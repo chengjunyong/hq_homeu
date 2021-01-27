@@ -11,6 +11,10 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Auth::routes();
+
+Route::get('/', 'HomeController@index')->name('home');
+
+Route::get('/branchsetup','OtherController@getBranch')->name('getBranch');
+
+Route::post('/createbranch','OtherController@createBranch')->name('createBranch');
