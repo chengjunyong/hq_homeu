@@ -8,7 +8,7 @@ class api extends Controller
 {
     public function testresult()
     {
-    	return "Cheng Jun Yong";
+    	return "Good";
     }
 
     public function receive(Request $request)

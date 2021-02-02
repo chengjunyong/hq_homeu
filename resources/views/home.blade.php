@@ -2,129 +2,289 @@
 
 @section('content')
 <style>
+  #logout{
+    border:none;
+    background: none;
+    font-size: 27px;
+    font-weight: 700;
+    margin: 10px 0px 10px 0px;
+  }
   body{
     overflow-x: hidden;
   }
 
-  .footer{
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    background-color: #e4b109;
-    height:50px;
-    width:100%;
+  .float{
+    position:fixed;
+    width:60px;
+    height:60px;
+    bottom:40px;
+    right:40px;
+    background-color:#0C9;
+    color:#FFF;
+    border-radius:50px;
+    text-align:center;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 99;
+  }
+
+  .float2{
+    position:fixed;
+    width:60px;
+    height:60px;
+    bottom:110px;
+    right:40px;
+    background-color:#92cb18;
+    color:#FFF;
+    border-radius:50px;
+    text-align:center;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 99;
+    cursor: pointer;
+  }
+
+  .col-md-6{
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .center{
     text-align: center;
   }
 
-  .logout{
-    margin-top: 5px;
-    margin-right: 5px;
-    text-align: right;
-    font-size:22px;
+  .center>button{
+    padding:10px 40px;
   }
 
-  .col-md-4{
-    font-size:850%;
-    color:#2b407b;
+  .first{
+    float:left;
+    font-size: 120px;
   }
 
-  h2{
-    color:black;
+  .icon{
+    border-radius: 50px;
   }
 
-  a { 
-    text-decoration: none;
-    color:#2b407b;
+  .icon>.card-body{
+     margin: 0 auto;
   }
 
 </style>
-<div class="row" style="background-color: #e4b109;padding:15px 0px 15px 0px;">
-  <div class="col-md-12">
-    <h2 align="center">Homeu Management System</h2>
-  </div>
-</div>
-<div class="logout">
-   <form action="{{route('logout')}}" method="post">
-     @csrf
-     <lable>Hello {{$user->name}}</lable><br/>
-     <input type="submit" class="logout btn btn-primary" value="Logout" style="color:white"/>
-   </form> 
+<h4 align="center" style="font-size: 1.75rem;">POS Management System</h4><br/>
+<div class="float">
+  <form method="post" action="{{route('logout')}}">
+    @csrf
+    <button id="logout"><i class="fa fa-sign-out-alt"></i></button>
+  </form>
 </div>
 
-<div class="container" id="first">
-  <div class="row" style="text-align: center">
-    <div class="col-md-4">
-      <a href="#">
-        <i class="fa fa-shopping-bag"></i>
-        <h2>Product</h2>
-      </a>
+<div class="float2" style="display:none">
+  <i class="fa fa-arrow-left" style="font-size: 40px;margin-top: 10px"></i>
+</div>
+
+<div class="container" id="main_menu">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Branch</h4>
+          <div class="col-md-5">
+            <i class="fa fa-store-alt first"></i>
+          </div>
+          <div class="col-md-7" style="float:right">
+            <ul>
+              <li>Branch Setup</li>
+              <li>Check Stock List</li>
+              <li>Branch Reorder Setting</li>
+              <li>Branch Stock Alert</li>
+            </ul>
+            <div class="center">
+              <button class="btn btn-primary" id="branch_btn">Access</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="col-md-4">
-      <a href="#">
-        <i class="fa fa-cubes"></i><br/>
-        <h2>Stock</h2>
-      </a>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Product</h4>
+          <div class="col-md-5">
+            <i class="fa fa-shopping-bag first"></i>
+          </div>
+          <div class="col-md-7" style="float:right">
+            <ul>
+              <li>Product List</li>
+              <li>Add Product</li>
+              <li>Modify Product</li>
+              <li>Check Product Detail</li>
+            </ul>
+            <div class="center">
+              <button class="btn btn-primary" id="product_btn">Access</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="col-md-4">
-      <a href="#">
-        <i class="fa fa-chart-bar"></i>
-        <h2>Report</h2>
-      </a>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Stock</h4>
+          <div class="col-md-5">
+            <i class="fa fa-warehouse first"></i>
+          </div>
+          <div class="col-md-7" style="float:right">
+            <ul>
+              <li>Warehouse Stock List</li>
+              <li>Stock Reorder Setting</li>
+              <li>Stock Refill</li>
+              <li>Stock Check Module</li>
+            </ul>
+            <div class="center">
+              <button class="btn btn-primary" id="stock_btn">Access</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="row" style="text-align: center;margin-top: 25px">
-    <div class="col-md-4">
-      <a href="#">
-        <i class="fa fa-coins"></i>
-        <h2>Sales</h2>
-      </a>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Sales</h4>
+          <div class="col-md-5">
+            <i class="fa fa-file-invoice-dollar first"></i>
+          </div>
+          <div class="col-md-7" style="float:right">
+            <ul>
+              <li>Branch Sales</li>
+              <li>Report</li>
+              <li>Sales Sync Setting</li>
+              <li>Export Report</li>
+            </ul>
+            <div class="center">
+              <button class="btn btn-primary" id="sales_btn">Access</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="col-md-4">
-      <a href="#" id="btn_other">
-        <i class="fa fa-question-circle"></i>
-        <h2>Others</h2>
-      </a>
-    </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Other</h4>
+          <div class="col-md-5">
+            <i class="fa fa-wrench first"></i>
+          </div>
+          <div class="col-md-7" style="float:right">
+            <ul>
+              <li>Pending</li>
+              <li>Pending</li>
+              <li>Pending</li>
+              <li>Pending</li>
+            </ul>
+            <div class="center">
+              <button class="btn btn-primary" id="other_btn">Access</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="container" id="other" hidden>
-  <div class="row" style="text-align: center">
-    <div class="col-md-12">
-      <button class="btn btn-secondary backmain">Main</button>
+<div class="container" id="product_menu" style="display: none">
+  <div class="row">
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Product Check List</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getProductList')}}"><i class="fa fa-box first"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="col-md-4">
-      <a href="{{route('getBranch')}}">
-        <i class="fa fa-store"></i>
-        <h2>Branch Setup</h2>
-      </a>
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Product Price & Cost Setting</h4>
+            </div>
+            <div class="col">
+              <a href="#"><i class="fa fa-dollar-sign first"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Product Default Setting</h4>
+            </div>
+            <div class="col">
+              <a href=""><i class="fa fa-cogs first"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
   </div>
 </div>
 
-<div class="footer">
-  <label style="font-weight: 600;margin-top: 10px">Design & Developed By Team Homeu</label>
+<div class="container" id="branch_menu" style="display: none">
+  <div class="row">
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Branch Setup</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getBranch')}}"><i class="fa fa-sliders-h first"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
 </div>
 
 <script>
-  $("#btn_other").click(function(){
-    showSecond($("#first"),$("#other"));
+$(document).ready(function(){
+  $(".float2").click(function(){
+    $(this).fadeOut("fast");
+    $("#product_menu,#branch_menu,#stock_menu,#sales_menu,#other_menu").fadeOut("fast",function(){
+      $("#main_menu").fadeIn("fast");
+    });
   });
 
-  $(".backmain").click(function(){
-    showMain($(this));
-  });
+  showMenu("product_btn","product_menu");
+  showMenu("branch_btn","branch_menu");
+  showMenu("sales_btn","sales_menu");
+  showMenu("other_btn","other_menu");
+  showMenu("stock_btn","stock_menu");
 
-function showSecond(hide,show){
-  hide.prop('hidden',true);
-  show.prop('hidden',false);
-}
+  function showMenu(target_btn,target_menu){
+    $("#"+target_btn).click(function(){
+      $("#main_menu").fadeOut("fast",function(){
+        $("#"+target_menu).fadeIn("fast");
+        $(".float2").fadeIn("fast");
+      });
+    });
+  }
 
-function showMain(hide){
-  $("#first").prop('hidden',false);
-  hide.parent().parent().parent().prop('hidden',true);
-}
+});
 </script>
 @endsection

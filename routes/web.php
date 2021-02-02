@@ -15,6 +15,9 @@ Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
 
-Route::get('/branchsetup','OtherController@getBranch')->name('getBranch');
+Route::get('/branchsetup','BranchController@getBranch')->name('getBranch');
+Route::post('/createbranch','BranchController@createBranch')->name('createBranch');
 
-Route::post('/createbranch','OtherController@createBranch')->name('createBranch');
+Route::get('/productlist','ProductController@getProductList')->name('getProductList');
+Route::get('/searchproduct','ProductController@searchProduct')->name('searchProduct');
+Route::post('/addproduct','ProductController@ajaxAddProduct')->name('ajaxAddProduct');
