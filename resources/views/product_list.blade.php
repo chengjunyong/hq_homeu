@@ -29,30 +29,18 @@
 		margin-right: 3px;
 	}
 
-	.float{
-    position:fixed;
-    width:60px;
-    height:60px;
-    bottom:40px;
-    right:40px;
-    background-color:#0C9;
-    color:#FFF;
-    border-radius:50px;
-    text-align:center;
-    box-shadow: 2px 2px 3px #999;
-    z-index: 99;
-  }
+	.container{
+		max-width: 98%;
+	}
 
 </style>
-
-<button class="float" onclick="window.location.assign('{{route('home')}}')" style="border:none"><i class="fa fa-arrow-left" style="font-size: 40px;"></i></button>
 
 <h2 align="center">Product Check List</h2>
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
 			<div style="float:left">
-				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_product">Add Product</button>
+				<button type="button" class="btn btn-primary" onclick="window.location.assign('{{route('getAddProduct')}}')">Add Product</button>
 			</div>
 			<div style="float:right">
 				<form action="{{route('searchProduct')}}" method="get">
@@ -69,7 +57,6 @@
 						<td>Product Name</td>
 						<td>Cost</td>
 						<td>Price</td>
-						<td>Stock Quantity</td>
 						<td>Reorder Level</td>
 						<td>Reorder Recommend Quantity</td>
 						<td>Last Updated</td>
@@ -82,10 +69,9 @@
 							<td>{{$result->barcode}}</td>
 							<td>{{$result->department_name}}</td>
 							<td>{{$result->category_name}}</td>
-							<td>{{$result->product_name}}</td>
+							<td><a href="{{route('getModifyProduct',$result->id)}}">{{$result->product_name}}</a></td>
 							<td style="width:5%">{{number_format($result->cost,2)}}</td>
 							<td style="width:5%">{{number_format($result->price,2)}}</td>
-							<td align="center" style="width:2%">{{$result->quantity}}</td>
 							<td align="center" style="width:2%">{{$result->reorder_level}}</td>
 							<td align="center" style="width:2%">{{$result->recommend_quantity}}</td>
 							<td align="center" style="width:9%">{{$result->created_at}}</td>
@@ -100,50 +86,4 @@
 	</div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="add_product" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add Product</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-      	<form id="add_product_form">
-      		@csrf
-      		<label>Barcode</label>
-      		<input type="text" name="barcode" class='form-control'>
-      		<label>Product Name</label>
-      		<input type="text" name="product_name" class='form-control'>
-      		<label>Price</label>
-      		<input type="number" step="0.01" name="price" class='form-control'>
-      		<label>Initial Quantity</label>
-      		<input type="number" name="quantity" class='form-control'>
-      	</form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close">Close</button>
-        <button type="button" class="btn btn-primary" id="add_product_btn">Add</button>
-      </div>
-    </div>
-  </div>
-</div>
-<script>	
-	$("#add_product_btn").click(function(){
-		$.post("{{route('ajaxAddProduct')}}",
-			$("#add_product_form").serialize(),
-			function(data){
-				if(data == 'true'){
-					alert('Product Add Successful');
-					$("#add_product_form").find('input').val('');
-					$("#close").click();
-				}else{
-					alert('Product Add Fail, Please Contact IT Support')
-				}
-			},'html');
-	});
-
-</script>
 @endsection

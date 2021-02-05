@@ -22,20 +22,6 @@
 		padding: 5px 0px 5px 0px;
 	}
 
-	.float{
-    position:fixed;
-    width:60px;
-    height:60px;
-    bottom:40px;
-    right:40px;
-    background-color:#0C9;
-    color:#FFF;
-    border-radius:50px;
-    text-align:center;
-    box-shadow: 2px 2px 3px #999;
-    z-index: 99;
-  }
-
   .loader {
 	  border: 16px solid #f3f3f3;
 	  border-radius: 50%;
@@ -53,7 +39,7 @@
 	}
 
 </style>
-<button class="float" onclick="window.location.assign('{{route('home')}}')" style="border:none"><i class="fa fa-arrow-left" style="font-size: 40px;"></i></button>
+
 
 <div class="container">
 	<h2 align="center">Branch Setup</h2>

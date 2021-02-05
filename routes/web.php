@@ -15,9 +15,24 @@ Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
 
+
+//Branch
 Route::get('/branchsetup','BranchController@getBranch')->name('getBranch');
 Route::post('/createbranch','BranchController@createBranch')->name('createBranch');
+Route::get('/branchstocklist/{branch_id}','BranchController@getBranchStockList')->name('getBranchStockList');
+Route::get('/searchbranchproduct','BranchController@searchBranchProduct')->name('searchBranchProduct');
 
+
+
+//Product
 Route::get('/productlist','ProductController@getProductList')->name('getProductList');
 Route::get('/searchproduct','ProductController@searchProduct')->name('searchProduct');
 Route::post('/addproduct','ProductController@ajaxAddProduct')->name('ajaxAddProduct');
+Route::get('/productconfig','ProductController@getProductConfig')->name('getProductConfig');
+Route::post('/setproductconfig','ProductController@postProductConfig')->name('postProductConfig');
+Route::get('/addproduct','ProductController@getAddProduct')->name('getAddProduct');
+Route::get('/getcategory','ProductController@ajaxGetCategory')->name('ajaxGetCategory');
+Route::post('/createproduct','ProductController@postAddProduct')->name('postAddProduct');
+Route::get('/getbarcode','ProductController@ajaxGetBarcode')->name('ajaxGetBarcode');
+Route::get('/modifyproduct/{id}','ProductController@getModifyProduct')->name('getModifyProduct');
+Route::post('/modifyproduct','ProductController@postModifyProduct')->name('postModifyProduct');
