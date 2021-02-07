@@ -14,18 +14,21 @@ use App\Branch;
 class ProductController extends Controller
 {
   public function getProductList()
-  {
+  { 
+    $search = null;
   	$product_list = Product_list::join('department','department.id','=','product_list.department_id')
                                 ->join('category','category.id','=','product_list.category_id')
                                 ->select('product_list.*','department.department_name','category.category_name')
                                 ->paginate(14);
 
-  	return view('product_list',compact('product_list'));
+  	return view('product_list',compact('product_list','search'));
   }
 
   public function searchProduct(Request $request)
   {
-  	$product_list = Branch_product::join('department','department.id','=','product_list.department_id')
+    $search = $request->search;
+
+  	$product_list = Product_list::join('department','department.id','=','product_list.department_id')
                             ->join('category','category.id','=','product_list.category_id')
                             ->select('product_list.*','department.department_name','category.category_name')
                             ->where('product_list.barcode','LIKE','%'.$request->search.'%')
@@ -34,7 +37,7 @@ class ProductController extends Controller
 
   	$product_list->withPath('?search='.$request->search);
 
-  	return view('product_list',compact('product_list'));
+  	return view('product_list',compact('product_list','search'));
   }
 
   public function ajaxAddProduct(Request $request)
@@ -160,11 +163,10 @@ class ProductController extends Controller
 
   public function postModifyProduct(Request $request)
   {
+
     $branch = Branch::select('id')->get();
 
-    $start = microtime(true);
-
-    Branch_product::where('barcode','LIKE',$request->barcode)
+    Branch_product::where('barcode',$request->barcode)
                     ->update([
                       'department_id'=>$request->department,
                       'category_id'=>$request->category,
@@ -175,10 +177,8 @@ class ProductController extends Controller
                       'recommend_quantity'=>$request->recommend_quantity,
                       'product_sync'=>0,
                     ]);
-    
-    $time = microtime(true) - $start;
 
-    Product_list::where('barcode','LIKE',$request->barcode)
+    Product_list::where('barcode',$request->barcode)
                     ->update([
                       'department_id'=>$request->department,
                       'category_id'=>$request->category,

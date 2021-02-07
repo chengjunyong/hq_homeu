@@ -57,7 +57,7 @@
 								<td>{{$result->barcode}}</td>
 								<td>{{$result->department_name}}</td>
 								<td>{{$result->category_name}}</td>
-								<td>{{$result->product_name}}</td>
+								<td><a href={{route('getModifyBranchStock',$result->id)}}>{{$result->product_name}}</a></td>
 								<td>{{$result->cost}}</td>
 								<td>{{$result->price}}</td>
 								<td>{{$result->quantity}}</td>

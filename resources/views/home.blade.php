@@ -283,7 +283,21 @@
               <h4 class="card-title">Branch Restock List</h4>
             </div>
             <div class="col">
-              <a href="{{route('getBranch')}}"><i class="fa fa-truck-loading first"></i></a>
+              <a href="{{route('getBranchRestock')}}"><i class="fa fa-truck-loading first"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Restock Confirmation</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getBranch')}}"><i class="fa fa-clipboard-check first"></i></a>
             </div>
           </div>
         </div>

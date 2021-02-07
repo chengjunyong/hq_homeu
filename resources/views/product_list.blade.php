@@ -44,7 +44,7 @@
 			</div>
 			<div style="float:right">
 				<form action="{{route('searchProduct')}}" method="get">
-					<i class="fa fa-search"></i><input type="text" id="search" name="search" class="form-control" placeholder="Search">
+					<i class="fa fa-search"></i><input type="text" id="search" name="search" class="form-control" placeholder="Search" value="{{$search}}">
 				</form>
 			</div>
 			<table id="product_list">

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Branch;
 use App\Branch_product;
 use App\Product_list;
+use App\Product_configure;
+
 
 class BranchController extends Controller
 {
@@ -81,5 +83,56 @@ class BranchController extends Controller
     return view('branch_stock_list',compact('branch','branch_product','branch_id'));                         
   }
 
+
+  public function getModifyBranchStock(Request $request)
+  {
+    $product = Branch_product::join('department','department.id','=','branch_product.department_id')
+                              ->join('category','category.id','=','Branch_product.category_id')
+                              ->select('branch_product.*','department.department_name','category.category_name')
+                              ->where('branch_product.id',$request->id)
+                              ->first();
+
+    $default_price = Product_configure::first();
+
+    return view('branch_stock_edit',compact('product','default_price'));
+  }
+
+  public function postModifyBranchStock(Request $request)
+  {
+    Branch_product::where('id',$request->id)
+                    ->update([
+                      'reorder_level' => $request->reorder_level,
+                      'recommend_quantity' => $request->recommend_quantity,
+                      'quantity' => $request->stock_quantity,
+                    ]);
+
+    return "success";
+  }
+
+  public function getBranchRestock()
+  {
+    $branch = Branch::get();
+    $branch_product = new \stdClass();
+    $branch_id = null;
+
+    if(isset($_GET['branch_id'])){
+      $branch_product = Branch_product::where('reorder_level','>=','quantity')
+                                      ->where('branch_id',$_GET['branch_id'])
+                                      ->get();
+      if($branch_product->count() != 0){
+        $branch_id = $_GET['branch_id'];
+      }
+    }
+
+    return view('branch_restock',compact('branch','branch_product','branch_id'));
+  }
+  
+  public function postBranchStock(Request $request)
+  {
+
+
+    dd($request);
+
+  }
 
 }
