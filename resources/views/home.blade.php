@@ -308,7 +308,21 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Branch Reorder History</h4>
+              <h4 class="card-title">Delivery Order History</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getBranch')}}"><i class="fa fa-shipping-fast first"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Branch Restock History</h4>
             </div>
             <div class="col">
               <a href="{{route('getBranch')}}"><i class="fa fa-history first"></i></a>

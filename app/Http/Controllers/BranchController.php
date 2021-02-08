@@ -7,6 +7,9 @@ use App\Branch;
 use App\Branch_product;
 use App\Product_list;
 use App\Product_configure;
+use App\Do_detail;
+use App\Do_configure;
+use App\Do_list;
 
 
 class BranchController extends Controller
@@ -129,10 +132,58 @@ class BranchController extends Controller
   
   public function postBranchStock(Request $request)
   {
+    $do_configure = Do_configure::first();
+    $header = $do_configure->do_prefix_number.$do_configure->next_do_number;
+    $do_number = intval($do_configure->next_do_number);
+    $next = strval(++$do_number);
+    $i=6;
+    while($i>strlen($next)){
+      $next = "0".$next;
+    }
+    Do_configure::where('id',1)->update(['current_do_number'=>$do_configure->next_do_number,'next_do_number'=>$next]);
 
+    if($request->branch_transfer == "0"){
+      $from = "HQ";
+    }else{
+      $branch = Branch::where('id',$request->branch_transfer)->first();
+      $from = $branch->branch_name;
+    }
 
-    dd($request);
+    $branch = Branch::where('id',$request->branch_id)->first();
+    $to = $branch->branch_name;
 
+    Do_list::create([
+      'do_number' => $header,
+      'from' => $from,
+      'from_branch_id' => $request->branch_transfer,
+      'to' => $to,
+      'to_branch_id' => $request->branch_id,
+      'total_item' => array_sum($request->reorder_quantity),
+      'completed' => 0,
+    ]);
+
+    for($i=0;$i<count($request->barcode);$i++){
+      Do_detail::create([
+        'do_number' => $header,
+        'product_id' => $request->product_id[$i],
+        'barcode' => $request->barcode[$i],
+        'product_name' => $request->product_name[$i],
+        'price' => $request->product_price[$i],
+        'quantity' => $request->reorder_quantity[$i],
+      ]);
+    }
+
+    return redirect(route('getPrintDo',$header));  
   }
+
+
+  public function getPrintDo(Request $request)
+  {
+    $do_list = Do_list::where('do_number',$request->do_number)->first();
+    $do_detail = Do_detail::where('do_number',$request->do_number)->get();
+
+    return view('print_do',compact('do_list','do_detail'));
+  }
+
 
 }

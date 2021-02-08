@@ -86,7 +86,7 @@
 					<h4>Stock Order</h4>
 				</div>
 				<div class="card-body">
-					<form method="post" action="{{route('postBranchStock')}}">
+					<form method="post" action="{{route('postBranchStock')}}" target="_blank">
 						@csrf
 						<h5>Transfer</h5>
 						<div class="row" style="margin-bottom: 10px">
@@ -122,6 +122,8 @@
 							<input type="text" hidden value="{{$result->barcode}}" name="barcode[]">
 							<label>Product Name : {{$result->product_name}}</label>
 							<input type="text" hidden value="{{$result->product_name}}" name="product_name[]">
+							<input type="text" hidden value="{{$result->id}}" name="product_id[]">
+							<input type="text" hidden value="{{$result->price}}" name="product_price[]">
 							<label>Restock Quantity: 								
 								<input type="number" name="reorder_quantity[]" step="1" required placeholder="Reorder Quantity" class="form-control" value="{{number_format($result->recommend_quantity,0)}}" style="width:30%;display:unset">
 							</label>
@@ -129,7 +131,8 @@
 						@endforeach
 
 						@if($branch_id != null)
-							<input type="submit" value="Generate DO" class="btn btn-primary">
+							<input type="submit" hidden>
+							<button id="submit" type="button" class="btn btn-primary">Generate DO</button>
 						@endif
 
 					</form>
@@ -155,6 +158,13 @@ $(document).ready(function(){
 
 	$("#branch").change(function(){
 		window.location.assign($(this).val());
+	});
+
+	$("#submit").click(function(){
+		let result = confirm("I'm confirm generate DO based on the selected items. (Generate DO process cannot retrieve)");
+		if(result == true){
+			$("input[type=submit]").click();
+		}
 	});
 
 });

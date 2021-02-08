@@ -25,6 +25,7 @@ Route::get('/modifybranchstock/{id}','BranchController@getModifyBranchStock')->n
 Route::post('/modifybranchstock','BranchController@postModifyBranchStock')->name('postModifyBranchStock');
 Route::get('/restock','BranchController@getBranchRestock')->name('getBranchRestock');
 Route::post('/generatedo','BranchController@postBranchStock')->name('postBranchStock');
+Route::get('/printdo/{do_number}','BranchController@getPrintDo')->name('getPrintDo');
 
 
 
