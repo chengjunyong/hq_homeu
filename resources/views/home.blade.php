@@ -311,7 +311,7 @@
               <h4 class="card-title">Delivery Order History</h4>
             </div>
             <div class="col">
-              <a href="{{route('getBranch')}}"><i class="fa fa-shipping-fast first"></i></a>
+              <a href="{{route('getDoHistory')}}"><i class="fa fa-shipping-fast first"></i></a>
             </div>
           </div>
         </div>

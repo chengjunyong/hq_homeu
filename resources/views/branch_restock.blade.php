@@ -88,6 +88,7 @@
 				<div class="card-body">
 					<form method="post" action="{{route('postBranchStock')}}" target="_blank">
 						@csrf
+						<input type="text" name="description" value="" hidden>
 						<h5>Transfer</h5>
 						<div class="row" style="margin-bottom: 10px">
 							<div class="col">
@@ -161,8 +162,9 @@ $(document).ready(function(){
 	});
 
 	$("#submit").click(function(){
-		let result = confirm("I'm confirm generate DO based on the selected items. (Generate DO process cannot retrieve)");
-		if(result == true){
+		let result = prompt("I'm confirm generate DO based on the selected items. (Generate DO process cannot retrieve) Type Description:");
+		if(result != null){
+			$("input[name=description]").val(result);
 			$("input[type=submit]").click();
 		}
 	});

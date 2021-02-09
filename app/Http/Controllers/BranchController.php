@@ -159,6 +159,7 @@ class BranchController extends Controller
       'to' => $to,
       'to_branch_id' => $request->branch_id,
       'total_item' => array_sum($request->reorder_quantity),
+      'description' => $request->description,
       'completed' => 0,
     ]);
 
@@ -183,6 +184,25 @@ class BranchController extends Controller
     $do_detail = Do_detail::where('do_number',$request->do_number)->get();
 
     return view('print_do',compact('do_list','do_detail'));
+  }
+
+  public function getDoHistory()
+  {
+    if(isset($_GET['search']) && $_GET['search'] != null){
+      $do_list = Do_list::where('do_number',$_GET['search'])->orderBy('created_at','desc')->paginate(15);
+    }else{
+      $do_list = Do_list::orderBy('created_at','desc')->paginate(15);
+    }
+
+    return view('do_history',compact('do_list'));
+  }
+
+  public function getDoHistoryDetail(Request $request)
+  {
+    $do_list = Do_list::where('do_number',$request->do_number)->first(); 
+    $do_detail = Do_detail::where('do_number',$request->do_number)->get();
+
+    return view('do_history_detail',compact('do_list','do_detail'));
   }
 
 

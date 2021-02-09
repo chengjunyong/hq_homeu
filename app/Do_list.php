@@ -15,6 +15,7 @@ class Do_list extends Model
       'to',
       'to_branch_id',
       'total_item',
+      'description',
       'completed',
       'stock_lost_quantity',
       'stock_lost_reason',
