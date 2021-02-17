@@ -261,20 +261,22 @@
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card icon">
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h4 class="card-title">Branch Stock Checklist</h4>
-            </div>
-            <div class="col">
-              <a href="{{route('getBranchStockList',$branch->id)}}"><i class="fa fa-clipboard-list first"></i></a>
+    @if(isset($branch->$id))
+      <div class="col-md-4">
+        <div class="card icon">
+          <div class="card-body">
+            <div class="row">
+              <div class="col">
+                <h4 class="card-title">Branch Stock Checklist</h4>
+              </div>
+              <div class="col">
+                <a href="{{route('getBranchStockList',$branch->id)}}"><i class="fa fa-clipboard-list first"></i></a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    @endif
     <div class="col-md-4">
       <div class="card icon">
         <div class="card-body">
