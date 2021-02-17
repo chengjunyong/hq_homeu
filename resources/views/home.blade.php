@@ -261,7 +261,7 @@
         </div>
       </div>
     </div>
-    @if(isset($branch->$id))
+    @if($branch->id)
       <div class="col-md-4">
         <div class="card icon">
           <div class="card-body">

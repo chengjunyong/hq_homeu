@@ -16,7 +16,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+      $this->middleware('auth');
     }
 
     /**
@@ -26,9 +26,13 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        $branch = Branch::first();
 
-        return view('home',compact('user','branch'));
+      $user = Auth::user();
+      $branch = Branch::first();
+      if(!$branch){
+        $branch = new \stdClass();
+        $branch->id = null;
+      }
+      return view('home',compact('user','branch'));
     }
-}
+  }
