@@ -205,5 +205,31 @@ class BranchController extends Controller
     return view('do_history_detail',compact('do_list','do_detail'));
   }
 
+  public function getRestocklist()
+  {
+    if(isset($_GET['search']) && $_GET['search'] != null){
+      $do_list = Do_list::where('do_number',$_GET['search'])
+                          ->where('completed','0')
+                          ->orderBy('created_at','desc')->paginate(15);
+    }else{
+      $do_list = Do_list::where('completed','0')->orderBy('created_at','desc')->paginate(15);
+    }
+    return view('restock_list',compact('do_list'));
+  }
+
+  public function getRestockConfirmation(Request $request)
+  { 
+    $do_list = Do_list::where('do_number',$request->do_number)->first(); 
+    $do_detail = Do_detail::where('do_number',$request->do_number)->get();
+
+    return view('restock_confirmation',compact('do_list','do_detail'));
+  }
+
+  public function postRestockConfirmation(Request $request)
+  {
+
+    dd($request);
+    
+  }
 
 }

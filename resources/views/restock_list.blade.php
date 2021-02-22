@@ -10,7 +10,7 @@
 <div class="container">
 	<div class="card">
 		<div class="title">
-			<h4>Delivery Order History</h4>
+			<h4 style="margin:20px">Delivery Order List</h4>
 		</div>
 		<div class="card-body">
 			<div style="float:right">
@@ -34,13 +34,12 @@
 						@foreach($do_list as $key => $result)
 							<tr>
 								<td>{{$key + 1}}</td>
-								<td><a href="{{route('getDoHistoryDetail',$result->do_number)}}">{{$result->do_number}}</a></td>
+								<td>{{$result->do_number}}</td>
 								<td>{{$result->from}}</td>
 								<td>{{$result->to}}</td>
 								<td>{{$result->total_item}}</td>
-								<td>{{($result->completed == 0)? 'No' : 'Yes'}}</td>
 								<td>{{$result->created_at}}</td>
-								<td><buttton class="btn btn-primary" onclick="window.location.assign('{{route('getPrintDo',$result->do_number)}}')">Print</buttton></td>
+								<td><button class="btn btn-primary" onclick="window.location.assign('{{route('getRestockConfirmation',$result->do_number)}}')">Confirm Delivered</button></td>
 							</tr>
 						@endforeach
 					</tbody>
@@ -51,17 +50,17 @@
 	</div>
 </div>
 <script>
-$(document).ready(function(){
 
+$(document).ready(function(){
 	$("#search").keypress(function(e){
-		let header = "{{route('getDoHistory')}}";
+		let header = "{{route('getRestocklist')}}";
 		if(e.keyCode == 13){
 			let target = $("#search").val();
 			header = `${header}?search=${target}`;
 			window.location.assign(header);
 		}
 	});
-
 });
+
 </script>
 @endsection

@@ -296,10 +296,10 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Restock Confirmation</h4>
+              <h4 class="card-title">Delivery Order History</h4>
             </div>
             <div class="col">
-              <a href="{{route('getBranch')}}"><i class="fa fa-clipboard-check first"></i></a>
+              <a href="{{route('getDoHistory')}}"><i class="fa fa-shipping-fast first"></i></a>
             </div>
           </div>
         </div>
@@ -310,10 +310,10 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Delivery Order History</h4>
+              <h4 class="card-title">Restock Confirmation</h4>
             </div>
             <div class="col">
-              <a href="{{route('getDoHistory')}}"><i class="fa fa-shipping-fast first"></i></a>
+              <a href="{{route('getRestocklist')}}"><i class="fa fa-clipboard-check first"></i></a>
             </div>
           </div>
         </div>

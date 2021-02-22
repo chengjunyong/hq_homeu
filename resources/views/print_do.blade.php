@@ -41,9 +41,6 @@
 	<div class="header">
 		<h2>Company Name</h2>
 		<h4>Co No .........</h4>
-		<h4>Address Line 1</h4>	
-		<h4>Address Line 2</h4>
-		<h4>Address Line 3</h4>
 		<h4>Tel: 09-xxxxxxx &nbsp Fax: 09-5737591</h4>
 		<h3 style="margin:20px 30%;border:1px solid black">WAREHOUSE TRANSFER</h3>
 	</div>
@@ -89,17 +86,17 @@
 	<div class="main" style="padding-bottom: 2.5rem;">
 		<table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
 			<thead style="background: #adade0;">
-				<th>QTY</th>
-				<th style="width:15%">BARCODE</th>
+				<th style="width:15%" align="left">BARCODE</th>
 				<th>ITEMS</th>
+				<th>QTY</th>
 				<th>PRICE</th>
 			</thead>
 			<tbody class="border">
 				@foreach($do_detail as $result)
 					<tr>
-						<td align="center">{{ number_format($result->quantity,0) }}</td>
 						<td>{{ $result->barcode }}</td>
 						<td>{{ $result->product_name }}</td>
+						<td align="center">{{ number_format($result->quantity,0) }}</td>
 						<td align="right">{{ number_format($result->price,2) }}</td>
 					</tr>
 				@endforeach
