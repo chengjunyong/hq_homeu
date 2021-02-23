@@ -9,7 +9,7 @@ use App\transaction_detail;
 
 class SalesController extends Controller
 {
-    public function getSalesReport(Request $request)
+  public function getSalesReport(Request $request)
   {
     $branch = Branch::get();
 
