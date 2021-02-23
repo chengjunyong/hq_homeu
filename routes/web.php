@@ -46,8 +46,8 @@ Route::get('/modifyproduct/{id}','ProductController@getModifyProduct')->name('ge
 Route::post('/modifyproduct','ProductController@postModifyProduct')->name('postModifyProduct');
 
 // sales report
-Route::get('/sales_report', 'BranchController@getSalesReport')->name('getSalesReport');
-Route::get('/sales_report/{branch_id}/{id}', 'BranchController@getSalesReportDetail')->name('getSalesReportDetail');
+Route::get('/sales_report', 'SalesController@getSalesReport')->name('getSalesReport');
+Route::get('/sales_report/{branch_id}/{id}', 'SalesController@getSalesReportDetail')->name('getSalesReportDetail');
 
 // sync URL
 Route::get('/branchSync','BranchController@branchSync')->name('branchSync');
