@@ -187,6 +187,7 @@ class ProductController extends Controller
                       'price'=>$request->price,
                       'reorder_level'=>$request->reorder_level,
                       'recommend_quantity'=>$request->recommend_quantity,
+                      'product_sync'=>0,
                     ]);
 
     return back()->with('result','true');

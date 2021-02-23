@@ -302,6 +302,8 @@ class BranchController extends Controller
     return view('restock_history_detail',compact('do_list','do_detail'));
   }
 
+
+  //Start Delete Here
   public function branchSync(Request $request)
   {
     $transaction = $request->transaction;
@@ -395,4 +397,6 @@ class BranchController extends Controller
 
     return response()->json($response);
   }
+
+  //Delete Until HERE
 }
