@@ -21,3 +21,8 @@ Route::post('/createbranch','BranchController@createBranch')->name('createBranch
 Route::get('/productlist','ProductController@getProductList')->name('getProductList');
 Route::get('/searchproduct','ProductController@searchProduct')->name('searchProduct');
 Route::post('/addproduct','ProductController@ajaxAddProduct')->name('ajaxAddProduct');
+
+Route::get('/sales_report', 'BranchController@getSalesReport')->name('getSalesReport');
+Route::get('/sales_report/{branch_id}/{id}', 'BranchController@getSalesReportDetail')->name('getSalesReportDetail');
+Route::get('/branchSync','BranchController@branchSync')->name('branchSync');
+Route::get('/branchSyncCompleted', 'BranchController@branchSyncCompleted')->name('branchSyncCompleted');
