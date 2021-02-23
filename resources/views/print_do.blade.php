@@ -39,9 +39,9 @@
 <div class="container">
 
 	<div class="header">
-		<h2>Company Name</h2>
-		<h4>Co No .........</h4>
-		<h4>Tel: 09-xxxxxxx &nbsp Fax: 09-5737591</h4>
+		<h2>HOME U(M) SDN BHD</h2>
+		<h4>(125272-P)</h4>
+		<h4>Tel: 09-7744243 &nbsp Email: assist@homeu.com.my</h4>
 		<h3 style="margin:20px 30%;border:1px solid black">WAREHOUSE TRANSFER</h3>
 	</div>
 

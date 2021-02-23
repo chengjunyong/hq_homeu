@@ -17,7 +17,7 @@ class Do_list extends Model
       'total_item',
       'description',
       'completed',
-      'stock_lost_quantity',
-      'stock_lost_reason',
+      'completed_time',
+      'stock_lost',
     ];
 }

@@ -15,5 +15,8 @@ class Do_detail extends Model
       'product_name',
       'price',
       'quantity',
+      'stock_lost_quantity',
+      'stock_lost_reason',
+      'remark',
     ];
 }

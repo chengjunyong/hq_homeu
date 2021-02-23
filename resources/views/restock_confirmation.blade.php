@@ -62,6 +62,7 @@
 							<tbody>
 								@foreach($do_detail as $key => $result)
 									<input type="text" name="do_detail_id[]" hidden value="{{$result->id}}" />
+									<input type="text" name="product_id[]" hidden value="{{$result->product_id}}" />
 									<tr>
 										<td>{{$key+1}}</td>
 										<td>{{$result->barcode}}</td>

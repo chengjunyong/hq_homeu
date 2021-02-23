@@ -49,6 +49,23 @@
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="result" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="title">Update</h5>
+      </div>
+      <div class="modal-body" style="text-align: center">
+        <label style="margin-top: 5px" id="label">Update Successful</label>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 
 $(document).ready(function(){
@@ -63,4 +80,9 @@ $(document).ready(function(){
 });
 
 </script>
+
+@if(session()->get('success'))
+	<script>$("#result").modal('toggle');</script>
+@endif
+
 @endsection

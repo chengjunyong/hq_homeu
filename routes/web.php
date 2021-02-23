@@ -31,6 +31,8 @@ Route::get('/dohistorydetail/{do_number}','BranchController@getDoHistoryDetail')
 Route::get('/restocklist','BranchController@getRestocklist')->name('getRestocklist');
 Route::get('/restockconfirmation/{do_number}','BranchController@getRestockConfirmation')->name('getRestockConfirmation');
 Route::post('restockconfirmation','BranchController@postRestockConfirmation')->name('postRestockConfirmation');
+Route::get('/branchrestockhistory','BranchController@getRestockHistory')->name('getRestockHistory');
+Route::get('/branchrestockhistorydetail/{id}','BranchController@getRestockHistoryDetail')->name('getRestockHistoryDetail');
 
 //Product
 Route::get('/productlist','ProductController@getProductList')->name('getProductList');
@@ -44,3 +46,12 @@ Route::post('/createproduct','ProductController@postAddProduct')->name('postAddP
 Route::get('/getbarcode','ProductController@ajaxGetBarcode')->name('ajaxGetBarcode');
 Route::get('/modifyproduct/{id}','ProductController@getModifyProduct')->name('getModifyProduct');
 Route::post('/modifyproduct','ProductController@postModifyProduct')->name('postModifyProduct');
+
+// sales report
+Route::get('/sales_report', 'BranchController@getSalesReport')->name('getSalesReport');
+Route::get('/sales_report/{branch_id}/{id}', 'BranchController@getSalesReportDetail')->name('getSalesReportDetail');
+
+// sync URL
+Route::get('/branchSync','BranchController@branchSync')->name('branchSync');
+Route::get('/branchSyncCompleted', 'BranchController@branchSyncCompleted')->name('branchSyncCompleted'); 
+
