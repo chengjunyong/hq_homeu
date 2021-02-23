@@ -68,6 +68,10 @@
      margin: 0 auto;
   }
 
+  .col-md-4{
+    margin-top: 25px;
+  }
+
 </style>
 <h4 align="center" style="font-size: 1.75rem;">POS Management System</h4><br/>
 <div class="float">
@@ -213,10 +217,10 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Product Price & Cost Setting</h4>
+              <h4 class="card-title">Add Product</h4>
             </div>
             <div class="col">
-              <a href="#"><i class="fa fa-dollar-sign first"></i></a>
+              <a href="{{route('getAddProduct')}}"><i class="fa fa-plus-circle first"></i></a>
             </div>
           </div>
         </div>
@@ -227,10 +231,10 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Product Default Setting</h4>
+              <h4 class="card-title">Product Price & Cost Setting</h4>
             </div>
             <div class="col">
-              <a href=""><i class="fa fa-cogs first"></i></a>
+              <a href="{{route('getProductConfig')}}"><i class="fa fa-dollar-sign first"></i></a>
             </div>
           </div>
         </div>
@@ -252,6 +256,78 @@
             </div>
             <div class="col">
               <a href="{{route('getBranch')}}"><i class="fa fa-sliders-h first"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    @if($branch->id)
+      <div class="col-md-4">
+        <div class="card icon">
+          <div class="card-body">
+            <div class="row">
+              <div class="col">
+                <h4 class="card-title">Branch Stock Checklist</h4>
+              </div>
+              <div class="col">
+                <a href="{{route('getBranchStockList',$branch->id)}}"><i class="fa fa-clipboard-list first"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    @endif
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Branch Restock List</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getBranchRestock')}}"><i class="fa fa-truck-loading first"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Delivery Order History</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getDoHistory')}}"><i class="fa fa-shipping-fast first"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Restock Confirmation</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getRestocklist')}}"><i class="fa fa-clipboard-check first"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Branch Restock History</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getBranch')}}"><i class="fa fa-history first"></i></a>
             </div>
           </div>
         </div>
