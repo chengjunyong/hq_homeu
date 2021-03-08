@@ -208,7 +208,14 @@ class BranchController extends Controller
     $do_list = Do_list::where('do_number',$request->do_number)->first(); 
     $do_detail = Do_detail::where('do_number',$request->do_number)->get();
 
-    return view('do_history_detail',compact('do_list','do_detail'));
+    $stock_lost_quantity = 0;
+    $total_lost_amount = 0;
+    foreach($do_detail as $result){
+      $stock_lost_quantity += $result->stock_lost_quantity;
+      $total_lost_amount += ($result->stock_lost_quantity * $result->price);
+    }
+
+    return view('do_history_detail',compact('do_list','do_detail','stock_lost_quantity','total_lost_amount'));
   }
 
   public function getRestocklist()
@@ -236,15 +243,18 @@ class BranchController extends Controller
   {
     //stock lost status, 0 = no stock lost, 1 = gt stock lost
     $stock_lost_status = 0;
+    $stock_lost_review = 0;
     for($x=0;$x<count($request->do_detail_id);$x++){
 
       if($request->stock_lost_quantity[$x] > 0){
         $stock_lost_status = 1;
+        $stock_lost_review = 1;
         $stock_lost_reason = $request->stock_lost_reason[$x];
         $stock_lost_quantity = $request->stock_lost_quantity[$x];
       }else{
         $stock_lost_reason = null;
         $stock_lost_quantity = 0;
+        $stock_lost_review = 0;
       }
 
       if($request->restock_quantity[$x] > 0){
@@ -258,6 +268,7 @@ class BranchController extends Controller
                                 'stock_lost_quantity' => $stock_lost_quantity,
                                 'stock_lost_reason' => $stock_lost_reason,
                                 'remark' => $request->remark[$x],
+                                'stock_lost_review' => $stock_lost_review,
                               ]);
 
       $branch_product = Branch_product::where('id',$request->product_id[$x])->first();
@@ -302,101 +313,12 @@ class BranchController extends Controller
     return view('restock_history_detail',compact('do_list','do_detail'));
   }
 
-
-  //Start Delete Here
-  public function branchSync(Request $request)
+  public function getDamagedStock()
   {
-    $transaction = $request->transaction;
-    $transaction = json_decode($transaction, true);
-    $transaction_detail = $request->transaction_detail;
-    $transaction_detail = json_decode($transaction_detail, true);
+    $do_detail = Do_detail::where('stock_lost_reason','damaged')
+                          ->where('stock_lost_review',1)
+                          ->get();
 
-    $branch_id = $request->branch_id;
-    $session_id = $request->session_id;
-
-    transaction::where('branch_id', $branch_id)->where('session_id', $session_id)->delete();
-    transaction_detail::where('branch_id', $branch_id)->where('session_id', $session_id)->delete();
-
-    $transaction_query = [];
-    foreach($transaction as $data)
-    {
-      $query = [
-        'branch_transaction_id' => $data['id'],
-        'branch_id' => $branch_id,
-        'session_id' => $session_id,
-        'transaction_no' => $data['transaction_no'],
-        'invoice_no' => $data['invoice_no'],
-        'user_id' => $data['user_id'],
-        'subtotal' => $data['subtotal'],
-        'total_discount' => $data['total_discount'],
-        'payment' => $data['payment'],
-        'payment_type' => $data['payment_type'],
-        'payment_type_text' => $data['payment_type_text'],
-        'balance' => $data['balance'],
-        'total' => $data['total'],
-        'void' => $data['void'],
-        'completed' => $data['completed'],
-        'transaction_date' => $data['transaction_date'],
-        'created_at' => $data['created_at'],
-        'updated_at' => $data['updated_at']
-      ];
-
-      array_push($transaction_query, $query);
-    }
-
-    transaction::insert($transaction_query);
-
-    $transaction_detail_query = [];
-    foreach($transaction_detail as $data)
-    {
-      $query = [
-        'branch_id' => $branch_id,
-        'session_id' => $session_id,
-        'branch_transaction_detail_id' => $data['id'],
-        'branch_transaction_id' => $data['transaction_id'],
-        'product_id' => $data['product_id'],
-        'barcode' => $data['barcode'],
-        'product_name' => $data['product_name'],
-        'quantity' => $data['quantity'],
-        'price' => $data['price'],
-        'discount' => $data['discount'],
-        'subtotal' => $data['subtotal'],
-        'total' => $data['total'],
-        'void' => $data['void'],
-        'created_at' => $data['created_at'],
-        'updated_at' => $data['updated_at']
-      ];
-
-      array_push($transaction_detail_query, $query);
-    }
-
-    transaction_detail::insert($transaction_detail_query);
-
-    // more than 10000, php will return error
-    $product_list = product_list::select('department_id', 'category_id', 'barcode', 'product_name', 'price')->where('product_sync', 0)->limit(10000)->get();
-
-    $response = new \stdClass();
-    $response->error = 0;
-    $response->message = "Transaction sync completed";
-    $response->product_list = $product_list->toJson();
-
-    return response()->json($response);
+    return view('damaged_stock_list',compact('do_detail'));
   }
-
-  public function branchSyncCompleted(Request $request)
-  {
-    $barcode_array = explode("|", $request->barcode_array);
-
-    product_list::where('product_sync', 0)->whereIn('barcode', $barcode_array)->update([
-      'product_sync' => 1
-    ]);
-
-    $response = new \stdClass();
-    $response->error = 0;
-    $response->message = "Product list sync completed";
-
-    return response()->json($response);
-  }
-
-  //Delete Until HERE
 }

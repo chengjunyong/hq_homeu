@@ -62,13 +62,13 @@
 									<td>{{$result->barcode}}</td>
 									<td>{{$result->product_name}}</td>
 									<td class="quantity">{{$result->quantity}}</td>
-									<td><input type="number" name="restock_quantity[]" value="{{$result->quantity}}" class="restock_quantity" style="width:50%" disabled="" min=0></td>
-									<td><input type="number" name="stock_lost_quantity[]" value="0" class="stock_lost_quantity" style="width:50%" disabled min=0></td>
+									<td><input type="number" name="restock_quantity[]" value="{{$result->quantity - $result->stock_lost_quantity}}" class="restock_quantity" style="width:50%" disabled="" min=0></td>
+									<td><input type="number" name="stock_lost_quantity[]" value="{{$result->stock_lost_quantity}}" class="stock_lost_quantity" style="width:50%" disabled min=0></td>
 									<td>
 										<select name="stock_lost_reason[]" disabled>
-											<option value="damaged">Damaged</option>
-											<option value="lost">Lost</option>
-											<option value="other">Other</option>
+											<option value="damaged" {{($result->stock_lost_reason == 'damaged') ? 'selected' : ''}}>Damaged</option>
+											<option value="lost" {{($result->stock_lost_reason == 'lost') ? 'selected' : ''}}>Lost</option>
+											<option value="other" {{($result->stock_lost_reason == 'other') ? 'selected' : ''}}>Other</option>
 											<option {{($result->stock_lost_quantity <= 0) ? 'selected' : ''}}>No Stock Lost</option>
 										</select>
 									</td>

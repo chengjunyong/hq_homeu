@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Branch;
 class api extends Controller
 {
     public function testresult()
@@ -11,8 +11,13 @@ class api extends Controller
     	return "Good";
     }
 
-    public function receive(Request $request)
+    public function update(Request $request)
     {	
-    	return $request;
+		  $result =	Branch::create([
+		    		'id' => $request->branch_id,
+		    		'branch_name' => 'testing',
+		    	]);
+
+    	return $result;
     }
 }

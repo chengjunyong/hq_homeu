@@ -33,6 +33,7 @@ Route::get('/restockconfirmation/{do_number}','BranchController@getRestockConfir
 Route::post('restockconfirmation','BranchController@postRestockConfirmation')->name('postRestockConfirmation');
 Route::get('/branchrestockhistory','BranchController@getRestockHistory')->name('getRestockHistory');
 Route::get('/branchrestockhistorydetail/{id}','BranchController@getRestockHistoryDetail')->name('getRestockHistoryDetail');
+Route::get('/damagedstock','BranchController@getDamagedStock')->name('getDamagedStock');
 
 //Product
 Route::get('/productlist','ProductController@getProductList')->name('getProductList');

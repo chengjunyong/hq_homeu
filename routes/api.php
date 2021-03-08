@@ -20,4 +20,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('/testapi','api@testresult')->name('testresult');
 
-Route::post('/somedata','api@receive');
+Route::post('/update','api@update');

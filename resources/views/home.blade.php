@@ -333,6 +333,34 @@
         </div>
       </div>
     </div>
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Damaged Stock List</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getDamagedStock')}}"><i class="fa fa-house-damage first"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Stock Lost List</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getRestockHistory')}}"><i class="fa fa-window-close first"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     
   </div>
 </div>
