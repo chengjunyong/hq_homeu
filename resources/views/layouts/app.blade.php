@@ -9,6 +9,7 @@
   <script src="{{ asset('bootstrap-4.0.0/js/bootstrap.min.js') }}"></script>
   <script src="{{ asset('fontawesome/js/all.min.js') }}"></script>
   <script src="{{ asset('datatable/datatables.min.js') }}"></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
   <link rel="stylesheet" href="{{ asset('bootstrap-4.0.0/css/bootstrap.min.css')}}"/>
   <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css')}}"/>
   <link rel="stylesheet" href="{{ asset('datatable/datatables.min.css')}}"/>

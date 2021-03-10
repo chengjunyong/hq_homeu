@@ -5,6 +5,10 @@
 		min-width:95%;
 		margin-top: 10px;
 	}
+
+	.table td{
+		padding:5px !important;
+	}
 </style>
 
 <div class="container">
@@ -40,6 +44,12 @@
 						@endforeach
 					</tbody>
 				</table>
+				<div class="paginate" style="float:right;margin-top: 15px">
+					{{ $do_detail->links() }}
+				</div>
+				<div style="margin-top: 3.5rem;text-align: center">
+					<button id="gr" class="btn btn-primary">Generate Good Return Form</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -47,6 +57,35 @@
 <script>
 $(document).ready(function(){
 
+	$("#gr").click(function(){
+		Swal.fire({
+	  	title: 'Generate Good Return Form',
+	  	icon: 'info',
+	  	text: 'After generate Good Return Form, those items will be clear in the list. Please make sure before proceed',
+	  	showCancelButton: true,
+	  	confirmButtomText: 'Confirm Generate'
+		}).then((result) =>{
+			if(result.isConfirmed){
+				let token = '{{ csrf_token() }}';
+				let send = 'true';
+				if($("tbody").html().trim() == ""){
+					send = 'false';
+				}
+				$.post('{{route('postDamagedStock')}}',
+					{
+						'_token':token,
+						'result':send,
+					},
+					function(data){
+						if(data['redirect'] != null){
+							window.location.assign(`${data['redirect']}`);
+						}
+					},'json');
+			}
+		});
+	});
+
 });
+
 </script>
 @endsection

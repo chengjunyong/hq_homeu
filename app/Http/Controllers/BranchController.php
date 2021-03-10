@@ -12,6 +12,8 @@ use App\Product_configure;
 use App\Do_detail;
 use App\Do_configure;
 use App\Do_list;
+use App\Damaged_stock_history;
+use Illuminate\Support\Facades\Crypt;
 
 class BranchController extends Controller
 {
@@ -317,8 +319,53 @@ class BranchController extends Controller
   {
     $do_detail = Do_detail::where('stock_lost_reason','damaged')
                           ->where('stock_lost_review',1)
-                          ->get();
+                          ->paginate(15);
 
     return view('damaged_stock_list',compact('do_detail'));
   }
+
+  public function postDamagedStock(Request $request)
+  {
+    $response = new \stdClass();
+
+    if($request->result == 'true'){
+      $dmg_stock = Do_detail::where('stock_lost_review','1')
+                              ->where('stock_lost_reason','damaged')
+                              ->get();
+
+      Do_detail::where('stock_lost_review','1')->where('stock_lost_reason','damaged')->update(['stock_lost_review' => '0']);
+
+      $key = Crypt::encryptString(now());
+      try{                     
+        foreach($dmg_stock as $result){
+          Damaged_stock_history::create([
+            'gr_number' => $key,
+            'do_number' => $result->do_number,
+            'barcode' => $result->barcode,
+            'product_name' => $result->product_name,
+            'lost_quantity' => $result->stock_lost_quantity,
+            'price_per_unit' => $result->price,
+            'total' => $result->price * $result->stock_lost_quantity,
+            'remark' => $result->remark,
+          ]);
+        }
+
+        $response->redirect = route('getGenerateGR',$key);
+      }catch(Throwable $e){
+        $response->redirect = null;
+      }
+    }else{
+      $response->redirect = null;
+    }
+
+    return response()->json($response);
+  }
+
+
+  public function getGenerateGR(Request $request)
+  {
+
+    dd($request);
+
+  } 
 }
