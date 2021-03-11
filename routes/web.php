@@ -35,7 +35,8 @@ Route::get('/branchrestockhistory','BranchController@getRestockHistory')->name('
 Route::get('/branchrestockhistorydetail/{id}','BranchController@getRestockHistoryDetail')->name('getRestockHistoryDetail');
 Route::get('/damagedstock','BranchController@getDamagedStock')->name('getDamagedStock');
 Route::post('/generatedamagedstock','BranchController@postDamagedStock')->name('postDamagedStock');
-Route::get('/GR/{id}','BranchController@getGenerateGR')->name('getGenerateGR');
+Route::get('/damagedstockhistory','BranchController@getDamagedStockHistory')->name('getDamagedStockHistory');
+Route::get('/GR/{gr_number}','BranchController@getGenerateGR')->name('getGenerateGR');
 
 //Product
 Route::get('/productlist','ProductController@getProductList')->name('getProductList');

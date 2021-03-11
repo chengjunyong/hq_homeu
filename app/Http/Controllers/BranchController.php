@@ -335,7 +335,8 @@ class BranchController extends Controller
 
       Do_detail::where('stock_lost_review','1')->where('stock_lost_reason','damaged')->update(['stock_lost_review' => '0']);
 
-      $key = Crypt::encryptString(now());
+      $date = strtotime(date("Y-m-d h:i:s"));
+      $key = "GR".$date;
       try{                     
         foreach($dmg_stock as $result){
           Damaged_stock_history::create([
@@ -361,11 +362,39 @@ class BranchController extends Controller
     return response()->json($response);
   }
 
-
   public function getGenerateGR(Request $request)
   {
+    // Dummy Supplier Data (Development only)
+      $supplier = new \stdClass();
+      $supplier->name = "Dummy Supplier";
+      $supplier->id = "DS001";
+      $supplier->address1 = "Supplier Address 1";
+      $supplier->address2 = "Supplier Address 2";
+      $supplier->address3 = "Supplier Address 3";
+      $supplier->contact = "03-562 3662";
+      $supplier->email = "Dummy_Supplier@gmail.com";
+    // Dummy Supplier Data End Here
 
-    dd($request);
+    $gr = Damaged_stock_history::where('gr_number',$request->gr_number)->get();
+
+    $total = new \stdClass();
+    $a=0;
+    $q=0;
+    foreach($gr as $result){
+      $a += floatval($result->total);
+      $q += intval($result->lost_quantity);
+    }
+
+    $total->quantity = $q;
+    $total->amount = $a;
+
+    return view('report_gr',compact('gr','supplier','total'));
 
   } 
+
+  public function getDamagedStockHistory()
+  {
+
+    return view('gr_history');
+  }
 }
