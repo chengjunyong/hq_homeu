@@ -33,6 +33,12 @@ class HomeController extends Controller
         $branch = new \stdClass();
         $branch->id = null;
       }
-      return view('home',compact('user','branch'));
+
+      $target = "na";
+      if(isset($_GET['p'])){
+        $target = $_GET['p'];
+      }
+
+      return view('home',compact('user','branch','target'));
     }
   }

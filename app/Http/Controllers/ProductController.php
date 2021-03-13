@@ -15,17 +15,20 @@ class ProductController extends Controller
 {
   public function getProductList()
   { 
+    $url = route('home')."?p=product_menu";
     $search = null;
   	$product_list = Product_list::join('department','department.id','=','product_list.department_id')
                                 ->join('category','category.id','=','product_list.category_id')
                                 ->select('product_list.*','department.department_name','category.category_name')
                                 ->paginate(14);
 
-  	return view('product_list',compact('product_list','search'));
+  	return view('product_list',compact('product_list','search','url'));
   }
 
   public function searchProduct(Request $request)
   {
+    $url = route('home')."?p=product_menu";
+
     $search = $request->search;
 
   	$product_list = Product_list::join('department','department.id','=','product_list.department_id')
@@ -37,7 +40,7 @@ class ProductController extends Controller
 
   	$product_list->withPath('?search='.$request->search);
 
-  	return view('product_list',compact('product_list','search'));
+  	return view('product_list',compact('product_list','search','url'));
   }
 
   public function ajaxAddProduct(Request $request)
@@ -55,6 +58,7 @@ class ProductController extends Controller
 
   public function getProductConfig()
   {
+    $url = route('home')."?p=product_menu";
     $result = Product_configure::first();
 
     if($result == null){
@@ -63,7 +67,7 @@ class ProductController extends Controller
       $result->below_sales_price = true;
     }
 
-    return view('productconfig',compact('result'));
+    return view('productconfig',compact('result','url'));
   }
 
   public function postProductConfig(Request $request)
@@ -79,13 +83,15 @@ class ProductController extends Controller
 
   public function getAddProduct()
   {
+    $url = route('home')."?p=product_menu";
+
     $department = Department::orderBy('id','asc')->get();
 
     $category = Category::where('department_id',$department->first()->id)->get();
 
     $default_price = Product_configure::first();
 
-    return view('addproduct',compact('department','category','default_price'));
+    return view('addproduct',compact('department','category','default_price','url'));
   }
 
   public function ajaxGetCategory(Request $request)
@@ -150,6 +156,8 @@ class ProductController extends Controller
 
   public function getModifyProduct(Request $request)
   {
+    $url = route('home')."?p=product_menu";
+
     $product = Product_list::where('id',$request->id)->first();
 
     $department = Department::orderBy('id','asc')->get();
@@ -158,7 +166,7 @@ class ProductController extends Controller
 
     $default_price = Product_configure::first();
 
-    return view('modifyproduct',compact('product','department','category','default_price'));
+    return view('modifyproduct',compact('product','department','category','default_price','url'));
   }
 
   public function postModifyProduct(Request $request)

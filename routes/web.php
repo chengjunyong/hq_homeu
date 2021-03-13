@@ -15,7 +15,6 @@ Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
 
-
 //Branch
 Route::get('/branchsetup','BranchController@getBranch')->name('getBranch');
 Route::post('/createbranch','BranchController@createBranch')->name('createBranch');

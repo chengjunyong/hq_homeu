@@ -24,9 +24,11 @@ class BranchController extends Controller
 
   public function getBranch()
   {
+   $url = route('home')."?p=branch_menu";
+
    $branch = Branch::paginate(6);
 
-   return view('branch',compact('branch'));
+   return view('branch',compact('branch','url'));
  }
 
   public function createBranch(Request $request)
@@ -63,6 +65,8 @@ class BranchController extends Controller
 
   public function getBranchStockList(Request $request)
   {
+    $url = route('home')."?p=branch_menu";
+
     $branch = Branch::get();
     $branch_product = Branch_product::where('branch_id',$request->branch_id)->paginate(25);
     foreach($branch as $key => $result){
@@ -70,11 +74,13 @@ class BranchController extends Controller
     }
     $branch_id = $request->branch_id;
 
-    return view('branch_stock_list',compact('branch','branch_product','branch_id'));
+    return view('branch_stock_list',compact('branch','branch_product','branch_id','url'));
   }
 
   public function searchBranchProduct(Request $request)
   {
+    $url = route('home')."?p=branch_menu";
+
     $branch = Branch::get();
     $branch_product = Branch_product::where('branch_id',$request->branch_id)
                                     ->where(function($query) use ($request) {
@@ -91,12 +97,14 @@ class BranchController extends Controller
 
     $branch_id = $request->branch_id;
 
-    return view('branch_stock_list',compact('branch','branch_product','branch_id'));                         
+    return view('branch_stock_list',compact('branch','branch_product','branch_id','url'));                         
   }
 
 
   public function getModifyBranchStock(Request $request)
   {
+    $url = route('home')."?p=branch_menu";
+
     $product = Branch_product::join('department','department.id','=','branch_product.department_id')
                               ->join('category','category.id','=','Branch_product.category_id')
                               ->select('branch_product.*','department.department_name','category.category_name')
@@ -105,7 +113,7 @@ class BranchController extends Controller
 
     $default_price = Product_configure::first();
 
-    return view('branch_stock_edit',compact('product','default_price'));
+    return view('branch_stock_edit',compact('product','default_price','url'));
   }
 
   public function postModifyBranchStock(Request $request)
@@ -122,6 +130,8 @@ class BranchController extends Controller
 
   public function getBranchRestock()
   {
+    $url = route('home')."?p=branch_menu";
+
     $branch = Branch::get();
     $branch_product = new \stdClass();
     $branch_id = null;
@@ -135,7 +145,7 @@ class BranchController extends Controller
       }
     }
 
-    return view('branch_restock',compact('branch','branch_product','branch_id'));
+    return view('branch_restock',compact('branch','branch_product','branch_id','url'));
   }
   
   public function postBranchStock(Request $request)
@@ -188,25 +198,28 @@ class BranchController extends Controller
 
   public function getPrintDo(Request $request)
   {
+    $url = route('home')."?p=branch_menu";
     $do_list = Do_list::where('do_number',$request->do_number)->first();
     $do_detail = Do_detail::where('do_number',$request->do_number)->get();
 
-    return view('print_do',compact('do_list','do_detail'));
+    return view('print_do',compact('do_list','do_detail','url'));
   }
 
   public function getDoHistory()
   {
+    $url = route('home')."?p=branch_menu";
     if(isset($_GET['search']) && $_GET['search'] != null){
       $do_list = Do_list::where('do_number',$_GET['search'])->where('completed',0)->orderBy('created_at','desc')->paginate(15);
     }else{
       $do_list = Do_list::orderBy('created_at','desc')->where('completed',0)->paginate(15);
     }
 
-    return view('do_history',compact('do_list'));
+    return view('do_history',compact('do_list','url'));
   }
 
   public function getDoHistoryDetail(Request $request)
   {
+    $url = route('home')."?p=branch_menu";
     $do_list = Do_list::where('do_number',$request->do_number)->first(); 
     $do_detail = Do_detail::where('do_number',$request->do_number)->get();
 
@@ -217,11 +230,12 @@ class BranchController extends Controller
       $total_lost_amount += ($result->stock_lost_quantity * $result->price);
     }
 
-    return view('do_history_detail',compact('do_list','do_detail','stock_lost_quantity','total_lost_amount'));
+    return view('do_history_detail',compact('do_list','do_detail','stock_lost_quantity','total_lost_amount','url'));
   }
 
   public function getRestocklist()
   {
+    $url = route('home')."?p=branch_menu";
     if(isset($_GET['search']) && $_GET['search'] != null){
       $do_list = Do_list::where('do_number',$_GET['search'])
                           ->where('completed','0')
@@ -230,15 +244,16 @@ class BranchController extends Controller
       $do_list = Do_list::where('completed','0')->orderBy('created_at','desc')->paginate(15);
     }
 
-    return view('restock_list',compact('do_list'));
+    return view('restock_list',compact('do_list','url'));
   }
 
   public function getRestockConfirmation(Request $request)
   { 
+    $url = route('home')."?p=branch_menu";
     $do_list = Do_list::where('do_number',$request->do_number)->first(); 
     $do_detail = Do_detail::where('do_number',$request->do_number)->get();
 
-    return view('restock_confirmation',compact('do_list','do_detail'));
+    return view('restock_confirmation',compact('do_list','do_detail','url'));
   }
 
   public function postRestockConfirmation(Request $request)
@@ -296,6 +311,7 @@ class BranchController extends Controller
 
   public function getRestockHistory()
   {
+    $url = route('home')."?p=branch_menu";
     if(isset($_GET['search']) && $_GET['search'] != null){
       $do_list = Do_list::where('do_number',$_GET['search'])
                           ->where('completed','1')
@@ -304,24 +320,26 @@ class BranchController extends Controller
       $do_list = Do_list::where('completed','1')->orderBy('created_at','desc')->paginate(15);
     }
 
-    return view('restock_history',compact('do_list'));
+    return view('restock_history',compact('do_list','url'));
   }
 
   public function getRestockHistoryDetail(Request $request)
   {
+    $url = route('home')."?p=branch_menu";
     $do_list = Do_list::where('id',$request->id)->first();
     $do_detail = Do_detail::where('do_number',$do_list->do_number)->get();
 
-    return view('restock_history_detail',compact('do_list','do_detail'));
+    return view('restock_history_detail',compact('do_list','do_detail','url'));
   }
 
   public function getDamagedStock()
   {
+    $url = route('home')."?p=branch_menu";
     $do_detail = Do_detail::where('stock_lost_reason','damaged')
                           ->where('stock_lost_review',1)
                           ->paginate(15);
 
-    return view('damaged_stock_list',compact('do_detail'));
+    return view('damaged_stock_list',compact('do_detail','url'));
   }
 
   public function postDamagedStock(Request $request)
@@ -364,6 +382,7 @@ class BranchController extends Controller
 
   public function getGenerateGR(Request $request)
   {
+    $url = route('home')."?p=branch_menu";
     // Dummy Supplier Data (Development only)
       $supplier = new \stdClass();
       $supplier->name = "Dummy Supplier";
@@ -388,13 +407,14 @@ class BranchController extends Controller
     $total->quantity = $q;
     $total->amount = $a;
 
-    return view('report_gr',compact('gr','supplier','total'));
+    return view('report_gr',compact('gr','supplier','total','url'));
 
   } 
 
   public function getDamagedStockHistory()
   {
+    $url = route('home')."?p=branch_menu";
 
-    return view('gr_history');
+    return view('gr_history','url');
   }
 }

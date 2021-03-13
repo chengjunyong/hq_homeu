@@ -72,6 +72,46 @@
     margin-top: 25px;
   }
 
+  .branch-color{
+    color:#b74242;
+  }
+
+  .btn-branch{
+    background-color:#b74242; 
+  }
+
+  .product-color{
+    color:#693aa7;
+  }
+
+  .btn-product{
+    background-color:#693aa7;
+  }
+
+  .stock-color{
+    color:#3fa57f;
+  }
+
+  .btn-stock{
+    background-color: #3fa57f;
+  }
+
+  .sales-color{
+    color:#7dbb02;
+  }
+
+  .btn-sales{
+    background-color: #7dbb02;
+  }
+
+  .other-color{
+    color:#3fa57f;
+  }
+
+  .btn-other{
+    background-color: #3fa57f;
+  }
+
 </style>
 <h4 align="center" style="font-size: 1.75rem;">POS Management System</h4><br/>
 <div class="float">
@@ -91,7 +131,7 @@
       <div class="card">
         <div class="card-body">
           <h4 class="card-title">Branch</h4>
-          <div class="col-md-5">
+          <div class="col-md-5 branch-color">
             <i class="fa fa-store-alt first"></i>
           </div>
           <div class="col-md-7" style="float:right">
@@ -102,7 +142,7 @@
               <li>Branch Stock Alert</li>
             </ul>
             <div class="center">
-              <button class="btn btn-primary" id="branch_btn">Access</button>
+              <button class="btn btn-primary btn-branch" id="branch_btn">Access</button>
             </div>
           </div>
         </div>
@@ -112,7 +152,7 @@
       <div class="card">
         <div class="card-body">
           <h4 class="card-title">Product</h4>
-          <div class="col-md-5">
+          <div class="col-md-5 product-color">
             <i class="fa fa-shopping-bag first"></i>
           </div>
           <div class="col-md-7" style="float:right">
@@ -123,7 +163,7 @@
               <li>Check Product Detail</li>
             </ul>
             <div class="center">
-              <button class="btn btn-primary" id="product_btn">Access</button>
+              <button class="btn btn-primary btn-product" id="product_btn">Access</button>
             </div>
           </div>
         </div>
@@ -133,7 +173,7 @@
       <div class="card">
         <div class="card-body">
           <h4 class="card-title">Stock</h4>
-          <div class="col-md-5">
+          <div class="col-md-5 stock-color">
             <i class="fa fa-warehouse first"></i>
           </div>
           <div class="col-md-7" style="float:right">
@@ -144,7 +184,7 @@
               <li>Stock Check Module</li>
             </ul>
             <div class="center">
-              <button class="btn btn-primary" id="stock_btn">Access</button>
+              <button class="btn btn-primary btn-stock" id="stock_btn">Access</button>
             </div>
           </div>
         </div>
@@ -154,7 +194,7 @@
       <div class="card">
         <div class="card-body">
           <h4 class="card-title">Sales</h4>
-          <div class="col-md-5">
+          <div class="col-md-5 sales-color">
             <i class="fa fa-file-invoice-dollar first"></i>
           </div>
           <div class="col-md-7" style="float:right">
@@ -165,7 +205,7 @@
               <li>Export Report</li>
             </ul>
             <div class="center">
-              <button class="btn btn-primary" id="sales_btn">Access</button>
+              <button class="btn btn-primary btn-sales" id="sales_btn">Access</button>
             </div>
           </div>
         </div>
@@ -206,7 +246,7 @@
               <h4 class="card-title">Product Check List</h4>
             </div>
             <div class="col">
-              <a href="{{route('getProductList')}}"><i class="fa fa-box first"></i></a>
+              <a href="{{route('getProductList')}}"><i class="fa fa-box first product-color"></i></a>
             </div>
           </div>
         </div>
@@ -220,7 +260,7 @@
               <h4 class="card-title">Add Product</h4>
             </div>
             <div class="col">
-              <a href="{{route('getAddProduct')}}"><i class="fa fa-plus-circle first"></i></a>
+              <a href="{{route('getAddProduct')}}"><i class="fa fa-plus-circle first product-color"></i></a>
             </div>
           </div>
         </div>
@@ -234,7 +274,7 @@
               <h4 class="card-title">Product Price & Cost Setting</h4>
             </div>
             <div class="col">
-              <a href="{{route('getProductConfig')}}"><i class="fa fa-dollar-sign first"></i></a>
+              <a href="{{route('getProductConfig')}}"><i class="fa fa-dollar-sign first product-color"></i></a>
             </div>
           </div>
         </div>
@@ -255,7 +295,7 @@
               <h4 class="card-title">Branch Setup</h4>
             </div>
             <div class="col">
-              <a href="{{route('getBranch')}}"><i class="fa fa-sliders-h first"></i></a>
+              <a href="{{route('getBranch')}}"><i class="fa fa-sliders-h first branch-color"></i></a>
             </div>
           </div>
         </div>
@@ -270,7 +310,7 @@
                 <h4 class="card-title">Branch Stock Checklist</h4>
               </div>
               <div class="col">
-                <a href="{{route('getBranchStockList',$branch->id)}}"><i class="fa fa-clipboard-list first"></i></a>
+                <a href="{{route('getBranchStockList',$branch->id)}}"><i class="fa fa-clipboard-list first branch-color"></i></a>
               </div>
             </div>
           </div>
@@ -285,7 +325,7 @@
               <h4 class="card-title">Branch Restock List</h4>
             </div>
             <div class="col">
-              <a href="{{route('getBranchRestock')}}"><i class="fa fa-truck-loading first"></i></a>
+              <a href="{{route('getBranchRestock')}}"><i class="fa fa-truck-loading first branch-color"></i></a>
             </div>
           </div>
         </div>
@@ -299,7 +339,7 @@
               <h4 class="card-title">Delivery Order History</h4>
             </div>
             <div class="col">
-              <a href="{{route('getDoHistory')}}"><i class="fa fa-shipping-fast first"></i></a>
+              <a href="{{route('getDoHistory')}}"><i class="fa fa-shipping-fast first branch-color"></i></a>
             </div>
           </div>
         </div>
@@ -313,7 +353,7 @@
               <h4 class="card-title">Restock Confirmation</h4>
             </div>
             <div class="col">
-              <a href="{{route('getRestocklist')}}"><i class="fa fa-clipboard-check first"></i></a>
+              <a href="{{route('getRestocklist')}}"><i class="fa fa-clipboard-check first branch-color"></i></a>
             </div>
           </div>
         </div>
@@ -327,7 +367,7 @@
               <h4 class="card-title">Branch Restock History</h4>
             </div>
             <div class="col">
-              <a href="{{route('getRestockHistory')}}"><i class="fa fa-history first"></i></a>
+              <a href="{{route('getRestockHistory')}}"><i class="fa fa-history first branch-color"></i></a>
             </div>
           </div>
         </div>
@@ -341,7 +381,7 @@
               <h4 class="card-title">Damaged Stock List</h4>
             </div>
             <div class="col">
-              <a href="{{route('getDamagedStock')}}"><i class="fa fa-house-damage first"></i></a>
+              <a href="{{route('getDamagedStock')}}"><i class="fa fa-house-damage first branch-color"></i></a>
             </div>
           </div>
         </div>
@@ -355,7 +395,7 @@
               <h4 class="card-title">Stock Lost List</h4>
             </div>
             <div class="col">
-              <a href="{{route('getRestockHistory')}}"><i class="fa fa-window-close first"></i></a>
+              <a href="{{route('getRestockHistory')}}"><i class="fa fa-window-close first branch-color"></i></a>
             </div>
           </div>
         </div>
@@ -376,7 +416,7 @@
               <h4 class="card-title">Sales Report</h4>
             </div>
             <div class="col">
-              <a href="{{route('getSalesReport')}}"><i class="fas fa-chart-bar first"></i></a>
+              <a href="{{route('getSalesReport')}}"><i class="fas fa-chart-bar first sales-color"></i></a>
             </div>
           </div>
         </div>
@@ -386,7 +426,7 @@
   </div>
 </div>
 
-<div class="container" id="sales_menu" style="display: none">
+<div class="container" id="other_menu" style="display: none">
   <div class="row">
 
     <div class="col-md-4">
@@ -394,10 +434,10 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Sales Report</h4>
+              <h4 class="card-title">Other</h4>
             </div>
             <div class="col">
-              <a href="{{route('getSalesReport')}}"><i class="fas fa-chart-bar first"></i></a>
+              <a href="{{route('getSalesReport')}}"><i class="fas fa-chart-bar first sales-color" ></i></a>
             </div>
           </div>
         </div>
@@ -422,12 +462,24 @@ $(document).ready(function(){
   showMenu("other_btn","other_menu");
   showMenu("stock_btn","stock_menu");
 
+  let a = "{{$target}}";
+  if(a != "na"){
+    changeMenu(a);
+  }
+
   function showMenu(target_btn,target_menu){
     $("#"+target_btn).click(function(){
       $("#main_menu").fadeOut("fast",function(){
         $("#"+target_menu).fadeIn("fast");
         $(".float2").fadeIn("fast");
       });
+    });
+  }
+
+  function changeMenu(target_menu){
+    $("#main_menu").fadeOut("fast",function(){
+      $("#"+target_menu).fadeIn("fast");
+      $(".float2").fadeIn("fast");
     });
   }
 

@@ -38,11 +38,16 @@
   }
 </style>
 <body style="background: linear-gradient(90deg, rgb(66 183 245) 0%, rgb(66 245 189 / 70%) 100%);">
-  <button class="float" onclick="window.location.assign('{{route('home')}}')" style="border:none"><i class="fa fa-arrow-left" style="font-size: 40px;"></i></button>
+  <button class="float" onclick="window.location.assign('{{ (isset($url)) ? $url : "" }}')" style="border:none">
+    <i class="fa fa-arrow-left" style="font-size: 40px;"></i>
+  </button>
   <div id="app">
 
    @yield('content')
    
  </div>
+ <script>
+
+ </script>
 </body>
 </html>
