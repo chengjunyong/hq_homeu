@@ -14,10 +14,10 @@
 <div class="container">
 	<div class="card">
 		<div class="title">
-			<h4 style="margin: 20px">Damaged Stock List</h4>
+			<h4 style="margin: 20px">Stock Lost List</h4>
 		</div>
 		<div>
-			<a href="{{route('getDamagedStockHistory')}}" style="float:right;margin-right: 20px"><button class="btn btn-primary">Good Returns History</button></a>
+			<a href="{{route('getStockLostHistory')}}" style="float:right;margin-right: 20px"><button class="btn btn-primary">Stock Lost History</button></a>
 		</div>
 		<div class="card-body">
 			<div class="table">
@@ -51,7 +51,7 @@
 					{{ $do_detail->links() }}
 				</div>
 				<div style="margin-top: 3.5rem;text-align: center">
-					<button id="gr" class="btn btn-primary">Generate Good Return Form</button>
+					<button id="gr" class="btn btn-primary">Generate Stock Lost Report</button>
 				</div>
 			</div>
 		</div>
@@ -62,9 +62,9 @@ $(document).ready(function(){
 
 	$("#gr").click(function(){
 		Swal.fire({
-	  	title: 'Generate Good Return Form',
+	  	title: 'Generate Stock Lost Report',
 	  	icon: 'info',
-	  	text: 'After generate Good Return Form, those items will be clear in the list. Please make sure before proceed',
+	  	text: 'After generate Stock Lost Report, those items will be clear in the list. Please make sure before proceed',
 	  	showCancelButton: true,
 	  	confirmButtomText: 'Confirm Generate'
 		}).then((result) =>{
@@ -74,15 +74,16 @@ $(document).ready(function(){
 				if($("tbody").html().trim() == ""){
 					send = 'false';
 				}
-				$.post('{{route('postDamagedStock')}}',
+				$.post('{{route('postStockLost')}}',
 					{
 						'_token':token,
 						'result':send,
 					},
 					function(data){
+						console.log(data);
 						if(data['redirect'] != null){
-							window.open(`${data['redirect']}`);
-							window.location.reload();
+							// window.open(`${data['redirect']}`);
+							// window.location.reload();
 						}
 					},'json');
 			}

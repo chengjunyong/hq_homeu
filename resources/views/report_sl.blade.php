@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Goods Return</title>
+<title>Stock Lost</title>
 </head>
 <style>
 	h2,h4{
@@ -43,72 +43,26 @@
 <body>
 <div class="container">
 
-	<div class="header">
+	<div class="header" style="margin-bottom: 15px">
 		<h2>HOME U(M) SDN BHD</h2>
 		<h4>(125272-P)</h4>
 		<h4>Tel: 09-7744243 <br/> Email: assist@homeu.com.my</h4>
-		<h3 style="margin:20px 30%;border:1px solid black">Goods Return</h3>
-	</div>
-
-	<div class="second">
-		<table style="float:left">
-			<tr>
-				<td><b>Return To</b></td>
-				<td>:</td>
-				<td>{{$supplier->name}}</td>
-			</tr>
-			<tr>
-				<td><b>Address</b></td>
-				<td>:</td>
-				<td>{{$supplier->address1}}</td>
-			</tr>
-			<tr>
-				<td><b></b></td>
-				<td></td>
-				<td>{{$supplier->address2}}</td>
-			</tr>
-			<tr>
-				<td><b></b></td>
-				<td></td>
-				<td>{{$supplier->address3}}</td>
-			</tr>
-		</table>
-		<table style="float:right">
-			<tr>
-				<td><b>GR NO</b></td>
-				<td>:</td>
-				<td align="right">{{$gr[0]->gr_number}}</td>
-			</tr>
-			<tr>
-				<td><b>Return Date</b></td>
-				<td>:</td>
-				<td align="right">{{date('d-M-Y',strtotime($gr[0]->created_at))}}</td>
-			</tr>
-			<tr>
-				<td><b>Contact</b></td>
-				<td>:</td>
-				<td align="right">{{$supplier->contact}}</td>
-			</tr>
-			<tr>
-				<td><b>E-mail</b></td>
-				<td>:</td>
-				<td align="right">{{$supplier->email}}</td>
-			</tr>
-		</table>
+		<h3 style="margin:20px 30%;border:1px solid black">Stock Lost</h3>
+		<h4>Generate Date : {{date('d-M-Y',strtotime($sl[0]->created_at))}} <br/> Stock Lost ID : {{$sl[0]->stock_lost_id}}</h4>
 	</div>
 
 	<div class="main" style="padding-bottom: 2.5rem;">
-		<table class="detail" style="width:100%;margin-top:140px;border-collapse: collapse;">
+		<table class="detail" style="width:100%;border-collapse: collapse;">
 			<thead style="background: #adade0;">
 				<th style="width:10%">Do Number</th>
-				<th>Barcode</th>
-				<th>Product</th>
-				<th>Quantity</th>
-				<th>Unit Price</th>
-				<th>Total</th>
+				<th style="width:15%">Barcode</th>
+				<th style="width:40%">Product</th>
+				<th style="width:7.5%">Quantity</th>
+				<th style="width:7.5%">Unit Price</th>
+				<th style="width:20%">Total</th>
 			</thead>
 			<tbody class="border">
-				@foreach($gr as $result)
+				@foreach($sl as $result)
 					<tr>
 						<td style="text-align: center">{{$result->do_number}}</td>
 						<td>{{$result->barcode}}</td>

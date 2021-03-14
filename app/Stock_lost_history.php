@@ -4,12 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Damaged_stock_history extends Model
+class Stock_lost_history extends Model
 {
-    protected $table = 'damaged_stock_history';
+    protected $table = 'stock_lost_history';
     protected $fillable = 
     [
-	    'gr_number',
+	    'stock_lost_id',
 		'do_number',
 		'barcode',
 		'product_name',

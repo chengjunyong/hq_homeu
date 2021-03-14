@@ -100,7 +100,7 @@ $(document).ready(function(){
 			if(total == parseInt($(".quantity")[a].innerHTML)){
 				$(".restock_quantity")[a].setCustomValidity("");
 			}else{
-				$(".restock_quantity")[a].setCustomValidity("Quantity is not talley with the delivery quantity, Please make sure the restock_quantity and stock lost quantity is correct");
+				$(".restock_quantity")[a].setCustomValidity("Quantity is not talley with the delivery quantity, Please make sure the restock quantity and stock lost quantity is correct");
 			}
 		}
 	});

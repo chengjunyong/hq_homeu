@@ -10,7 +10,7 @@
 		padding:5px;
 	}
 </style>
-<div class="container">
+<div class="container" style="padding-bottom: 5vh;">
 	<div class="card" style="margin-top: 10px">
 		<div class="card-title">
 			<h4>DO Detail</h4>

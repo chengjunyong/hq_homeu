@@ -14,7 +14,7 @@
 <div class="container">
 	<div class="card">
 		<div class="title">
-			<h4 style="margin: 20px">Goods Return History</h4>
+			<h4 style="margin: 20px">Stock Lost History</h4>
 		</div>
 		<div class="card-body">
 			<div class="table">
@@ -22,17 +22,17 @@
 					<thead style="background: #b8b8efd1">
 						<tr>
 							<td>No</td>
-							<td>GR Number</td>
+							<td>Stock Lost Id</td>
 							<td style="text-align: center">Total Quantity</td>
 							<td style="text-align: right">Total Amount</td>
 							<td style="text-align: center">Generate Date</td>
 						</tr>
 					</thead>
 					<tbody>
-						@foreach($gr_list as $key => $result)
+						@foreach($sl_list as $key => $result)
 							<tr>
 								<td>{{$key + 1}}</td>
-								<td><a href="{{route('getGenerateGR',$result->gr_number)}}">{{$result->gr_number}}</a></td>
+								<td><a href="{{route('getGenerateSL',$result->stock_lost_id)}}">{{$result->stock_lost_id}}</a></td>
 								<td style="text-align: center">{{$result->lost_quantity}}</td>
 								<td style="text-align: right">Rm {{number_format($result->total,2)}}</td>
 								<td style="text-align: center">{{$result->created_at}}</td>
@@ -41,7 +41,7 @@
 					</tbody>
 				</table>
 				<div class="paginate" style="float:right;margin-top: 15px">
-					{{ $gr_list->links() }}
+					{{ $sl_list->links() }}
 				</div>
 			</div>
 		</div>

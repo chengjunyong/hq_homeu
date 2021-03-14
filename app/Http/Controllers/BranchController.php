@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Branch;
 use App\Branch_product;
@@ -13,6 +14,7 @@ use App\Do_detail;
 use App\Do_configure;
 use App\Do_list;
 use App\Damaged_stock_history;
+use App\Stock_lost_history;
 use Illuminate\Support\Facades\Crypt;
 
 class BranchController extends Controller
@@ -250,6 +252,7 @@ class BranchController extends Controller
   public function getRestockConfirmation(Request $request)
   { 
     $url = route('home')."?p=branch_menu";
+
     $do_list = Do_list::where('do_number',$request->do_number)->first(); 
     $do_detail = Do_detail::where('do_number',$request->do_number)->get();
 
@@ -413,8 +416,106 @@ class BranchController extends Controller
 
   public function getDamagedStockHistory()
   {
+    $url = route('getDamagedStock');
+
+    $gr_list = Damaged_stock_history::select(DB::raw('SUM(total) as total,SUM(lost_quantity) as lost_quantity,gr_number,created_at'))
+                                      ->groupBy('gr_number')
+                                      ->orderBy('created_at','desc')
+                                      ->paginate(20);
+
+    return view('gr_history',compact('url','gr_list'));
+  }
+
+  public function getStockLost()
+  {
     $url = route('home')."?p=branch_menu";
 
-    return view('gr_history','url');
+    $do_detail = Do_detail::where('stock_lost_review',1)
+                          ->where(function($query){
+                            $query->where('stock_lost_reason','lost')
+                                  ->orWhere('stock_lost_reason','other');
+                          })
+                          ->paginate(15);
+
+    return view('stock_lost_list',compact('url','do_detail'));
   }
+
+  public function postStockLost(Request $request)
+  {
+    $response = new \stdClass();
+
+    if($request->result == 'true'){
+      $stock_lost = Do_detail::where('stock_lost_review',1)
+                          ->where(function($query){
+                            $query->where('stock_lost_reason','lost')
+                                  ->orWhere('stock_lost_reason','other');
+                          })
+                          ->get();
+
+      Do_detail::where('stock_lost_review','1')
+                ->where(function($query){
+                  $query->where('stock_lost_reason','lost')
+                        ->orWhere('stock_lost_reason','other');
+                })
+                ->update(['stock_lost_review' => '0']);
+
+      $date = strtotime(date("Y-m-d h:i:s"));
+      $key = "SL".$date;
+      try{                     
+        foreach($stock_lost as $result){
+          Stock_lost_history::create([
+            'stock_lost_id' => $key,
+            'do_number' => $result->do_number,
+            'barcode' => $result->barcode,
+            'product_name' => $result->product_name,
+            'lost_quantity' => $result->stock_lost_quantity,
+            'price_per_unit' => $result->price,
+            'total' => $result->price * $result->stock_lost_quantity,
+            'remark' => $result->remark,
+          ]);
+        }
+
+        $response->redirect = route('getGenerateSL',$key);
+      }catch(Throwable $e){
+        $response->redirect = null;
+      }
+    }else{
+      $response->redirect = null;
+    }
+
+    return response()->json($response);
+  }
+
+  public function getGenerateSL(Request $request)
+  {
+
+    $sl = Stock_lost_history::where('stock_lost_id',$request->sl_id)->get();
+
+    $total = new \stdClass();
+    $a=0;
+    $q=0;
+    foreach($sl as $result){
+      $a += floatval($result->total);
+      $q += intval($result->lost_quantity);
+    }
+
+    $total->quantity = $q;
+    $total->amount = $a;
+
+    return view('report_sl',compact('sl','total'));
+  }
+
+  public function getStockLostHistory()
+  {
+    $url = route('getStockLost');
+
+    $sl_list = Stock_lost_history::select(DB::raw('SUM(total) as total,SUM(lost_quantity) as lost_quantity,stock_lost_id,created_at'))
+                                      ->groupBy('stock_lost_id')
+                                      ->orderBy('created_at','desc')
+                                      ->paginate(20);
+
+    return view('sl_history',compact('url','sl_list'));
+  }
+
+
 }

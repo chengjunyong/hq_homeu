@@ -36,6 +36,10 @@ Route::get('/damagedstock','BranchController@getDamagedStock')->name('getDamaged
 Route::post('/generatedamagedstock','BranchController@postDamagedStock')->name('postDamagedStock');
 Route::get('/damagedstockhistory','BranchController@getDamagedStockHistory')->name('getDamagedStockHistory');
 Route::get('/GR/{gr_number}','BranchController@getGenerateGR')->name('getGenerateGR');
+Route::get('/stocklost','BranchController@getStockLost')->name('getStockLost');
+Route::post('/generatestocklost','BranchController@postStockLost')->name('postStockLost');
+Route::get('/SL/{sl_id}','BranchController@getGenerateSL')->name('getGenerateSL');
+Route::get('/stocklosthistory','BranchController@getStockLostHistory')->name('getStockLostHistory');
 
 //Product
 Route::get('/productlist','ProductController@getProductList')->name('getProductList');

@@ -73,11 +73,11 @@
   }
 
   .branch-color{
-    color:#b74242;
+    color:#ea0a0a;
   }
 
   .btn-branch{
-    background-color:#b74242; 
+    background-color:#ea0a0a; 
   }
 
   .product-color{
@@ -105,11 +105,11 @@
   }
 
   .other-color{
-    color:#3fa57f;
+    color:#239ee6;
   }
 
   .btn-other{
-    background-color: #3fa57f;
+    background-color: #239ee6;
   }
 
 </style>
@@ -215,7 +215,7 @@
       <div class="card">
         <div class="card-body">
           <h4 class="card-title">Other</h4>
-          <div class="col-md-5">
+          <div class="col-md-5 other-color">
             <i class="fa fa-wrench first"></i>
           </div>
           <div class="col-md-7" style="float:right">
@@ -226,7 +226,7 @@
               <li>Pending</li>
             </ul>
             <div class="center">
-              <button class="btn btn-primary" id="other_btn">Access</button>
+              <button class="btn btn-primary btn-other" id="other_btn">Access</button>
             </div>
           </div>
         </div>
@@ -395,7 +395,7 @@
               <h4 class="card-title">Stock Lost List</h4>
             </div>
             <div class="col">
-              <a href="{{route('getRestockHistory')}}"><i class="fa fa-window-close first branch-color"></i></a>
+              <a href="{{route('getStockLost')}}"><i class="fa fa-window-close first branch-color"></i></a>
             </div>
           </div>
         </div>
@@ -437,7 +437,7 @@
               <h4 class="card-title">Other</h4>
             </div>
             <div class="col">
-              <a href="{{route('getSalesReport')}}"><i class="fas fa-chart-bar first sales-color" ></i></a>
+              <a href="{{route('getSalesReport')}}"><i class="fas fa-chart-bar first other-color" ></i></a>
             </div>
           </div>
         </div>
