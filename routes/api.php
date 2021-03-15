@@ -17,11 +17,7 @@ use Illuminate\Http\Request;
 //     return $request->user();
 // });
 
-
-Route::get('/testapi','api@testresult')->name('testresult');
-
-Route::post('/somedata','api@receive');
-
 // branch sync
 Route::post('/branchSync', 'api@branchSync')->name('branchSync');
 Route::post('/branchSyncCompleted', 'api@branchSyncCompleted')->name('branchSyncCompleted');
+

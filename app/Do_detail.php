@@ -18,5 +18,6 @@ class Do_detail extends Model
       'stock_lost_quantity',
       'stock_lost_reason',
       'remark',
+      'stock_lost_review',
     ];
 }

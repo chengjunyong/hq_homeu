@@ -9,6 +9,7 @@
   <script src="{{ asset('bootstrap-4.0.0/js/bootstrap.min.js') }}"></script>
   <script src="{{ asset('fontawesome/js/all.min.js') }}"></script>
   <script src="{{ asset('datatable/datatables.min.js') }}"></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
   <link rel="stylesheet" href="{{ asset('bootstrap-4.0.0/css/bootstrap.min.css')}}"/>
   <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css')}}"/>
   <link rel="stylesheet" href="{{ asset('datatable/datatables.min.css')}}"/>
@@ -45,11 +46,16 @@
   }
 </style>
 <body style="background: linear-gradient(90deg, rgb(66 183 245) 0%, rgb(66 245 189 / 70%) 100%);">
-  <button class="float" onclick="window.location.assign('{{route('home')}}')" style="border:none"><i class="fa fa-arrow-left" style="font-size: 40px;"></i></button>
+  <button class="float" onclick="window.location.assign('{{ (isset($url)) ? $url : "" }}')" style="border:none">
+    <i class="fa fa-arrow-left" style="font-size: 40px;"></i>
+  </button>
   <div id="app">
 
    @yield('content')
    
  </div>
+ <script>
+
+ </script>
 </body>
 </html>

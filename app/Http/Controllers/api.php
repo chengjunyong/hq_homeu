@@ -6,17 +6,13 @@ use Illuminate\Http\Request;
 use App\transaction;
 use App\transaction_detail;
 use App\Product_list;
+use App\Branch;
 
 class api extends Controller
 {
     public function testresult()
     {
     	return "Good";
-    }
-
-    public function receive(Request $request)
-    {	
-    	return $request;
     }
 
     public function branchSync(Request $request)

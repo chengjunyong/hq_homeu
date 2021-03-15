@@ -17,6 +17,8 @@ class SalesController extends Controller
       return view('no_access');
     }
     
+    $url = route('home')."?p=sales_menu";
+
     $branch = Branch::get();
 
     $selected_branch = null;
@@ -61,13 +63,14 @@ class SalesController extends Controller
       $transaction = transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', null)->paginate(25);
     }
 
-    return view('sales_report',compact('branch', 'selected_branch', 'selected_date_from', 'selected_date_to', 'transaction'));
+    return view('sales_report',compact('branch', 'selected_branch', 'selected_date_from', 'selected_date_to', 'transaction','url'));
   }
 
   public function getSalesReportDetail($branch_id, $branch_transaction_id)
-  {
+  { 
+    $url = route('home')."?p=product_menu";
     $transaction_detail = transaction_detail::where('branch_id', $branch_id)->where('branch_transaction_id', $branch_transaction_id)->paginate(25);
 
-    return view('sales_report_detail',compact('transaction_detail'));
+    return view('sales_report_detail',compact('transaction_detail','url'));
   }
 }
