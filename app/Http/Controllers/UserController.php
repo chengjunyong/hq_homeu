@@ -19,6 +19,8 @@ class UserController extends Controller
 
     public function getUserAccessControl()
     {
+      $url = route('home')."?p=other_menu";
+      
       $user_list = User::leftJoin('user_access_control', 'user_access_control.user_id', '=', 'users.id')->select('users.*', 'user_access_control.access_control')->get();
 
       foreach($user_list as $user_detail)
@@ -30,7 +32,7 @@ class UserController extends Controller
       $user_access_control = $this->UserAccessControl();
       $default_access_control = $this->defaultAccessControl();
 
-      return view('user_access_control', compact('user_list', 'user_group', 'user_access_control', 'default_access_control'));
+      return view('user_access_control', compact('user_list', 'user_group', 'user_access_control', 'default_access_control', 'url'));
     }
 
     public function createNewUser(Request $request)
@@ -54,15 +56,24 @@ class UserController extends Controller
         'password' => Hash::make($request->new_user_password),
       ]);
 
-      if($request->new_user_role)
+      $access = "";
+      if($request->new_access_control)
       {
-        $access = $this->accessControlByRole($request->new_user_role);
+        if(count($request->new_access_control) > 0)
+        {
+          foreach($request->new_access_control as $access_control)
+          {
+            $access .= $access_control.",";
+          }
 
-        user_access_control::create([
-          'user_id' => $user_detail->id,
-          'access_control' => $access
-        ]);
+          $access = substr($access, 0, -1);
+        }
       }
+
+      user_access_control::create([
+        'user_id' => $user_detail->id,
+        'access_control' => $access
+      ]);
 
       $response = new \stdClass();
       $response->error = 0;
