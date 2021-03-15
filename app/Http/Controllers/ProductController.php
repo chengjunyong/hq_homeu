@@ -15,6 +15,12 @@ class ProductController extends Controller
 {
   public function getProductList()
   { 
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('not_access');
+    }
+
     $search = null;
   	$product_list = Product_list::join('department','department.id','=','product_list.department_id')
                                 ->join('category','category.id','=','product_list.category_id')
@@ -55,6 +61,12 @@ class ProductController extends Controller
 
   public function getProductConfig()
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('not_access');
+    }
+    
     $result = Product_configure::first();
 
     if($result == null){
@@ -79,6 +91,12 @@ class ProductController extends Controller
 
   public function getAddProduct()
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('not_access');
+    }
+
     $department = Department::orderBy('id','asc')->get();
 
     $category = Category::where('department_id',$department->first()->id)->get();

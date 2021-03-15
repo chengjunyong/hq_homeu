@@ -11,6 +11,12 @@ class SalesController extends Controller
 {
   public function getSalesReport(Request $request)
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('no_access');
+    }
+    
     $branch = Branch::get();
 
     $selected_branch = null;
