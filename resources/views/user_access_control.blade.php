@@ -23,41 +23,45 @@
 </style>
 
 <div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <h4>User Access Control</h4>
-      <table id="user_table">
-        <thead style="background-color: #403c3c80;text-align: center">
-          <tr>
-            <th>User role</th>
-            <th>Name</th>
-            <th>Username</th>
-            <th>Edit</th>
-          </tr>
-        </thead>
-        <tbody style="text-align: center">
-          @foreach($user_list as $user_detail)
-            <tr>
-              <td>{{ $user_detail->user_type_text }}</td>
-              <td>{{ $user_detail->name }}</td>
-              <td>{{ $user_detail->username }}</td>
-              <td>
-                <button type="button" class="btn btn-primary edit_user" user_id="{{ $user_detail->id }}" user_type="{{ $user_detail->user_type }}" name="{{ $user_detail->name }}" username="{{ $user_detail->username }}" access_control="{{ $user_detail->access_control }}">Edit</button>
-              </td>
-            </tr>
-          @endforeach
-        </tbody>
-      </table>
-    </div>
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <h4>User Access Control</h4>
+          <table id="user_table">
+            <thead style="background-color: #403c3c80;text-align: center">
+              <tr>
+                <th>User role</th>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+            <tbody style="text-align: center">
+              @foreach($user_list as $user_detail)
+                <tr>
+                  <td>{{ $user_detail->user_type_text }}</td>
+                  <td>{{ $user_detail->name }}</td>
+                  <td>{{ $user_detail->username }}</td>
+                  <td>
+                    <button type="button" class="btn btn-primary edit_user" user_id="{{ $user_detail->id }}" user_type="{{ $user_detail->user_type }}" name="{{ $user_detail->name }}" username="{{ $user_detail->username }}" access_control="{{ $user_detail->access_control }}">Edit</button>
+                  </td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
 
-    <div class="col-md-12" style="margin-top: 20px;">
-      <button type="button" id="add_user" class="btn btn-success">Add New User</button>
+        <div class="col-md-12" style="margin-top: 20px;">
+          <button type="button" id="add_user" class="btn btn-success">Add New User</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog" role="document" style="max-width: 700px !important;">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Add New User</h5>
@@ -77,6 +81,20 @@
               @endforeach
             </select>
             <span class="invalid-feedback" role="alert"></span>
+            <a href="#" id="new_user_more_option">More options</a>
+            <div id="new_role_option" style="display: none;">
+              <div class="row">
+                @foreach($user_access_control as $access_control)
+                  <div class="col-md-6">
+                    <div class="checkbox icheck" style="display: inline-block; margin-right: 10px;">
+                      <label>
+                        <input class="form-check-input" type="checkbox" name="new_access_control[]" value="{{ $access_control['value'] }}" /> {{ $access_control['name'] }}
+                      </label>
+                    </div>
+                  </div>
+                @endforeach
+              </div>
+            </div>
           </div>
 
           <div class="form-group">
@@ -113,7 +131,7 @@
 </div>
 
 <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog" role="document" style="max-width: 700px !important;">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Edit User</h5>
@@ -134,14 +152,18 @@
             </select>
             <span class="invalid-feedback" role="alert"></span>
             <a href="#" id="more_option">More options</a>
-            <div id="edit_role_option" style="display: none;">
-              @foreach($user_access_control as $access_control)
-                <div class="checkbox icheck" style="display: inline-block; margin-right: 10px;">
-                  <label>
-                    <input class="form-check-input" type="checkbox" name="access_control[]" value="{{ $access_control['value'] }}" /> {{ $access_control['name'] }}
-                  </label>
+            <div id="edit_role_option" style="display: none;"> 
+              <div class="row">
+                @foreach($user_access_control as $access_control)
+                <div class="col-md-6">
+                  <div class="checkbox icheck" style="display: inline-block; margin-right: 10px;">
+                    <label>
+                      <input class="form-check-input" type="checkbox" name="access_control[]" value="{{ $access_control['value'] }}" /> {{ $access_control['name'] }}
+                    </label>
+                  </div>
                 </div>
-              @endforeach
+                @endforeach
+              </div>
             </div>
           </div>
 
@@ -187,6 +209,8 @@
   $(document).ready(function(){
 
     $("#add_user").click(function(){
+      $("#new_role_option").hide();
+
       $("#addUserModal").modal('show');
     });
 
@@ -231,12 +255,26 @@
       $("#edit_role_option").slideToggle();
     });
 
-    $("select[name='edit_user_role']").on('change', function(){
+    $("#new_user_more_option").click(function(){
+      $("#new_role_option").slideToggle();
+    });
+
+    $("select[name='edit_user_role'], select[name='new_user_role']").on('change', function(){
       var selected_role = $(this).val();
       var access = "";
+
+      var select_name = $(this).attr("name");
       if(selected_role != 0)
       {
-        $("input.form-check-input[name='access_control[]']").iCheck('uncheck');
+        if(select_name == "edit_user_role")
+        {
+          $("input.form-check-input[name='access_control[]']").iCheck('uncheck');
+        }
+        else if(select_name == "new_user_role")
+        {
+          $("input.form-check-input[name='new_access_control[]']").iCheck('uncheck');
+        }
+    
         for(var a = 0; a < default_access_control.length; a++)
         {
           if(selected_role == default_access_control[a].user_type)
@@ -253,12 +291,18 @@
           {
             if(access_control_array[a] != "")
             {
-              $("input.form-check-input[name='access_control[]'][value="+access_control_array[a]+"]").iCheck('check');
+              if(select_name == "edit_user_role")
+              {
+                $("input.form-check-input[name='access_control[]'][value="+access_control_array[a]+"]").iCheck('check');
+              }
+              else if(select_name == "new_user_role")
+              {
+                $("input.form-check-input[name='new_access_control[]'][value="+access_control_array[a]+"]").iCheck('check');
+              }
             }
           }
         }
       }
-      
     });
 
   });
