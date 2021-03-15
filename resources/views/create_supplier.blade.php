@@ -62,7 +62,7 @@
 $(document).ready(function(){
 	$("input[type=button]").click(function(){
 
-		if($("input[name=supplier_name]").val() != ""){
+		if($("input[name=supplier_name]").val() != "" && $("input[name=supplier_code]").val() != ""){
 			$.post("{{route('postCreateSupplier')}}",
 				$("form").serialize(),
 				function(data){
@@ -71,6 +71,10 @@ $(document).ready(function(){
 							icon:'success',
 							title:'Success',
 							text:'Update Successful',
+						}).then((result)=>{
+							if(result.isConfirmed){
+								window.location.assign("{{route('getSupplier')}}");
+							}
 						});
 					}else{
 						Swal.fire({
@@ -84,7 +88,7 @@ $(document).ready(function(){
 			Swal.fire({
 				icon:'error',
 				title:'Error',
-				text:'Supplier Name Cannot Left Blank',
+				text:'Supplier Code & Name Cannot Left Blank',
 			});
 		}
 	});

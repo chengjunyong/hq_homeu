@@ -20,7 +20,7 @@
 		<div class="title">
 			<h4 style="margin: 20px">Supplier List</h4>
 		</div>
-		<div>
+		<div style="margin-left: 20px">
 			<button class="btn btn-primary" onclick="window.location.assign('{{route('getCreateSupplier')}}')">Create Supplier</button>
 		</div>
 		<div class="card-body">

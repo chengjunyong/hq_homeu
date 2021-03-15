@@ -71,6 +71,10 @@ $(document).ready(function(){
 							icon:'success',
 							title:'Success',
 							text:'Update Successful',
+						}).then((result)=>{
+							if(result.isConfirmed){
+								window.location.assign("{{route('getSupplier')}}");
+							}
 						});
 					}else{
 						Swal.fire({
