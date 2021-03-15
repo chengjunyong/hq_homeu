@@ -14,6 +14,14 @@
   <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css')}}"/>
   <link rel="stylesheet" href="{{ asset('datatable/datatables.min.css')}}"/>
   <link href='https://fonts.googleapis.com/css?family=ABeeZee' rel='stylesheet'>
+
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="{{ asset('iCheck/all.css') }}">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="{{ asset('iCheck/square/blue.css') }}">
+  <!-- iCheck 1.0.1 -->
+  <script src="{{ asset('iCheck/icheck.min.js') }}"></script>
+
 </head>
 <style>
   html{

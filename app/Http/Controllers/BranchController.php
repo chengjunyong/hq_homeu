@@ -7,12 +7,13 @@ use Illuminate\Http\Request;
 use App\Branch;
 use App\Branch_product;
 use App\Product_list;
-use App\transaction;
-use App\transaction_detail;
 use App\Product_configure;
 use App\Do_detail;
 use App\Do_configure;
 use App\Do_list;
+use App\transaction;
+use App\transaction_detail;
+use App\User;
 use App\Damaged_stock_history;
 use App\Stock_lost_history;
 use Illuminate\Support\Facades\Crypt;
@@ -21,21 +22,27 @@ class BranchController extends Controller
 {
   public function __construct()
   {
-      $this->middleware('auth', ['except' => ['branchSync', 'branchSyncCompleted']]);
+      $this->middleware('auth', ['except' => ['branchSync', 'branchSyncCompleted', 'createTesting']]);
   }
 
   public function getBranch()
   {
-   $url = route('home')."?p=branch_menu";
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('no_access');
+    }
 
-   $branch = Branch::paginate(6);
+    $url = route('home')."?p=branch_menu";
 
-   return view('branch',compact('branch','url'));
- }
+
+    $branch = Branch::paginate(6);
+
+    return view('branch',compact('branch','url'));
+  }
 
   public function createBranch(Request $request)
   {
-
     $branch_id = Branch::create([
       'branch_name' => $request->branch_name,
       'address' => $request->address,
@@ -67,6 +74,12 @@ class BranchController extends Controller
 
   public function getBranchStockList(Request $request)
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('no_access');
+    }
+
     $url = route('home')."?p=branch_menu";
 
     $branch = Branch::get();
@@ -132,6 +145,12 @@ class BranchController extends Controller
 
   public function getBranchRestock()
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('no_access');
+    }
+
     $url = route('home')."?p=branch_menu";
 
     $branch = Branch::get();
@@ -209,7 +228,14 @@ class BranchController extends Controller
 
   public function getDoHistory()
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('no_access');
+    }
+
     $url = route('home')."?p=branch_menu";
+
     if(isset($_GET['search']) && $_GET['search'] != null){
       $do_list = Do_list::where('do_number',$_GET['search'])->where('completed',0)->orderBy('created_at','desc')->paginate(15);
     }else{
@@ -237,7 +263,14 @@ class BranchController extends Controller
 
   public function getRestocklist()
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('no_access');
+    }
+
     $url = route('home')."?p=branch_menu";
+
     if(isset($_GET['search']) && $_GET['search'] != null){
       $do_list = Do_list::where('do_number',$_GET['search'])
                           ->where('completed','0')
@@ -314,7 +347,14 @@ class BranchController extends Controller
 
   public function getRestockHistory()
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('no_access');
+    }
+    
     $url = route('home')."?p=branch_menu";
+
     if(isset($_GET['search']) && $_GET['search'] != null){
       $do_list = Do_list::where('do_number',$_GET['search'])
                           ->where('completed','1')
@@ -516,6 +556,4 @@ class BranchController extends Controller
 
     return view('sl_history',compact('url','sl_list'));
   }
-
-
 }

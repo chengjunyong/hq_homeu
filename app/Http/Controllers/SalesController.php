@@ -11,7 +11,14 @@ class SalesController extends Controller
 {
   public function getSalesReport(Request $request)
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('no_access');
+    }
+    
     $url = route('home')."?p=sales_menu";
+
     $branch = Branch::get();
 
     $selected_branch = null;

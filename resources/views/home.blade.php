@@ -220,7 +220,7 @@
           </div>
           <div class="col-md-7" style="float:right">
             <ul>
-              <li>Pending</li>
+              <li>User Access Control</li>
               <li>Pending</li>
               <li>Pending</li>
               <li>Pending</li>
@@ -443,7 +443,22 @@
         </div>
       </div>
     </div>
-    
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">User Access Control</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getUserAccessControl')}}"><i class="fas fa-users first"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -464,7 +479,7 @@
         </div>
       </div>
     </div>
-    
+
   </div>
 </div>
 

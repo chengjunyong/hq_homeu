@@ -61,17 +61,22 @@ Route::post('/postEditSupplier','OtherController@postEditSupplier')->name('postE
 Route::get('/createSupplier','OtherController@getCreateSupplier')->name('getCreateSupplier');
 Route::post('/postcreateSupplier','OtherController@postCreateSupplier')->name('postCreateSupplier');
 
-
-
 // sales report
 Route::get('/sales_report', 'BranchController@getSalesReport')->name('getSalesReport');
 Route::get('/sales_report/{branch_id}/{id}', 'BranchController@getSalesReportDetail')->name('getSalesReportDetail');
 Route::get('/sales_report', 'SalesController@getSalesReport')->name('getSalesReport');
 Route::get('/sales_report/{branch_id}/{id}', 'SalesController@getSalesReportDetail')->name('getSalesReportDetail');
 
-
-
 // sync URL
 Route::get('/branchSync','BranchController@branchSync')->name('branchSync');
 Route::get('/branchSyncCompleted', 'BranchController@branchSyncCompleted')->name('branchSyncCompleted'); 
+
+// User access control
+Route::get('/user_access_control', 'UserController@getUserAccessControl')->name('getUserAccessControl'); 
+Route::post('/createNewUser', 'UserController@createNewUser')->name('createNewUser');
+Route::post('/editUser', 'UserController@editUser')->name('editUser');
+
+// Testing page
+Route::get('testingPage', 'UserController@testingPage')->name('testingPage');
+
 
