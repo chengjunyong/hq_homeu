@@ -54,11 +54,22 @@ Route::get('/getbarcode','ProductController@ajaxGetBarcode')->name('ajaxGetBarco
 Route::get('/modifyproduct/{id}','ProductController@getModifyProduct')->name('getModifyProduct');
 Route::post('/modifyproduct','ProductController@postModifyProduct')->name('postModifyProduct');
 
+//Other
+Route::get('/Supplier','OtherController@getSupplier')->name('getSupplier');
+Route::get('/EditSupplier/{id}','OtherController@getEditSupplier')->name('getEditSupplier');
+Route::post('/postEditSupplier','OtherController@postEditSupplier')->name('postEditSupplier');
+Route::get('/createSupplier','OtherController@getCreateSupplier')->name('getCreateSupplier');
+Route::post('/postcreateSupplier','OtherController@postCreateSupplier')->name('postCreateSupplier');
+
+
+
 // sales report
 Route::get('/sales_report', 'BranchController@getSalesReport')->name('getSalesReport');
 Route::get('/sales_report/{branch_id}/{id}', 'BranchController@getSalesReportDetail')->name('getSalesReportDetail');
 Route::get('/sales_report', 'SalesController@getSalesReport')->name('getSalesReport');
 Route::get('/sales_report/{branch_id}/{id}', 'SalesController@getSalesReportDetail')->name('getSalesReportDetail');
+
+
 
 // sync URL
 Route::get('/branchSync','BranchController@branchSync')->name('branchSync');
