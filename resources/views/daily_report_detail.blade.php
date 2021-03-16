@@ -17,6 +17,7 @@
 
   .border > tr > td{
     border-right: 1px solid black;
+    border-left: 1px solid black;
     padding: 5px 5px;
   }
 
