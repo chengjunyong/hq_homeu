@@ -221,9 +221,9 @@
           <div class="col-md-7" style="float:right">
             <ul>
               <li>User Access Control</li>
-              <li>Pending</li>
-              <li>Pending</li>
-              <li>Pending</li>
+              <li>Supplier Settings</li>
+              <li>Email Settings</li>
+              <li>Export & Import</li>
             </ul>
             <div class="center">
               <button class="btn btn-primary btn-other" id="other_btn">Access</button>
@@ -503,7 +503,7 @@
               <h4 class="card-title">Warehouse Stock</h4>
             </div>
             <div class="col">
-              <a href="{{route('getSalesReport')}}"><i class="fas fa-chart-bar first stock-color"></i></a>
+              <a href=""><i class="fas fa-boxes first stock-color"></i></a>
             </div>
           </div>
         </div>
