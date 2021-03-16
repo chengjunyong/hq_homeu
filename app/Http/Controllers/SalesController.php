@@ -96,11 +96,11 @@ class SalesController extends Controller
 
     if($selected_branch)
     {
-      $transaction = transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $selected_branch->token)->paginate(25);
+      $transaction = transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $selected_branch->token)->get();
     }
     else
     {
-      $transaction = transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', null)->paginate(25);
+      $transaction = transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', null)->get();
     }
 
     return view('sales_report_transaction',compact('selected_branch', 'selected_date_from', 'selected_date_to', 'transaction', 'url', 'date', 'user'));
@@ -109,7 +109,7 @@ class SalesController extends Controller
   public function getSalesReportDetail($branch_id, $branch_transaction_id)
   { 
     $url = route('home')."?p=product_menu";
-    $transaction_detail = transaction_detail::where('branch_id', $branch_id)->where('branch_transaction_id', $branch_transaction_id)->paginate(25);
+    $transaction_detail = transaction_detail::where('branch_id', $branch_id)->where('branch_transaction_id', $branch_transaction_id)->get();
 
     $date = date('Y-m-d H:i:s', strtotime(now()));
     $user = Auth::user();
