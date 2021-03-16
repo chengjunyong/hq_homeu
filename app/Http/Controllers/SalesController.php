@@ -39,7 +39,7 @@ class SalesController extends Controller
     
     $branch = Branch::get();
 
-    return view('daily_report',compact('branch', 'selected_date_from', 'selected_date_to'));
+    return view('daily_report',compact('branch', 'selected_date_from', 'selected_date_to','url'));
   }
 
   public function getBranchReport()
@@ -51,7 +51,7 @@ class SalesController extends Controller
     
     $branch = Branch::get();
 
-    return view('branch_report',compact('branch', 'selected_date_from', 'selected_date_to'));
+    return view('branch_report',compact('branch', 'selected_date_from', 'selected_date_to','url'));
   }
 
   public function getSalesTransactionReport(Request $request)
