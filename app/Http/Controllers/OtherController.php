@@ -77,6 +77,7 @@ class OtherController extends Controller
 			$address4 = ($request->address4 == null) ? 'null' : $request->address4;
 			$email = ($request->email == null) ? 'null' : $request->email;
 			Supplier::create([
+				'supplier_code' => $request->supplier_code,
 				'supplier_name' => $request->supplier_name,
 				'contact_number' => $request->contact_number,
 				'email' => $email,
@@ -86,11 +87,11 @@ class OtherController extends Controller
 				'address4' => $address4,
 			]);
 
-			return true;
+			return response()->json(true);
 
 		}catch(Throwable $e){
 
-			return false;
+			return $e;
 		}
 	}
 	

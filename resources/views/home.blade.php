@@ -482,7 +482,7 @@
               <h4 class="card-title">User Access Control</h4>
             </div>
             <div class="col">
-              <a href="{{route('getUserAccessControl')}}"><i class="fas fa-users first"></i></a>
+              <a href="{{route('getUserAccessControl')}}"><i class="fas fa-users first other-color"></i></a>
             </div>
           </div>
         </div>
