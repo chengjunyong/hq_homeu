@@ -24,16 +24,15 @@
 
 </style>
 
-<form method="get" action="{{route('getSalesTransactionReport')}}" target="_blank">
-  <h2 align="center">Sales Report</h2>
+<form method="get" action="{{route('getdailyReportDetail')}}" target="_blank">
+  <h2 align="center">Daily Report</h2>
   <div class="container">
     <div class="card">
       <div class="card-body">
         <div class="row">
           <div class="col-md-12">
             <label>Branch</label>
-            <select class="form-control" name="branch_token">
-              <option value="0">Please select</option>
+            <select class="form-control select2" multiple="multiple" style="width: 100%;" name="branch[]">
               @foreach($branch as $value)
                 <option value="{{ $value->token }}">{{ $value->branch_name }}</option>
               @endforeach
@@ -62,6 +61,11 @@
 
 <script>
 
+  $(document).ready(function(){
+
+    $(".select2").select2();
+
+  });
 
 </script>
 

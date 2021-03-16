@@ -65,30 +65,44 @@
   <div class="main" style="padding-bottom: 2.5rem;">
     <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
       <thead style="background: #adade0;">
-        <th>Product name</th>
-        <th>Quantity</th>
-        <th>Price</th>
-        <th>Total</th>
+        <th>INVOICE NO</th>
+        <th>PAYMENT TYPE</th>
+        <th>REFERENCE NO</th>
+        <th>SUBTOTAL</th>
+        <th>DISCOUNT</th>
+        <th>TOTAL</th>
+        <th>RECEIVED PAYMENT</th>
+        <th>BALANCE</th>
+        <th>TRANSACTION DATE</th>
+        <th>DETAIL</th>
       </thead>
       <tbody class="border">
-        @foreach($transaction_detail as $result)
+        @foreach($transaction as $result)
           <tr>
-            <td>{{ $result->product_name }}</td>
-            <td>{{ $result->quantity }}</td>
-            <td>{{ $result->price }}</td>
+            <td>{{ $result->transaction_no }}</td>
+            <td>{{ $result->payment_type_text }}</td>
+            <td>{{ $result->invoice_no }}</td>
+            <td>{{ number_format($result->subtotal, 2) }}</td>
+            <td>{{ number_format($result->total_discount, 2) }}</td>
             <td>{{ number_format($result->total, 2) }}</td>
+            <td>{{ number_format($result->payment, 2) }}</td>
+            <td>{{ number_format($result->balance, 2) }}</td>
+            <td data-order="{{ $result->transaction_date }}">{{ date('d M Y g:i:s A', strtotime($result->transaction_date)) }}</td>
+            <td>
+              <a href="{{ route('getSalesReportDetail', ['branch_id' => $result->branch_id, 'id' => $result->branch_transaction_id ]) }}">Detail</a>
+            </td>
           </tr>
         @endforeach
       </tbody>
     </table>
-    <div style="float:right;">
-      {{$transaction_detail->links()}}
+    <div style="margin-top: 20px;">
+      {{ $transaction->links() }}
     </div>
   </div>
 
-</div>
-
+</div>  
 <script>
-
-
+  // window.print();
 </script>
+</body>
+</html>

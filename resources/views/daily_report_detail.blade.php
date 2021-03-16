@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Sales Report</title>
+<title>Daily Report</title>
 </head>
 <style>
   h2,h4{
@@ -65,25 +65,27 @@
   <div class="main" style="padding-bottom: 2.5rem;">
     <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
       <thead style="background: #adade0;">
-        <th>Product name</th>
-        <th>Quantity</th>
-        <th>Price</th>
-        <th>Total</th>
+        <th>CATEGORY NAME</th>
+        <th>QUANTITY</th>
+        <th>TOTAL</th>
       </thead>
-      <tbody class="border">
-        @foreach($transaction_detail as $result)
-          <tr>
-            <td>{{ $result->product_name }}</td>
-            <td>{{ $result->quantity }}</td>
-            <td>{{ $result->price }}</td>
-            <td>{{ number_format($result->total, 2) }}</td>
-          </tr>
-        @endforeach
-      </tbody>
+      @foreach($selected_branch as $branch)
+        <tr>
+          <td colspan="3">
+            <h6>{{ $branch->branch_name }}</h6>
+          </td>
+        </tr>
+        <tbody class="border">
+          @foreach($branch->category_report as $report_detail)
+            <tr>
+              <td>{{ $report_detail->category_name }}</td>
+              <td>{{ $report_detail->quantity }}</td>
+              <td>{{ number_format($report_detail->total, 2) }}</td>
+            </tr>
+          @endforeach
+        </tbody>
+      @endforeach
     </table>
-    <div style="float:right;">
-      {{$transaction_detail->links()}}
-    </div>
   </div>
 
 </div>

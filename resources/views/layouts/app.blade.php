@@ -22,6 +22,12 @@
   <!-- iCheck 1.0.1 -->
   <script src="{{ asset('iCheck/icheck.min.js') }}"></script>
 
+  <!-- Select2 -->
+  <link rel="stylesheet" href="{{ asset('select2/css/select2.min.css') }}">
+  <!-- Select2 -->
+  <script src="{{ asset('select2/js/select2.full.min.js') }}"></script>
+
+
 </head>
 <style>
   html{

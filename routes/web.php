@@ -61,11 +61,14 @@ Route::post('/postEditSupplier','OtherController@postEditSupplier')->name('postE
 Route::get('/createSupplier','OtherController@getCreateSupplier')->name('getCreateSupplier');
 Route::post('/postcreateSupplier','OtherController@postCreateSupplier')->name('postCreateSupplier');
 
-// sales report
-Route::get('/sales_report', 'BranchController@getSalesReport')->name('getSalesReport');
-Route::get('/sales_report/{branch_id}/{id}', 'BranchController@getSalesReportDetail')->name('getSalesReportDetail');
+// Report
 Route::get('/sales_report', 'SalesController@getSalesReport')->name('getSalesReport');
 Route::get('/sales_report/{branch_id}/{id}', 'SalesController@getSalesReportDetail')->name('getSalesReportDetail');
+Route::get('/sales_report_transaction', 'SalesController@getSalesTransactionReport')->name('getSalesTransactionReport');
+Route::get('/daily_report', 'SalesController@getDailyReport')->name('getDailyReport');
+Route::get('/daily_report_detail', 'SalesController@getdailyReportDetail')->name('getdailyReportDetail');
+Route::get('/branch_report', 'SalesController@getBranchReport')->name('getBranchReport');
+Route::get('/branch_report_detail', 'SalesController@getBranchReportDetail')->name('getBranchReportDetail');
 
 // sync URL
 Route::get('/branchSync','BranchController@branchSync')->name('branchSync');

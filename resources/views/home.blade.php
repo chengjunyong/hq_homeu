@@ -422,6 +422,36 @@
         </div>
       </div>
     </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Daily Report</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getDailyReport')}}"><i class="fas fa-calendar-day first sales-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Branch Sales Report</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getBranchReport')}}"><i class="fas fa-th-large first sales-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     
   </div>
 </div>
