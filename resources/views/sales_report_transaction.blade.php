@@ -95,9 +95,6 @@
         @endforeach
       </tbody>
     </table>
-    <div style="margin-top: 20px;">
-      {{ $transaction->links() }}
-    </div>
   </div>
 
 </div>  
