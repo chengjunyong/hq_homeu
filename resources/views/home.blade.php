@@ -502,9 +502,9 @@
             <div class="col">
               <h4 class="card-title">Warehouse Stock</h4>
             </div>
-            <div class="col">
+            <!-- <div class="col">
               <a href=""><i class="fas fa-boxes first stock-color"></i></a>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
