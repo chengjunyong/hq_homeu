@@ -18,7 +18,7 @@ class CreateBranchTable extends Migration
             $table->text('branch_name')->nullable();
             $table->text('address')->nullable();
             $table->text('contact')->nullable();
-            $table->text('token')->nullable();
+            $table->text('token')->unique()->nullable();
             $table->timestamps();
         });
     }
