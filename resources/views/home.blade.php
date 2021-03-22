@@ -172,7 +172,7 @@
     <div class="col-md-6">
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title">Stock</h4>
+          <h4 class="card-title">Warehouse</h4>
           <div class="col-md-5 stock-color">
             <i class="fa fa-warehouse first"></i>
           </div>
@@ -193,7 +193,7 @@
     <div class="col-md-6">
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title">Sales</h4>
+          <h4 class="card-title">Report</h4>
           <div class="col-md-5 sales-color">
             <i class="fa fa-file-invoice-dollar first"></i>
           </div>

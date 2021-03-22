@@ -69,7 +69,7 @@
         <th>BRANCH NAME</th>
         <th>TOTAL</th>
       </thead>
-      <tbody class="border">
+      <tbody class="border" style="border-bottom-color: black !important">
         @foreach($selected_branch as $branch)
           <tr>
             <td>{{ $branch->branch_name }}</td>
@@ -83,6 +83,4 @@
 </div>
 
 <script>
-
-
 </script>

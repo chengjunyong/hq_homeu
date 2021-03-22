@@ -209,29 +209,53 @@ class UserController extends Controller
           'route' => 'getRestockHistory'
         ],
         [
-          'group' => 'Product',
+          'group' => 'Branch',
           'value' => 7,
+          'name' => 'Damaged Stock List',
+          'route' => 'getDamagedStock'
+        ],
+        [
+          'group' => 'Branch',
+          'value' => 8,
+          'name' => 'Stock Lost List',
+          'route' => 'getStockLost'
+        ],
+        [
+          'group' => 'Product',
+          'value' => 9,
           'name' => 'Product Check List',
           'route' => 'getProductList'
         ],
         [
           'group' => 'Product',
-          'value' => 8,
+          'value' => 10,
           'name' => 'Add Product',
           'route' => 'getAddProduct'
         ],
         [
           'group' => 'Product',
-          'value' => 9,
+          'value' => 11,
           'name' => 'Product Price & Cost Setting',
           'route' => 'getProductConfig'
         ],
         [
           'group' => 'Sales',
-          'value' => 10,
+          'value' => 12,
           'name' => 'Sales Report',
           'route' => 'getSalesReport'
-        ]
+        ],
+        [
+          'group' => 'Sales',
+          'value' => 13,
+          'name' => 'Daily Report',
+          'route' => 'getDailyReport'
+        ],
+        [
+          'group' => 'Sales',
+          'value' => 14,
+          'name' => 'Branch Sales Report',
+          'route' => 'getBranchReport'
+        ],
       ];
 
       return $access_control;
