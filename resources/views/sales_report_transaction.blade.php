@@ -69,11 +69,11 @@
         <th>INVOICE NO</th>
         <th>PAYMENT TYPE</th>
         <th>REFERENCE NO</th>
-        <th>SUBTOTAL</th>
-        <th>DISCOUNT</th>
-        <th>TOTAL</th>
-        <th>RECEIVED PAYMENT</th>
-        <th>BALANCE</th>
+        <th>SUBTOTAL(RM)</th>
+        <th>DISCOUNT(RM)</th>
+        <th>TOTAL(RM)</th>
+        <th>RECEIVED PAYMENT(RM)</th>
+        <th>BALANCE(RM)</th>
         <th>TRANSACTION DATE</th>
         <!-- <th>DETAIL</th> -->
       </thead>
@@ -83,11 +83,11 @@
             <td>{{ $result->transaction_no }}</td>
             <td>{{ $result->payment_type_text }}</td>
             <td>{{ $result->invoice_no }}</td>
-            <td>{{ number_format($result->subtotal, 2) }}</td>
-            <td>{{ number_format($result->total_discount, 2) }}</td>
-            <td>{{ number_format($result->total, 2) }}</td>
-            <td>{{ number_format($result->payment, 2) }}</td>
-            <td>{{ number_format($result->balance, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($result->subtotal, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($result->total_discount, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($result->total, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($result->payment, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($result->balance, 2) }}</td>
             <td data-order="{{ $result->transaction_date }}">{{ date('d M Y g:i:s A', strtotime($result->transaction_date)) }}</td>
             <!-- <td>
               <a href="{{ route('getSalesReportDetail', ['branch_id' => $result->branch_id, 'id' => $result->branch_transaction_id ]) }}">Detail</a>

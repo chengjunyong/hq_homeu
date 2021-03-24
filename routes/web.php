@@ -78,6 +78,7 @@ Route::get('/branchSyncCompleted', 'BranchController@branchSyncCompleted')->name
 Route::get('/user_access_control', 'UserController@getUserAccessControl')->name('getUserAccessControl'); 
 Route::post('/createNewUser', 'UserController@createNewUser')->name('createNewUser');
 Route::post('/editUser', 'UserController@editUser')->name('editUser');
+Route::get('/no_access', 'UserController@getNoAccess')->name('no_access');
 
 // Testing page
 Route::get('testingPage', 'UserController@testingPage')->name('testingPage');

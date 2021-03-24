@@ -22,17 +22,11 @@ class BranchController extends Controller
 {
   public function __construct()
   {
-      $this->middleware('auth', ['except' => ['branchSync', 'branchSyncCompleted', 'createTesting']]);
+    $this->middleware(['auth', 'user_access'], ['except' => ['branchSync', 'branchSyncCompleted', 'createTesting']]);
   }
 
   public function getBranch()
   {
-    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
-    if(!$access)
-    {
-      return view('no_access');
-    }
-
     $url = route('home')."?p=branch_menu";
 
 
@@ -74,12 +68,6 @@ class BranchController extends Controller
 
   public function getBranchStockList(Request $request)
   {
-    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
-    if(!$access)
-    {
-      return view('no_access');
-    }
-
     $url = route('home')."?p=branch_menu";
 
     $branch = Branch::get();
@@ -145,12 +133,6 @@ class BranchController extends Controller
 
   public function getBranchRestock()
   {
-    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
-    if(!$access)
-    {
-      return view('no_access');
-    }
-
     $url = route('home')."?p=branch_menu";
 
     $branch = Branch::get();
@@ -228,12 +210,6 @@ class BranchController extends Controller
 
   public function getDoHistory()
   {
-    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
-    if(!$access)
-    {
-      return view('no_access');
-    }
-
     $url = route('home')."?p=branch_menu";
 
     if(isset($_GET['search']) && $_GET['search'] != null){
@@ -263,12 +239,6 @@ class BranchController extends Controller
 
   public function getRestocklist()
   {
-    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
-    if(!$access)
-    {
-      return view('no_access');
-    }
-
     $url = route('home')."?p=branch_menu";
 
     if(isset($_GET['search']) && $_GET['search'] != null){
@@ -347,12 +317,6 @@ class BranchController extends Controller
 
   public function getRestockHistory()
   {
-    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
-    if(!$access)
-    {
-      return view('no_access');
-    }
-    
     $url = route('home')."?p=branch_menu";
 
     if(isset($_GET['search']) && $_GET['search'] != null){

@@ -12,14 +12,13 @@ use Illuminate\Support\Facades\Auth;
 
 class SalesController extends Controller
 {
+  public function __construct()
+  {
+    $this->middleware(['auth', 'user_access']);
+  }
+    
   public function getSalesReport()
   {
-    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
-    if(!$access)
-    {
-      return view('no_access');
-    }
-
     $url = route('home')."?p=sales_menu";
 
     $selected_date_from = date('Y-m-d', strtotime(now()));

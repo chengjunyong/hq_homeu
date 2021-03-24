@@ -19,6 +19,11 @@ use Illuminate\Support\Facades\DB;
 
 class OtherController extends Controller
 {
+  public function __construct()
+  {
+    $this->middleware(['auth', 'user_access']);
+  }
+    
 	public function getSupplier()
   {
   	$url = route('home')."?p=other_menu";

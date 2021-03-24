@@ -67,13 +67,13 @@
     <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
       <thead style="background: #adade0;">
         <th>BRANCH NAME</th>
-        <th>TOTAL</th>
+        <th>TOTAL(RM)</th>
       </thead>
       <tbody class="border">
         @foreach($selected_branch as $branch)
           <tr>
             <td>{{ $branch->branch_name }}</td>
-            <td>{{ number_format($branch->branch_total, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($branch->branch_total, 2) }}</td>
           </tr>
         @endforeach
       </tbody>

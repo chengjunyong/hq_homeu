@@ -14,7 +14,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-      $this->middleware('auth');
+      $this->middleware(['auth', 'user_access']);
     }
 
     public function getUserAccessControl()
@@ -257,30 +257,39 @@ class UserController extends Controller
 
           $route_name = Route::currentRouteName();
           $value = "";
+          $route_found = null;
           foreach($access_control_list as $access_control)
           {
             if(strtolower($route_name) == strtolower($access_control['route']))
             {
+              $route_found = 1;
               $value = $access_control['value'];
               break;
             }
           }
 
-          $access_array = explode(",", $access);
-          foreach($access_array as $access_value)
+          if($route_found == 1)
           {
-            if($access_value == $value)
+            $access_array = explode(",", $access);
+            foreach($access_array as $access_value)
             {
-              return true;
+              if($access_value == $value)
+              {
+                return true;
+              }
             }
-          }
 
-          return false;
+            return false;
+          }
+          else
+          {
+            return true;
+          }
         }
       }
       else
       {
-        return false;
+        return true;
       }
     }
 
@@ -320,6 +329,12 @@ class UserController extends Controller
       }
 
       return $access;
+    }
+
+    public function getNoAccess()
+    {
+      $url = route('home');
+      return view('no_access', compact('url'));
     }
 
     public function testingPage()

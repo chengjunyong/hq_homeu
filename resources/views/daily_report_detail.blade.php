@@ -68,7 +68,7 @@
       <thead style="background: #adade0;">
         <th>CATEGORY NAME</th>
         <th>QUANTITY</th>
-        <th>TOTAL</th>
+        <th>TOTAL(RM)</th>
       </thead>
       @foreach($selected_branch as $branch)
         <tr>
@@ -81,7 +81,7 @@
             <tr>
               <td>{{ $report_detail->category_name }}</td>
               <td>{{ $report_detail->quantity }}</td>
-              <td>{{ number_format($report_detail->total, 2) }}</td>
+              <td style="text-align: right;">{{ number_format($report_detail->total, 2) }}</td>
             </tr>
           @endforeach
         </tbody>

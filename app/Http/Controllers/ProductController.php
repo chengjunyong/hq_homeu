@@ -13,6 +13,11 @@ use App\Branch;
 
 class ProductController extends Controller
 {
+  public function __construct()
+  {
+    $this->middleware(['auth', 'user_access']);
+  }
+    
   public function getProductList()
   { 
     $access = app('App\Http\Controllers\UserController')->checkAccessControl();
