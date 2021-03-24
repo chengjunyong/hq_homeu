@@ -32,7 +32,7 @@
 						@foreach($sl_list as $key => $result)
 							<tr>
 								<td>{{$key + 1}}</td>
-								<td><a href="{{route('getGenerateSL',$result->stock_lost_id)}}">{{$result->stock_lost_id}}</a></td>
+								<td><a href="{{route('getGenerateSL',$result->stock_lost_id)}}" target="_blank">{{$result->stock_lost_id}}</a></td>
 								<td style="text-align: center">{{$result->lost_quantity}}</td>
 								<td style="text-align: right">Rm {{number_format($result->total,2)}}</td>
 								<td style="text-align: center">{{$result->created_at}}</td>

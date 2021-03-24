@@ -3,10 +3,6 @@
 <title>Daily Report</title>
 </head>
 <style>
-  h2,h4{
-    margin: 0;
-  }
-
   .header{
     text-align: center;
   }
@@ -31,6 +27,10 @@
     min-height: 98vh;
   }
 
+  h4{
+    margin: 0px;
+  }
+
   .footer{
 
   }
@@ -41,13 +41,14 @@
 <div style="margin: 0 30px;">
 
   <div class="header">
-    <h2>HOME U(M) SDN BHD</h2>
+    <h4>HOME U(M) SDN BHD</h4>
     <h4>(125272-P)</h4>
-    <h4>Tel: 09-7744243 &nbsp Email: assist@homeu.com.my</h4>
-    <h3 style="margin:20px 30%;border:1px solid black">BRANCH REPORT</h3>
+    <h4 style="margin:20px 30%;border:1px solid black;margin-top: 10px">Branch Sales Report</h4>
+    <h5 style="margin: 0 !important;">Report Date</h5>
+    <h5>({{ date("d-M-Y", strtotime($_GET['report_date_from'])) }} - {{ date("d-M-Y", strtotime($_GET['report_date_to'])) }})</h5>
   </div>
 
-  <div class="second">
+<!--   <div class="second">
     <table style="float:right">
       <tr>
         <td><b>Date</b></td>
@@ -60,8 +61,8 @@
         <td align="right">{{ $user->name }}</td>
       </tr>
     </table>
-  </div>
-  <br/><br/><br/>
+  </div> -->
+
 
   <div class="main" style="padding-bottom: 2.5rem;">
     <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">

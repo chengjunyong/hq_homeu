@@ -37,7 +37,7 @@
 						@foreach($do_detail as $key => $result)
 							<tr>
 								<td>{{$key + 1}}</td>
-								<td><a href="{{route('getDoHistoryDetail',$result->do_number)}}">{{$result->do_number}}</a></td>
+								<td><a href="{{route('getDoHistoryDetail',$result->do_number)}}" target="_blank">{{$result->do_number}}</a></td>
 								<td>{{$result->product_name}}</td>
 								<td>{{$result->stock_lost_quantity}}</td>
 								<td>Rm {{number_format($result->price,2)}}</td>

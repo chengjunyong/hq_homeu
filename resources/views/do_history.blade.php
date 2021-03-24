@@ -40,7 +40,7 @@
 								<td>{{$result->total_item}}</td>
 								<td>{{($result->completed == 0)? 'No' : 'Yes'}}</td>
 								<td>{{$result->created_at}}</td>
-								<td><buttton class="btn btn-primary" onclick="window.location.assign('{{route('getPrintDo',$result->do_number)}}')">Print</buttton></td>
+								<td><buttton class="btn btn-primary" onclick="window.open('{{route('getPrintDo',$result->do_number)}}')">Print</buttton></td>
 							</tr>
 						@endforeach
 					</tbody>
