@@ -53,11 +53,11 @@
 					<h4>Stock List</h4>
 				</div>
 				<div class="card-body">
-					<table id="stock_list" class="display">
+					<table id="stock_list" class="display" style="width:99%">
 						<thead>
 							<tr style="background: #b2b43c;">
 								<td>No</td>
-								<td>Barcode</td>
+								<td style="width:5%%">Barcode</td>
 								<td>Product Name</td>
 								<td align="center" style="width:5%">Current Stock Quantity</td>
 								<td align="center" style="width:10%">Reorder Level</td>
@@ -68,7 +68,7 @@
 							@foreach($branch_product as $key => $result)
 								<tr>
 									<td>{{$key + 1}}</td>
-									<td style="width:20%">{{$result->barcode}}</td>
+									<td>{{$result->barcode}}</td>
 									<td>{{$result->product_name}}</td>
 									<td align="center">{{$result->quantity}}</td>
 									<td align="right">{{$result->reorder_level}}</td>
@@ -86,7 +86,7 @@
 					<h4>Stock Order</h4>
 				</div>
 				<div class="card-body">
-					<form method="post" action="{{route('postBranchStock')}}" target="_blank">
+					<form method="post" action="{{route('postBranchStock')}}" target="_blank" id="generate_do">
 						@csrf
 						<input type="text" name="description" value="" hidden>
 						<h5>Transfer</h5>
@@ -166,8 +166,12 @@ $(document).ready(function(){
 		if(result != null){
 			$("input[name=description]").val(result);
 			$("input[type=submit]").click();
-		}
+		}	
 	});
+
+	$("#generate_do").submit(function(){
+		window.location.assign("{{route('home')}}?p=branch_menu");
+	});	
 
 });
 </script>

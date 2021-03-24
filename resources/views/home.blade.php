@@ -495,7 +495,7 @@
 <div class="container" id="stock_menu" style="display: none">
   <div class="row">
 
-    <div class="col-md-4">
+    <!-- <div class="col-md-4">
       <div class="card icon">
         <div class="card-body">
           <div class="row">
@@ -508,7 +508,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
   </div>
 </div>

@@ -106,11 +106,6 @@ class BranchController extends Controller
 
   public function getModifyBranchStock(Request $request)
   {
-    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
-    if(!$access)
-    {
-      return view('not_access');
-    }
 
     $url = route('home')."?p=branch_menu";
 
@@ -401,11 +396,6 @@ class BranchController extends Controller
 
   public function getGenerateGR(Request $request)
   {
-    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
-    if(!$access)
-    {
-      return view('not_access');
-    }
 
     $url = route('home')."?p=branch_menu";
     // Dummy Supplier Data (Development only)

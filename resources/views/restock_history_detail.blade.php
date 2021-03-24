@@ -72,7 +72,7 @@
 											<option {{($result->stock_lost_quantity <= 0) ? 'selected' : ''}}>No Stock Lost</option>
 										</select>
 									</td>
-									<td><input type="text" name="remark[]" style="width:100%" disabled></td>
+									<td><input type="text" name="remark[]" style="width:100%" value="{{ $result->remark}}" disabled></td>
 								</tr>
 							@endforeach
 						</tbody>

@@ -25,7 +25,7 @@
 </style>
 
 <form method="get" action="{{route('getBranchReportDetail')}}" target="_blank">
-  <h2 align="center">Branch Report</h2>
+  <h2 align="center">Branch Sales Report</h2>
   <div class="container">
     <div class="card">
       <div class="card-body">
