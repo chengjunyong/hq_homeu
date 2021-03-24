@@ -106,6 +106,12 @@ class BranchController extends Controller
 
   public function getModifyBranchStock(Request $request)
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('not_access');
+    }
+
     $url = route('home')."?p=branch_menu";
 
     $product = Branch_product::join('department','department.id','=','branch_product.department_id')
@@ -341,6 +347,12 @@ class BranchController extends Controller
 
   public function getDamagedStock()
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('not_access');
+    }
+
     $url = route('home')."?p=branch_menu";
     $do_detail = Do_detail::where('stock_lost_reason','damaged')
                           ->where('stock_lost_review',1)
@@ -389,6 +401,12 @@ class BranchController extends Controller
 
   public function getGenerateGR(Request $request)
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('not_access');
+    }
+
     $url = route('home')."?p=branch_menu";
     // Dummy Supplier Data (Development only)
       $supplier = new \stdClass();
@@ -432,6 +450,12 @@ class BranchController extends Controller
 
   public function getStockLost()
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('not_access');
+    }
+    
     $url = route('home')."?p=branch_menu";
 
     $do_detail = Do_detail::where('stock_lost_review',1)

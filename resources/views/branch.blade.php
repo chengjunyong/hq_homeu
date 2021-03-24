@@ -50,7 +50,7 @@
 				<h2 align="center">Branch Setup</h2>
 				<div class="row">
 					<div class="col-md-12">
-						<h4>Create New Branch</h4>
+						<h4>Create New Branchs</h4>
 					</div>
 				</div>
 				<form method="post" action="{{route('createBranch')}}" id="form">

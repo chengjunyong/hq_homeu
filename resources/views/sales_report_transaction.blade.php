@@ -77,7 +77,7 @@
         <th>TRANSACTION DATE</th>
         <!-- <th>DETAIL</th> -->
       </thead>
-      <tbody class="border">
+      <tbody class="border" style="border-bottom-color:black !important">
         @foreach($transaction as $result)
           <tr>
             <td>{{ $result->transaction_no }}</td>
