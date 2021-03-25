@@ -7,6 +7,11 @@ use App\branch;
 
 class BarcodeController extends Controller
 {
+    public function __construct()
+    {
+      $this->middleware(['auth', 'user_access']);
+    }
+    
     public function getCheckStockPage()
     {
       $branch_list = branch::get();
