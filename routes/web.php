@@ -80,6 +80,9 @@ Route::post('/createNewUser', 'UserController@createNewUser')->name('createNewUs
 Route::post('/editUser', 'UserController@editUser')->name('editUser');
 Route::get('/no_access', 'UserController@getNoAccess')->name('no_access');
 
+// barcode check stock
+Route::get('/check_stock', 'BarcodeController@getCheckStockPage')->name('getCheckStockPage');
+
 // Testing page
 Route::get('testingPage', 'UserController@testingPage')->name('testingPage');
 
