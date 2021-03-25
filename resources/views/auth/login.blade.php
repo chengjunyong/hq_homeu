@@ -257,6 +257,17 @@ body {
   background: #FFFFFF !important;
   color: #4285F4 !important;
 }
+
+.invalid-feedback { 
+  display: none;
+  width: 100%;
+  margin-top: .25rem;
+  font-size: 80%;
+  color: #dc3545;
+}
+
+.is-invalid~.invalid-feedback { display: block; }
+      
 </style>
 <body>
 <!-- partial:index.partial.html -->
@@ -272,11 +283,21 @@ body {
       	@csrf
         <div class="form-group">
           <label for="username">Username</label>
-          <input type="text" id="username" name="username" required="required"/>
+          <input type="text" id="username" class="{{ $errors->has('username') ? 'is-invalid' : '' }}" name="username" required="required"/>
+          @if ($errors->has('username'))
+            <span class="invalid-feedback" role="alert">
+              <strong>{{ $errors->first('username') }}</strong>
+            </span>
+          @endif
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" required="required"/>
+          <input type="password" id="password" class="{{ $errors->has('username') ? 'is-invalid' : '' }}" name="password" required="required"/>
+          @if ($errors->has('username'))
+            <span class="invalid-feedback" role="alert">
+              <strong>{{ $errors->first('username') }}</strong>
+            </span>
+          @endif
         </div>
         <div class="form-group">
           <button type="submit">Log In</button>
