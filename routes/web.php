@@ -82,6 +82,8 @@ Route::get('/no_access', 'UserController@getNoAccess')->name('no_access');
 
 // barcode check stock
 Route::get('/check_stock', 'BarcodeController@getCheckStockPage')->name('getCheckStockPage');
+Route::post('/getProductByBarcode', 'BarcodeController@getProductByBarcode')->name('getProductByBarcode');
+Route::post('/updateBranchStockByScanner', 'BarcodeController@updateBranchStockByScanner')->name('updateBranchStockByScanner');
 
 // Testing page
 Route::get('testingPage', 'UserController@testingPage')->name('testingPage');
