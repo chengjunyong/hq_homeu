@@ -95,11 +95,11 @@ class SalesController extends Controller
 
     if($selected_branch)
     {
-      $transaction = transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $selected_branch->token)->get();
+      $transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $selected_branch->token)->get();
     }
     else
     {
-      $transaction = transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', null)->get();
+      $transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', null)->get();
     }
 
     return view('sales_report_transaction',compact('selected_branch', 'selected_date_from', 'selected_date_to', 'transaction', 'url', 'date', 'user'));
@@ -108,7 +108,7 @@ class SalesController extends Controller
   public function getSalesReportDetail($branch_id, $branch_transaction_id)
   { 
     $url = route('home')."?p=product_menu";
-    $transaction_detail = transaction_detail::where('branch_id', $branch_id)->where('branch_transaction_id', $branch_transaction_id)->get();
+    $transaction_detail = Transaction_detail::where('branch_id', $branch_id)->where('branch_transaction_id', $branch_transaction_id)->get();
 
     $date = date('Y-m-d H:i:s', strtotime(now()));
     $user = Auth::user();
@@ -159,7 +159,7 @@ class SalesController extends Controller
     {
       foreach($selected_branch as $branch_detail)
       {
-        $transaction_detail_list = transaction_detail::whereBetween('created_at', [$selected_date_start, $selected_date_end])->where('branch_id', $branch_detail->token)->get();
+        $transaction_detail_list = Transaction_detail::whereBetween('created_at', [$selected_date_start, $selected_date_end])->where('branch_id', $branch_detail->token)->get();
 
         $barcode_array = [];
         foreach($transaction_detail_list as $transaction_detail)
@@ -170,7 +170,7 @@ class SalesController extends Controller
           }
         }
 
-        $product_list = product_list::whereIn('product_list.barcode', $barcode_array)->leftJoin('category', 'product_list.category_id', '=', 'category.id')->select('product_list.*', 'category.department_id', 'category.category_name')->get();
+        $product_list = Product_list::whereIn('product_list.barcode', $barcode_array)->leftJoin('category', 'product_list.category_id', '=', 'category.id')->select('product_list.*', 'category.department_id', 'category.category_name')->get();
 
         $category_id_array = [];
         $category_report_array = [];
@@ -265,7 +265,7 @@ class SalesController extends Controller
 
     if(count($selected_branch) > 0)
     {
-      $transaction_detail_list = transaction_detail::whereBetween('created_at', [$selected_date_start, $selected_date_end])->whereIn('branch_id', $branch)->selectRaw('*, sum(total) as branch_total')->groupBy('branch_id')->get();
+      $transaction_detail_list = Transaction_detail::whereBetween('created_at', [$selected_date_start, $selected_date_end])->whereIn('branch_id', $branch)->selectRaw('*, sum(total) as branch_total')->groupBy('branch_id')->get();
 
       foreach($selected_branch as $branch)
       {

@@ -18,13 +18,13 @@ class BarcodeController extends Controller
 
     public function getCheckStockPage()
     {
-      $branch_list = branch::get();
+      $branch_list = Branch::get();
       return view('barcode.index', compact('branch_list'));
     }
 
     public function getProductByBarcode(Request $request)
     {
-      $product_detail = branch_product::where('branch_id', $request->branch_id)->where('barcode', $request->barcode)->first();
+      $product_detail = Branch_product::where('branch_id', $request->branch_id)->where('barcode', $request->barcode)->first();
       if(!$product_detail)
       {
         $response = new \stdClass();
@@ -74,7 +74,7 @@ class BarcodeController extends Controller
         return response()->json($response);
       }
 
-      $branch_product = branch_product::where('id', $request->product_id)->first();
+      $branch_product = Branch_product::where('id', $request->product_id)->first();
 
       if(!$branch_product)
       {
@@ -85,7 +85,7 @@ class BarcodeController extends Controller
         return response()->json($response);
       }
 
-      branch_stock_history::create([
+      Branch_stock_history::create([
         'user_id' => $user->id,
         'branch_product_id' => $request->product_id,
         'barcode' => $branch_product->barcode,
@@ -95,7 +95,7 @@ class BarcodeController extends Controller
         'difference_count' => ($branch_product->quantity - $request->stock_count)
       ]);
 
-      branch_product::where('id', $request->product_id)->update([
+      Branch_product::where('id', $request->product_id)->update([
         'quantity' => $request->stock_count
       ]);
 

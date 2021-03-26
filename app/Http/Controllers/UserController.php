@@ -70,7 +70,7 @@ class UserController extends Controller
         }
       }
 
-      user_access_control::create([
+      User_access_control::create([
         'user_id' => $user_detail->id,
         'access_control' => $access
       ]);
@@ -121,7 +121,7 @@ class UserController extends Controller
         }
       }
 
-      user_access_control::updateOrCreate([
+      User_access_control::updateOrCreate([
         'user_id' => $request->edit_user_id
       ],[
         'access_control' => $access
@@ -267,7 +267,7 @@ class UserController extends Controller
 
       if($user)
       {
-        $user_access_control = user_access_control::where('user_id', $user->id)->first();
+        $user_access_control = User_access_control::where('user_id', $user->id)->first();
 
         // default admin account, able to access every view
         if(!$user_access_control)
