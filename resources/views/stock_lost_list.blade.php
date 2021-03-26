@@ -29,6 +29,7 @@
 							<td>Product Name</td>
 							<td>Damaged Quantity</td>
 							<td>Price Per Unit</td>
+							<td>Cost</td>
 							<td>Total Price</td>
 							<td>Remark</td>
 						</tr>
@@ -41,6 +42,7 @@
 								<td>{{$result->product_name}}</td>
 								<td>{{$result->stock_lost_quantity}}</td>
 								<td>Rm {{number_format($result->price,2)}}</td>
+								<td>Rm {{number_format($result->cost,2)}}</td>
 								<td>Rm {{number_format($result->price * $result->stock_lost_quantity,2)}}</td>
 								<td>{{($result->remark != null) ? $result->remark : 'No Remark'}}</td>
 							</tr>
@@ -82,8 +84,8 @@ $(document).ready(function(){
 					function(data){
 						console.log(data);
 						if(data['redirect'] != null){
-							// window.open(`${data['redirect']}`);
-							// window.location.reload();
+							window.open(`${data['redirect']}`);
+							window.location.reload();
 						}
 					},'json');
 			}

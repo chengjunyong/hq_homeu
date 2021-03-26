@@ -117,19 +117,42 @@
         type : "LiveStream",
         target: document.querySelector('#quagga-scanner'),    // Or '#yourElement' (optional)
       },
-      decoder : {
+      decoder :{
         readers : ["code_128_reader"]
-      }
+      },
+      config :{
+        numOfWorkers: 0,
+        locate: true,
+      },
+      locator :{
+        halfSample: true,
+        patchSize: "x-large", // x-small, small, medium, large, x-large
+        debug: {
+          showCanvas: false,
+          showPatches: false,
+          showFoundPatches: false,
+          showSkeleton: false,
+          showLabels: false,
+          showPatchLabels: false,
+          showRemainingPatchLabels: false,
+          boxFromPatches: {
+            showTransformed: false,
+            showTransformedBox: false,
+            showBB: false,
+          }
+        }
+      },
     }, function(err) {
         if (err) {
-            console.log(err);
-            return
+          console.log(err);
+          return
         }
         console.log("Initialization finished. Ready to start");
         Quagga.start();
     });
 
     Quagga.onDetected(function(data){
+      console.log(data);
       if(scan_value != data.codeResult.code)
       {
         scan_value = data.codeResult.code;

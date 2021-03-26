@@ -69,11 +69,11 @@
         <th>INVOICE NO</th>
         <th>PAYMENT TYPE</th>
         <th>REFERENCE NO</th>
-        <th>SUBTOTAL(RM)</th>
-        <th>DISCOUNT(RM)</th>
-        <th>TOTAL(RM)</th>
-        <th>RECEIVED PAYMENT(RM)</th>
-        <th>BALANCE(RM)</th>
+        <th style="text-align: right">SUBTOTAL(RM)</th>
+        <th style="text-align: right">DISCOUNT(RM)</th>
+        <th style="text-align: right">TOTAL(RM)</th>
+        <th style="text-align: right">RECEIVED PAYMENT(RM)</th>
+        <th style="text-align: right">BALANCE(RM)</th>
         <th>TRANSACTION DATE</th>
         <!-- <th>DETAIL</th> -->
       </thead>
@@ -95,6 +95,17 @@
           </tr>
         @endforeach
       </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" style="text-align: center;">Total :</td>
+          <td style="text-align: right;border:1px solid black">{{ number_format($transaction->sum('subtotal'),2) }}</td>
+          <td style="text-align: right;border:1px solid black">{{ number_format($transaction->sum('total_discount'),2) }}</td>
+          <td style="text-align: right;border:1px solid black">{{ number_format($transaction->sum('total'),2) }}</td>
+          <td style="text-align: right;border:1px solid black">{{ number_format($transaction->sum('payment'),2) }}</td>
+          <td style="text-align: right;border:1px solid black">{{ number_format($transaction->sum('balance'),2) }}</td>
+          <td></td>
+        </tr>
+      </tfoot>
     </table>
   </div>
 
