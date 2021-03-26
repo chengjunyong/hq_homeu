@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-use App\branch;
-use App\branch_product;
-use App\branch_stock_history;
+use App\Branch;
+use App\Branch_product;
+use App\Branch_stock_history;
 
 class BarcodeController extends Controller
 {

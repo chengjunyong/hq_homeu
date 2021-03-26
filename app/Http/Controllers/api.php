@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\transaction;
-use App\transaction_detail;
+use App\Transaction;
+use App\Transaction_detail;
 use App\Product_list;
 use App\Branch;
 

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\User;
-use App\user_access_control;
+use App\User_access_control;
 use Illuminate\Support\Facades\Route;
 
 use Illuminate\Support\Facades\Hash;

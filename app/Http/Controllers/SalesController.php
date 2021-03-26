@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Branch;
-use App\transaction;
-use App\transaction_detail;
-use App\product_list;
+use App\Transaction;
+use App\Transaction_detail;
+use App\Product_list;
 
 use Illuminate\Support\Facades\Auth;
 
