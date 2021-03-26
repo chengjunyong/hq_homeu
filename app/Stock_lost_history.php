@@ -10,12 +10,13 @@ class Stock_lost_history extends Model
     protected $fillable = 
     [
 	    'stock_lost_id',
-		'do_number',
-		'barcode',
-		'product_name',
-		'price_per_unit',
-		'lost_quantity',
-		'total',
-		'remark',
+			'do_number',
+			'barcode',
+			'product_name',
+			'price_per_unit',
+			'cost',
+			'lost_quantity',
+			'total',
+			'remark',
     ];
 }

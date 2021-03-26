@@ -123,6 +123,7 @@
 							<input type="text" hidden value="{{$result->barcode}}" name="barcode[]">
 							<label>Product Name : {{$result->product_name}}</label>
 							<input type="text" hidden value="{{$result->product_name}}" name="product_name[]">
+							<input type="text" hidden value="{{$result->cost}}" name="product_cost[]">
 							<input type="text" hidden value="{{$result->id}}" name="product_id[]">
 							<input type="text" hidden value="{{$result->price}}" name="product_price[]">
 							<label>Restock Quantity: 								

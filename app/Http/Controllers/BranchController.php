@@ -192,6 +192,7 @@ class BranchController extends Controller
         'barcode' => $request->barcode[$i],
         'product_name' => $request->product_name[$i],
         'price' => $request->product_price[$i],
+        'cost' => $request->product_cost[$i],
         'quantity' => $request->reorder_quantity[$i],
       ]);
     }
@@ -488,6 +489,7 @@ class BranchController extends Controller
             'product_name' => $result->product_name,
             'lost_quantity' => $result->stock_lost_quantity,
             'price_per_unit' => $result->price,
+            'cost' => $result->cost,
             'total' => $result->price * $result->stock_lost_quantity,
             'remark' => $result->remark,
           ]);
