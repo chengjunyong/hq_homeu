@@ -11,7 +11,7 @@
 |
 */
 
-Auth::routes();
+Auth::route();
 
 Route::get('/', 'HomeController@index')->name('home');
 
@@ -88,4 +88,12 @@ Route::post('/updateBranchStockByScanner', 'BarcodeController@updateBranchStockB
 // Testing page
 Route::get('testingPage', 'UserController@testingPage')->name('testingPage');
 
+//Warehouse
+Route::get('/WarehouseStockList','WarehouseController@getWarehouseStockList')->name('getWarehouseStockList');
+Route::get('/AddWarehouseProduct','WarehouseController@getAddWarehouseProduct')->name('getAddWarehouseProduct');
+Route::post('/AddWarehouseProduct','WarehouseController@postAddWarehouseProduct')->name('postAddWarehouseProduct');
+Route::get('/EditWarehouseProduct/{id}','WarehouseController@getEditWarehouseProduct')->name('getEditWarehouseProduct');
+Route::post('EditWarehouseProduct','WarehouseController@postModifyWarehouseProduct')->name('postModifyWarehouseProduct');
+Route::get('/PurchaseOrder','WarehouseController@getPurchaseOrder')->name('getPurchaseOrder');
+Route::post('/ajaxGetSupplier','WarehouseController@ajaxGetSupplier')->name('ajaxGetSupplier');
 

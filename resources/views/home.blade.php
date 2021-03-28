@@ -495,7 +495,22 @@
 <div class="container" id="stock_menu" style="display: none">
   <div class="row">
 
-    <!-- <div class="col-md-4">
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Warehouse Stock Settings</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getWarehouseStockList')}}"><i class="fas fa-cogs first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
       <div class="card icon">
         <div class="card-body">
           <div class="row">
@@ -503,12 +518,72 @@
               <h4 class="card-title">Warehouse Stock</h4>
             </div>
             <div class="col">
-              <a href=""><i class="fas fa-boxes first stock-color"></i></a>
+              <a href="{{route('getWarehouseStockList')}}"><i class="fas fa-boxes first stock-color"></i></a>
             </div>
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Purchase Order</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getPurchaseOrder')}}"><i class="fas fa-file-invoice-dollar first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Purchase Order History</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getWarehouseStockList')}}"><i class="fas fa-history first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Restock</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getWarehouseStockList')}}"><i class="fas fa-folder-plus first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Credit Note</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getWarehouseStockList')}}"><i class="fas fa-sticky-note first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 </div>
