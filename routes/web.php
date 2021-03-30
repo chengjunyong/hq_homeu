@@ -96,5 +96,6 @@ Route::post('/AddWarehouseProduct','WarehouseController@postAddWarehouseProduct'
 Route::get('/EditWarehouseProduct/{id}','WarehouseController@getEditWarehouseProduct')->name('getEditWarehouseProduct');
 Route::post('EditWarehouseProduct','WarehouseController@postModifyWarehouseProduct')->name('postModifyWarehouseProduct');
 Route::get('/PurchaseOrder','WarehouseController@getPurchaseOrder')->name('getPurchaseOrder');
-Route::post('/ajaxGetSupplier','WarehouseController@ajaxGetSupplier')->name('ajaxGetSupplier');
-
+Route::get('/ajaxGetSupplier','WarehouseController@ajaxGetSupplier')->name('ajaxGetSupplier');
+Route::post('/sendPurchaseOrder','WarehouseController@ajaxPO')->name('ajaxPO');
+Route::get('/GeneratePurchaseOrder/{id}','WarehouseController@getGeneratePurchaseOrder')->name('getGeneratePurchaseOrder');

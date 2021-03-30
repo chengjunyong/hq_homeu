@@ -7,6 +7,8 @@ use App\Warehouse_stock;
 use App\Department;
 use App\Category;
 use App\Supplier;
+use App\Purchase_order;
+use App\Purchase_order_detail;
 
 class WarehouseController extends Controller
 {
@@ -100,8 +102,59 @@ class WarehouseController extends Controller
   public function ajaxGetSupplier(Request $request)
   {
 
-    dd("abc");
+    $supplier = Supplier::where('id',$request->id)->first();
     
+    return $supplier;
+  }
+
+  public function ajaxPO(Request $request)
+  {
+    $product_list = Warehouse_stock::whereIn('id',$request->product_id)->get();
+    $total_cost = Warehouse_stock::whereIn('id',$request->product_id)->sum('cost');
+
+    $date = strtotime(date("Y-m-d h:i:s"));
+    $po_number = "PO".$date;
+
+    $purchase_order = Purchase_order::create([
+                        'po_number' => $po_number,
+                        'supplier_id' => $request->supplier_id,
+                        'supplier_code' => $request->supplier_code,
+                        'supplier_name' => $request->supplier_name,
+                        'total_quantity_items' => array_sum($request->product_quantity),
+                        'total_amount' => $total_cost,
+                        'issue_date' => $request->issue_date,
+                      ]);
+
+    foreach($product_list as $key => $result){
+      Purchase_order_detail::create([
+        'po_id' => $purchase_order->id,
+        'po_number' => $po_number,
+        'product_id' => $result->id,
+        'barcode' => $result->barcode,
+        'product_name' => $result->product_name,
+        'cost' => $result->cost,
+        'quantity' => $request->product_quantity[$key],
+        'received' => 0,
+      ]);
+    }
+
+    $msg = new \stdClass();
+    $msg->success = 1;
+    $msg->url = route('getGeneratePurchaseOrder',$purchase_order->id);
+
+    return json_encode($msg);
+  }
+
+  public function getGeneratePurchaseOrder(Request $request)
+  {
+    $po = Purchase_order::where('id',$request->id)->first();
+    $po_detail = Purchase_order_detail::where('po_id',$request->id)->get();
+    $total = 0;
+    foreach($po_detail as $result){
+      $total += floatval($result->cost) * intval($result->quantity);
+    }
+
+    return view('print_po',compact('po','po_detail','total'));
   }
 
 }

@@ -118,8 +118,8 @@
 									<label>{{$result->product_name}}</label>
 								</div>
 								<div class="col-md-2" style="padding: 0px">
-									<input type="number" step="1" required min=1 style="width:100%;padding:6px 2px;" class="form-control" value="{{($result->reorder_quantity == null) ? '' : $result->reorder_quantity }}" />
-									<input type="text" name="product_id" value="{{$result->id}}" hidden />
+									<input type="number" step="1" name="product_quantity[]" required min=1 style="width:100%;padding:6px 2px;" class="form-control" value="{{($result->reorder_quantity == null) ? '1' : $result->reorder_quantity }}" />
+									<input type="text" name="product_id[]" value="{{$result->id}}" hidden />
 								</div>
 								<div class="col-md-1" style="padding: 0px 3px">
 									<i class="fa fa-times-circle" style="cursor:pointer" ref="row{{$result->id}}"></i>
@@ -144,13 +144,14 @@
 						<input type="text" name="contact_number" class="form-control confirm" readonly value="">
 						<label>Email</label><br/>
 						<input type="text" name="email" class="form-control confirm" readonly value="">
-						<button style="margin-top: 15px" type="button" class="btn btn-primary" id="issue_po">Generate PO</button>
+						<button type="button" style="margin-top: 15px" class="btn btn-primary" id="issue_po">Generate PO</button>
 					</div>
 				</div>
 			</div>
 		</div>
 	</form>
 </div>
+
 <script>
 $(document).ready(function(){
 	let table = $("#po_table").dataTable({
@@ -169,13 +170,51 @@ $(document).ready(function(){
 	});
 
 	$("#supplier_id").change(function(){
-		// $.post("{{route('ajaxGetSupplier')}}",
-		// {
-		// 	'id':$(this).val();
-		// },function(data){
-		// 	console.log(data);
-		// },"json");
+		$.get("{{route('ajaxGetSupplier')}}",
+		{
+			'id':$(this).val(),
+		},function(data){
+			$("input[name=supplier_name]").val(data['supplier_name']);
+			$("input[name=supplier_code]").val(data['supplier_code']);
+			$("input[name=supplier_id]").val(data['id']);
+			if(data['contact_number'] == "null")
+				$("input[name=contact_number]").val("Not Available");
+			else
+				$("input[name=contact_number]").val(data['contact_number']);
 
+			if(data['email'] == "null")
+				$("input[name=email]").val("Not Available");
+			else
+				$("input[name=email]").val(data['email']);
+		},"json");
+	});
+
+	$("#issue_po").click(function(){
+		if($("#supplier_id").val() == null || $("#po_date").val() == ""){
+			swal.fire(
+				'Warning',
+				'Please select supplier and fill up the purchase order date',
+				'error'
+			);
+		}else{
+			$.post("{{route('ajaxPO')}}",
+				$("form").serialize(),
+				function(data){
+					console.log(data);
+					if(data['success'] == 1){
+						Swal.fire({
+							title:'Purchase Order Generate Successful',
+							confirmButtonText: 'Redirect',
+							icon: 'success',
+						}).then((result)=>{
+							if(result.isConfirmed){
+								window.location.assign('{{$url}}');
+								window.open(data['url']);
+							}
+						})
+					}
+				},"json");	
+		}
 	});
 
 });
