@@ -401,6 +401,21 @@
         </div>
       </div>
     </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Branch Check Stock History</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getStockLost')}}"><i class="fas fa-barcode first branch-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     
   </div>
 </div>
@@ -483,6 +498,21 @@
             </div>
             <div class="col">
               <a href="{{route('getUserAccessControl')}}"><i class="fas fa-users first other-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Stock Checking</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getCheckStockPage')}}"><i class="fas fa-barcode first other-color"></i></a>
             </div>
           </div>
         </div>

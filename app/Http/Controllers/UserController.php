@@ -317,6 +317,48 @@ class UserController extends Controller
       }
     }
 
+    public function checkAllAccessControl()
+    {
+      $response = [['access' => true]];
+      $user = Auth::user();
+
+      if($user)
+      {
+        $user_access_control = User_access_control::where('user_id', $user->id)->first();
+
+        // default admin account, able to access every view
+        if(!$user_access_control)
+        {
+          return $response;
+        }
+        else
+        {
+          $access_control_list = $this->UserAccessControl();
+          $access = $user_access_control->access_control;
+          $access_array = explode(",", $access);
+
+          foreach($access_control_list as $key => $access_control)
+          {
+            $access_control_list[$key]['access'] = false;
+            foreach($access_array as $user_access)
+            {
+              if($access_control['value'] == $user_access)
+              {
+                $access_control_list[$key]['access'] = true;
+                break;
+              }
+            }
+          }
+
+          return $access_control_list;
+        }
+      }
+      else
+      {
+        return $response;
+      }
+    }
+
     public function defaultAccessControl()
     {
       $default_access_control = [

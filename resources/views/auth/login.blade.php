@@ -292,10 +292,10 @@ body {
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" class="{{ $errors->has('username') ? 'is-invalid' : '' }}" name="password" required="required"/>
-          @if ($errors->has('username'))
+          <input type="password" id="password" class="{{ $errors->has('password') ? 'is-invalid' : '' }}" name="password" required="required"/>
+          @if ($errors->has('password'))
             <span class="invalid-feedback" role="alert">
-              <strong>{{ $errors->first('username') }}</strong>
+              <strong>{{ $errors->first('password') }}</strong>
             </span>
           @endif
         </div>

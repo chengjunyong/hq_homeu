@@ -30,8 +30,9 @@
     <div class="card">
       <div class="card-body">
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-md-12 form-group">
             <label>Branch</label>
+            <button type="button" class="btn btn-primary" id="export_report" style="float: right; margin-bottom: 10px;">Export Report</button>
             <select class="form-control select2" multiple="multiple" style="width: 100%;" name="branch[]">
               @foreach($branch as $value)
                 <option value="{{ $value->token }}">{{ $value->branch_name }}</option>

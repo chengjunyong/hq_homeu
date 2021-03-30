@@ -69,6 +69,7 @@ Route::get('/daily_report', 'SalesController@getDailyReport')->name('getDailyRep
 Route::get('/daily_report_detail', 'SalesController@getdailyReportDetail')->name('getdailyReportDetail');
 Route::get('/branch_report', 'SalesController@getBranchReport')->name('getBranchReport');
 Route::get('/branch_report_detail', 'SalesController@getBranchReportDetail')->name('getBranchReportDetail');
+Route::post('/exportSalesReport', 'SalesController@exportSalesReport')->name('exportSalesReport');
 
 // sync URL
 Route::get('/branchSync','BranchController@branchSync')->name('branchSync');

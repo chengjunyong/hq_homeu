@@ -38,6 +38,8 @@ class HomeController extends Controller
         $target = $_GET['p'];
       }
 
+      // $access_control = app('App\Http\Controllers\UserController')->checkAllAccessControl();
+
       return view('home',compact('user','branch','target'));
     }
   }

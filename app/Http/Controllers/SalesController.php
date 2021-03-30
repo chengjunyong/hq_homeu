@@ -9,6 +9,9 @@ use App\Transaction_detail;
 use App\Product_list;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class SalesController extends Controller
 {
@@ -282,5 +285,31 @@ class SalesController extends Controller
     }
 
     return view('branch_report_detail',compact('selected_branch', 'selected_date_from', 'selected_date_to', 'url', 'date', 'user'));
+  }
+
+  public function exportSalesReport(Request $request)
+  {
+    if(!Storage::exists('public/report'))
+    {
+      Storage::makeDirectory('public/report', 0775, true); //creates directory
+    }
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setCellValue('A1', 'INVOICE NO');
+    $sheet->setCellValue('B1', 'PAYMENT TYPE');
+    $sheet->setCellValue('C1', 'REFERENCE NO');
+    $sheet->setCellValue('D1', 'SUBTOTAL(RM)');
+    $sheet->setCellValue('E1', 'DISCOUNT(RM)');
+    $sheet->setCellValue('F1', 'TOTAL(RM)');
+    $sheet->setCellValue('G1', 'RECEIVED PAYMENT(RM)');
+    $sheet->setCellValue('H1', 'BALANCE(RM)');
+    $sheet->setCellValue('I1', 'TRANSACTION DATE');
+
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/report/sales report.xlsx';
+    $writer->save($path);
+
+    return response()->download($path);
   }
 }

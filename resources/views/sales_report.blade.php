@@ -30,8 +30,9 @@
     <div class="card">
       <div class="card-body">
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-md-12 form-group">
             <label>Branch</label>
+            <button type="button" class="btn btn-primary" id="export_report" style="float: right; margin-bottom: 10px;">Export Report</button>
             <select class="form-control" name="branch_token">
               <option value="0">Please select</option>
               @foreach($branch as $value)
@@ -60,8 +61,28 @@
   </div>
 </form>
 
+<form method="POST" action="{{ route('exportSalesReport') }}" id="exportSalesReportForm">
+  @csrf
+  <input type="hidden" id="branch_token" name="branch_token" />
+  <input type="hidden" id="report_date_from" name="report_date_from" value="{{ $selected_date_from }}" />
+  <input type="hidden" id="report_date_to" name="report_date_to" value="{{ $selected_date_to }}" />
+</form>
+
 <script>
 
+  $(document).ready(function(){
+    $("#export_report").click(function(){
+      var report_date_from = $("input[name='report_date_from']").val();
+      var report_date_to = $("input[name='report_date_to']").val();
+      var branch_token = $("select[name='branch_token']").val();
+
+      $("#branch_token").val(branch_token);
+      $("#report_date_from").val(report_date_from);
+      $("#report_date_to").val(report_date_to);
+
+      $("#exportSalesReportForm").submit();
+    });
+  });
 
 </script>
 

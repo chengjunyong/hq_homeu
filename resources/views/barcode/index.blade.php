@@ -90,6 +90,8 @@
           <div class="col-12 form-group">
             <input type="hidden" id="product_id" />
             <button type="button" class="btn btn-success" id="submit_stock" disabled>Submit</button>
+            <br>
+            <a href="{{ route('home') }}">Back to home</a>
           </div>
 
         </div>
@@ -110,6 +112,9 @@
 <script>
 
   var scan_value = null;
+  var cameraFeed = document.getElementById("quagga-scanner");
+  var freeze = 0;
+
   $(document).ready(function(){
     Quagga.init({
       inputStream : {
@@ -152,16 +157,23 @@
     });
 
     Quagga.onDetected(function(data){
-      console.log(data);
-      if(scan_value != data.codeResult.code)
+      if(freeze == 1)
+      {
+        return;
+      }
+      else if(scan_value != data.codeResult.code)
       {
         scan_value = data.codeResult.code;
         checkProductBarcode(scan_value);
       }
     });
 
+    cameraFeed.getElementsByTagName("video")[0].pause();
+
     $(".close-quagga").click(function(){
       $("#quagga-scanner").hide();
+      
+      cameraFeed.getElementsByTagName("video")[0].pause();
     });
 
     $("select[name='branch']").on('change', function(){
@@ -171,6 +183,13 @@
         alert("Please select branch before you proceed.");
         return;
       }
+
+      scan_value = null;
+      cameraFeed.getElementsByTagName("video")[0].load();
+      freeze = 1;
+      setTimeout(function(){
+        freeze = 0;
+      },300);
 
       $("#quagga-scanner").show();
     });
@@ -183,7 +202,13 @@
         return;
       }
 
+      scan_value = null;
       $("#quagga-scanner").show();
+      cameraFeed.getElementsByTagName("video")[0].load();
+      freeze = 1;
+      setTimeout(function(){
+        freeze = 0;
+      },300);
     });
 
     $("#submit_stock").click(function(){
@@ -202,6 +227,7 @@
     }
 
     $.post("{{ route('getProductByBarcode') }}", {"_token" : "{{ csrf_token() }}", "barcode" : barcode, "branch_id" : selected_branch }, function(result){
+      cameraFeed.getElementsByTagName("video")[0].pause();
       if(result.error == 0)
       {
         $("#quagga-scanner").hide();
@@ -211,6 +237,21 @@
         $("#product_id").val(product_detail.id);
 
         $("#submit_stock").attr("disabled", false);
+      }
+      else
+      {
+        Swal.fire(
+          'Failed!',
+          "Barcode "+barcode+" not found in the system.",
+          'error'
+        ).then((result) => {
+          scan_value = null;
+          cameraFeed.getElementsByTagName("video")[0].load();
+          freeze = 1;
+          setTimeout(function(){
+            freeze = 0;
+          },300);
+        });
       }
     });
   }
@@ -229,21 +270,33 @@
     $.post("{{ route('updateBranchStockByScanner') }}", {"_token" : "{{ csrf_token() }}", "product_id" : product_id, "stock_count" : stock_count }, function(result){
       if(result.error == 0)
       {
+        $("#product_name").html("");
+        $("#product_barcode").html("");
+        $("#product_id").val("");
+
+        $("input[name='stock_count']").val("");
+        scan_value = null;
+
         Swal.fire(
           'Success!',
           "<b>"+result.product_detail.product_name+"</b> stock was updated.",
           'success'
-        );
-
-        $("input[name='stock_count']").val("");
-        scan_value = null;
+        ).then((result) => {
+          if (result.isConfirmed) {
+            $("#scan_again").click();
+          }
+        });
       }
       else
       {
         alert(result.message);
       }
     }).fail(function(){
-      alert("Something wrong, please refresh the page.");
+      Swal.fire(
+        'Failed!',
+        "Something wrong, please refresh the page.",
+        'error'
+      );
     });
   }
 
