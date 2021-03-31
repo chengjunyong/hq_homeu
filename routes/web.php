@@ -40,6 +40,8 @@ Route::get('/stocklost','BranchController@getStockLost')->name('getStockLost');
 Route::post('/generatestocklost','BranchController@postStockLost')->name('postStockLost');
 Route::get('/SL/{sl_id}','BranchController@getGenerateSL')->name('getGenerateSL');
 Route::get('/stocklosthistory','BranchController@getStockLostHistory')->name('getStockLostHistory');
+Route::get('/branch_stock_history', 'BranchController@getBranchStockHistory')->name('getBranchStockHistory');
+Route::get('/branch_stock_history_detail', 'BranchController@getBranchStockHistoryDetail')->name('getBranchStockHistoryDetail');
 
 //Product
 Route::get('/productlist','ProductController@getProductList')->name('getProductList');

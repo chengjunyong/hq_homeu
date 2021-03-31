@@ -11,6 +11,9 @@ class branch_stock_history extends Model
   protected $fillable = 
   [
     'user_id',
+    'user_name',
+    'branch_id',
+    'branch_token',
     'branch_product_id',
     'barcode',
     'product_name',

@@ -34,7 +34,20 @@
   #quagga-scanner video { width: 100%; height: 100%; }
   #quagga-scanner canvas { display: none; }
 
-  .close-quagga { position: absolute; top: 10px; right: 20px; font-size: 30px; color: #666; cursor: pointer; }
+  .close { position: absolute; top: 10px; right: 20px; font-size: 30px; color: #666; cursor: pointer; }
+  .floating_menu { position: fixed; right: 20px; bottom: 20px; }
+  .menu_icon { width: 50px; height: 50px; border: 1px solid #ccc; border-radius: 50%; text-align: center; line-height: 50px; box-shadow: 1px 1px 5px 0px #999; background: #d2e8ff; cursor: pointer; }
+  .menu_icon:hover { box-shadow: 1px 1px 10px 3px #999; }
+  .menu_detail { display: none; position: absolute; left: -150px; width: 130px; text-align: left; bottom: 0px; line-height: 30px; border: 1px solid #ccc; }
+  .menu_detail ul { list-style-type: none; padding: 0; margin: 0; }
+  .menu_detail ul li:first-child a { padding-top: 10px; }
+  .menu_detail ul li:last-child a { padding-bottom: 10px; }
+  .menu_detail ul li a { display: block; cursor: pointer; padding: 5px 10px; cursor: pointer; color: #000; }
+  .menu_detail ul li a:hover { text-decoration: none; }
+  .menu_detail ul li:hover { background: #ccc; }
+  .history { display: none; position: fixed; left: 0px; top: 0px; height: 100%; width: 100%; background: #fff; padding: 30px; }
+  .history table { margin: auto; }
+
 
   </style>
 
@@ -99,12 +112,60 @@
     </div>
 
     <div id="quagga-scanner">
-      <div class="close-quagga">
+      <div class="close" id="close-quagga">
         <i class="fas fa-times"></i>
       </div>
     </div>
 
     <p id="result"></p>
+  </div>
+
+  <div class="floating_menu">
+    <div class="menu_icon">
+      <i class="fas fa-bars"></i>
+    </div>
+    <div class="menu_detail">
+      <ul>
+        <li><a href="{{ route('home') }}"> Homepage </a></li>
+        <li><a href="#" id="show_history">History </a></li>
+        <li><a href="#" id="logout">Logout </a></li>
+      </ul>
+    </div>
+  </div>
+
+  <form method="post" action="{{route('logout')}}" id="logout_form">
+    @csrf
+  </form>
+
+  <div class="history" id="history_box">
+    <div class="close" id="close_history">
+      <i class="fas fa-times"></i>
+    </div>
+
+    <h4>Branch Check Stock History</h4>
+    <table class="table" id="history_table">
+      <thead>
+        <th>Branch</th>
+        <th>Barcode</th>
+        <th>Product Name</th>
+        <th>Updated Stock</th>
+        <th>Created at</th>
+      </thead>
+      <tbody>
+        @foreach($branch_stock_history as $history)
+          <tr>
+            <td>{{ $history->branch_name }}</td>
+            <td>{{ $history->barcode }}</td>
+            <td>{{ $history->product_name }}</td>
+            <td>{{ $history->new_stock_count }}</td>
+            <td>{{ $history->created_at }}</td>
+          </tr>
+        @endforeach
+      </tbody>
+    </table>
+    <div style="float:right;margin-top: 5px">
+      {{$branch_stock_history->links()}}
+    </div>
   </div>
 
 </body>
@@ -170,7 +231,7 @@
 
     cameraFeed.getElementsByTagName("video")[0].pause();
 
-    $(".close-quagga").click(function(){
+    $("#close-quagga").click(function(){
       $("#quagga-scanner").hide();
       
       cameraFeed.getElementsByTagName("video")[0].pause();
@@ -213,6 +274,22 @@
 
     $("#submit_stock").click(function(){
       submitStock();
+    });
+
+    $("#logout").click(function(){
+      $("#logout_form").submit();
+    });
+
+    $("#close_history").click(function(){
+      $("#history_box").hide();
+    });
+
+    $("#show_history").click(function(){
+      $("#history_box").show();
+    });
+
+    $(".floating_menu").click(function(){
+      $(".menu_detail").fadeIn();
     });
 
   });
@@ -277,9 +354,24 @@
         $("input[name='stock_count']").val("");
         scan_value = null;
 
+        var branch_detail = result.branch_detail;
+        var product_detail = result.product_detail;
+        var history = result.history;
+
+        var html = "";
+        html += "<tr>";
+        html += "<td>"+branch_detail.branch_name+"</td>";
+        html += "<td>"+product_detail.barcode+"</td>";
+        html += "<td>"+product_detail.product_name+"</td>";
+        html += "<td>"+stock_count+"</td>";
+        html += "<td>"+history.created_at+"</td>";
+        html += "</tr>";
+
+        $("#history_table tbody").append(html);
+
         Swal.fire(
           'Success!',
-          "<b>"+result.product_detail.product_name+"</b> stock was updated.",
+          "<b>"+product_detail.product_name+"</b> stock was updated.",
           'success'
         ).then((result) => {
           if (result.isConfirmed) {

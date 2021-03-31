@@ -410,7 +410,7 @@
               <h4 class="card-title">Branch Check Stock History</h4>
             </div>
             <div class="col">
-              <a href="{{route('getStockLost')}}"><i class="fas fa-barcode first branch-color"></i></a>
+              <a href="{{route('getBranchStockHistory')}}"><i class="fas fa-barcode first branch-color"></i></a>
             </div>
           </div>
         </div>

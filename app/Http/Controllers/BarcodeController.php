@@ -19,7 +19,11 @@ class BarcodeController extends Controller
     public function getCheckStockPage()
     {
       $branch_list = Branch::get();
-      return view('barcode.index', compact('branch_list'));
+
+      $user = Auth::user();
+      $branch_stock_history = Branch_stock_history::where('Branch_stock_history.user_id', $user->id)->leftJoin('branch', 'Branch_stock_history.branch_id', '=', 'Branch.id')->select('Branch_stock_history.*', 'Branch.branch_name')->paginate(15);
+
+      return view('barcode.index', compact('branch_list', 'branch_stock_history'));
     }
 
     public function getProductByBarcode(Request $request)
@@ -85,8 +89,21 @@ class BarcodeController extends Controller
         return response()->json($response);
       }
 
-      Branch_stock_history::create([
+      $branch_detail = Branch::where('id', $branch_product->branch_id)->first();
+      $branch_id = null;
+      $branch_token = null;
+
+      if($branch_detail)
+      {
+        $branch_id = $branch_detail->id;
+        $branch_token = $branch_detail->token;
+      }
+
+      $history = Branch_stock_history::create([
         'user_id' => $user->id,
+        'user_name' => $user->name,
+        'branch_id' => $branch_id,
+        'branch_token' => $branch_token,
         'branch_product_id' => $request->product_id,
         'barcode' => $branch_product->barcode,
         'product_name' => $branch_product->product_name,
@@ -103,6 +120,8 @@ class BarcodeController extends Controller
       $response->error = 0;
       $response->message = "Success";
       $response->product_detail = $branch_product;
+      $response->branch_detail = $branch_detail;
+      $response->history = $history;
 
       return response()->json($response);
     }

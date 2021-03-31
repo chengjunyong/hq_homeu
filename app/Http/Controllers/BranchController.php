@@ -16,6 +16,9 @@ use App\Transaction_detail;
 use App\User;
 use App\Damaged_stock_history;
 use App\Stock_lost_history;
+use App\Branch_stock_history;
+
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
 class BranchController extends Controller
@@ -535,5 +538,69 @@ class BranchController extends Controller
                                       ->paginate(20);
 
     return view('sl_history',compact('url','sl_list'));
+  }
+
+  public function getBranchStockHistory()
+  {
+    $url = route('home')."?p=branch_menu";
+
+    $selected_date_from = date('Y-m-d', strtotime(now()));
+    $selected_date_to = date('Y-m-d', strtotime(now()));
+    
+    $branch = Branch::get();
+
+    return view('branch.branch_stock_history',compact('branch', 'selected_date_from', 'selected_date_to','url'));
+  }
+
+  public function getBranchStockHistoryDetail(Request $request)
+  {
+    $url = route('home')."?p=branch_menu";
+
+    $selected_branch = null;
+    $selected_branch_token = null;
+    $selected_date_from = date('Y-m-d', strtotime(now()));
+    $selected_date_to = date('Y-m-d', strtotime(now()));
+
+    $date = date('Y-m-d H:i:s', strtotime(now()));
+    $user = Auth::user();
+
+    // default
+    if($request->branch_token)
+    {
+      $selected_branch_token = $request->branch_token;
+    }
+
+    if($request->report_date_from)
+    {
+      $selected_date_from = $request->report_date_from;
+    }
+
+    if($request->report_date_to)
+    {
+      $selected_date_to = $request->report_date_to;
+    }
+
+    if(!$selected_branch_token)
+    {
+      $selected_branch = Branch::first();
+    }
+    else
+    {
+      $selected_branch = Branch::where('token', $selected_branch_token)->first();
+    }
+
+    $selected_date_start = $selected_date_from." 00:00:00";
+    $selected_date_end = $selected_date_to." 23:59:59";
+
+    if($selected_branch)
+    {
+      $branch_stock_history = Branch_stock_history::whereBetween('created_at', [$selected_date_start, $selected_date_end])->where('branch_token', $selected_branch->token)->get();
+    }
+    else
+    {
+      $branch_stock_history = Branch_stock_history::whereBetween('created_at', [$selected_date_start, $selected_date_end])->where('branch_token', null)->get();
+    }
+
+    return view('branch/branch_stock_history_detail',compact('selected_branch', 'selected_date_from', 'selected_date_to', 'branch_stock_history', 'url', 'date', 'user'));
   }
 }
