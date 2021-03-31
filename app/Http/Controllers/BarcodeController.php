@@ -21,7 +21,7 @@ class BarcodeController extends Controller
       $branch_list = Branch::get();
 
       $user = Auth::user();
-      $branch_stock_history = Branch_stock_history::where('branch_stock_history.user_id', $user->id)->leftJoin('branch', 'branch_stock_history.branch_id', '=', 'Branch.id')->select('Branch_stock_history.*', 'Branch.branch_name')->paginate(15);
+      $branch_stock_history = Branch_stock_history::where('branch_stock_history.user_id', $user->id)->leftJoin('branch', 'branch_stock_history.branch_id', '=', 'branch.id')->select('branch_stock_history.*', 'branch.branch_name')->paginate(15);
 
       return view('barcode.index', compact('branch_list', 'branch_stock_history'));
     }
