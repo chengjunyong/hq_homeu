@@ -60,7 +60,22 @@
     let branch_id = $("select[name='branch_id']").val();
     $("#branch_id").val(branch_id)
 
-    $("#exportStockBalanceReport").submit();
+    swal.fire({
+      title : 'Exporting Report',
+      html  : 'It will take some time to process, please wait awhile.',
+      didOpen: () => {
+          swal.showLoading()
+      },
+      backdrop : true,
+      allowOutsideClick : true,
+    });
+
+    $.post("{{route('exportStockBalance')}}",
+      $("#exportStockBalanceReport").serialize(),
+      function(data){
+        swal.close();
+        window.open(data);
+      },'json');
 
   });
 </script>

@@ -403,7 +403,7 @@ class SalesController extends Controller
     $path = 'storage/report/Stock Balance Report.xlsx';
     $writer->save($path);
 
-    return response()->download($path);
+    return response()->json($path);
   }
 
   public function getStockOrder()
