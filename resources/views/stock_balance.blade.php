@@ -67,7 +67,7 @@
           swal.showLoading()
       },
       backdrop : true,
-      allowOutsideClick : true,
+      allowOutsideClick : false,
     });
 
     $.post("{{route('exportStockBalance')}}",
