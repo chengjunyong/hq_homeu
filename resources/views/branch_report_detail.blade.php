@@ -48,8 +48,8 @@
     <h5>({{ date("d-M-Y", strtotime($_GET['report_date_from'])) }} - {{ date("d-M-Y", strtotime($_GET['report_date_to'])) }})</h5>
   </div>
 
-<!--   <div class="second">
-    <table style="float:right">
+  <div class="second">
+    <table style="float:left; margin-bottom: 20px;">
       <tr>
         <td><b>Date</b></td>
         <td>:</td>
@@ -60,22 +60,50 @@
         <td>:</td>
         <td align="right">{{ $user->name }}</td>
       </tr>
+      <tr>
+        <td><b>Branch : </b></td>
+        <td>:</td>
+        <td align="right">{{ $branch->branch_name }}</td>
+      </tr>
     </table>
-  </div> -->
+  </div>
 
 
   <div class="main" style="padding-bottom: 2.5rem;">
     <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
       <thead style="background: #adade0;">
-        <th>BRANCH NAME</th>
-        <th>TOTAL(RM)</th>
+        <th style="text-align: right">BRANCH NAME</th>
+        <th style="text-align: right">CASH</th>
+        <th style="text-align: right">CREDIT CARD</th>
+        <th style="text-align: right">T & GO</th>
+        <th style="text-align: right">OTHER</th>
+        <th style="text-align: right">CREDIT SALES</th>
+        <th style="text-align: right">TOTAL</th>
       </thead>
-      <tbody class="border" style="border-bottom-color: black !important">
-        <tr>
-          <td>{{ $branch->branch_name }}</td>
-          <td style="text-align: right;">{{ number_format($branch->branch_total, 2) }}</td>
-        </tr>
+      <tbody class="border" style="border-bottom-color:black !important">
+        @foreach($cashier_transaction as $cashier)
+          <tr>
+            <td style="text-align: right;">{{ $cashier->cashier_name }}</td>
+            <td style="text-align: right;">{{ number_format($cashier->cash, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($cashier->credit_card, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($cashier->tng, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($cashier->other, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($cashier->credit_sales, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($cashier->total, 2) }}</td>
+          </tr>
+        @endforeach
       </tbody>
+      <tfoot>
+        <tr>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">Jumlah :</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->cash, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->credit_card, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->tng, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->other, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->credit_sales, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->total, 2) }}</td>
+        </tr>
+      </tfoot>
     </table>
   </div>
 

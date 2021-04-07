@@ -41,14 +41,16 @@
 <div style="margin: 0 30px;">
 
   <div class="header">
-    <h2>HOME U(M) SDN BHD</h2>
+    <h4>HOME U(M) SDN BHD</h4>
     <h4>(125272-P)</h4>
-    <h4>Tel: 09-7744243 &nbsp Email: assist@homeu.com.my</h4>
-    <h3 style="margin:20px 30%;border:1px solid black">SALES REPORT</h3>
+    <h4 style="margin:20px 30%;border:1px solid black;margin-top: 10px">Total Sales Report</h4>
+    <h5 style="margin: 0 !important;">Report Date</h5>
+    <h5>({{ date("d-M-Y", strtotime($_GET['report_date_from'])) }} - {{ date("d-M-Y", strtotime($_GET['report_date_to'])) }})</h5>
+
   </div>
 
   <div class="second">
-    <table style="float:right">
+    <table style="float:left; margin-bottom: 20px;">
       <tr>
         <td><b>Date</b></td>
         <td>:</td>
@@ -61,49 +63,41 @@
       </tr>
     </table>
   </div>
-  <br/><br/><br/>
 
   <div class="main" style="padding-bottom: 2.5rem;">
     <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
       <thead style="background: #adade0;">
-        <th>INVOICE NO</th>
-        <th>PAYMENT TYPE</th>
-        <th>REFERENCE NO</th>
-        <th style="text-align: right">SUBTOTAL(RM)</th>
-        <th style="text-align: right">DISCOUNT(RM)</th>
-        <th style="text-align: right">TOTAL(RM)</th>
-        <th style="text-align: right">RECEIVED PAYMENT(RM)</th>
-        <th style="text-align: right">BALANCE(RM)</th>
-        <th>TRANSACTION DATE</th>
+        <th style="text-align: right">CASHIER NAME</th>
+        <th style="text-align: right">CASH</th>
+        <th style="text-align: right">CREDIT CARD</th>
+        <th style="text-align: right">T & GO</th>
+        <th style="text-align: right">OTHER</th>
+        <th style="text-align: right">CREDIT SALES</th>
+        <th style="text-align: right">TOTAL</th>
         <!-- <th>DETAIL</th> -->
       </thead>
       <tbody class="border" style="border-bottom-color:black !important">
-        @foreach($transaction as $result)
+        @foreach($branch_list as $branch)
           <tr>
-            <td>{{ $result->transaction_no }}</td>
-            <td>{{ $result->payment_type_text }}</td>
-            <td>{{ $result->invoice_no }}</td>
-            <td style="text-align: right;">{{ number_format($result->subtotal, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($result->total_discount, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($result->total, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($result->payment, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($result->balance, 2) }}</td>
-            <td data-order="{{ $result->transaction_date }}">{{ date('d M Y g:i:s A', strtotime($result->transaction_date)) }}</td>
-            <!-- <td>
-              <a href="{{ route('getSalesReportDetail', ['branch_id' => $result->branch_id, 'id' => $result->branch_transaction_id ]) }}">Detail</a>
-            </td> -->
+            <td style="text-align: right;">{{ $branch->branch_name }}</td>
+            <td style="text-align: right;">{{ number_format($branch->cash, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($branch->credit_card, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($branch->tng, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($branch->other, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($branch->credit_sales, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($branch->total, 2) }}</td>
           </tr>
         @endforeach
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="3" style="text-align: center; padding: 5px 5px;">Total :</td>
-          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($transaction->sum('subtotal'),2) }}</td>
-          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($transaction->sum('total_discount'),2) }}</td>
-          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($transaction->sum('total'),2) }}</td>
-          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($transaction->sum('payment'),2) }}</td>
-          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($transaction->sum('balance'),2) }}</td>
-          <td></td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">Jumlah :</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->cash, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->credit_card, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->tng, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->other, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->credit_sales, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->total, 2) }}</td>
         </tr>
       </tfoot>
     </table>
