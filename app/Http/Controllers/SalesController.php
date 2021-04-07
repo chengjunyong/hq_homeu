@@ -59,6 +59,9 @@ class SalesController extends Controller
 
   public function getSalesTransactionReport(Request $request)
   {
+    $report_date_from = $request->report_date_from;
+    $report_date_to = $request->report_date_to;
+
     $url = route('home')."?p=sales_menu";
 
     $selected_date_from = date('Y-m-d', strtotime(now()));
@@ -80,9 +83,75 @@ class SalesController extends Controller
     $selected_date_start = $selected_date_from." 00:00:00";
     $selected_date_end = $selected_date_to." 23:59:59";
 
-    $transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->get();
+    $branch_list = Branch::get();
 
-    return view('sales_report_transaction',compact('selected_date_from', 'selected_date_to', 'transaction', 'url', 'date', 'user'));
+    $cash_total = 0;
+    $credit_card_total = 0;
+    $tng_total = 0;
+    $other_total = 0;
+    $credit_sales_total = 0;
+    $total = 0;
+
+    foreach($branch_list as $branch)
+    { 
+      $branch->cash = 0;
+      $branch->credit_card = 0;
+      $branch->tng = 0;
+      $branch->other = 0;
+      $branch->credit_sales = 0;
+
+      $branch_other_total = 0;
+      $branch_total = 0;
+
+      $transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $branch->token)->selectRaw('*, sum(total) as payment_type_total')->groupBy('payment_type')->get();
+
+      foreach($transaction as $value)
+      {
+        $branch_total += $value->payment_type_total;
+
+        $total += $value->payment_type_total;
+
+        if($value->payment_type == "cash")
+        {
+          $branch->cash = $value->payment_type_total;
+
+          $cash_total += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "credit_card")
+        {
+          $branch->credit_card = $value->payment_type_total;
+
+          $credit_card_total += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "tng")
+        {
+          $branch->tng = $value->payment_type_total;
+
+          $tng_total += $value->payment_type_total;
+        }
+        else
+        {
+          $branch_other_total += $value->payment_type_total;
+
+          $other_total += $value->payment_type_total;
+        }
+      }
+
+      if($branch_other_total > 0)
+      {
+        $branch->other = $branch_other_total;
+      }
+    }
+
+    $total_summary = new \stdClass();
+    $total_summary->cash = $cash_total;
+    $total_summary->credit_card = $credit_card_total;
+    $total_summary->tng = $tng_total;
+    $total_summary->other = $other_total;
+    $total_summary->credit_sales = $credit_sales_total;
+    $total_summary->total = $total;
+
+    return view('sales_report_transaction',compact('selected_date_from', 'selected_date_to', 'branch_list', 'total_summary', 'url', 'date', 'user'));
   }
 
   public function getSalesReportDetail($branch_id, $branch_transaction_id)
@@ -206,22 +275,13 @@ class SalesController extends Controller
 
   public function getBranchReportDetail(Request $request)
   {
-    $report_date_from = $request->report_date_from;
-    $report_date_to = $request->report_date_to;
-
     $url = route('home')."?p=sales_menu";
-
-    $selected_branch = [];
-    $selected_branch_token = [];
-    $selected_date_from = date('Y-m-d', strtotime(now()));
-    $selected_date_to = date('Y-m-d', strtotime(now()));
 
     $date = date('Y-m-d H:i:s', strtotime(now()));
     $user = Auth::user();
 
-    // default
-    $branch = $request->branch;
-    $branch = Branch::where('token', $branch)->first();
+    $selected_date_from = date('Y-m-d', strtotime(now()));
+    $selected_date_to = date('Y-m-d', strtotime(now()));
 
     if($request->report_date_from)
     {
@@ -236,22 +296,75 @@ class SalesController extends Controller
     $selected_date_start = $selected_date_from." 00:00:00";
     $selected_date_end = $selected_date_to." 23:59:59";
 
-    if($branch)
-    {
-      $transaction_detail_list = Transaction_detail::whereBetween('created_at', [$selected_date_start, $selected_date_end])->where('branch_id', $branch->token)->selectRaw('*, sum(total) as branch_total')->groupBy('branch_id')->get();
+    $branch = Branch::where('token', $request->branch)->first();
 
-      $branch->branch_total = 0;
-      foreach($transaction_detail_list as $transaction_detail)
+    $branch_cash = 0;
+    $branch_credit_card = 0;
+    $branch_tng = 0;
+    $branch_other = 0;
+    $branch_credit_sales = 0;
+    $branch_total = 0;
+
+    $cashier_transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $branch->token)->groupBy('cashier_name')->get();
+
+    foreach($cashier_transaction as $cashier)
+    {
+      $cashier->cash = 0;
+      $cashier->credit_card = 0;
+      $cashier->tng = 0;
+      $cashier->other = 0;
+      $cashier->credit_sales = 0;
+      $cashier->total = 0;
+
+      $cashier_other_total = 0;
+      $cashier_total = 0;
+
+      $transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $branch->token)->where('ip', $cashier->ip)->selectRaw('*, sum(total) as payment_type_total')->groupBy('payment_type')->get();
+
+      foreach($transaction as $value)
       {
-        if($transaction_detail->branch_id == $branch->token)
+        $cashier_total += $value->payment_type_total;
+        $branch_total += $value->payment_type_total;
+
+        if($value->payment_type == "cash")
         {
-          $branch->branch_total = $transaction_detail->branch_total;
-          break;
+          $cashier->cash = $value->payment_type_total;
+          $branch_cash += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "credit_card")
+        {
+          $cashier->credit_card = $value->payment_type_total;
+          $branch_credit_card += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "tng")
+        {
+          $cashier->tng = $value->payment_type_total;
+          $branch_tng += $value->payment_type_total;
+        }
+        else
+        {
+          $cashier_other_total += $value->payment_type_total;
+          $branch_other += $value->payment_type_total;
         }
       }
+
+      if($cashier_other_total > 0)
+      {
+        $cashier->other = $cashier_other_total;
+      }
+
+      $cashier->total = $cashier_total;
     }
 
-    return view('branch_report_detail',compact('branch', 'selected_date_from', 'selected_date_to', 'url', 'date', 'user'));
+    $total_summary = new \stdClass();
+    $total_summary->cash = $branch_cash;
+    $total_summary->credit_card = $branch_credit_card;
+    $total_summary->tng = $branch_tng;
+    $total_summary->other = $branch_other;
+    $total_summary->credit_sales = $branch_credit_sales;
+    $total_summary->total = $branch_total;
+
+    return view('branch_report_detail',compact('cashier_transaction', 'total_summary', 'branch', 'selected_date_from', 'selected_date_to', 'url', 'date', 'user'));
   }
 
   public function exportSalesReport(Request $request)
@@ -555,11 +668,6 @@ class SalesController extends Controller
       if($cashier_other_total > 0)
       {
         $cashier->other = $cashier_other_total;
-      }
-
-      if($cashier_total == 0)
-      {
-        $cashier_total = "";
       }
 
       $sheet->setCellValue('A'.$started_row, $cashier->cashier_name);
