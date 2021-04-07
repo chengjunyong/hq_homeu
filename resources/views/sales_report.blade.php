@@ -31,14 +31,7 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-12 form-group">
-            <label>Branch</label>
             <button type="button" class="btn btn-primary" id="export_report" style="float: right; margin-bottom: 10px;">Export Report</button>
-            <select class="form-control" name="branch_token">
-              <option value="0">Please select</option>
-              @foreach($branch as $value)
-                <option value="{{ $value->token }}">{{ $value->branch_name }}</option>
-              @endforeach
-            </select>
           </div>
           <div class="col-md-6">
             <label>Report date from</label>
@@ -48,6 +41,11 @@
           <div class="col-md-6">
             <label>Report date to</label>
             <input type="date" name="report_date_to" class="form-control" value="{{ $selected_date_to }}" required>
+          </div>
+
+          <div class="col-md-12">
+            <label>Invoice Number</label>
+            <input type="text" name="invoice" class="form-control" />
           </div>
         </div>
 

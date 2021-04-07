@@ -72,10 +72,7 @@ Route::get('/daily_report_detail', 'SalesController@getdailyReportDetail')->name
 Route::get('/branch_report', 'SalesController@getBranchReport')->name('getBranchReport');
 Route::get('/branch_report_detail', 'SalesController@getBranchReportDetail')->name('getBranchReportDetail');
 Route::post('/exportSalesReport', 'SalesController@exportSalesReport')->name('exportSalesReport');
-
-// sync URL
-Route::get('/branchSync','BranchController@branchSync')->name('branchSync');
-Route::get('/branchSyncCompleted', 'BranchController@branchSyncCompleted')->name('branchSyncCompleted'); 
+Route::post('/exportBranchReport', 'SalesController@exportBranchReport')->name('exportBranchReport');
 
 // User access control
 Route::get('/user_access_control', 'UserController@getUserAccessControl')->name('getUserAccessControl'); 

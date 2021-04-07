@@ -33,6 +33,8 @@ class api extends Controller
           'branch_transaction_id' => $data['id'],
           'branch_id' => $branch_id,
           'session_id' => $session_id,
+          'ip' => $data['ip'],
+          'cashier_name' => $data['cashier_name'],
           'transaction_no' => $data['transaction_no'],
           'invoice_no' => $data['invoice_no'],
           'user_id' => $data['user_id'],

@@ -12,6 +12,8 @@ class transaction extends Model
       'branch_transaction_id',
       'branch_id',
       'session_id',
+      'ip',
+      'cashier_name',
       'transaction_no',
       'invoice_no',
       'user_id',
