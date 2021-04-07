@@ -93,22 +93,24 @@
 
 		<table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
 			<thead style="background: #adade0;">
+        <th style="width:5%" align="left">Bil</th>
 				<th style="width:15%" align="left">BARCODE</th>
 				<th>ITEMS</th>
-				<th style="width:5%;text-align: right">QTY</th>
-				<th style="width:13%;text-align: right">UNIT PRICE</th>
+				<th style="width:5%;text-align: center">QTY</th>
+				<th style="width:13%;text-align: center">UNIT PRICE</th>
 			</thead>
 			<tbody class="border">
-				@foreach($po_detail as $result)
+				@foreach($po_detail as $key => $result)
 					<tr>
+            <td>{{$key +1}}</td>
 						<td>{{$result->barcode}}</td>
 						<td>{{$result->product_name}}</td>
-						<td style="text-align: right">{{$result->quantity}}</td>
-						<td style="text-align: right">{{$result->cost}}</td>
+						<td style="text-align: center">{{$result->quantity}}</td>
+						<td style="text-align: right">{{ number_format($result->cost,2) }}</td>
 					</tr>
 				@endforeach
 				<tr>
-					<td rowspan="5" colspan="2" style="vertical-align: top">Comment</td>
+					<td rowspan="5" colspan="3" style="vertical-align: top">Comment</td>
 					<td>Sub Total</td>
 					<td style="text-align: right">{{number_format($total,2)}}</td>
 				</tr>

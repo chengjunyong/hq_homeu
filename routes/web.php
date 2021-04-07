@@ -73,6 +73,13 @@ Route::get('/branch_report', 'SalesController@getBranchReport')->name('getBranch
 Route::get('/branch_report_detail', 'SalesController@getBranchReportDetail')->name('getBranchReportDetail');
 Route::post('/exportSalesReport', 'SalesController@exportSalesReport')->name('exportSalesReport');
 
+Route::get('/stock_balance','SalesController@getStockBalance')->name('getStockBalance');
+Route::post('/stock_balance_report','SalesController@postStockBalanceReport')->name('postStockBalanceReport');
+Route::post('/export_stock_balance', 'SalesController@exportStockBalance')->name('exportStockBalance');
+
+Route::get('/stock_reorder','SalesController@getStockReorder')->name('getStockReorder');
+Route::post('/stock_report_report','SalesController@getStockReorderReport')->name('getStockReorderReport');
+
 // sync URL
 Route::get('/branchSync','BranchController@branchSync')->name('branchSync');
 Route::get('/branchSyncCompleted', 'BranchController@branchSyncCompleted')->name('branchSyncCompleted'); 

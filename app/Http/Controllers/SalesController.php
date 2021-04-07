@@ -7,7 +7,10 @@ use App\Branch;
 use App\Transaction;
 use App\Transaction_detail;
 use App\Product_list;
-
+use App\Branch_stock_history;
+use App\Branch_product;
+use App\Do_list;
+use App\Do_detail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -311,5 +314,106 @@ class SalesController extends Controller
     $writer->save($path);
 
     return response()->download($path);
+  }
+
+  public function getStockBalance()
+  {
+    $url = route('home')."?p=sales_menu";
+
+    $branch = Branch::get();
+
+    return view('stock_balance',compact('url','branch'));
+  }
+
+  public function postStockBalanceReport(Request $request)
+  {
+    $date = date('Y-m-d H:i:s', strtotime(now()));
+    $stock = Branch_product::join('department','department.id','=','branch_product.department_id')
+                          ->join('category','category.id','=','branch_product.category_id')
+                          ->where('branch_product.branch_id',$request->branch_id)
+                          ->select('department.department_name','category.category_name','branch_product.*')
+                          ->limit(10000)
+                          ->get();
+
+    $branch = Branch::where('id',$request->branch_id)->first();
+
+    $balance_stock = Branch_product::where('branch_id',$request->branch_id)
+                                    ->selectRaw('SUM(cost * quantity) as total')
+                                    ->get();
+
+    return view('report.stock_balance_report',compact('stock','branch','date','balance_stock'));
+  }
+
+  public function exportStockBalance(Request $request)
+  {
+
+     if(!Storage::exists('public/report'))
+    {
+      Storage::makeDirectory('public/report', 0775, true); //creates directory
+    }
+
+    $date = date('Y-m-d', strtotime(now()));
+    $branch = Branch::where('id',$request->branch_id)->first();
+
+    $stock = Branch_product::join('department','department.id','=','branch_product.department_id')
+                          ->join('category','category.id','=','branch_product.category_id')
+                          ->where('branch_product.branch_id',$request->branch_id)
+                          ->select('department.department_name','category.category_name','branch_product.*')
+                          ->get();
+
+    $stock_array = array();
+    foreach($stock as $key => $result){
+      array_push($stock_array,[$key+1,$result->department_name,$result->category_name,$result->barcode,$result->product_name,$result->cost,number_format($result->quantity,0),$result->price,number_format($result->cost * $result->quantity,2)]);
+    }
+
+    $balance_stock = Branch_product::where('branch_id',$request->branch_id)
+                                    ->selectRaw('SUM(cost * quantity) as total')
+                                    ->get();
+
+    $spreadsheet = new Spreadsheet();
+    $spreadsheet->getActiveSheet()->mergeCells('A1:I1');
+    $spreadsheet->getActiveSheet()->mergeCells('A2:I2');
+    $spreadsheet->getActiveSheet()->mergeCells('G4:H4');
+    $spreadsheet->getActiveSheet()->fromArray($stock_array,null,'A6');  
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal('center');
+
+    //Header
+    $sheet->setCellValue('A1', 'HomeU (M) Sdh Bhd');
+    $sheet->setCellValue('A2', 'Stock Balance Stock');
+    $sheet->setCellValue('A3', 'Date');
+    $sheet->setCellValue('B3', $date);
+    $sheet->setCellValue('A4', 'Branch');
+    $sheet->setCellValue('B4', $branch->branch_name);
+    $sheet->setCellValue('G4', 'Balance Stock');
+    $sheet->setCellValue('I4', number_format($balance_stock[0]->total,2));
+
+    //Data
+    $sheet->setCellValue('A5', 'Bil');
+    $sheet->setCellValue('B5', 'Department');
+    $sheet->setCellValue('C5', 'Category');
+    $sheet->setCellValue('D5', 'Barcode');
+    $sheet->setCellValue('E5', 'Product Name');
+    $sheet->setCellValue('F5', 'Cost');
+    $sheet->setCellValue('G5', 'Quantity');
+    $sheet->setCellValue('H5', 'Selling Price');
+    $sheet->setCellValue('I5', 'Total Cost');
+
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/report/Stock Balance Report.xlsx';
+    $writer->save($path);
+
+    return response()->download($path);
+  }
+
+  public function getStockOrder()
+  {
+    $url = route('home')."?p=sales_menu";
+
+  }
+
+  public function getStockReorderReport(Request $request)
+  {
+
   }
 }
