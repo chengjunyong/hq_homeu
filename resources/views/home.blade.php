@@ -467,6 +467,36 @@
         </div>
       </div>
     </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Stock Balance Report</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getStockBalance')}}"><i class="fas fa-cubes first sales-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!--     <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Stock Reorder Report</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getStockBalance')}}"><i class="fas fa-chart-bar first sales-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
     
   </div>
 </div>

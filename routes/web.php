@@ -74,6 +74,13 @@ Route::get('/branch_report_detail', 'SalesController@getBranchReportDetail')->na
 Route::post('/exportSalesReport', 'SalesController@exportSalesReport')->name('exportSalesReport');
 Route::post('/exportBranchReport', 'SalesController@exportBranchReport')->name('exportBranchReport');
 
+Route::get('/stock_balance','SalesController@getStockBalance')->name('getStockBalance');
+Route::post('/stock_balance_report','SalesController@postStockBalanceReport')->name('postStockBalanceReport');
+Route::post('/export_stock_balance', 'SalesController@exportStockBalance')->name('exportStockBalance');
+
+Route::get('/stock_reorder','SalesController@getStockReorder')->name('getStockReorder');
+Route::post('/stock_report_report','SalesController@getStockReorderReport')->name('getStockReorderReport');
+
 // User access control
 Route::get('/user_access_control', 'UserController@getUserAccessControl')->name('getUserAccessControl'); 
 Route::post('/createNewUser', 'UserController@createNewUser')->name('createNewUser');
