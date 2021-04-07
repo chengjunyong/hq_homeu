@@ -71,12 +71,10 @@
         <th>TOTAL(RM)</th>
       </thead>
       <tbody class="border" style="border-bottom-color: black !important">
-        @foreach($selected_branch as $branch)
-          <tr>
-            <td>{{ $branch->branch_name }}</td>
-            <td style="text-align: right;">{{ number_format($branch->branch_total, 2) }}</td>
-          </tr>
-        @endforeach
+        <tr>
+          <td>{{ $branch->branch_name }}</td>
+          <td style="text-align: right;">{{ number_format($branch->branch_total, 2) }}</td>
+        </tr>
       </tbody>
     </table>
   </div>

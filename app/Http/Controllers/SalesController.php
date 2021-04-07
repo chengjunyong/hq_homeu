@@ -80,14 +80,7 @@ class SalesController extends Controller
     $selected_date_start = $selected_date_from." 00:00:00";
     $selected_date_end = $selected_date_to." 23:59:59";
 
-    $invoice = $request->invoice;
-
-    $transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where(function($query) use ($invoice){
-      if($invoice)
-      {
-        $query->where('invoice_no', $invoice);
-      }
-    })->get();
+    $transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->get();
 
     return view('sales_report_transaction',compact('selected_date_from', 'selected_date_to', 'transaction', 'url', 'date', 'user'));
   }
@@ -228,14 +221,7 @@ class SalesController extends Controller
 
     // default
     $branch = $request->branch;
-
-    if($request->branch)
-    {
-      if(count($branch) > 0)
-      {
-        $selected_branch = Branch::whereIn('token', $branch)->get();
-      }
-    }
+    $branch = Branch::where('token', $branch)->first();
 
     if($request->report_date_from)
     {
@@ -250,25 +236,22 @@ class SalesController extends Controller
     $selected_date_start = $selected_date_from." 00:00:00";
     $selected_date_end = $selected_date_to." 23:59:59";
 
-    if(count($selected_branch) > 0)
+    if($branch)
     {
-      $transaction_detail_list = Transaction_detail::whereBetween('created_at', [$selected_date_start, $selected_date_end])->whereIn('branch_id', $branch)->selectRaw('*, sum(total) as branch_total')->groupBy('branch_id')->get();
+      $transaction_detail_list = Transaction_detail::whereBetween('created_at', [$selected_date_start, $selected_date_end])->where('branch_id', $branch->token)->selectRaw('*, sum(total) as branch_total')->groupBy('branch_id')->get();
 
-      foreach($selected_branch as $branch)
+      $branch->branch_total = 0;
+      foreach($transaction_detail_list as $transaction_detail)
       {
-        $branch->branch_total = 0;
-        foreach($transaction_detail_list as $transaction_detail)
+        if($transaction_detail->branch_id == $branch->token)
         {
-          if($transaction_detail->branch_id == $branch->token)
-          {
-            $branch->branch_total = $transaction_detail->branch_total;
-            break;
-          }
+          $branch->branch_total = $transaction_detail->branch_total;
+          break;
         }
       }
     }
 
-    return view('branch_report_detail',compact('selected_branch', 'selected_date_from', 'selected_date_to', 'url', 'date', 'user'));
+    return view('branch_report_detail',compact('branch', 'selected_date_from', 'selected_date_to', 'url', 'date', 'user'));
   }
 
   public function exportSalesReport(Request $request)
@@ -328,11 +311,11 @@ class SalesController extends Controller
 
     foreach($branch_list as $branch)
     { 
-      $branch->cash = "";
-      $branch->credit_card = "";
-      $branch->tng = "";
-      $branch->other = "";
-      $branch->credit_sales = "";
+      $branch->cash = 0;
+      $branch->credit_card = 0;
+      $branch->tng = 0;
+      $branch->other = 0;
+      $branch->credit_sales = 0;
 
       $branch_other_total = 0;
       $branch_total = 0;
@@ -376,18 +359,13 @@ class SalesController extends Controller
         $branch->other = $branch_other_total;
       }
 
-      if($branch_total == 0)
-      {
-        $branch_total = "";
-      }
-
       $sheet->setCellValue('A'.$started_row, $branch->branch_name);
-      $sheet->setCellValue('B'.$started_row, $branch->cash);
-      $sheet->setCellValue('C'.$started_row, $branch->credit_card);
-      $sheet->setCellValue('D'.$started_row, $branch->tng);
-      $sheet->setCellValue('E'.$started_row, $branch->other);
-      $sheet->setCellValue('F'.$started_row, $branch->credit_sales);
-      $sheet->setCellValue('G'.$started_row, $branch_total);
+      $sheet->setCellValue('B'.$started_row, number_format($branch->cash, 2));
+      $sheet->setCellValue('C'.$started_row, number_format($branch->credit_card, 2));
+      $sheet->setCellValue('D'.$started_row, number_format($branch->tng, 2));
+      $sheet->setCellValue('E'.$started_row, number_format($branch->other, 2));
+      $sheet->setCellValue('F'.$started_row, number_format($branch->credit_sales, 2));
+      $sheet->setCellValue('G'.$started_row, number_format($branch_total, 2));
 
       $started_row++;
     }
@@ -395,17 +373,53 @@ class SalesController extends Controller
     $started_row++;
 
     if($cash_total == 0)
+    {
       $cash_total = "";
+    }
+    else
+    {
+      $cash_total = number_format($cash_total, 2);
+    }
     if($credit_card_total == 0)
+    {
       $credit_card_total = "";
+    }
+    else
+    {
+      $credit_card_total = number_format($credit_card_total);
+    }
     if($tng_total == 0)
+    {
       $tng_total = "";
+    }
+    else
+    {
+      $tng_total = number_format($tng_total, 2);
+    }
     if($other_total == 0)
+    {
       $other_total = "";
+    }
+    else
+    {
+      $other_total = number_format($other_total, 2);
+    }
     if($credit_sales_total == 0)
+    {
       $credit_sales_total = "";
+    }
+    else
+    {
+      $credit_sales_total = number_format($credit_sales_total, 2);
+    }
     if($total == 0)
+    {
       $total = "";
+    }
+    else
+    {
+      $total = number_format($total, 2);
+    }
 
     $sheet->setCellValue('A'.$started_row, "Jumlah:");
     $sheet->setCellValue('B'.$started_row, $cash_total);
@@ -415,7 +429,7 @@ class SalesController extends Controller
     $sheet->setCellValue('F'.$started_row, $credit_sales_total);
     $sheet->setCellValue('G'.$started_row, $total);
 
-    $sheet->getColumnDimension('A')->setWidth(11);
+    $sheet->getColumnDimension('A')->setWidth(20);
     $sheet->getColumnDimension('B')->setWidth(11);
     $sheet->getColumnDimension('C')->setWidth(11);
     $sheet->getColumnDimension('D')->setWidth(11);
@@ -424,9 +438,11 @@ class SalesController extends Controller
     $sheet->getColumnDimension('G')->setWidth(11);
 
     $sheet->getStyle('A5:G'.$started_row)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+    $sheet->getStyle('A5:G5')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('B6:G100')->getAlignment()->setHorizontal('right');
 
     $writer = new Xlsx($spreadsheet);
-    $path = 'storage/report/sales report.xlsx';
+    $path = 'storage/report/Sales Report.xlsx';
     $writer->save($path);
 
     return response()->download($path);
@@ -498,11 +514,11 @@ class SalesController extends Controller
 
     foreach($cashier_transaction as $cashier)
     {
-      $cashier->cash = "";
-      $cashier->credit_card = "";
-      $cashier->tng = "";
-      $cashier->other = "";
-      $cashier->credit_sales = "";
+      $cashier->cash = 0;
+      $cashier->credit_card = 0;
+      $cashier->tng = 0;
+      $cashier->other = 0;
+      $cashier->credit_sales = 0;
 
       $cashier_other_total = 0;
       $cashier_total = 0;
@@ -547,40 +563,27 @@ class SalesController extends Controller
       }
 
       $sheet->setCellValue('A'.$started_row, $cashier->cashier_name);
-      $sheet->setCellValue('B'.$started_row, $cashier->cash);
-      $sheet->setCellValue('C'.$started_row, $cashier->credit_card);
-      $sheet->setCellValue('D'.$started_row, $cashier->tng);
-      $sheet->setCellValue('E'.$started_row, $cashier->other);
-      $sheet->setCellValue('F'.$started_row, $cashier->credit_sales);
-      $sheet->setCellValue('G'.$started_row, $cashier_total);
+      $sheet->setCellValue('B'.$started_row, number_format($cashier->cash, 2));
+      $sheet->setCellValue('C'.$started_row, number_format($cashier->credit_card, 2));
+      $sheet->setCellValue('D'.$started_row, number_format($cashier->tng, 2));
+      $sheet->setCellValue('E'.$started_row, number_format($cashier->other, 2));
+      $sheet->setCellValue('F'.$started_row, number_format($cashier->credit_sales, 2));
+      $sheet->setCellValue('G'.$started_row, number_format($cashier_total, 2));
 
       $started_row++;
     }
 
     $started_row++;
 
-    if($branch_cash == 0)
-      $branch_cash = "";
-    if($branch_credit_card == 0)
-      $branch_credit_card = "";
-    if($branch_tng == 0)
-      $branch_tng = "";
-    if($branch_other == 0)
-      $branch_other = "";
-    if($branch_credit_sales == 0)
-      $branch_credit_sales = "";
-    if($branch_total == 0)
-      $branch_total = "";
-
     $sheet->setCellValue('A'.$started_row, "Jumlah: ");
-    $sheet->setCellValue('B'.$started_row, $branch_cash);
-    $sheet->setCellValue('C'.$started_row, $branch_credit_card);
-    $sheet->setCellValue('D'.$started_row, $branch_tng);
-    $sheet->setCellValue('E'.$started_row, $branch_other);
-    $sheet->setCellValue('F'.$started_row, $branch_credit_sales);
-    $sheet->setCellValue('G'.$started_row, $branch_total);
+    $sheet->setCellValue('B'.$started_row, number_format($branch_cash, 2));
+    $sheet->setCellValue('C'.$started_row, number_format($branch_credit_card, 2));
+    $sheet->setCellValue('D'.$started_row, number_format($branch_tng, 2));
+    $sheet->setCellValue('E'.$started_row, number_format($branch_other, 2));
+    $sheet->setCellValue('F'.$started_row, number_format($branch_credit_sales, 2));
+    $sheet->setCellValue('G'.$started_row, number_format($branch_total, 2));
 
-    $sheet->getColumnDimension('A')->setWidth(11);
+    $sheet->getColumnDimension('A')->setWidth(20);
     $sheet->getColumnDimension('B')->setWidth(11);
     $sheet->getColumnDimension('C')->setWidth(11);
     $sheet->getColumnDimension('D')->setWidth(11);
@@ -589,9 +592,11 @@ class SalesController extends Controller
     $sheet->getColumnDimension('G')->setWidth(11);
 
     $sheet->getStyle('A5:G'.$started_row)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+    $sheet->getStyle('A5:G5')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('B6:G100')->getAlignment()->setHorizontal('right');
 
     $writer = new Xlsx($spreadsheet);
-    $path = 'storage/report/branch report.xlsx';
+    $path = 'storage/report/Branch Report.xlsx';
     $writer->save($path);
 
     return response()->download($path);

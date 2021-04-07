@@ -43,10 +43,10 @@
             <input type="date" name="report_date_to" class="form-control" value="{{ $selected_date_to }}" required>
           </div>
 
-          <div class="col-md-12">
+          <!-- <div class="col-md-12">
             <label>Invoice Number</label>
             <input type="text" name="invoice" class="form-control" />
-          </div>
+          </div> -->
         </div>
 
         <div class="row">
