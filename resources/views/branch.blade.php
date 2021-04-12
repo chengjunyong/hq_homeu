@@ -183,12 +183,15 @@
 				$("#load").modal('toggle');
 				if(data == "true"){
 					$("#title").text("Successful");
-					$("#msg").text("Branch create successful");
+					$("#msg").text("Branch create successful, Refresh in 1 seconds");
 				}else{
 					$("#title").text("Failed");
 					$("#msg").text("Branch create failure, please contact IT support");
 				}
 				$("#result").modal('toggle');
+
+        setTimeout(()=>{window.location.reload();},1250);
+
 			},'html');
 	});
 		

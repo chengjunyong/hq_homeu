@@ -11,5 +11,6 @@ class Category extends Model
     [
       'category_name',
       'department_id',
+      'category_code',
     ];
 }
