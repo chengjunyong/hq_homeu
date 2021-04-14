@@ -157,13 +157,17 @@ class BarcodeController extends Controller
       if($stock_type == "branch")
       {
         Branch_product::where('id', $request->product_id)->update([
-          'quantity' => $request->stock_count
+          'quantity' => $request->stock_count,
+          'department_id' => $request->department_id,
+          'category_id' => $request->category_id
         ]);
       }
       elseif($stock_type == "warehouse")
       {
         Warehouse_stock::where('id', $request->product_id)->update([
-          'quantity' => $request->stock_count
+          'quantity' => $request->stock_count,
+          'department_id' => $request->department_id,
+          'category_id' => $request->category_id
         ]);
       }
 

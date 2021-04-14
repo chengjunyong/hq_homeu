@@ -519,20 +519,22 @@
       </div>
     </div>
 
-    <div class="col-md-4">
-      <div class="card icon">
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h4 class="card-title">User Access Control</h4>
-            </div>
-            <div class="col">
-              <a href="{{route('getUserAccessControl')}}"><i class="fas fa-users first other-color"></i></a>
+    @if($user->user_type == 1)
+      <div class="col-md-4">
+        <div class="card icon">
+          <div class="card-body">
+            <div class="row">
+              <div class="col">
+                <h4 class="card-title">User Access Control</h4>
+              </div>
+              <div class="col">
+                <a href="{{route('getUserAccessControl')}}"><i class="fas fa-users first other-color"></i></a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    @endif
 
     <div class="col-md-4">
       <div class="card icon">

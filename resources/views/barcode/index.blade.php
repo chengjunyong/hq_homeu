@@ -115,7 +115,6 @@
           <div class="col-12">
             <label>Department : </label>
             <select class="form-control" name="department">
-              <option value="0">No department</option>
               @foreach($department_list as $department)
                 <option value={{ $department->id }}>{{ $department->department_name }}</option>
               @endforeach
@@ -125,7 +124,6 @@
           <div class="col-12">
             <label>Category : </label>
             <select class="form-control" name="category">
-              <option value="0">No category</option>
               @foreach($category_list as $category)
                 <option style="display: none;" department_id="{{ $category->department_id }}" value={{ $category->id }}>{{ $category->category_name }}</option>
               @endforeach
@@ -399,6 +397,9 @@
         $("#product_id").val(product_detail.id);
         $("#stock_type").val(result.stock_type);
 
+        $("select[name='department']").val(product_detail.department_id);
+        $("select[name='category']").val(product_detail.category_id);
+
         $("#submit_stock").attr("disabled", false);
 
         cameraFeed.getElementsByTagName("video")[0].load();
@@ -445,6 +446,9 @@
         $("#product_name").html("");
         $("#product_barcode").html("");
         $("#product_id").val("");
+
+        $("select[name='department']").val($("select[name='department'] option:first-child").val());
+        $("select[name='category']").val($("select[name='category'] option:first-child").val());
 
         $("input[name='stock_count']").val("");
         scan_value = null;
