@@ -148,13 +148,14 @@ class WarehouseController extends Controller
   public function getGeneratePurchaseOrder(Request $request)
   {
     $po = Purchase_order::where('id',$request->id)->first();
+    $supplier = Supplier::where('id',$po->supplier_id)->first();
     $po_detail = Purchase_order_detail::where('po_id',$request->id)->get();
     $total = 0;
     foreach($po_detail as $result){
       $total += floatval($result->cost) * intval($result->quantity);
     }
 
-    return view('print_po',compact('po','po_detail','total'));
+    return view('print_po',compact('po','po_detail','total','supplier'));
   }
 
   public function getPurchaseOrderHistory()
