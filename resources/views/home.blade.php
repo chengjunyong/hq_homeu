@@ -560,21 +560,6 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Warehouse Stock Settings</h4>
-            </div>
-            <div class="col">
-              <a href="#"><i class="fas fa-cogs first stock-color"></i></a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card icon">
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
               <h4 class="card-title">Warehouse Stock</h4>
             </div>
             <div class="col">
@@ -608,7 +593,7 @@
               <h4 class="card-title">Purchase Order History</h4>
             </div>
             <div class="col">
-              <a href="#"><i class="fas fa-history first stock-color"></i></a>
+              <a href="{{route('getPurchaseOrderHistory')}}"><i class="fas fa-history first stock-color"></i></a>
             </div>
           </div>
         </div>
@@ -624,21 +609,6 @@
             </div>
             <div class="col">
               <a href="#"><i class="fas fa-folder-plus first stock-color"></i></a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card icon">
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h4 class="card-title">Credit Note</h4>
-            </div>
-            <div class="col">
-              <a href="#"><i class="fas fa-sticky-note first stock-color"></i></a>
             </div>
           </div>
         </div>

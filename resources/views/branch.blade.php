@@ -115,7 +115,7 @@
 										<td>{{$result->token}}</td>
 										<td>{{$result->created_at}}</td>
 										<td>{{$result->updated_at}}</td>
-										<td><a href="#"><button class="btn btn-danger">Modify</button></a></td>
+										<td><button class="btn btn-danger modify-branch" data="{{ $result->id }}">Modify</button></a></td>
 									</tr>
 								@endforeach
 							</tbody>
@@ -159,8 +159,40 @@
   </div>
 </div>
 
+<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="title">Edit Branch Information</h5>
+      </div>
+      <div class="modal-body" style="text-align: center">
+        <div class="row" style="text-align: left">
+          <div class="col-md-12">
+            <label>Branch Name</label>
+            <input type="text" id="branch_name" class="form-control">
+            <input type="text" id="target_id" hidden />
+          </div>
+          <div class="col-md-12">
+            <label>Branch Contact Number</label>
+            <input type="text" id="branch_contact_number" class="form-control">
+          </div>
+          <div class="col-md-12">
+            <label>Branch Address</label>
+            <textarea id="branch_address" class="form-control"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="edit_branch">Save</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script>
+$(document).ready(function(){
 	$("#branch_list").dataTable({
 		'ordering':false,
 		'paging':false,
@@ -194,6 +226,43 @@
 
 			},'html');
 	});
+
+  $(".modify-branch").click(function(){
+    let method = "get";
+    let id = $(this).attr('data');
+    $.get('{{ route('editBranch') }}',
+    {
+      'method' : method,
+      'id'     : id
+    },function(data){
+      console.log(data);
+      $("#target_id").val(data['id']);
+      $("#branch_name").val(data['branch_name']);
+      $("#branch_contact_number").val(data['contact']);
+      $("#branch_address").val(data['address']);
+      $("#edit-modal").modal('toggle');
+    },'json');
+  });
+
+  $("#edit_branch").click(function(){
+    $.get('{{route('editBranch')}}',
+    {
+      'method' : "postBranch",
+      'id' : $("#target_id").val(),
+      'name' : $("#branch_name").val(),
+      'contact' : $("#branch_contact_number").val(),
+      'address' : $("#branch_address").val(),
+    },function(data){
+      if(data == 1){
+        window.location.reload();
+      }else{
+        swal.fire("Fail","Update Unsuccessful","error");
+      }
+
+    },'json');
+  });
+
+});
 		
 
 

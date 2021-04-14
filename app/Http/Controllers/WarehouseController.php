@@ -92,7 +92,7 @@ class WarehouseController extends Controller
     $supplier = Supplier::get();
     $items = Warehouse_stock::join('department','department.id','=','warehouse_stock.department_id')
                               ->join('category','category.id','=','warehouse_stock.category_id')
-                              ->where('warehouse_stock.reorder_level','>=','warehouse_stock.quantity')
+                              ->whereRaw('warehouse_stock.quantity <= warehouse_stock.reorder_level')
                               ->select('department.department_name','category.category_name','warehouse_stock.*')
                               ->get();
 
@@ -155,6 +155,33 @@ class WarehouseController extends Controller
     }
 
     return view('print_po',compact('po','po_detail','total'));
+  }
+
+  public function getPurchaseOrderHistory()
+  {
+    $url = route('home')."?p=stock_menu";
+
+    $po = Purchase_order::join('supplier','supplier.id','=','purchase_order.supplier_id')
+                          ->select('purchase_order.*','supplier.supplier_name')
+                          ->orderBy('created_at','desc')
+                          ->paginate(10);
+
+    return view('purchase_order_history',compact('url','po'));
+  }
+
+  public function getPoHistoryDetail(Request $request)
+  {
+    $url = route('getPurchaseOrderHistory');
+
+    $po_detail = Purchase_order::join('supplier','supplier.id','=','purchase_order.supplier_id')
+                                ->where('purchase_order.po_number','=',$request->po_number)
+                                ->select('purchase_order.*','supplier.supplier_name')
+                                ->first();
+
+    $po_list = Purchase_order_detail::where('po_number',$request->po_number)
+                                      ->get();
+
+    return view('po_history_detail',compact('url','po_detail','po_list'));
   }
 
 }
