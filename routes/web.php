@@ -18,6 +18,7 @@ Route::get('/', 'HomeController@index')->name('home');
 //Branch
 Route::get('/branchsetup','BranchController@getBranch')->name('getBranch');
 Route::post('/createbranch','BranchController@createBranch')->name('createBranch');
+Route::get('/editBranch','BranchController@editBranch')->name('editBranch');
 Route::get('/branchstocklist/{branch_id}','BranchController@getBranchStockList')->name('getBranchStockList');
 Route::get('/searchbranchproduct','BranchController@searchBranchProduct')->name('searchBranchProduct');
 Route::get('/modifybranchstock/{id}','BranchController@getModifyBranchStock')->name('getModifyBranchStock');
@@ -107,3 +108,5 @@ Route::get('/PurchaseOrder','WarehouseController@getPurchaseOrder')->name('getPu
 Route::get('/ajaxGetSupplier','WarehouseController@ajaxGetSupplier')->name('ajaxGetSupplier');
 Route::post('/sendPurchaseOrder','WarehouseController@ajaxPO')->name('ajaxPO');
 Route::get('/GeneratePurchaseOrder/{id}','WarehouseController@getGeneratePurchaseOrder')->name('getGeneratePurchaseOrder');
+Route::get('/PurchaseOrderHistory','WarehouseController@getPurchaseOrderHistory')->name('getPurchaseOrderHistory');
+Route::get('/PoHistoryDetail/{po_number}','WarehouseController@getPoHistoryDetail')->name('getPoHistoryDetail');

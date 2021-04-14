@@ -69,6 +69,29 @@ class BranchController extends Controller
     }
   }
 
+  public function editBranch(Request $request)
+  {
+    if($request->method == "get"){
+
+      $branch = Branch::where('id',$request->id)->first();
+
+      return $branch;
+
+    }else if($request->method == "postBranch"){
+
+      $result = Branch::where('id',$request->id)
+                        ->update([
+                          'branch_name' => $request->name,
+                          'address' => $request->address,
+                          'contact' => $request->contact
+                        ]);
+
+      return $result;
+    }
+
+    
+  }
+
   public function getBranchStockList(Request $request)
   {
     $url = route('home')."?p=branch_menu";
@@ -144,7 +167,7 @@ class BranchController extends Controller
     $branch_id = null;
 
     if(isset($_GET['branch_id'])){
-      $branch_product = Branch_product::where('reorder_level','>=','quantity')
+      $branch_product = Branch_product::whereRaw('reorder_level >= quantity')
                                       ->where('branch_id',$_GET['branch_id'])
                                       ->get();
       if($branch_product->count() != 0){

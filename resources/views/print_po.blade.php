@@ -132,7 +132,11 @@
 
 </div>	
 <script>
-	window.print();
+  window.print();
+  window.addEventListener('afterprint', (event) => {
+    window.close();
+  });
+
 </script>
 </body>
 </html>

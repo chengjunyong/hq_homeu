@@ -77,11 +77,7 @@
 						<table class="table table-responsive" id="po_table" style="width:100%">
 							<thead>
 								<tr>
-	<!-- 								<td></td>
-									<td>No</td>
-									<td>Department</td>
-									<td>Category</td>
-	 -->						<td>Barcode</td>
+      						<td>Barcode</td>
 									<td style="width:50%">Name</td>
 									<td>Current Stock</td>
 									<td>Reorder Level</td>
@@ -91,10 +87,6 @@
 							<tbody>
 								@foreach($items as $key => $result)
 									<tr>
-	<!-- 									<td><input type="checkbox" name="id[]" value="{{$result->id}}" class="form-control"/></td>
-										<td>{{$key+1}}</td>
-										<td>{{$result->department_name}}</td>
-										<td>{{$result->category_name}}</td> -->
 										<td>{{$result->barcode}}</td>
 										<td>{{$result->product_name}}</td>
 										<td>{{$result->quantity}}</td>
@@ -208,8 +200,7 @@ $(document).ready(function(){
 							icon: 'success',
 						}).then((result)=>{
 							if(result.isConfirmed){
-								window.location.assign('{{$url}}');
-								window.open(data['url']);
+                window.location.assign('{{route('getPurchaseOrderHistory')}}');
 							}
 						})
 					}
