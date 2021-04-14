@@ -27,7 +27,7 @@
 			<div style="float:right">
 				<!-- input type="text" id="search" placeholder="Search Supplier" class="form-control" style="margin-bottom: 15px"/> -->
 			</div>
-			<div class="table">
+			<div class="table table-responsive">
 				<table id="history" style="width:100%">
 					<thead style="background: #b8b8efd1">
 						<tr>

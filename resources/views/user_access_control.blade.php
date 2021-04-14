@@ -82,7 +82,7 @@
             </select>
             <span class="invalid-feedback" role="alert"></span>
             <a href="#" id="new_user_more_option">More options</a>
-            <div id="new_role_option" style="display: none;">
+            <div id="new_role_option" style="display: none; max-height: 200px; overflow-y: scroll; overflow-x: hidden;">
               <div class="row">
                 @foreach($user_access_control as $access_control)
                   <div class="col-md-6">
@@ -152,7 +152,7 @@
             </select>
             <span class="invalid-feedback" role="alert"></span>
             <a href="#" id="more_option">More options</a>
-            <div id="edit_role_option" style="display: none;"> 
+            <div id="edit_role_option" style="display: none; max-height: 200px; overflow-y: scroll; overflow-x: hidden;"> 
               <div class="row">
                 @foreach($user_access_control as $access_control)
                 <div class="col-md-6">

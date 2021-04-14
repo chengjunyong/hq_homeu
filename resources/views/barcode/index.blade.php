@@ -47,7 +47,7 @@
   .menu_detail ul li:hover { background: #ccc; }
   .history { display: none; position: fixed; left: 0px; top: 0px; height: 100%; width: 100%; background: #fff; padding: 30px; }
   .history table { margin: auto; }
-
+  .icheck label { cursor: pointer; }
 
   </style>
 
@@ -64,6 +64,23 @@
           </div>
 
           <div class="col-12">
+            <label style="width: 100%;">Stock type</label>
+            <div class='checkbox icheck' style="display: inline-block; margin-right: 20px;">
+              <label>
+                <input class='form-check-input icheck' type='radio' name='stock_type' value='branch' checked /> Branch
+              </label>
+            </div>
+
+            <div class='checkbox icheck' style="display: inline-block; margin-right: 20px;">
+              <label>
+                <input class='form-check-input icheck' type='radio' name='stock_type' value='warehouse' /> Warehouse
+              </label>
+            </div>
+
+            <hr/>
+          </div>
+
+          <div class="col-12" id="branch_list">
             <div class="form-group">
               <label>Branch</label>
               <select class="form-control" name="branch">
@@ -95,6 +112,26 @@
             <label id="product_barcode"></label>
           </div>
 
+          <div class="col-12">
+            <label>Department : </label>
+            <select class="form-control" name="department">
+              <option value="0">No department</option>
+              @foreach($department_list as $department)
+                <option value={{ $department->id }}>{{ $department->department_name }}</option>
+              @endforeach
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label>Category : </label>
+            <select class="form-control" name="category">
+              <option value="0">No category</option>
+              @foreach($category_list as $category)
+                <option style="display: none;" department_id="{{ $category->department_id }}" value={{ $category->id }}>{{ $category->category_name }}</option>
+              @endforeach
+            </select>
+          </div>
+
           <div class="col-12 form-group">
             <label>Stock count </label>
             <input type="number" class="form-control" name="stock_count" /> 
@@ -102,9 +139,9 @@
 
           <div class="col-12 form-group">
             <input type="hidden" id="product_id" />
+            <input type="hidden" id="stock_type" />
             <button type="button" class="btn btn-success" id="submit_stock" disabled>Submit</button>
             <br>
-            <a href="{{ route('home') }}">Back to home</a>
           </div>
 
         </div>
@@ -143,7 +180,7 @@
     </div>
 
     <h4>Branch Check Stock History</h4>
-    <table class="table" id="history_table">
+    <table class="table table-responsive" id="history_table">
       <thead>
         <th>Branch</th>
         <th>Barcode</th>
@@ -177,6 +214,13 @@
   var freeze = 0;
 
   $(document).ready(function(){
+
+    $('.form-check-input').iCheck({
+      checkboxClass: 'icheckbox_square-blue',
+      radioClass: 'iradio_square-blue',
+      increaseArea: '20%' /* optional */
+    });
+
     Quagga.init({
       inputStream : {
         name : "Live",
@@ -256,13 +300,17 @@
     });
 
     $("#scan_again").click(function(){
-      var selected_branch = $("select[name='branch']").val();
-      if(selected_branch == 0)
+      var stock_type = $("input[name='stock_type']:checked").val();
+      if(stock_type == "branch")
       {
-        alert("Please select branch before you proceed.");
-        return;
+        var selected_branch = $("select[name='branch']").val();
+        if(selected_branch == 0)
+        {
+          alert("Please select branch before you proceed.");
+          return;
+        }
       }
-
+    
       scan_value = null;
       $("#quagga-scanner").show();
       cameraFeed.getElementsByTagName("video")[0].load();
@@ -289,21 +337,58 @@
     });
 
     $(".floating_menu").click(function(){
-      $(".menu_detail").fadeIn();
+      if($(".menu_detail").css("display") == "block")
+      {
+        $(".menu_detail").fadeOut();
+      }
+      else
+      {
+        $(".menu_detail").fadeIn();
+      }
     });
 
+    $("select[name=department]").change(function(){
+      var department_id = $(this).val();
+      $("select[name=category] option").hide();
+      $("select[name=category] option[value=0]").show();
+      $("select[name=category]").val(0);
+      $("select[name=category] option[department_id="+department_id+"]").show();
+    })
+
+    $(document).click(function(event){
+      if (!$(event.target).closest('.floating_menu').length) {
+        $(".menu_detail").fadeOut();
+      }
+    });
+
+    $("input[name='stock_type']").on('ifChanged', function(){
+      var stock_type = $(this).val();
+      if(stock_type == "branch")
+      {
+        $("#branch_list").show();
+      }
+      else if(stock_type == "warehouse")
+      {
+        $("#branch_list").hide();
+      }
+    });
   });
 
   function checkProductBarcode(barcode)
   {
-    var selected_branch = $("select[name='branch']").val();
-    if(selected_branch == 0)
+    var stock_type = $("input[name='stock_type']:checked").val();
+    var selected_branch = "";
+    if(stock_type == "branch")
     {
-      alert("Please select branch before you proceed.");
-      return;
+      selected_branch = $("select[name='branch']").val();
+      if(selected_branch == 0)
+      {
+        alert("Please select branch before you proceed.");
+        return;
+      }
     }
 
-    $.post("{{ route('getProductByBarcode') }}", {"_token" : "{{ csrf_token() }}", "barcode" : barcode, "branch_id" : selected_branch }, function(result){
+    $.post("{{ route('getProductByBarcode') }}", {"_token" : "{{ csrf_token() }}", "barcode" : barcode, "stock_type" : stock_type, "branch_id" : selected_branch }, function(result){
       cameraFeed.getElementsByTagName("video")[0].pause();
       if(result.error == 0)
       {
@@ -312,8 +397,15 @@
         $("#product_name").html(product_detail.product_name);
         $("#product_barcode").html(product_detail.barcode);
         $("#product_id").val(product_detail.id);
+        $("#stock_type").val(result.stock_type);
 
         $("#submit_stock").attr("disabled", false);
+
+        cameraFeed.getElementsByTagName("video")[0].load();
+        freeze = 1;
+        setTimeout(function(){
+          freeze = 0;
+        },300);
       }
       else
       {
@@ -337,6 +429,9 @@
   {
     var stock_count = $("input[name='stock_count']").val();
     var product_id = $("#product_id").val();
+    var department_id = $("select[name='department']").val();
+    var category_id = $("select[name='category']").val();
+    var stock_type = $("#stock_type").val();
 
     if(stock_count == "")
     {
@@ -344,7 +439,7 @@
       return;
     }
 
-    $.post("{{ route('updateBranchStockByScanner') }}", {"_token" : "{{ csrf_token() }}", "product_id" : product_id, "stock_count" : stock_count }, function(result){
+    $.post("{{ route('updateBranchStockByScanner') }}", {"_token" : "{{ csrf_token() }}", "product_id" : product_id, "stock_count" : stock_count, "department_id" : department_id, "category_id" : category_id, "stock_type" : stock_type }, function(result){
       if(result.error == 0)
       {
         $("#product_name").html("");
@@ -354,13 +449,12 @@
         $("input[name='stock_count']").val("");
         scan_value = null;
 
-        var branch_detail = result.branch_detail;
         var product_detail = result.product_detail;
         var history = result.history;
 
         var html = "";
         html += "<tr>";
-        html += "<td>"+branch_detail.branch_name+"</td>";
+        html += "<td>"+result.branch_name+"</td>";
         html += "<td>"+product_detail.barcode+"</td>";
         html += "<td>"+product_detail.product_name+"</td>";
         html += "<td>"+stock_count+"</td>";

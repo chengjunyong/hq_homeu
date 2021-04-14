@@ -87,6 +87,8 @@ Route::get('/user_access_control', 'UserController@getUserAccessControl')->name(
 Route::post('/createNewUser', 'UserController@createNewUser')->name('createNewUser');
 Route::post('/editUser', 'UserController@editUser')->name('editUser');
 Route::get('/no_access', 'UserController@getNoAccess')->name('no_access');
+Route::get('/profile', 'UserController@getUserProfile')->name('getUserProfile');
+Route::post('/update_profile', 'UserController@updateUserProfile')->name('updateUserProfile');
 
 // barcode check stock
 Route::get('/check_stock', 'BarcodeController@getCheckStockPage')->name('getCheckStockPage');
