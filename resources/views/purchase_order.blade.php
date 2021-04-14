@@ -74,7 +74,7 @@
 			<div class="col-md-5">
 				<div class="card">
 					<div class="card-body custom-scrollbar" style="min-height:650px;height:650px;overflow-y: scroll;">
-						<table class="table" id="po_table" style="width:100%">
+						<table class="table table-responsive" id="po_table" style="width:100%">
 							<thead>
 								<tr>
 	<!-- 								<td></td>
