@@ -97,6 +97,7 @@ Route::post('/updateBranchStockByScanner', 'BarcodeController@updateBranchStockB
 
 // Testing page
 Route::get('testingPage', 'UserController@testingPage')->name('testingPage');
+Route::get('test_mail', 'HomeController@testMail')->name('testMail');
 
 //Warehouse
 Route::get('/WarehouseStockList','WarehouseController@getWarehouseStockList')->name('getWarehouseStockList');

@@ -55,12 +55,18 @@ class UserController extends Controller
         }
       }
 
-      User::where('id', Auth::id())->update([
-        'name' => $name,
-        'password' => Hash::make($request->password),
-      ]);
+      $user_update = [
+        'name' => $name
+      ];
 
-      return back();
+      if($request->password)
+      {
+        $user_update['password'] = Hash::make($request->password);
+      }
+
+      User::where('id', Auth::id())->update($user_update);
+
+      return redirect()->back()->with('updated', '1');
     }
 
     public function createNewUser(Request $request)
@@ -477,4 +483,5 @@ class UserController extends Controller
     {
       return view('testing');
     }
+
 }

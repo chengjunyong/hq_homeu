@@ -70,4 +70,23 @@
   </div>
 </div>
 
+@if (\Session::has('updated'))
+  <div id="user_updated">
+@endif
+
+<script>
+  
+  $(document).ready(function(){
+    if($("#user_updated").length > 0)
+    {
+      Swal.fire(
+        'Success!',
+        "User updated.",
+        'success'
+      );
+    }
+  });
+
+</script>
+
 @endsection

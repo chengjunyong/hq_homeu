@@ -38,7 +38,7 @@
   .floating_menu { position: fixed; right: 20px; bottom: 20px; }
   .menu_icon { width: 50px; height: 50px; border: 1px solid #ccc; border-radius: 50%; text-align: center; line-height: 50px; box-shadow: 1px 1px 5px 0px #999; background: #d2e8ff; cursor: pointer; }
   .menu_icon:hover { box-shadow: 1px 1px 10px 3px #999; }
-  .menu_detail { display: none; position: absolute; left: -150px; width: 130px; text-align: left; bottom: 0px; line-height: 30px; border: 1px solid #ccc; }
+  .menu_detail { display: none; position: absolute; left: -250px; width: 300px; text-align: left; bottom: 60px; line-height: 30px; border: 1px solid #ccc; background: #fff; }
   .menu_detail ul { list-style-type: none; padding: 0; margin: 0; }
   .menu_detail ul li:first-child a { padding-top: 10px; }
   .menu_detail ul li:last-child a { padding-bottom: 10px; }
@@ -161,6 +161,9 @@
     </div>
     <div class="menu_detail">
       <ul>
+        <li>
+          <select class="form-control" id="deviceSelection"></select>
+        </li>
         <li><a href="{{ route('home') }}"> Homepage </a></li>
         <li><a href="#" id="show_history">History </a></li>
         <li><a href="#" id="logout">Logout </a></li>
@@ -201,7 +204,7 @@
     <div style="float:right;margin-top: 5px">
       {{$branch_stock_history->links()}}
     </div>
-  </div>
+  </div> 
 
 </body>
 
@@ -219,59 +222,35 @@
       increaseArea: '20%' /* optional */
     });
 
-    Quagga.init({
-      inputStream : {
-        name : "Live",
-        type : "LiveStream",
-        target: document.querySelector('#quagga-scanner'),    // Or '#yourElement' (optional)
-      },
-      decoder :{
-        readers : ["code_128_reader"]
-      },
-      config :{
-        numOfWorkers: 0,
-        locate: true,
-      },
-      locator :{
-        halfSample: true,
-        patchSize: "x-large", // x-small, small, medium, large, x-large
-        debug: {
-          showCanvas: false,
-          showPatches: false,
-          showFoundPatches: false,
-          showSkeleton: false,
-          showLabels: false,
-          showPatchLabels: false,
-          showRemainingPatchLabels: false,
-          boxFromPatches: {
-            showTransformed: false,
-            showTransformedBox: false,
-            showBB: false,
-          }
-        }
-      },
-    }, function(err) {
-        if (err) {
-          console.log(err);
-          return
-        }
-        console.log("Initialization finished. Ready to start");
-        Quagga.start();
-    });
+    if (hasGetUserMedia())
+    {
+      var errorCallback = function(e) {
+        Swal.fire(
+          'Failed!',
+          "Your block the permission of camera, please reset the permission to proceed.",
+          'error'
+        );
+      };
 
-    Quagga.onDetected(function(data){
-      if(freeze == 1)
-      {
-        return;
-      }
-      else if(scan_value != data.codeResult.code)
-      {
-        scan_value = data.codeResult.code;
-        checkProductBarcode(scan_value);
-      }
-    });
-
-    cameraFeed.getElementsByTagName("video")[0].pause();
+      navigator.getUserMedia({ video: true, audio: false }, function(localMediaStream) {
+        captureCamera();
+        var deviceId = $("#deviceSelection option:first-child").attr("value");
+        if(!deviceId)
+        {
+          deviceId = "";
+        }
+        initQuagga(deviceId);
+        cameraFeed.getElementsByTagName("video")[0].pause();
+      }, errorCallback);
+    }
+    else
+    {
+      Swal.fire(
+        'Failed!',
+        "Cannot get any data.",
+        'error'
+      );
+    }
 
     $("#close-quagga").click(function(){
       $("#quagga-scanner").hide();
@@ -334,8 +313,8 @@
       $("#history_box").show();
     });
 
-    $(".floating_menu").click(function(){
-      if($(".menu_detail").css("display") == "block")
+    $(".floating_menu").click(function(event){
+      if($(".menu_detail").css("display") == "block" && !$(event.target).closest('.menu_detail').length)
       {
         $(".menu_detail").fadeOut();
       }
@@ -354,6 +333,7 @@
     })
 
     $(document).click(function(event){
+      console.log($(event.target).closest('.floating_menu').length);
       if (!$(event.target).closest('.floating_menu').length) {
         $(".menu_detail").fadeOut();
       }
@@ -370,7 +350,87 @@
         $("#branch_list").hide();
       }
     });
+
+    $("#deviceSelection").on('change', function(){
+      var deviceId = $(this).val();
+      setTimeout(function(){
+        $(".menu_detail").fadeOut();
+      },100);
+      Quagga.stop();
+      initQuagga(deviceId);
+    });
+
   });
+
+  function initQuagga(deviceId)
+  {
+    var quaggaOption = {
+      inputStream : {
+        name : "Live",
+        type : "LiveStream",
+        target: document.querySelector('#quagga-scanner'),    // Or '#yourElement' (optional)
+        constraints: {
+          width: {min: 640},
+          height: {min: 480},
+          aspectRatio: {min: 1, max: 100},
+          facingMode: "environment", // or user
+          deviceId: deviceId
+        }
+      },
+      decoder :{
+        readers : ["code_128_reader"]
+      },
+      numOfWorkers: 2,
+      frequency: 10,
+      decoder: {
+        readers : [{
+          format: "code_128_reader",
+          config: {}
+        }]
+      },
+      locate: true,
+      locator :{
+        halfSample: true,
+        patchSize: "medium", // x-small, small, medium, large, x-large
+        debug: {
+          showCanvas: false,
+          showPatches: false,
+          showFoundPatches: false,
+          showSkeleton: false,
+          showLabels: false,
+          showPatchLabels: false,
+          showRemainingPatchLabels: false,
+          boxFromPatches: {
+            showTransformed: false,
+            showTransformedBox: false,
+            showBB: false,
+          }
+        }
+      },
+    };
+
+    console.log(quaggaOption);
+    Quagga.init(quaggaOption, function(err) {
+        if (err) {
+          console.log(err);
+          return
+        }
+        console.log("Initialization finished. Ready to start");
+        Quagga.start();
+    });
+
+    Quagga.onDetected(function(data){
+      if(freeze == 1)
+      {
+        return;
+      }
+      else if(scan_value != data.codeResult.code)
+      {
+        scan_value = data.codeResult.code;
+        checkProductBarcode(scan_value);
+      }
+    });
+  }
 
   function checkProductBarcode(barcode)
   {
@@ -488,6 +548,34 @@
         'error'
       );
     });
+  }
+
+  function captureCamera()
+  {
+    var streamLabel = Quagga.CameraAccess.getActiveStreamLabel();
+
+    return Quagga.CameraAccess.enumerateVideoDevices()
+    .then(function(devices) {
+      function pruneText(text) {
+        return text.length > 30 ? text.substr(0, 30) : text;
+      }
+      var $deviceSelection = document.getElementById("deviceSelection");
+      while ($deviceSelection.firstChild) {
+        $deviceSelection.removeChild($deviceSelection.firstChild);
+      }
+      devices.forEach(function(device) {
+        var $option = document.createElement("option");
+        $option.value = device.deviceId || device.id;
+        $option.appendChild(document.createTextNode(pruneText(device.label || device.deviceId || device.id)));
+        $option.selected = streamLabel === device.label;
+        $deviceSelection.appendChild($option);
+      });
+    });
+  }
+
+  function hasGetUserMedia() {
+    return !!(navigator.getUserMedia || navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia || navigator.msGetUserMedia);
   }
 
 </script>
