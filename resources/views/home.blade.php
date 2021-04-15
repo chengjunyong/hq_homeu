@@ -622,10 +622,25 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Restock</h4>
+              <h4 class="card-title">WareHouse Restock</h4>
             </div>
             <div class="col">
-              <a href="#"><i class="fas fa-folder-plus first stock-color"></i></a>
+              <a href="{{route('getPoList')}}"><i class="fas fa-folder-plus first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Warehouse Restock History</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getWarehouseRestockHistory')}}"><i class="fas fa-paste first stock-color"></i></a>
             </div>
           </div>
         </div>
