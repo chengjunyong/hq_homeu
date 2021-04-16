@@ -12,9 +12,12 @@ class branch_stock_history extends Model
   [
     'user_id',
     'user_name',
+    'stock_type',
     'branch_id',
     'branch_token',
     'branch_product_id',
+    'department_id',
+    'category_id',
     'barcode',
     'product_name',
     'old_stock_count',

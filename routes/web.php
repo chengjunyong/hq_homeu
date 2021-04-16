@@ -18,6 +18,7 @@ Route::get('/', 'HomeController@index')->name('home');
 //Branch
 Route::get('/branchsetup','BranchController@getBranch')->name('getBranch');
 Route::post('/createbranch','BranchController@createBranch')->name('createBranch');
+Route::get('/editBranch','BranchController@editBranch')->name('editBranch');
 Route::get('/branchstocklist/{branch_id}','BranchController@getBranchStockList')->name('getBranchStockList');
 Route::get('/searchbranchproduct','BranchController@searchBranchProduct')->name('searchBranchProduct');
 Route::get('/modifybranchstock/{id}','BranchController@getModifyBranchStock')->name('getModifyBranchStock');
@@ -86,6 +87,8 @@ Route::get('/user_access_control', 'UserController@getUserAccessControl')->name(
 Route::post('/createNewUser', 'UserController@createNewUser')->name('createNewUser');
 Route::post('/editUser', 'UserController@editUser')->name('editUser');
 Route::get('/no_access', 'UserController@getNoAccess')->name('no_access');
+Route::get('/profile', 'UserController@getUserProfile')->name('getUserProfile');
+Route::post('/update_profile', 'UserController@updateUserProfile')->name('updateUserProfile');
 
 // barcode check stock
 Route::get('/check_stock', 'BarcodeController@getCheckStockPage')->name('getCheckStockPage');
@@ -94,6 +97,7 @@ Route::post('/updateBranchStockByScanner', 'BarcodeController@updateBranchStockB
 
 // Testing page
 Route::get('testingPage', 'UserController@testingPage')->name('testingPage');
+Route::get('test_mail', 'HomeController@testMail')->name('testMail');
 
 //Warehouse
 Route::get('/WarehouseStockList','WarehouseController@getWarehouseStockList')->name('getWarehouseStockList');
@@ -105,3 +109,10 @@ Route::get('/PurchaseOrder','WarehouseController@getPurchaseOrder')->name('getPu
 Route::get('/ajaxGetSupplier','WarehouseController@ajaxGetSupplier')->name('ajaxGetSupplier');
 Route::post('/sendPurchaseOrder','WarehouseController@ajaxPO')->name('ajaxPO');
 Route::get('/GeneratePurchaseOrder/{id}','WarehouseController@getGeneratePurchaseOrder')->name('getGeneratePurchaseOrder');
+Route::get('/PurchaseOrderHistory','WarehouseController@getPurchaseOrderHistory')->name('getPurchaseOrderHistory');
+Route::get('/PoHistoryDetail/{po_number}','WarehouseController@getPoHistoryDetail')->name('getPoHistoryDetail');
+Route::get('/PoList','WarehouseController@getPoList')->name('getPoList');
+Route::get('/WarehouseRestock/{po_number}','WarehouseController@getWarehouseRestock')->name('getWarehouseRestock');
+Route::post('/WarehouseRestockProcess','WarehouseController@postWarehouseRestock')->name('postWarehouseRestock');
+Route::get('/WarehouseRestockHistory','WarehouseController@getWarehouseRestockHistory')->name('getWarehouseRestockHistory');
+Route::get('/WarehouseRestockHistoryDetail/{id}/{po_number}','WarehouseController@getWarehouseRestockHistoryDetail')->name('getWarehouseRestockHistoryDetail');

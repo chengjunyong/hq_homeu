@@ -62,16 +62,19 @@
 
 	<div class="main" style="padding-bottom: 2.5rem;margin-top: 15px;">
 		<div class="second">
-			<table style="float:left;font-size:19px;margin-bottom: 20px">
+			<table style="float:left;font-size:19px;margin-bottom: 20px;font-size:16px;">
 				<tr>
-					<td>Home(U) Sdh Bhd</td>
+					<td>{{ucwords($supplier->supplier_name)}}</td>
 				</tr>
 				<tr>
-					<td>Warehouse Address</td>
+					<td>{{ucwords($supplier->address1)}}</td>
 				</tr>
 				<tr>
-					<td>City, State, Postcode</td>
+					<td>{{ucwords($supplier->address2)}}</td>
 				</tr>
+        <tr>
+          <td>{{ucwords($supplier->address3)}}</td>
+        </tr>
 			</table>
 
 			<table style="float:right;font-size:19px">
@@ -132,7 +135,11 @@
 
 </div>	
 <script>
-	window.print();
+  window.print();
+  window.addEventListener('afterprint', (event) => {
+    window.close();
+  });
+
 </script>
 </body>
 </html>

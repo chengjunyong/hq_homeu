@@ -9,6 +9,9 @@ use App\Category;
 use App\Supplier;
 use App\Purchase_order;
 use App\Purchase_order_detail;
+use App\Warehouse_restock_history;
+use App\Warehouse_restock_history_detail;
+use Illuminate\Support\Facades\DB;
 
 class WarehouseController extends Controller
 {
@@ -92,7 +95,7 @@ class WarehouseController extends Controller
     $supplier = Supplier::get();
     $items = Warehouse_stock::join('department','department.id','=','warehouse_stock.department_id')
                               ->join('category','category.id','=','warehouse_stock.category_id')
-                              ->where('warehouse_stock.reorder_level','>=','warehouse_stock.quantity')
+                              ->whereRaw('warehouse_stock.quantity <= warehouse_stock.reorder_level')
                               ->select('department.department_name','category.category_name','warehouse_stock.*')
                               ->get();
 
@@ -148,13 +151,125 @@ class WarehouseController extends Controller
   public function getGeneratePurchaseOrder(Request $request)
   {
     $po = Purchase_order::where('id',$request->id)->first();
+    $supplier = Supplier::where('id',$po->supplier_id)->first();
     $po_detail = Purchase_order_detail::where('po_id',$request->id)->get();
     $total = 0;
     foreach($po_detail as $result){
       $total += floatval($result->cost) * intval($result->quantity);
     }
 
-    return view('print_po',compact('po','po_detail','total'));
+    return view('print_po',compact('po','po_detail','total','supplier'));
+  }
+
+  public function getPurchaseOrderHistory()
+  {
+    $url = route('home')."?p=stock_menu";
+
+    $po = Purchase_order::join('supplier','supplier.id','=','purchase_order.supplier_id')
+                          ->select('purchase_order.*','supplier.supplier_name')
+                          ->orderBy('created_at','desc')
+                          ->paginate(10);
+
+    return view('purchase_order_history',compact('url','po'));
+  }
+
+  public function getPoHistoryDetail(Request $request)
+  {
+    $url = route('getPurchaseOrderHistory');
+
+    $po_detail = Purchase_order::join('supplier','supplier.id','=','purchase_order.supplier_id')
+                                ->where('purchase_order.po_number','=',$request->po_number)
+                                ->select('purchase_order.*','supplier.supplier_name')
+                                ->first();
+
+    $po_list = Purchase_order_detail::where('po_number',$request->po_number)
+                                      ->get();
+
+    return view('po_history_detail',compact('url','po_detail','po_list'));
+  }
+
+  public function getPoList()
+  {
+    $url = route('home')."?p=stock_menu";
+
+    $po = Purchase_order::where('completed','0')
+                          ->orderBy('created_at','desc')
+                          ->paginate(10);
+
+    return view('po_list',compact('url','po'));
+  }
+
+  public function getWarehouseRestock(Request $request)
+  {
+    $url = route('getPoList');
+
+    $po = Purchase_order::where('po_number',$request->po_number)
+                          ->where('completed',0)
+                          ->first();
+
+    $po_detail = Purchase_order_detail::where('po_number',$request->po_number)->get();
+
+    if($po == null){
+      return redirect(route('getPoList'));
+    }else{
+      return view('warehouse_restock',compact('url','po_detail','po'));
+    }
+
+  }
+
+  public function postWarehouseRestock(Request $request)
+  {
+    Purchase_order::where('id',$request->po_id)->update(['completed' => '1']);
+
+    $warehouse =  Warehouse_restock_history::create([
+                    'po_id' => $request->po_id,
+                    'po_number' => $request->po_number,
+                    'supplier_id' => $request->supplier_id,
+                    'supplier_code' => $request->supplier_code,
+                    'supplier_name' => $request->supplier_name,
+                    'invoice_number' => $request->invoice_number,
+                  ]);
+
+    foreach($request->product_id as $key => $result){
+      Warehouse_restock_history_detail::create([
+        'warehouse_history_id' => $warehouse->id,
+        'product_id' => $request->product_id[$key],
+        'barcode' => $request->barcode[$key],
+        'product_name' => $request->product_name[$key],
+        'cost' => $request->cost[$key],
+        'quantity' => $request->received_quantity[$key],
+        'remark' => $request->remark[$key],
+      ]);
+
+      Warehouse_stock::where('id',$request->product_id[$key])
+                      ->update([
+                        'quantity' => DB::raw('quantity +'.$request->received_quantity[$key]),
+                      ]);
+    }
+
+    return back()->with('success','success');
+  }
+
+  public function getWarehouseRestockHistory()
+  {
+    $url = route('home')."?p=stock_menu";
+
+    $history = Warehouse_restock_history::orderBy('created_at','desc')->paginate(10);
+
+    return view('warehouse_restock_history',compact('url','history'));
+  }
+
+  public function getWarehouseRestockHistoryDetail(Request $request)
+  {
+    $url = route('getWarehouseRestockHistory');
+
+    $po = Purchase_order::where('po_number',$request->po_number)->first();
+
+    $invoice = Warehouse_restock_history::where('id',$request->id)->first();
+
+    $detail = Warehouse_restock_history_detail::where('warehouse_history_id',$request->id)->get();
+
+    return view('warehouse_restock_view',compact('url','invoice','detail','po'));
   }
 
 }

@@ -51,7 +51,7 @@
 
         <div class="row">
           <div class="col-md-12" style="text-align: center;margin:10px 0px 10px 0px">
-            <input type="submit" class="btn btn-primary"/>
+            <button type="submit" class="btn btn-primary">Generate</button>
           </div>
         </div>
       </div>

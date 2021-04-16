@@ -8,6 +8,11 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    // user_type
+    // 1 : admin
+    // 2 : staff
+    // 3 : driver
+  
     use Notifiable;
 
     /**

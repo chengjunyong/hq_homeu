@@ -519,20 +519,22 @@
       </div>
     </div>
 
-    <div class="col-md-4">
-      <div class="card icon">
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h4 class="card-title">User Access Control</h4>
-            </div>
-            <div class="col">
-              <a href="{{route('getUserAccessControl')}}"><i class="fas fa-users first other-color"></i></a>
+    @if($user->user_type == 1)
+      <div class="col-md-4">
+        <div class="card icon">
+          <div class="card-body">
+            <div class="row">
+              <div class="col">
+                <h4 class="card-title">User Access Control</h4>
+              </div>
+              <div class="col">
+                <a href="{{route('getUserAccessControl')}}"><i class="fas fa-users first other-color"></i></a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    @endif
 
     <div class="col-md-4">
       <div class="card icon">
@@ -549,26 +551,26 @@
       </div>
     </div>
 
-  </div>
-</div>
-
-<div class="container" id="stock_menu" style="display: none">
-  <div class="row">
-
     <div class="col-md-4">
       <div class="card icon">
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Warehouse Stock Settings</h4>
+              <h4 class="card-title">User Profile</h4>
             </div>
             <div class="col">
-              <a href="#"><i class="fas fa-cogs first stock-color"></i></a>
+              <a href="{{route('getUserProfile')}}"><i class="fas fa-user first other-color"></i></a>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+  </div>
+</div>
+
+<div class="container" id="stock_menu" style="display: none">
+  <div class="row">
 
     <div class="col-md-4">
       <div class="card icon">
@@ -608,7 +610,7 @@
               <h4 class="card-title">Purchase Order History</h4>
             </div>
             <div class="col">
-              <a href="#"><i class="fas fa-history first stock-color"></i></a>
+              <a href="{{route('getPurchaseOrderHistory')}}"><i class="fas fa-history first stock-color"></i></a>
             </div>
           </div>
         </div>
@@ -620,10 +622,10 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Restock</h4>
+              <h4 class="card-title">WareHouse Restock</h4>
             </div>
             <div class="col">
-              <a href="#"><i class="fas fa-folder-plus first stock-color"></i></a>
+              <a href="{{route('getPoList')}}"><i class="fas fa-folder-plus first stock-color"></i></a>
             </div>
           </div>
         </div>
@@ -635,10 +637,10 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Credit Note</h4>
+              <h4 class="card-title">Warehouse Restock History</h4>
             </div>
             <div class="col">
-              <a href="#"><i class="fas fa-sticky-note first stock-color"></i></a>
+              <a href="{{route('getWarehouseRestockHistory')}}"><i class="fas fa-paste first stock-color"></i></a>
             </div>
           </div>
         </div>

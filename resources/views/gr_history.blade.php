@@ -17,7 +17,7 @@
 			<h4 style="margin: 20px">Goods Return History</h4>
 		</div>
 		<div class="card-body">
-			<div class="table">
+			<div class="table table-responsive">
 				<table id="history" style="width:100%">
 					<thead style="background: #b8b8efd1">
 						<tr>

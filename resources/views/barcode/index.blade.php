@@ -38,7 +38,7 @@
   .floating_menu { position: fixed; right: 20px; bottom: 20px; }
   .menu_icon { width: 50px; height: 50px; border: 1px solid #ccc; border-radius: 50%; text-align: center; line-height: 50px; box-shadow: 1px 1px 5px 0px #999; background: #d2e8ff; cursor: pointer; }
   .menu_icon:hover { box-shadow: 1px 1px 10px 3px #999; }
-  .menu_detail { display: none; position: absolute; left: -150px; width: 130px; text-align: left; bottom: 0px; line-height: 30px; border: 1px solid #ccc; }
+  .menu_detail { display: none; position: absolute; left: -250px; width: 300px; text-align: left; bottom: 60px; line-height: 30px; border: 1px solid #ccc; background: #fff; }
   .menu_detail ul { list-style-type: none; padding: 0; margin: 0; }
   .menu_detail ul li:first-child a { padding-top: 10px; }
   .menu_detail ul li:last-child a { padding-bottom: 10px; }
@@ -47,7 +47,7 @@
   .menu_detail ul li:hover { background: #ccc; }
   .history { display: none; position: fixed; left: 0px; top: 0px; height: 100%; width: 100%; background: #fff; padding: 30px; }
   .history table { margin: auto; }
-
+  .icheck label { cursor: pointer; }
 
   </style>
 
@@ -64,6 +64,23 @@
           </div>
 
           <div class="col-12">
+            <label style="width: 100%;">Stock type</label>
+            <div class='checkbox icheck' style="display: inline-block; margin-right: 20px;">
+              <label>
+                <input class='form-check-input icheck' type='radio' name='stock_type' value='branch' checked /> Branch
+              </label>
+            </div>
+
+            <div class='checkbox icheck' style="display: inline-block; margin-right: 20px;">
+              <label>
+                <input class='form-check-input icheck' type='radio' name='stock_type' value='warehouse' /> Warehouse
+              </label>
+            </div>
+
+            <hr/>
+          </div>
+
+          <div class="col-12" id="branch_list">
             <div class="form-group">
               <label>Branch</label>
               <select class="form-control" name="branch">
@@ -95,6 +112,24 @@
             <label id="product_barcode"></label>
           </div>
 
+          <div class="col-12">
+            <label>Department : </label>
+            <select class="form-control" name="department">
+              @foreach($department_list as $department)
+                <option value={{ $department->id }}>{{ $department->department_name }}</option>
+              @endforeach
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label>Category : </label>
+            <select class="form-control" name="category">
+              @foreach($category_list as $category)
+                <option style="display: none;" department_id="{{ $category->department_id }}" value={{ $category->id }}>{{ $category->category_name }}</option>
+              @endforeach
+            </select>
+          </div>
+
           <div class="col-12 form-group">
             <label>Stock count </label>
             <input type="number" class="form-control" name="stock_count" /> 
@@ -102,9 +137,9 @@
 
           <div class="col-12 form-group">
             <input type="hidden" id="product_id" />
+            <input type="hidden" id="stock_type" />
             <button type="button" class="btn btn-success" id="submit_stock" disabled>Submit</button>
             <br>
-            <a href="{{ route('home') }}">Back to home</a>
           </div>
 
         </div>
@@ -126,6 +161,9 @@
     </div>
     <div class="menu_detail">
       <ul>
+        <li>
+          <select class="form-control" id="deviceSelection"></select>
+        </li>
         <li><a href="{{ route('home') }}"> Homepage </a></li>
         <li><a href="#" id="show_history">History </a></li>
         <li><a href="#" id="logout">Logout </a></li>
@@ -143,7 +181,7 @@
     </div>
 
     <h4>Branch Check Stock History</h4>
-    <table class="table" id="history_table">
+    <table class="table table-responsive" id="history_table">
       <thead>
         <th>Branch</th>
         <th>Barcode</th>
@@ -166,7 +204,7 @@
     <div style="float:right;margin-top: 5px">
       {{$branch_stock_history->links()}}
     </div>
-  </div>
+  </div> 
 
 </body>
 
@@ -177,59 +215,42 @@
   var freeze = 0;
 
   $(document).ready(function(){
-    Quagga.init({
-      inputStream : {
-        name : "Live",
-        type : "LiveStream",
-        target: document.querySelector('#quagga-scanner'),    // Or '#yourElement' (optional)
-      },
-      decoder :{
-        readers : ["code_128_reader"]
-      },
-      config :{
-        numOfWorkers: 0,
-        locate: true,
-      },
-      locator :{
-        halfSample: true,
-        patchSize: "x-large", // x-small, small, medium, large, x-large
-        debug: {
-          showCanvas: false,
-          showPatches: false,
-          showFoundPatches: false,
-          showSkeleton: false,
-          showLabels: false,
-          showPatchLabels: false,
-          showRemainingPatchLabels: false,
-          boxFromPatches: {
-            showTransformed: false,
-            showTransformedBox: false,
-            showBB: false,
-          }
-        }
-      },
-    }, function(err) {
-        if (err) {
-          console.log(err);
-          return
-        }
-        console.log("Initialization finished. Ready to start");
-        Quagga.start();
+
+    $('.form-check-input').iCheck({
+      checkboxClass: 'icheckbox_square-blue',
+      radioClass: 'iradio_square-blue',
+      increaseArea: '20%' /* optional */
     });
 
-    Quagga.onDetected(function(data){
-      if(freeze == 1)
-      {
-        return;
-      }
-      else if(scan_value != data.codeResult.code)
-      {
-        scan_value = data.codeResult.code;
-        checkProductBarcode(scan_value);
-      }
-    });
+    if (hasGetUserMedia())
+    {
+      var errorCallback = function(e) {
+        Swal.fire(
+          'Failed!',
+          "Your block the permission of camera, please reset the permission to proceed.",
+          'error'
+        );
+      };
 
-    cameraFeed.getElementsByTagName("video")[0].pause();
+      navigator.getUserMedia({ video: true, audio: false }, function(localMediaStream) {
+        captureCamera();
+        var deviceId = $("#deviceSelection option:first-child").attr("value");
+        if(!deviceId)
+        {
+          deviceId = "";
+        }
+        initQuagga(deviceId);
+        cameraFeed.getElementsByTagName("video")[0].pause();
+      }, errorCallback);
+    }
+    else
+    {
+      Swal.fire(
+        'Failed!',
+        "Cannot get any data.",
+        'error'
+      );
+    }
 
     $("#close-quagga").click(function(){
       $("#quagga-scanner").hide();
@@ -256,13 +277,17 @@
     });
 
     $("#scan_again").click(function(){
-      var selected_branch = $("select[name='branch']").val();
-      if(selected_branch == 0)
+      var stock_type = $("input[name='stock_type']:checked").val();
+      if(stock_type == "branch")
       {
-        alert("Please select branch before you proceed.");
-        return;
+        var selected_branch = $("select[name='branch']").val();
+        if(selected_branch == 0)
+        {
+          alert("Please select branch before you proceed.");
+          return;
+        }
       }
-
+    
       scan_value = null;
       $("#quagga-scanner").show();
       cameraFeed.getElementsByTagName("video")[0].load();
@@ -288,22 +313,140 @@
       $("#history_box").show();
     });
 
-    $(".floating_menu").click(function(){
-      $(".menu_detail").fadeIn();
+    $(".floating_menu").click(function(event){
+      if($(".menu_detail").css("display") == "block" && !$(event.target).closest('.menu_detail').length)
+      {
+        $(".menu_detail").fadeOut();
+      }
+      else
+      {
+        $(".menu_detail").fadeIn();
+      }
+    });
+
+    $("select[name=department]").change(function(){
+      var department_id = $(this).val();
+      $("select[name=category] option").hide();
+      $("select[name=category] option[value=0]").show();
+      $("select[name=category]").val(0);
+      $("select[name=category] option[department_id="+department_id+"]").show();
+    })
+
+    $(document).click(function(event){
+      console.log($(event.target).closest('.floating_menu').length);
+      if (!$(event.target).closest('.floating_menu').length) {
+        $(".menu_detail").fadeOut();
+      }
+    });
+
+    $("input[name='stock_type']").on('ifChanged', function(){
+      var stock_type = $(this).val();
+      if(stock_type == "branch")
+      {
+        $("#branch_list").show();
+      }
+      else if(stock_type == "warehouse")
+      {
+        $("#branch_list").hide();
+      }
+    });
+
+    $("#deviceSelection").on('change', function(){
+      var deviceId = $(this).val();
+      setTimeout(function(){
+        $(".menu_detail").fadeOut();
+      },100);
+      Quagga.stop();
+      initQuagga(deviceId);
     });
 
   });
 
+  function initQuagga(deviceId)
+  {
+    var quaggaOption = {
+      inputStream : {
+        name : "Live",
+        type : "LiveStream",
+        target: document.querySelector('#quagga-scanner'),    // Or '#yourElement' (optional)
+        constraints: {
+          width: {min: 640},
+          height: {min: 480},
+          aspectRatio: {min: 1, max: 100},
+          facingMode: "environment", // or user
+          deviceId: deviceId
+        }
+      },
+      decoder :{
+        readers : ["code_128_reader"]
+      },
+      numOfWorkers: 2,
+      frequency: 10,
+      decoder: {
+        readers : [{
+          format: "code_128_reader",
+          config: {}
+        }]
+      },
+      locate: true,
+      locator :{
+        halfSample: true,
+        patchSize: "medium", // x-small, small, medium, large, x-large
+        debug: {
+          showCanvas: false,
+          showPatches: false,
+          showFoundPatches: false,
+          showSkeleton: false,
+          showLabels: false,
+          showPatchLabels: false,
+          showRemainingPatchLabels: false,
+          boxFromPatches: {
+            showTransformed: false,
+            showTransformedBox: false,
+            showBB: false,
+          }
+        }
+      },
+    };
+
+    console.log(quaggaOption);
+    Quagga.init(quaggaOption, function(err) {
+        if (err) {
+          console.log(err);
+          return
+        }
+        console.log("Initialization finished. Ready to start");
+        Quagga.start();
+    });
+
+    Quagga.onDetected(function(data){
+      if(freeze == 1)
+      {
+        return;
+      }
+      else if(scan_value != data.codeResult.code)
+      {
+        scan_value = data.codeResult.code;
+        checkProductBarcode(scan_value);
+      }
+    });
+  }
+
   function checkProductBarcode(barcode)
   {
-    var selected_branch = $("select[name='branch']").val();
-    if(selected_branch == 0)
+    var stock_type = $("input[name='stock_type']:checked").val();
+    var selected_branch = "";
+    if(stock_type == "branch")
     {
-      alert("Please select branch before you proceed.");
-      return;
+      selected_branch = $("select[name='branch']").val();
+      if(selected_branch == 0)
+      {
+        alert("Please select branch before you proceed.");
+        return;
+      }
     }
 
-    $.post("{{ route('getProductByBarcode') }}", {"_token" : "{{ csrf_token() }}", "barcode" : barcode, "branch_id" : selected_branch }, function(result){
+    $.post("{{ route('getProductByBarcode') }}", {"_token" : "{{ csrf_token() }}", "barcode" : barcode, "stock_type" : stock_type, "branch_id" : selected_branch }, function(result){
       cameraFeed.getElementsByTagName("video")[0].pause();
       if(result.error == 0)
       {
@@ -312,8 +455,18 @@
         $("#product_name").html(product_detail.product_name);
         $("#product_barcode").html(product_detail.barcode);
         $("#product_id").val(product_detail.id);
+        $("#stock_type").val(result.stock_type);
+
+        $("select[name='department']").val(product_detail.department_id);
+        $("select[name='category']").val(product_detail.category_id);
 
         $("#submit_stock").attr("disabled", false);
+
+        cameraFeed.getElementsByTagName("video")[0].load();
+        freeze = 1;
+        setTimeout(function(){
+          freeze = 0;
+        },300);
       }
       else
       {
@@ -337,6 +490,9 @@
   {
     var stock_count = $("input[name='stock_count']").val();
     var product_id = $("#product_id").val();
+    var department_id = $("select[name='department']").val();
+    var category_id = $("select[name='category']").val();
+    var stock_type = $("#stock_type").val();
 
     if(stock_count == "")
     {
@@ -344,23 +500,25 @@
       return;
     }
 
-    $.post("{{ route('updateBranchStockByScanner') }}", {"_token" : "{{ csrf_token() }}", "product_id" : product_id, "stock_count" : stock_count }, function(result){
+    $.post("{{ route('updateBranchStockByScanner') }}", {"_token" : "{{ csrf_token() }}", "product_id" : product_id, "stock_count" : stock_count, "department_id" : department_id, "category_id" : category_id, "stock_type" : stock_type }, function(result){
       if(result.error == 0)
       {
         $("#product_name").html("");
         $("#product_barcode").html("");
         $("#product_id").val("");
 
+        $("select[name='department']").val($("select[name='department'] option:first-child").val());
+        $("select[name='category']").val($("select[name='category'] option:first-child").val());
+
         $("input[name='stock_count']").val("");
         scan_value = null;
 
-        var branch_detail = result.branch_detail;
         var product_detail = result.product_detail;
         var history = result.history;
 
         var html = "";
         html += "<tr>";
-        html += "<td>"+branch_detail.branch_name+"</td>";
+        html += "<td>"+result.branch_name+"</td>";
         html += "<td>"+product_detail.barcode+"</td>";
         html += "<td>"+product_detail.product_name+"</td>";
         html += "<td>"+stock_count+"</td>";
@@ -390,6 +548,34 @@
         'error'
       );
     });
+  }
+
+  function captureCamera()
+  {
+    var streamLabel = Quagga.CameraAccess.getActiveStreamLabel();
+
+    return Quagga.CameraAccess.enumerateVideoDevices()
+    .then(function(devices) {
+      function pruneText(text) {
+        return text.length > 30 ? text.substr(0, 30) : text;
+      }
+      var $deviceSelection = document.getElementById("deviceSelection");
+      while ($deviceSelection.firstChild) {
+        $deviceSelection.removeChild($deviceSelection.firstChild);
+      }
+      devices.forEach(function(device) {
+        var $option = document.createElement("option");
+        $option.value = device.deviceId || device.id;
+        $option.appendChild(document.createTextNode(pruneText(device.label || device.deviceId || device.id)));
+        $option.selected = streamLabel === device.label;
+        $deviceSelection.appendChild($option);
+      });
+    });
+  }
+
+  function hasGetUserMedia() {
+    return !!(navigator.getUserMedia || navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia || navigator.msGetUserMedia);
   }
 
 </script>

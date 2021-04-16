@@ -52,7 +52,7 @@
 			</div>
 
 			<div style="overflow-y: auto;height:425px;margin-top:25px">
-				<table style="width:100%;">
+				<table class="table-responsive" style="width:100%;">
 					<thead style="background-color: #b8b8efd1">
 						<tr>
 							<td>No</td>

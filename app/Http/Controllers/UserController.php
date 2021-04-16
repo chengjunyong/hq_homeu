@@ -35,6 +35,40 @@ class UserController extends Controller
       return view('user_access_control', compact('user_list', 'user_group', 'user_access_control', 'default_access_control', 'url'));
     }
 
+    public function getUserProfile()
+    {
+      $url = route('home')."?p=other_menu";
+
+      $user = Auth::user();
+
+      return view('user.profile', compact('url', 'user'));
+    }
+
+    public function updateUserProfile(Request $request)
+    {
+      $name = $request->name;
+      if($request->password)
+      {
+        if($request->password != $request->confirmation_password)
+        {
+          return redirect()->back()->withErrors(['Password and confirmation password is not same.']);
+        }
+      }
+
+      $user_update = [
+        'name' => $name
+      ];
+
+      if($request->password)
+      {
+        $user_update['password'] = Hash::make($request->password);
+      }
+
+      User::where('id', Auth::id())->update($user_update);
+
+      return redirect()->back()->with('updated', '1');
+    }
+
     public function createNewUser(Request $request)
     {
       $user_check = User::where('username', $request->new_user_username)->first();
@@ -239,22 +273,64 @@ class UserController extends Controller
           'route' => 'getProductConfig'
         ],
         [
-          'group' => 'Sales',
+          'group' => 'Report',
           'value' => 12,
           'name' => 'Sales Report',
           'route' => 'getSalesReport'
         ],
+        // [
+        //   'group' => 'Report',
+        //   'value' => 13,
+        //   'name' => 'Daily Report',
+        //   'route' => 'getDailyReport'
+        // ],
         [
-          'group' => 'Sales',
-          'value' => 13,
-          'name' => 'Daily Report',
-          'route' => 'getDailyReport'
-        ],
-        [
-          'group' => 'Sales',
+          'group' => 'Report',
           'value' => 14,
           'name' => 'Branch Sales Report',
           'route' => 'getBranchReport'
+        ],
+        [
+          'group' => 'Branch',
+          'value' => 15,
+          'name' => 'Branch Check Stock History',
+          'route' => 'getBranchStockHistory'
+        ],
+        [
+          'group' => 'Report',
+          'value' => 16,
+          'name' => 'Stock Balance Report',
+          'route' => 'getStockBalance'
+        ],
+        [
+          'group' => 'Report',
+          'value' => 17,
+          'name' => 'Supplier',
+          'route' => 'getSupplier'
+        ],
+        [
+          'group' => 'Other',
+          'value' => 18,
+          'name' => 'User Access Control',
+          'route' => 'getUserAccessControl'
+        ],
+        [
+          'group' => 'Other',
+          'value' => 19,
+          'name' => 'Stock Checking',
+          'route' => 'getCheckStockPage'
+        ],
+        [
+          'group' => 'Stock',
+          'value' => 20,
+          'name' => 'Warehouse Stock',
+          'route' => 'getWarehouseStockList'
+        ],
+        [
+          'group' => 'Stock',
+          'value' => 21,
+          'name' => 'Purchase Order',
+          'route' => 'getPurchaseOrder'
         ],
       ];
 
@@ -364,7 +440,7 @@ class UserController extends Controller
       $default_access_control = [
         [
           'user_type' => '1',
-          'access' => "1,2,3,4,5,6,7,8,9,10"
+          'access' => "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21"
         ],
         [
           'user_type' => '2',
@@ -407,4 +483,5 @@ class UserController extends Controller
     {
       return view('testing');
     }
+
 }
