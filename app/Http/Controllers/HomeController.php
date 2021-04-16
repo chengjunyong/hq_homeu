@@ -67,14 +67,14 @@ class HomeController extends Controller
 
     public function testMail()
     {
-      $email = "wongwaiwen1001@gmail.com";
+      $email = "ycheng391@gmail.com";
       $info = [
-        "message" => "Hello there",
+        "message" => "",
         "files" => [
           "image/hq_icon.png"
         ],
-        "to" => "Wai wen",
-        "from" => "Home U",
+        "to" => "Ethan",
+        "from" => "Home(U) Sdh Bhd",
       ];
 
       $this->sendEmail($email, $info);
