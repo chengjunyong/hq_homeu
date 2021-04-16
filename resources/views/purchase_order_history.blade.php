@@ -14,7 +14,7 @@
     </div>
     <div class="card-body">
       <div style="float:right">
-        <input type="text" id="search" placeholder="Search DO Number" class="form-control" style="margin-bottom: 15px"/>
+<!--         <input type="text" id="search" placeholder="Search DO Number" class="form-control" style="margin-bottom: 15px"/> -->
       </div>
       <div class="table">
         <table id="history" style="width:100%">

@@ -44,6 +44,10 @@
 						<label>Cost</label>
 						<input type="number" min="0" step="0.01" name="cost" id="cost" class="form-control" required value="{{$warehouse_stock->cost}}">
 					</div>
+          <div class="col-md-6">
+            <label>Stock Quantity</label>
+            <input type="number" name="quantity" id="quantity" class="form-control" required value="{{$warehouse_stock->quantity}}">
+          </div>
 					<div class="col-md-6">
 						<label>Reorder Level</label>
 						<input type="number" min="0" step="1" name="reorder_level" class="form-control" required value="{{$warehouse_stock->reorder_level}}">
