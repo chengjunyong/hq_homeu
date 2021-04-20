@@ -180,8 +180,8 @@
             <ul>
               <li>Warehouse Stock List</li>
               <li>Stock Reorder Setting</li>
-              <li>Stock Refill</li>
-              <li>Supplier</li>
+              <li>Warehouse Restock</li>
+              <li>Purchase Order</li>
             </ul>
             <div class="center">
               <button class="btn btn-primary btn-stock" id="stock_btn">Access</button>
@@ -221,7 +221,7 @@
           <div class="col-md-7" style="float:right">
             <ul>
               <li>User Access Control</li>
-              <li>Supplier Settings</li>
+              <li>Supplier</li>
               <li>Email Settings</li>
               <li>Export & Import</li>
             </ul>

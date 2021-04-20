@@ -26,11 +26,18 @@ class OtherController extends Controller
     
 	public function getSupplier()
   {
-  	$url = route('home')."?p=other_menu";
-  	
-  	$supplier = Supplier::paginate('15');
+    $url = route('home')."?p=other_menu";
 
-  	return view('supplier_list',compact('url','supplier'));
+    if(isset($_GET['search']) && $_GET['search'] != ""){
+      $search = 0;
+      $supplier = Supplier::where('supplier_name','LIKE','%'.$_GET['search'].'%')
+                                          ->get();
+    }else{
+      $supplier = Supplier::paginate(25); 
+      $search = 1;
+    }
+
+  	return view('supplier_list',compact('url','supplier','search'));
 	}
 
 	public function getEditSupplier(Request $request)

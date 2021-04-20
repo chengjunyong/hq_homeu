@@ -69,9 +69,9 @@ class HomeController extends Controller
     {
       $email = "ycheng391@gmail.com";
       $info = [
-        "message" => "",
+        "message" => "13513",
         "files" => [
-          "image/hq_icon.png"
+          "image/hq_icon.png",
         ],
         "to" => "Ethan",
         "from" => "Home(U) Sdh Bhd",

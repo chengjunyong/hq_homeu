@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Branch;
 use App\Branch_product;
@@ -17,7 +16,8 @@ use App\User;
 use App\Damaged_stock_history;
 use App\Stock_lost_history;
 use App\Branch_stock_history;
-
+use App\Warehouse_stock;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
@@ -192,9 +192,11 @@ class BranchController extends Controller
 
     if($request->branch_transfer == "0"){
       $from = "HQ";
+      $from_branch_id = "HQ";
     }else{
       $branch = Branch::where('id',$request->branch_transfer)->first();
       $from = $branch->branch_name;
+      $from_branch_id = $request->branch_transfer;
     }
 
     $branch = Branch::where('id',$request->branch_id)->first();
@@ -203,7 +205,7 @@ class BranchController extends Controller
     Do_list::create([
       'do_number' => $header,
       'from' => $from,
-      'from_branch_id' => $request->branch_transfer,
+      'from_branch_id' => $from_branch_id,
       'to' => $to,
       'to_branch_id' => $request->branch_id,
       'total_item' => array_sum($request->reorder_quantity),
@@ -221,6 +223,28 @@ class BranchController extends Controller
         'cost' => $request->product_cost[$i],
         'quantity' => $request->reorder_quantity[$i],
       ]);
+    }
+
+    //Deduct Stock From Selected Branch & Increase Target Branch
+
+    $target_branch_id = $request->branch_id;
+
+    if($from == "HQ"){
+      for($i=0;$i<count($request->barcode);$i++){
+        Warehouse_stock::where('barcode',$request->barcode[$i])
+                          ->update([
+                            'quantity' => DB::raw('quantity -'.$request->reorder_quantity[$i]),
+                          ]);
+      }
+      
+    }else{
+      for($i=0;$i<count($request->barcode);$i++){
+        Branch_product::where('branch_id',$from_branch_id)
+                        ->where('barcode',$request->barcode[$i])
+                        ->update([
+                          'quantity' => DB::raw('quantity -'.$request->reorder_quantity[$i]),
+                        ]);
+      }
     }
 
     return redirect(route('getPrintDo',$header));  
