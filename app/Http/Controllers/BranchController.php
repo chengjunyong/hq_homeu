@@ -17,6 +17,7 @@ use App\Damaged_stock_history;
 use App\Stock_lost_history;
 use App\Branch_stock_history;
 use App\Warehouse_stock;
+use App\Tmp_order_list;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -650,4 +651,48 @@ class BranchController extends Controller
 
     return view('branch/branch_stock_history_detail',compact('selected_branch', 'selected_date_from', 'selected_date_to', 'branch_stock_history', 'url', 'date', 'user'));
   }
+
+  public function getManualStockOrder()
+  {
+    $url = route('home')."?p=branch_menu";
+
+    $branch_product = new \stdClass();
+
+    if(isset($_GET['branch_id']) && $_GET['branch_id'] != ''){
+
+      $branch_product = Branch_product::where('branch_id',$_GET['branch_id'])
+                                    ->limit(100)
+                                    ->get(); 
+    }
+
+    $branch = Branch::get();
+
+    return view('manual_stock_order',compact('url','branch_product','branch'));
+  }
+
+  public function ajaxAddManualStockOrder(Request $request)
+  {
+
+    $product_detail = Branch_product::where('id',$request->branch_product_id)->first();
+
+    try{
+      $result = Tmp_order_list::create([
+                                'branch_product_id' => $product_detail->id,
+                                'department_id' => $product_detail->department_id,
+                                'category_id' => $product_detail->category_id,
+                                'barcode' => $product_detail->barcode,
+                                'product_name' => $product_detail->product_name,
+                                'cost' => $product_detail->cost,
+                                'price' => $product_detail->price,
+                                'order_quantity' => $request->order_quantity,
+                              ]);
+      return "true";
+
+    }catch(Throwable $e){
+      return $e;
+    }
+
+    
+  }
+
 }
