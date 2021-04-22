@@ -661,7 +661,7 @@ class BranchController extends Controller
     if(isset($_GET['branch_id']) && $_GET['branch_id'] != ''){
 
       $branch_product = Branch_product::where('branch_id',$_GET['branch_id'])
-                                    ->limit(100)
+                                    ->limit(1000)
                                     ->get(); 
     }
 
@@ -672,12 +672,12 @@ class BranchController extends Controller
 
   public function ajaxAddManualStockOrder(Request $request)
   {
-
     $product_detail = Branch_product::where('id',$request->branch_product_id)->first();
 
     try{
-      $result = Tmp_order_list::create([
-                                'branch_product_id' => $product_detail->id,
+      $result = Tmp_order_list::updateOrCreate(
+                              ['from_branch' => $request->from,'to_branch' => $request->to,'branch_product_id' => $product_detail->id,]
+                              ,[
                                 'department_id' => $product_detail->department_id,
                                 'category_id' => $product_detail->category_id,
                                 'barcode' => $product_detail->barcode,
@@ -691,8 +691,40 @@ class BranchController extends Controller
     }catch(Throwable $e){
       return $e;
     }
+  }
 
+  public function getManualOrderList()
+  {
+    $branch = Branch::first();
+    $url = route('getManualStockOrder')."?branch_id=".$branch->id;
+    $from = new \stdClass();
+
+    $branch_group = Tmp_order_list::select(DB::raw('DISTINCT from_branch,to_branch'))->first();
+
+    if($branch_group->from_branch == 0)
+      $from->branch_name = "HQ";
+    else
+      $from = Branch::where('id',$branch_group->from_branch)->select('branch_name')->first();
+
+    $to = Branch::where('id',$branch_group->to_branch)->select('branch_name')->first();
+
+    $tmp = Tmp_order_list::where('from_branch',$branch_group->from_branch)
+                          ->where('to_branch',$branch_group->to_branch)
+                          ->get();
+    $total_item = 0;
+    foreach($tmp as $result){
+      $total_item += $result->order_quantity; 
+    }
+
+    return view('manual_order_list',compact('url','tmp','branch','from','to','total_item'));
+  }
+
+  public function postManualOrderList(Request $request)
+  {
+
+    dd($request);
     
   }
+
 
 }

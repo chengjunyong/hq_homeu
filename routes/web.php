@@ -45,6 +45,8 @@ Route::get('/branch_stock_history', 'BranchController@getBranchStockHistory')->n
 Route::get('/branch_stock_history_detail', 'BranchController@getBranchStockHistoryDetail')->name('getBranchStockHistoryDetail');
 Route::get('/ManualStockOrder','BranchController@getManualStockOrder')->name('getManualStockOrder');
 Route::get('/AddManualStockOrder','BranchController@ajaxAddManualStockOrder')->name('ajaxAddManualStockOrder');
+Route::get('/ManualOrderList','BranchController@getManualOrderList')->name('getManualOrderList');
+Route::post('/ManualOrderList','BranchController@postManualOrderList')->name('postManualOrderList');
 
 //Product
 Route::get('/productlist','ProductController@getProductList')->name('getProductList');

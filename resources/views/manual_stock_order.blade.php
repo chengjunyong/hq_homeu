@@ -1,6 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
+<script>
+  Swal.fire({
+    title: 'Fetching Product',
+    html: 'Please wait, we are loading your product list.<br/><br/><b>Approximate In 1 Minutes</b>',
+    allowOutsideClick: false,
+    timer: 60000,
+    timerProgressBar: true,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+</script>
 <style>
   .container{
     max-width: 90%;
@@ -43,9 +55,10 @@
           </select>
         </div>
         <div class="col" style="text-align:right;margin-right: 20px;">
-          <button class="btn btn-primary">Order List</button>
+          <button class="btn btn-primary" onclick="window.location.assign('{{route('getManualOrderList')}}')">Order List</button>
         </div>
-    </div>  
+      </div>  
+    </div>
 
     <div class="card-body">
       <table id="branch_product_list" class="table-striped" style="width: 100%">
@@ -82,9 +95,11 @@
     </div>
   </div>
 </div>
-<script>
 
+
+<script>
 $(document).ready(function(){
+  Swal.close();
   $('#branch_product_list').DataTable({
     responsive: true,
     lengthMenu: [25,50,100],
@@ -125,8 +140,7 @@ function quantityHandle(target){
           'to' : $("#to").val(),
           'order_quantity' : result,
         },function(data){
-
-          if(data == "true"){
+          if(data == true || data == 'true'){
             Swal.fire({
               title : 'Add To List Successful',
               icon : 'success',
