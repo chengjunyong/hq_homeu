@@ -43,6 +43,11 @@ Route::get('/SL/{sl_id}','BranchController@getGenerateSL')->name('getGenerateSL'
 Route::get('/stocklosthistory','BranchController@getStockLostHistory')->name('getStockLostHistory');
 Route::get('/branch_stock_history', 'BranchController@getBranchStockHistory')->name('getBranchStockHistory');
 Route::get('/branch_stock_history_detail', 'BranchController@getBranchStockHistoryDetail')->name('getBranchStockHistoryDetail');
+Route::get('/ManualStockOrder','BranchController@getManualStockOrder')->name('getManualStockOrder');
+Route::get('/AddManualStockOrder','BranchController@ajaxAddManualStockOrder')->name('ajaxAddManualStockOrder');
+Route::get('/ManualOrderList','BranchController@getManualOrderList')->name('getManualOrderList');
+Route::post('/ManualOrderList','BranchController@postManualOrderList')->name('postManualOrderList');
+Route::get('/RemoveItem','BranchController@ajaxRemoveItem')->name('ajaxRemoveItem');
 
 //Product
 Route::get('/productlist','ProductController@getProductList')->name('getProductList');

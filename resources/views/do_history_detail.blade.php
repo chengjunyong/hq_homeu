@@ -52,7 +52,7 @@
 			</div>
 
 			<div style="overflow-y: auto;height:425px;margin-top:25px">
-				<table class="table-responsive" style="width:100%;">
+				<table class="table-responsive" style="width:100%;display: table !important;">
 					<thead style="background-color: #b8b8efd1">
 						<tr>
 							<td>No</td>
@@ -65,22 +65,22 @@
 							<td>Stock Lost Reason</td>
 							<td>Remark</td>
 						</tr>
-						<tbody>
-							@foreach($do_detail as $key => $result)
-								<tr>
-									<td>{{$key+1}}</td>
-									<td>{{$result->barcode}}</td>
-									<td>{{$result->product_name}}</td>
-									<td align="right">{{number_format($result->price,2)}}</td>
-									<td align="center">{{$result->quantity}}</td>
-									<td align="center">{{$result->quantity - $result->stock_lost_quantity}}</td>
-									<td align="center">{{$result->stock_lost_quantity}}</td>
-									<td>{{($result->stock_lost_reason == null) ? 'Not Available' : $result->stock_lost_reason}}</td>
-									<td>{{($result->remark == null) ? 'Not Available' : $result->remark}}</td>
-								</tr>
-							@endforeach
-						</tbody>
-					</thead>
+          </thead>
+					<tbody>
+						@foreach($do_detail as $key => $result)
+							<tr>
+								<td>{{$key+1}}</td>
+								<td>{{$result->barcode}}</td>
+								<td>{{$result->product_name}}</td>
+								<td align="right">{{number_format($result->price,2)}}</td>
+								<td align="center">{{$result->quantity}}</td>
+								<td align="center">{{$result->quantity - $result->stock_lost_quantity}}</td>
+								<td align="center">{{$result->stock_lost_quantity}}</td>
+								<td>{{($result->stock_lost_reason == null) ? 'Not Available' : $result->stock_lost_reason}}</td>
+								<td>{{($result->remark == null) ? 'Not Available' : $result->remark}}</td>
+							</tr>
+						@endforeach
+					</tbody>
 				</table>
 			</div>
 

@@ -180,8 +180,8 @@
             <ul>
               <li>Warehouse Stock List</li>
               <li>Stock Reorder Setting</li>
-              <li>Stock Refill</li>
-              <li>Supplier</li>
+              <li>Warehouse Restock</li>
+              <li>Purchase Order</li>
             </ul>
             <div class="center">
               <button class="btn btn-primary btn-stock" id="stock_btn">Access</button>
@@ -221,7 +221,7 @@
           <div class="col-md-7" style="float:right">
             <ul>
               <li>User Access Control</li>
-              <li>Supplier Settings</li>
+              <li>Supplier</li>
               <li>Email Settings</li>
               <li>Export & Import</li>
             </ul>
@@ -416,7 +416,24 @@
         </div>
       </div>
     </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Manual Stock Order</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getManualStockOrder')}}?branch_id={{$branch->id}}"><i class="fas fa-file-signature first branch-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     
+
+
   </div>
 </div>
 

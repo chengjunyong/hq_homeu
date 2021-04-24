@@ -24,9 +24,13 @@
 			<button class="btn btn-primary" onclick="window.location.assign('{{route('getCreateSupplier')}}')">Create Supplier</button>
 		</div>
 		<div class="card-body">
-			<div style="float:right">
-				<!-- input type="text" id="search" placeholder="Search Supplier" class="form-control" style="margin-bottom: 15px"/> -->
-			</div>
+
+      <form action="{{route('getSupplier')}}" method="get">
+  			<div style="float:right">
+  				<input type="text" id="search" name="search" placeholder="Search Supplier Name" class="form-control" style="margin-bottom: 15px"/>
+  			</div>
+      </form>
+
 			<div class="table table-responsive">
 				<table id="history" style="width:100%">
 					<thead style="background: #b8b8efd1">
@@ -52,7 +56,13 @@
 						@endforeach
 					</tbody>
 				</table>
-				<div style="float:right;margin-top: 15px">{{ $supplier->links() }}</div>
+
+				@if($search == 1)
+          <div style="float:right">
+            {{$supplier->links()}}
+          </div>
+        @endif
+
 			</div>
 		</div>
 	</div>
