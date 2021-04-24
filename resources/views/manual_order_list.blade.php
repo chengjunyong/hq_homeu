@@ -16,13 +16,13 @@
       <h4>Manual Order List Detail</h4>
     </div>
 
-    <form method="post" action="{{route('postManualOrderList')}}">
+    <form>
       @csrf
       <div class="card-body">
         <div class="row">
           <div class="col-md-6">
             <label>From:</label>
-            <input readonly class="form-control" type="text" value="{{$from->branch_name}}">
+            <input readonly class="form-control" type="text" name="from" value="{{$from->branch_name}}">
             <input hidden class="form-control" type="text" name="from_branch_id" value="{{$tmp[0]->from_branch}}">
           </div>
           <div class="col-md-6">
@@ -54,14 +54,14 @@
             </thead>
             <tbody>
               @foreach($tmp as $key => $result)
-                <tr id="{{$key}}">
+                <tr id="{{$result->id}}">
                   <td>{{$key+1}}<input type="text" name="product_id[]" value="{{$result->branch_product_id}}" hidden /></td>
                   <td>{{$result->barcode}}<input type="text" name="barcode[]" value="{{$result->barcode}}" hidden /></td>
                   <td>{{$result->product_name}}<input type="text" name="product_name[]" value="{{$result->product_name}}" hidden /></td>
                   <td align="right">{{number_format($result->cost,2)}}<input type="text" name="cost[]" value="{{$result->cost}}" hidden /></td>
                   <td align="right">{{number_format($result->price,2)}}<input type="text" name="price[]" value="{{$result->price}}" hidden /></td>
                   <td align="center">{{$result->order_quantity}}<input type="text" name="order_quantity[]" value="{{$result->order_quantity}}" hidden /></td>
-                  <td><button type="button" class="btn btn-primary delete" value="{{$key}}">Delete</button></td>
+                  <td><button type="button" class="btn btn-primary delete" value="{{$result->id}}">Delete</button></td>
                 </tr>
               @endforeach
             </tbody>
@@ -83,8 +83,52 @@
 $(document).ready(function(){
   $(".delete").click(function(){
     let id = $(this).val();
-    $("#"+id).remove();
+    Swal.fire({
+      title: 'Remove Items',
+      html: 'Please confirm if you want to remove this item from list',
+      icon: 'warning',
+      confirmButtonText: `Yes`,
+      showCancelButton: true,
+    }).then((result)=>{
+      if(result.isConfirmed){
+        $("#"+id).remove();
+        $.get('{{route('ajaxRemoveItem')}}',
+        {
+          'id' : id
+        },function(data){
+          if(data == true){
+            Swal.fire('Success','Item remove successful','success');
+          }else{
+            Swal.fire('Fail','Item remove fail, please contact IT support','error');
+          }
+        },'json');
+      }
+    })
   });
+
+  $("form").submit(function(e){
+    e.preventDefault();
+    Swal.fire({
+      title: 'Generate DO',
+      html: 'Please make sure all the items in the list are correct, this action is irreversible',
+      icon: 'warning',
+      confirmButtonText: `Yes`,
+      showCancelButton: true,
+    }).then((result)=>{
+      if(result.isConfirmed){
+        $.post('{{route('postManualOrderList')}}',$("form").serialize(),
+        function(data){
+          if(data == true){
+            Swal.fire('Success','DO generate completed','success').then(()=>{window.location.assign('{{route('getDoHistory')}}')});
+          }else{
+            Swal.fire('Fail','Item remove fail, please contact IT support','error');
+          }
+        },"json");
+      }
+    });
+      
+  });
+
 });
 </script>
 

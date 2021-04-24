@@ -49,12 +49,12 @@
 			<tr>
 				<td><b>From</b></td>
 				<td>:</td>
-				<td>HQ Warehouse</td>
+				<td>{{$do_list->from}}</td>
 			</tr>
 			<tr>
 				<td><b>To</b></td>
 				<td>:</td>
-				<td>Branch Testing 2</td>
+				<td>{{$do_list->to}}</td>
 			</tr>
 			<tr>
 				<td><b>Description</b></td>

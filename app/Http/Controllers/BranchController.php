@@ -193,7 +193,7 @@ class BranchController extends Controller
 
     if($request->branch_transfer == "0"){
       $from = "HQ";
-      $from_branch_id = "HQ";
+      $from_branch_id = 0;
     }else{
       $branch = Branch::where('id',$request->branch_transfer)->first();
       $from = $branch->branch_name;
@@ -226,11 +226,8 @@ class BranchController extends Controller
       ]);
     }
 
-    //Deduct Stock From Selected Branch & Increase Target Branch
-
-    $target_branch_id = $request->branch_id;
-
-    if($from == "HQ"){
+    //Deduct Stock From Selected Branch
+    if($from_branch_id == 0){
       for($i=0;$i<count($request->barcode);$i++){
         Warehouse_stock::where('barcode',$request->barcode[$i])
                           ->update([
@@ -276,7 +273,7 @@ class BranchController extends Controller
 
   public function getDoHistoryDetail(Request $request)
   {
-    $url = route('home')."?p=branch_menu";
+    $url = route('getDoHistory');
     $do_list = Do_list::where('do_number',$request->do_number)->first(); 
     $do_detail = Do_detail::where('do_number',$request->do_number)->get();
 
@@ -354,8 +351,6 @@ class BranchController extends Controller
                       ->update([
                         'quantity' => $total_restock_quantity,
                       ]);
-
-      // Havent Deduced from Warehouse Store (Need modify ltr)
     }         
     
     Do_list::where('do_number',$request->do_number)
@@ -661,7 +656,6 @@ class BranchController extends Controller
     if(isset($_GET['branch_id']) && $_GET['branch_id'] != ''){
 
       $branch_product = Branch_product::where('branch_id',$_GET['branch_id'])
-                                    ->limit(1000)
                                     ->get(); 
     }
 
@@ -701,6 +695,14 @@ class BranchController extends Controller
 
     $branch_group = Tmp_order_list::select(DB::raw('DISTINCT from_branch,to_branch'))->first();
 
+    if($branch_group == null){ 
+      $branch = Branch::first();
+      return "<script>
+              alert('No order data, you will be redirect to order page shortly');
+              window.location.assign('".route('getManualStockOrder')."?branch_id=".$branch->id."');
+              </script>";
+    }
+
     if($branch_group->from_branch == 0)
       $from->branch_name = "HQ";
     else
@@ -721,9 +723,78 @@ class BranchController extends Controller
 
   public function postManualOrderList(Request $request)
   {
+    $do_configure = Do_configure::first();
+    $header = $do_configure->do_prefix_number.$do_configure->next_do_number;
+    $do_number = intval($do_configure->next_do_number);
+    $next = strval(++$do_number);
+    $i=6;
+    while($i>strlen($next)){
+      $next = "0".$next;
+    }
+    Do_configure::where('id',1)->update(['current_do_number'=>$do_configure->next_do_number,'next_do_number'=>$next]);
 
-    dd($request);
-    
+    Do_list::create([
+      'do_number' => $header,
+      'from' => $request->from,
+      'from_branch_id' => $request->from_branch_id,
+      'to' => $request->to,
+      'to_branch_id' => $request->to_branch_id,
+      'total_item' => array_sum($request->order_quantity),
+      'description' => "",
+      'completed' => 0,
+    ]);
+
+    for($a=0;$a < count($request->barcode);$a++){
+      Do_detail::create([
+        'do_number' => $header,
+        'product_id' => $request->product_id[$a],
+        'barcode' => $request->barcode[$a],
+        'product_name' => $request->product_name[$a],
+        'price' => $request->price[$a],
+        'cost' => $request->cost[$a],
+        'quantity' => $request->order_quantity[$a],
+      ]);
+    }
+
+    if($request->from_branch_id == 0){
+      for($i=0;$i<count($request->barcode);$i++){
+        Warehouse_stock::where('barcode',$request->barcode[$i])
+                          ->update([
+                            'quantity' => DB::raw('quantity -'.$request->order_quantity[$i]),
+                          ]);
+      }
+      
+    }else{
+      for($i=0;$i<count($request->barcode);$i++){
+        Branch_product::where('branch_id',$request->from_branch_id)
+                        ->where('barcode',$request->barcode[$i])
+                        ->update([
+                          'quantity' => DB::raw('quantity -'.$request->order_quantity[$i]),
+                        ]);
+      }
+    }
+
+    //Delete item from Tmp_order_list
+
+    Tmp_order_list::where('from_branch',$request->from_branch_id)
+                    ->where('to_branch',$request->to_branch_id)
+                    ->delete();
+
+    return "true";
+  }
+
+  public function ajaxRemoveItem(Request $request)
+  {
+    try{
+
+      Tmp_order_list::where('id',$request->id)->delete();
+
+      return "true";
+
+    }catch(Throwable $e){
+
+      return "false";
+    }
   }
 
 
