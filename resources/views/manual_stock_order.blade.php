@@ -4,10 +4,8 @@
 <script>
   Swal.fire({
     title: 'Fetching Product',
-    html: 'Please wait, we are loading your product list.<br/><br/><b>Approximate In 1 Minutes</b>',
+    html: 'Please wait, we are loading your product list.<br/><br/><b>Approximate In 1-2 Minutes</b>',
     allowOutsideClick: false,
-    timer: 60000,
-    timerProgressBar: true,
     didOpen: () => {
       Swal.showLoading();
     },
