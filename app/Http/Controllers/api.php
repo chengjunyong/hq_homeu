@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Transaction;
 use App\Transaction_detail;
-use App\Product_list;
+use App\Branch_product;
 use App\Branch;
 
 class api extends Controller
@@ -25,6 +25,16 @@ class api extends Controller
 
       transaction::where('branch_id', $branch_id)->where('session_id', $session_id)->delete();
       transaction_detail::where('branch_id', $branch_id)->where('session_id', $session_id)->delete();
+      $branch_detail = Branch::where('token', $branch_id)->first();
+
+      if(!$branch_detail)
+      {
+        $response = new \stdClass();
+        $response->error = 1;
+        $response->message = "Branch ID ".$branch_id." not found.";
+
+        return response()->json($response);
+      }
 
       $transaction_query = [];
       foreach($transaction as $data)
@@ -90,7 +100,7 @@ class api extends Controller
       }
 
       // more than 10000, php will return error
-      $product_list = product_list::select('department_id', 'category_id', 'barcode', 'product_name', 'price')->where('product_sync', 0)->get();
+      $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
 
       $response = new \stdClass();
       $response->error = 0;
@@ -103,14 +113,59 @@ class api extends Controller
     public function branchSyncCompleted(Request $request)
     {
       $barcode_array = $request->barcode_array;
+      $branch_id = $request->branch_id;
 
-      product_list::where('product_sync', 0)->whereIn('barcode', $barcode_array)->update([
+      $branch_detail = Branch::where('token', $branch_id)->first();
+
+      Branch_product::where('product_sync', 0)->where('branch_id', $branch_detail->id)->whereIn('barcode', $barcode_array)->update([
         'product_sync' => 1
       ]);
 
       $response = new \stdClass();
       $response->error = 0;
       $response->message = "Product list sync completed";
+
+      return response()->json($response);
+    }
+
+    public function syncBranchProductList(Request $request)
+    {
+      $branch_id = $request->branch_id;
+      $branch_detail = Branch::where('token', $branch_id)->first();
+
+      if(!$branch_detail)
+      {
+        $response = new \stdClass();
+        $response->error = 1;
+        $response->message = "Branch ID ".$branch_id." not found.";
+
+        return response()->json($response);
+      }
+      
+      $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
+
+      $response = new \stdClass();
+      $response->error = 0;
+      $response->message = "Syncing branch product list.";
+      $response->product_list = $product_list;
+
+      return response()->json($response);
+    }
+
+    public function branchSyncProductListCompleted(Request $request)
+    {
+      $barcode_array = $request->barcode_array;
+      $branch_id = $request->branch_id;
+
+      $branch_detail = Branch::where('token', $branch_id)->first();
+
+      Branch_product::where('product_sync', 0)->where('branch_id', $branch_detail->id)->whereIn('barcode', $barcode_array)->update([
+        'product_sync' => 1
+      ]);
+
+      $response = new \stdClass();
+      $response->error = 0;
+      $response->message = "Sync HQ product list completed";
 
       return response()->json($response);
     }
