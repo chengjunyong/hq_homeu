@@ -137,7 +137,7 @@ class BranchController extends Controller
     $url = route('home')."?p=branch_menu";
 
     $product = Branch_product::join('department','department.id','=','branch_product.department_id')
-                              ->join('category','category.id','=','Branch_product.category_id')
+                              ->join('category','category.id','=','branch_product.category_id')
                               ->select('branch_product.*','department.department_name','category.category_name')
                               ->where('branch_product.id',$request->id)
                               ->first();
