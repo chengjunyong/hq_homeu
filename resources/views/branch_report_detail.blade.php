@@ -72,7 +72,7 @@
   <div class="main" style="padding-bottom: 2.5rem;">
     <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
       <thead style="background: #adade0;">
-        <th style="text-align: right">BRANCH NAME</th>
+        <th style="text-align: right">CASHIER NAME</th>
         <th style="text-align: right">CASH</th>
         <th style="text-align: right">CREDIT CARD</th>
         <th style="text-align: right">T & GO</th>
