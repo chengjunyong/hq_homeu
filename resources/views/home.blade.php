@@ -639,7 +639,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">WareHouse Restock</h4>
+              <h4 class="card-title">Warehouse Restock</h4>
             </div>
             <div class="col">
               <a href="{{route('getPoList')}}"><i class="fas fa-folder-plus first stock-color"></i></a>

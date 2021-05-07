@@ -305,7 +305,7 @@ class SalesController extends Controller
     $branch_credit_sales = 0;
     $branch_total = 0;
 
-    $cashier_transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $branch->token)->groupBy('cashier_name')->get();
+    $cashier_transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $branch->token)->groupBy('ip')->get();
 
     foreach($cashier_transaction as $cashier)
     {
