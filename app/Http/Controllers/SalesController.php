@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Illuminate\Support\Facades\DB;
 
 class SalesController extends Controller
 {
@@ -724,14 +725,14 @@ class SalesController extends Controller
     $date = date('Y-m-d H:i:s', strtotime(now()));
     $stock = Branch_product::join('department','department.id','=','branch_product.department_id')
                           ->join('category','category.id','=','branch_product.category_id')
-                          ->where('branch_product.branch_id',$request->branch_id)
-                          ->select('department.department_name','category.category_name','branch_product.*')
-                          ->limit(10000)
+                          ->whereIn('branch_product.branch_id',$request->branch_id)
+                          ->select('department.department_name','category.category_name','branch_product.*',DB::raw('SUM(quantity) as total_quantity'))
+                          ->groupBy('branch_product.barcode')
                           ->get();
 
-    $branch = Branch::where('id',$request->branch_id)->first();
+    $branch = Branch::whereIn('id',$request->branch_id)->get();
 
-    $balance_stock = Branch_product::where('branch_id',$request->branch_id)
+    $balance_stock = Branch_product::whereIn('branch_id',$request->branch_id)
                                     ->selectRaw('SUM(cost * quantity) as total')
                                     ->get();
 
@@ -740,29 +741,58 @@ class SalesController extends Controller
 
   public function exportStockBalance(Request $request)
   {
+    $branch_id = explode(",",$request->branch_id[0]);
+
     if(!Storage::exists('public/report'))
     {
       Storage::makeDirectory('public/report', 0775, true); //creates directory
     }
 
     $date = date('Y-m-d', strtotime(now()));
-    $branch = Branch::where('id',$request->branch_id)->first();
+    $branch = Branch::whereIn('id',$branch_id)->get();
+    $count = count($branch);
+
+    $branch_list = "";
+    foreach($branch as $key => $result){
+      if($key+1 == $count){
+        $branch_list .= $result->branch_name;
+      }else{
+        $branch_list .= $result->branch_name.',';
+      }
+    }
 
     $stock = Branch_product::join('department','department.id','=','branch_product.department_id')
                           ->join('category','category.id','=','branch_product.category_id')
-                          ->where('branch_product.branch_id',$request->branch_id)
-                          ->select('department.department_name','category.category_name','branch_product.*')
+                          ->whereIn('branch_product.branch_id',$branch_id)
+                          ->select('department.department_name','category.category_name','branch_product.*',DB::raw('SUM(quantity) as total_quantity'))
+                          ->groupBy('branch_product.barcode')
+                          ->orderBy('barcode','asc')
                           ->get();
 
     $stock_array = array();
     foreach($stock as $key => $result){
-      array_push($stock_array,[$key+1,$result->department_name,$result->category_name,$result->barcode,$result->product_name,$result->cost,number_format($result->quantity,0),$result->price,number_format($result->cost * $result->quantity,2)]);
+      array_push($stock_array,[$key+1,$result->department_name,$result->category_name,$result->barcode,$result->product_name,$result->cost,$result->total_quantity,$result->price,$result->cost * $result->total_quantity]);
     }
 
-    $balance_stock = Branch_product::where('branch_id',$request->branch_id)
+    $balance_stock = Branch_product::whereIn('branch_id',$branch_id)
                                     ->selectRaw('SUM(cost * quantity) as total')
+                                    ->orderBy('barcode','asc')
                                     ->get();
 
+    $branch_stock_quantity = array();
+    foreach($branch as $result){
+
+      $a[] = Branch_product::where('branch_id',$result->id)
+                            ->select('quantity')
+                            ->orderBy('barcode','asc')
+                            ->get()
+                            ->toArray();
+    }
+
+    $row = 5;
+    $col = 11;
+
+    $set_col = $col; 
     $spreadsheet = new Spreadsheet();
     $spreadsheet->getActiveSheet()->mergeCells('A1:I1');
     $spreadsheet->getActiveSheet()->mergeCells('A2:I2');
@@ -777,9 +807,13 @@ class SalesController extends Controller
     $sheet->setCellValue('A3', 'Date');
     $sheet->setCellValue('B3', $date);
     $sheet->setCellValue('A4', 'Branch');
-    $sheet->setCellValue('B4', $branch->branch_name);
+    $sheet->setCellValue('B4', $branch_list);
     $sheet->setCellValue('G4', 'Balance Stock');
     $sheet->setCellValue('I4', number_format($balance_stock[0]->total,2));
+    foreach($branch as $result){
+      $sheet->getCellByColumnAndRow($set_col, $row)->setValue($result->branch_name." Stock Quantity");
+      $set_col++;
+    }
 
     //Data
     $sheet->setCellValue('A5', 'Bil');
@@ -788,9 +822,15 @@ class SalesController extends Controller
     $sheet->setCellValue('D5', 'Barcode');
     $sheet->setCellValue('E5', 'Product Name');
     $sheet->setCellValue('F5', 'Cost');
-    $sheet->setCellValue('G5', 'Quantity');
+    $sheet->setCellValue('G5', 'Total Quantity');
     $sheet->setCellValue('H5', 'Selling Price');
     $sheet->setCellValue('I5', 'Total Cost');
+
+    foreach($a as $key1 => $result){
+      foreach($result as $key2 => $final){
+        $sheet->getCellByColumnAndRow($col+$key1, $row+$key2+1)->setValue($final['quantity']); 
+      }
+    }
 
     $writer = new Xlsx($spreadsheet);
     $path = 'storage/report/Stock Balance Report.xlsx';

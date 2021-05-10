@@ -48,7 +48,7 @@ class BranchController extends Controller
       'token' => $request->token
     ]);
 
-    $product_list = Product_list::select('department_id','category_id','barcode','product_name','cost','price','quantity','reorder_level','recommend_quantity','unit_type')
+    $product_list = Product_list::select('department_id','category_id','barcode','product_name','cost','price','reorder_level','recommend_quantity','unit_type')
                                  ->get()
                                  ->toArray();
 

@@ -35,7 +35,7 @@
             <div class="col-md-12 form-group">
               <label>Please Select Branch</label>
               <button type="button" class="btn btn-primary" id="export_report" style="float: right; margin-bottom: 10px;">Export Report</button>
-              <select class="form-control" name="branch_id">
+              <select class="form-control" name="branch_id[]" id="select_branch" multiple="multiple" required>
                 @foreach($branch as $result)
                 <option value="{{$result->id}}">{{$result->branch_name}}</option>
                 @endforeach
@@ -52,31 +52,39 @@
 
 <form method="POST" action="{{ route('exportStockBalance') }}" id="exportStockBalanceReport">
   @csrf
-  <input type="hidden" id="branch_id" name="branch_id" />
+  <input type="hidden" id="branch_id" name="branch_id[]"/>
 </form>
 
 <script>
+$(document).ready(function(){
   $("#export_report").click(function(){
-    let branch_id = $("select[name='branch_id']").val();
-    $("#branch_id").val(branch_id)
+    if($("#select_branch").val().length != 0){
+      let branch_id = $("#select_branch").val();
+      $("#branch_id").val(branch_id);
 
-    swal.fire({
-      title : 'Exporting Report',
-      html  : 'It will take some time to process, please wait awhile.',
-      didOpen: () => {
-          swal.showLoading()
-      },
-      backdrop : true,
-      allowOutsideClick : false,
-    });
+      swal.fire({
+        title : 'Exporting Report',
+        html  : 'It will take some time to process, please wait awhile.',
+        didOpen: () => {
+            swal.showLoading()
+        },
+        backdrop : true,
+        allowOutsideClick : false,
+      });
 
-    $.post("{{route('exportStockBalance')}}",
-      $("#exportStockBalanceReport").serialize(),
-      function(data){
-        swal.close();
-        window.open(data);
-      },'json');
+      $.post("{{route('exportStockBalance')}}",
+        $("#exportStockBalanceReport").serialize(),
+        function(data){
+          swal.close();
+          window.open(data);
+        },'json');
+    }else{
+      swal.fire('Error','Please Select Branch Before Exporting Report','error');
+    }
 
   });
+
+  $("#select_branch").select2({});
+});
 </script>
 @endsection
