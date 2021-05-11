@@ -55,7 +55,11 @@
       <tr>
         <td><b>Branch</b></td>
         <td>:</td>
-        <td align="right">{{ $branch->branch_name }}</td>
+        <td align="right">
+          @foreach($branch as $result)
+            {{ $result->branch_name }},
+          @endforeach
+        </td>
       </tr>
     </table>
     <table style="float:right">
@@ -95,9 +99,9 @@
             <td>{{$result->barcode}}</td>
             <td>{{$result->product_name}}</td>
             <td>{{ number_format($result->cost,2)}}</td>
-            <td>{{$result->quantity}}</td>
+            <td>{{$result->total_quantity}}</td>
             <td>{{ number_format($result->price,2)}}</td>
-            <td>{{ number_format($result->cost * $result->quantity,2) }}</td>
+            <td>{{ number_format($result->cost * $result->total_quantity,2) }}</td>
           </tr>
         @endforeach
       </tbody>
