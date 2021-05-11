@@ -23,6 +23,8 @@ class api extends Controller
       $branch_id = $request->branch_id;
       $session_id = $request->session_id;
 
+      $previous_transaction_detail = transaction_detail::where('branch_id', $branch_id)->where('session_id', $session_id)->selectRaw('*, sum(quantity) as total_quantity')->groupBy('product_id')->get();
+
       transaction::where('branch_id', $branch_id)->where('session_id', $session_id)->delete();
       transaction_detail::where('branch_id', $branch_id)->where('session_id', $session_id)->delete();
       $branch_detail = Branch::where('token', $branch_id)->first();
@@ -70,6 +72,8 @@ class api extends Controller
         transaction::insert($query);
       }
 
+      $transaction_product = array();
+
       $transaction_detail_query = [];
       foreach($transaction_detail as $data)
       {
@@ -91,12 +95,48 @@ class api extends Controller
           'updated_at' => $data['updated_at']
         ];
 
+        $product_name = "product_".$data['product_id'];
+        if(!isset($transaction_product[$product_name]))
+        {
+          $transaction_product[$product_name] = new \stdClass();
+          $transaction_product[$product_name]->barcode = $data['barcode'];
+          $transaction_product[$product_name]->quantity = 0;
+        }
+
+        $transaction_product[$product_name]->quantity += $data['quantity'];
+
         array_push($transaction_detail_query, $query);
       }
+
+      foreach($transaction_product as $key => $transaction_product_detail)
+      {
+        $product_id = str_replace("product_", "", $key);
+        foreach($previous_transaction_detail as $previous_transaction)
+        {
+          if($product_id == $previous_transaction->product_id)
+          {
+            $transaction_product[$key]->quantity = $transaction_product_detail->quantity - $previous_transaction->total_quantity;
+            break;
+          }
+        }
+      } 
 
       $transaction_detail_query = array_chunk($transaction_detail_query,500);
       foreach($transaction_detail_query as $query){
         transaction_detail::insert($query);
+      }
+
+      foreach($transaction_product as $transaction_product_detail)
+      {
+        $branch_product = Branch_product::where('branch_id', $branch_detail->id)->where('barcode', $transaction_product_detail->barcode)->first();
+
+        if($branch_product)
+        {
+          $stock = $branch_product->quantity - $transaction_product_detail->quantity;
+          Branch_product::where('id', $branch_product->id)->update([
+            'quantity' => $stock
+          ]);
+        }
       }
 
       // more than 10000, php will return error
