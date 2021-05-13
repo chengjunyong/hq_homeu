@@ -815,7 +815,7 @@ class SalesController extends Controller
     $sheet->setCellValue('G4', 'Balance Stock');
     $sheet->setCellValue('I4', number_format($balance_stock[0]->total,2));
     foreach($branch as $result){
-      $sheet->getCellByColumnAndRow($set_col, $row)->setValue($result->branch_name." Stock Quantity");
+      $sheet->getCellByColumnAndRow($set_col, $row)->setValue($result->branch_name);
       $set_col++;
     }
 
