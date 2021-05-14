@@ -336,13 +336,13 @@ class UserController extends Controller
           'group' => 'Branch',
           'value' => 22,
           'name' => 'Manual Stock Order',
-          'route' => 'getManualOrderList'
+          'route' => 'getManualStockOrder'
         ],
         [
           'group' => 'Stock',
           'value' => 23,
           'name' => 'Purchase Order History',
-          'route' => 'getPurchaseOrder'
+          'route' => 'getPurchaseOrderHistory'
         ],
         [
           'group' => 'Stock',
