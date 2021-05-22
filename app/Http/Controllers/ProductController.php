@@ -9,6 +9,7 @@ use App\Category;
 use App\Product_list;
 use App\Product_configure;
 use App\Branch;
+use App\Warehouse_stock;
 
 
 class ProductController extends Controller
@@ -164,6 +165,20 @@ class ProductController extends Controller
       'unit_type'=>null,
     ]);
 
+    Warehouse_stock::create([
+      'department_id'=>$request->department,
+      'category_id'=>$request->category,
+      'barcode'=>$request->barcode,
+      'product_name'=>$request->product_name,
+      'cost'=>$request->cost,
+      'price'=>$request->price,
+      'quantity'=>0,
+      'reorder_level'=>$request->reorder_level,
+      'reorder_quantity'=>$request->recommend_quantity,
+      'unit_type'=>null,
+      'product_sync'=>null,
+    ]);
+
     return back()->with('result','true');
   }
 
@@ -181,7 +196,7 @@ class ProductController extends Controller
 
   public function getModifyProduct(Request $request)
   {
-    $url = route('home')."?p=product_menu";
+    $url = route('getProductList');
 
     $product = Product_list::where('id',$request->id)->first();
 
@@ -196,9 +211,6 @@ class ProductController extends Controller
 
   public function postModifyProduct(Request $request)
   {
-
-    $branch = Branch::select('id')->get();
-
     Branch_product::where('barcode',$request->barcode)
                     ->update([
                       'department_id'=>$request->department,
@@ -209,6 +221,8 @@ class ProductController extends Controller
                       'reorder_level'=>$request->reorder_level,
                       'recommend_quantity'=>$request->recommend_quantity,
                       'product_sync'=>0,
+                      'schedule_date'=>$request->schedule_date,
+                      'schedule_price'=>$request->schedule_price,
                     ]);
 
     Product_list::where('barcode',$request->barcode)
@@ -221,7 +235,21 @@ class ProductController extends Controller
                       'reorder_level'=>$request->reorder_level,
                       'recommend_quantity'=>$request->recommend_quantity,
                       'product_sync'=>0,
+                      'schedule_date'=>$request->schedule_date,
+                      'schedule_price'=>$request->schedule_price,
                     ]);
+
+    Warehouse_stock::where('barcode',$request->barcode)
+                    ->update([
+                      'department_id'=>$request->department,
+                      'category_id'=>$request->category,
+                      'product_name'=>$request->product_name,
+                      'cost'=>$request->cost,
+                      'price'=>$request->price,
+                      'reorder_level'=>0,
+                      'reorder_quantity'=>0,
+                      'product_sync'=>null,
+                    ]);                
 
     return back()->with('result','true');
   }

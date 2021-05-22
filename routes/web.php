@@ -21,7 +21,7 @@ Route::post('/createbranch','BranchController@createBranch')->name('createBranch
 Route::get('/editBranch','BranchController@editBranch')->name('editBranch');
 Route::get('/branchstocklist/{branch_id}','BranchController@getBranchStockList')->name('getBranchStockList');
 Route::get('/searchbranchproduct','BranchController@searchBranchProduct')->name('searchBranchProduct');
-Route::get('/modifybranchstock/{id}','BranchController@getModifyBranchStock')->name('getModifyBranchStock');
+Route::get('/modifybranchstock/{branch_id}/{id}','BranchController@getModifyBranchStock')->name('getModifyBranchStock');
 Route::post('/modifybranchstock','BranchController@postModifyBranchStock')->name('postModifyBranchStock');
 Route::get('/restock','BranchController@getBranchRestock')->name('getBranchRestock');
 Route::post('/generatedo','BranchController@postBranchStock')->name('postBranchStock');

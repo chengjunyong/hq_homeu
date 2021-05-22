@@ -56,6 +56,14 @@
 						<label>Reorder Recommend Quantity</label>
 						<input type="number" min="0" step="1" name="recommend_quantity" class="form-control" required value="{{$product->recommend_quantity}}">
 					</div>
+          <div class="col-md-6">
+            <label>Schedule Date</label>
+            <input type="date" name="schedule_date" class="form-control" value="{{$product->schedule_date}}">
+          </div>
+          <div class="col-md-6">
+            <label>Schedule Price</label>
+            <input type="number" min="0" step="0.01" name="schedule_price" class="form-control" value="{{$product->schedule_price}}">
+          </div>
 					<div class="col-md-12" style="text-align: center;margin-top: 20px">
 						<input type="submit" class="btn btn-primary" value="Update">
 					</div>

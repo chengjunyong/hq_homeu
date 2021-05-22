@@ -13,6 +13,7 @@ use App\Do_list;
 use App\Transaction;
 use App\Transaction_detail;
 use App\User;
+use App\Supplier;
 use App\Damaged_stock_history;
 use App\Stock_lost_history;
 use App\Branch_stock_history;
@@ -98,10 +99,15 @@ class BranchController extends Controller
     $url = route('home')."?p=branch_menu";
 
     $branch = Branch::get();
-    $branch_product = Branch_product::where('branch_id',$request->branch_id)->paginate(25);
+    $branch_product = Branch_product::join('department','department.id','=','branch_product.department_id')
+                                      ->join('category','category.id','=','branch_product.category_id')
+                                      ->where('branch_product.branch_id',$request->branch_id)
+                                      ->paginate(25);
+
     foreach($branch as $key => $result){
       $branch[$key]->url = route('getBranchStockList',$result->id);
     }
+
     $branch_id = $request->branch_id;
 
     return view('branch_stock_list',compact('branch','branch_product','branch_id','url'));
@@ -134,7 +140,7 @@ class BranchController extends Controller
   public function getModifyBranchStock(Request $request)
   {
 
-    $url = route('home')."?p=branch_menu";
+    $url = route('getBranchStockList',$request->branch_id);
 
     $product = Branch_product::join('department','department.id','=','branch_product.department_id')
                               ->join('category','category.id','=','branch_product.category_id')
@@ -396,11 +402,14 @@ class BranchController extends Controller
     }
 
     $url = route('home')."?p=branch_menu";
+
+    $supplier = Supplier::get();
+
     $do_detail = Do_detail::where('stock_lost_reason','damaged')
                           ->where('stock_lost_review',1)
                           ->paginate(15);
 
-    return view('damaged_stock_list',compact('do_detail','url'));
+    return view('damaged_stock_list',compact('do_detail','url','supplier'));
   }
 
   public function postDamagedStock(Request $request)
@@ -421,6 +430,7 @@ class BranchController extends Controller
           Damaged_stock_history::create([
             'gr_number' => $key,
             'do_number' => $result->do_number,
+            'supplier_id' => $request->supplier_id,
             'barcode' => $result->barcode,
             'product_name' => $result->product_name,
             'lost_quantity' => $result->stock_lost_quantity,
@@ -443,20 +453,11 @@ class BranchController extends Controller
 
   public function getGenerateGR(Request $request)
   {
-
     $url = route('home')."?p=branch_menu";
-    // Dummy Supplier Data (Development only)
-      $supplier = new \stdClass();
-      $supplier->name = "Dummy Supplier";
-      $supplier->id = "DS001";
-      $supplier->address1 = "Supplier Address 1";
-      $supplier->address2 = "Supplier Address 2";
-      $supplier->address3 = "Supplier Address 3";
-      $supplier->contact = "03-562 3662";
-      $supplier->email = "Dummy_Supplier@gmail.com";
-    // Dummy Supplier Data End Here
 
     $gr = Damaged_stock_history::where('gr_number',$request->gr_number)->get();
+
+    $supplier = Supplier::where('id',$gr[0]->supplier_id)->first();
 
     $total = new \stdClass();
     $a=0;

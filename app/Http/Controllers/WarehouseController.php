@@ -77,10 +77,6 @@ class WarehouseController extends Controller
   {
   	Warehouse_stock::where('barcode',$request->barcode)
   									->update([
-  										'department_id' => $request->department,
-  										'category_id' => $request->category,
-  										'product_name' => $request->product_name,
-  										'cost' => $request->cost,
                       'quantity' => $request->quantity,
   										'reorder_level' => $request->reorder_level,
   										'reorder_quantity' => $request->recommend_quantity,

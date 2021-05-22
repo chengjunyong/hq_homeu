@@ -20,5 +20,7 @@ class Product_list extends Model
       'recommend_quantity',
       'unit_type',
       'product_sync',
+      'schedule_date',
+      'schedule_price',
     ];
 }

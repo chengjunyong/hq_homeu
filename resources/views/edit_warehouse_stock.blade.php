@@ -18,7 +18,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<label>Department</label>
-						<select name="department" id="department" class="form-control" required>
+						<select name="department" id="department" class="form-control" readonly>
 							@foreach($department as $result)
 								<option value="{{$result->id}}" {{($warehouse_stock->department_id == $result->id) ? 'selected' : ''}}>{{$result->department_name}}</option>
 							@endforeach
@@ -26,7 +26,7 @@
 					</div>
 					<div class="col-md-12">
 						<label>Category</label>
-						<select name="category" id="category" class="form-control" required>
+						<select name="category" id="category" class="form-control" readonly>
 							@foreach($category as $result)
 								<option value="{{$result->id}}" {{($warehouse_stock->category_id == $result->id) ? 'selected' : ''}}>{{$result->category_name}}</option>
 							@endforeach
@@ -38,7 +38,7 @@
 					</div>
 					<div class="col-md-12">
 						<label>Product Name</label>
-						<input type="text" name="product_name" class="form-control" required value="{{$warehouse_stock->product_name}}">
+						<input type="text" name="product_name" class="form-control" readonly value="{{$warehouse_stock->product_name}}">
 					</div>
 					<div class="col-md-6">
 						<label>Cost</label>
@@ -99,7 +99,7 @@ $(document).ready(function(){
 </script>
 @if(session()->has('result'))
 <script>
-	$("#msg").text("Product Update Successful");
+	$("#msg").text("Warehouse Product Update Successful");
 	$("#result").modal('toggle');
 </script>
 @endif

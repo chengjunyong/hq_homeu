@@ -21,5 +21,7 @@ class Branch_product extends Model
       'recommend_quantity',
       'unit_type',
       'product_sync',
+      'schedule_date',
+      'schedule_price',
     ];
 }

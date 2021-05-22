@@ -46,7 +46,7 @@
 	<div class="header">
 		<h2>HOME U(M) SDN BHD</h2>
 		<h4>(125272-P)</h4>
-		<h4>Tel: 09-7744243 <br/> Email: assist@homeu.com.my</h4>
+		<h4>Tel: 09-7744243 <br/> Email: assist@homeumsd.com</h4>
 		<h3 style="margin:20px 30%;border:1px solid black">Goods Return</h3>
 	</div>
 
@@ -55,7 +55,7 @@
 			<tr>
 				<td><b>Return To</b></td>
 				<td>:</td>
-				<td>{{$supplier->name}}</td>
+				<td>{{$supplier->supplier_name}}</td>
 			</tr>
 			<tr>
 				<td><b>Address</b></td>
@@ -92,7 +92,7 @@
 			<tr>
 				<td><b>E-mail</b></td>
 				<td>:</td>
-				<td align="right">{{$supplier->email}}</td>
+				<td align="right">{{($supplier->email != 'null') ? $supplier->email : 'None'}}</td>
 			</tr>
 		</table>
 	</div>

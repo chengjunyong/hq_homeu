@@ -17,7 +17,14 @@
 			<h4 style="margin: 20px">Damaged Stock List</h4>
 		</div>
 		<div>
-			<a href="{{route('getDamagedStockHistory')}}" style="float:right;margin-right: 20px"><button class="btn btn-primary">Good Returns History</button></a>
+			<a href="{{route('getDamagedStockHistory')}}" style="float:right;margin-right: 20px">
+        <button class="btn btn-primary">Good Returns History</button>
+      </a>
+      <select class="form-control" id="supplier_id" style="float:left;margin-left: 20px;width: 35%">
+        @foreach($supplier as $result)
+          <option value="{{$result->id}}">{{$result->supplier_name}}</option>
+        @endforeach
+      </select>
 		</div>
 		<div class="card-body">
 			<div class="table table-responsive">
@@ -78,6 +85,7 @@ $(document).ready(function(){
 					{
 						'_token':token,
 						'result':send,
+            'supplier_id' : $("#supplier_id").val(),
 					},
 					function(data){
 						if(data['redirect'] != null){

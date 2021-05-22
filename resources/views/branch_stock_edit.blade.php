@@ -10,7 +10,7 @@
 		<div class="card-body">
 			<form method="post" id="form">
 				@csrf
-				<input type="text" value="{{$product->id}}" name="id" hidden />
+				<input type="text" value="{{$product->id}}" name="id" hidden /> 
 				<div class="row"> 
 					<div class="col-md-12">
 						<label>Department</label>
