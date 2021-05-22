@@ -7,6 +7,8 @@ use App\Transaction;
 use App\Transaction_detail;
 use App\Branch_product;
 use App\Branch;
+use App\Product_list;
+use Illuminate\Support\Facades\DB;
 
 class api extends Controller
 {
@@ -212,7 +214,24 @@ class api extends Controller
 
     public function CronPriceSync()
     {
+      try{
+        $list = Product_list::whereRaw("schedule_date = DATE(NOW())")->get();
+        foreach($list as $result){
+          Branch_product::where('barcode',$result->barcode)
+                        ->update([
+                            'price' => $result->schedule_price,
+                            'product_sync' => 0,
+                          ]);
+        }
 
-      return "Completed";
+        DB::select(DB::raw("UPDATE product_list SET price = schedule_price WHERE schedule_date = DATE(NOW())"));
+
+        return "Success";
+
+      }catch(Throwable $e){
+
+        return "Something Wrong";
+
+      }
     }
 }
