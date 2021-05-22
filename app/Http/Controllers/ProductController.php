@@ -254,5 +254,4 @@ class ProductController extends Controller
     return back()->with('result','true');
   }
 
-
 }

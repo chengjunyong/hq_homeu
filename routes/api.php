@@ -21,6 +21,8 @@ use Illuminate\Http\Request;
 Route::post('/branchSync', 'api@branchSync')->name('branchSync');
 Route::post('/branchSyncCompleted', 'api@branchSyncCompleted')->name('branchSyncCompleted');
 Route::post('/branchSyncProductList', 'api@syncBranchProductList')->name('syncBranchProductList');
-
 Route::post('/branchSyncProductListCompleted', 'api@branchSyncProductListCompleted')->name('branchSyncProductListCompleted');
+
+//CronJob
+Route::get('/PriceSync','api@CronPriceSync')->name('CronPriceSync');
 

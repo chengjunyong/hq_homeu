@@ -209,4 +209,10 @@ class api extends Controller
 
       return response()->json($response);
     }
+
+    public function CronPriceSync()
+    {
+
+      return "Completed";
+    }
 }
