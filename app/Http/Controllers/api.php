@@ -9,6 +9,7 @@ use App\Branch_product;
 use App\Branch;
 use App\Product_list;
 use Illuminate\Support\Facades\DB;
+use App\Warehouse_stock;
 
 class api extends Controller
 {
@@ -218,6 +219,12 @@ class api extends Controller
         $list = Product_list::whereRaw("schedule_date = DATE(NOW())")->get();
         foreach($list as $result){
           Branch_product::where('barcode',$result->barcode)
+                        ->update([
+                            'price' => $result->schedule_price,
+                            'product_sync' => 0,
+                          ]);
+
+          Warehouse_stock::where('barcode',$result->barcode)
                         ->update([
                             'price' => $result->schedule_price,
                             'product_sync' => 0,
