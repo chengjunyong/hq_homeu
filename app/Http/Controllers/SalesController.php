@@ -748,7 +748,11 @@ class SalesController extends Controller
       Storage::makeDirectory('public/report', 0775, true); //creates directory
     }
 
-    $date = date('Y-m-d', strtotime(now()));
+    $files = Storage::allFiles('public/report');
+
+    Storage::delete($files);
+
+    $date = date('d-M-Y h:i:s A', strtotime(now()));
     $branch = Branch::whereIn('id',$branch_id)->get();
     $count = count($branch);
 
@@ -811,7 +815,7 @@ class SalesController extends Controller
     $sheet->setCellValue('G4', 'Balance Stock');
     $sheet->setCellValue('I4', number_format($balance_stock[0]->total,2));
     foreach($branch as $result){
-      $sheet->getCellByColumnAndRow($set_col, $row)->setValue($result->branch_name." Stock Quantity");
+      $sheet->getCellByColumnAndRow($set_col, $row)->setValue($result->branch_name);
       $set_col++;
     }
 
@@ -832,8 +836,10 @@ class SalesController extends Controller
       }
     }
 
+    $time = date('d-M-Y h i s A');
+    $time = (string)$time;
     $writer = new Xlsx($spreadsheet);
-    $path = 'storage/report/Stock Balance Report.xlsx';
+    $path = 'storage/report/Stock Balance Report ('.$time.').xlsx';
     $writer->save($path);
 
     return response()->json($path);

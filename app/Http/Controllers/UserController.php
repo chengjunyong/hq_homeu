@@ -332,6 +332,30 @@ class UserController extends Controller
           'name' => 'Purchase Order',
           'route' => 'getPurchaseOrder'
         ],
+        [
+          'group' => 'Branch',
+          'value' => 22,
+          'name' => 'Manual Stock Order',
+          'route' => 'getManualStockOrder'
+        ],
+        [
+          'group' => 'Stock',
+          'value' => 23,
+          'name' => 'Purchase Order History',
+          'route' => 'getPurchaseOrderHistory'
+        ],
+        [
+          'group' => 'Stock',
+          'value' => 24,
+          'name' => 'Warehouse Restock',
+          'route' => 'getPoList'
+        ],
+        [
+          'group' => 'Stock',
+          'value' => 25,
+          'name' => 'Warehouse Restock History',
+          'route' => 'getWarehouseRestockHistory'
+        ],
       ];
 
       return $access_control;
