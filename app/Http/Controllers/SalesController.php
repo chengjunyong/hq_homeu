@@ -855,4 +855,81 @@ class SalesController extends Controller
   {
 
   }
+
+  public function getProductSalesReport()
+  {
+    $url = route('home')."?p=sales_menu";
+
+    $selected_date_from = date('Y-m-d', strtotime(now()));
+    $selected_date_to = date('Y-m-d', strtotime(now()));
+
+    $product_list = Product_list::get();
+
+    return view('report.product_sales_report',compact('url','selected_date_from','selected_date_to','product_list'));
+  }
+
+  public function postProductSalesReport(Request $request)
+  {
+    $user = Auth::user();
+    $data[] = array();
+    $total_quantity = 0;
+    $total_sales = 0;
+    $total_quantity_day = array();
+    $total_sales_day = array();
+    $branch_total_quantity = array();
+    $branch_total_sales = array(); 
+
+    $from_date = $request->report_date_from;
+    $to_date = date('Y-m-d',strtotime($request->report_date_to."+1 day"));
+
+    $diff=strtotime($to_date)-strtotime($from_date);
+    $diff_date = $diff / 60 / 60 / 24;
+
+    $branch = Branch::orderBy('token')->get();
+    $product_detail = Product_list::where('barcode',$request->barcode)->first();
+
+
+    foreach($branch as $index => $result){
+      $data[$index] = array();
+      for($a=0;$a<$diff_date;$a++){
+        $tmp_d = date('Y-m-d',strtotime($request->report_date_from."+".$a." day"));
+        $tmp = Transaction_detail::selectRaw("SUM(quantity) as quantity,SUM(total) as total,created_at,branch_id")
+                                    ->where('barcode',$request->barcode)
+                                    ->where('branch_id',$result->token)
+                                    ->whereRaw("DATE(created_at) = '$tmp_d'")
+                                    ->first();
+
+        array_push($data[$index],$tmp);
+      }
+
+      $branch_total_sales[$index] = 0;
+      $branch_total_quantity[$index] = 0;
+
+      foreach($data[$index] as $result){
+        $total_quantity += intval($result->quantity);
+        $total_sales += $result->total;
+
+        $branch_total_sales[$index] += $result->total;
+        $branch_total_quantity[$index] += intval($result->quantity);
+      }
+    }
+
+    //Row Sum
+    for($a=0;$a<$diff_date;$a++){
+      $total_quantity_day[$a] = 0;
+      $total_sales_day[$a] = 0;
+      for($b=0;$b<count($data);$b++){
+        $total_sales_day[$a] += $data[$b][$a]->total;
+        $total_quantity_day[$a] += intval($data[$b][$a]->quantity);
+      }
+    }
+
+    return view('report.print_product_sales_report',compact('total_quantity','total_sales','branch_total_quantity','branch_total_sales','user','data','from_date','to_date','product_detail','branch','diff_date','total_quantity_day','total_sales_day'));
+  }
+
+  public function exportProductSalesReport(Request $request)
+  {
+
+
+  }
 }

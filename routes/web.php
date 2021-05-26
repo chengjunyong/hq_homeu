@@ -87,6 +87,10 @@ Route::post('/export_stock_balance', 'SalesController@exportStockBalance')->name
 Route::get('/stock_reorder','SalesController@getStockReorder')->name('getStockReorder');
 Route::post('/stock_report_report','SalesController@getStockReorderReport')->name('getStockReorderReport');
 
+Route::get('/ProductSalesReport','SalesController@getProductSalesReport')->name('getProductSalesReport');
+Route::post('/ProductSalesReport','SalesController@postProductSalesReport')->name('postProductSalesReport');
+Route::post('/ExportProductSalesReport','SalesController@exportProductSalesReport')->name('exportProductSalesReport');
+
 // User access control
 Route::get('/user_access_control', 'UserController@getUserAccessControl')->name('getUserAccessControl'); 
 Route::post('/createNewUser', 'UserController@createNewUser')->name('createNewUser');
