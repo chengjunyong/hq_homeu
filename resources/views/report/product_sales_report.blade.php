@@ -40,9 +40,9 @@
     <div class="card">
       <div class="card-body">
         <div class="row">
-<!--           <div class="col-md-12 form-group">
+          <div class="col-md-12 form-group">
             <button type="button" class="btn btn-primary" id="export_report" style="float: right; margin-bottom: 10px;">Export Report</button>
-          </div> -->
+          </div>
           <div class="col-md-12">
             <label>Product</label>
             <select name="barcode[]" id="product" class="form-control" required>
@@ -73,9 +73,9 @@
   </div>
 </form>
 
-<form method="POST" action="{{ route('exportSalesReport') }}" id="exportSalesReportForm">
+<form method="POST" action="{{ route('exportProductSalesReport') }}" id="exportProductSalesReportForm">
   @csrf
-  <input type="hidden" id="branch_token" name="branch_token" />
+  <input type="hidden" id="barcode" name="barcode" />
   <input type="hidden" id="report_date_from" name="report_date_from" value="{{ $selected_date_from }}" />
   <input type="hidden" id="report_date_to" name="report_date_to" value="{{ $selected_date_to }}" />
 </form>
@@ -85,13 +85,13 @@ $(document).ready(function(){
   $("#export_report").click(function(){
     var report_date_from = $("input[name='report_date_from']").val();
     var report_date_to = $("input[name='report_date_to']").val();
-    var branch_token = $("select[name='branch_token']").val();
+    var barcode = $("select[name='barcode[]']").val();
 
-    $("#branch_token").val(branch_token);
+    $("#barcode").val(barcode);
     $("#report_date_from").val(report_date_from);
     $("#report_date_to").val(report_date_to);
 
-    $("#exportSalesReportForm").submit();
+    $("#exportProductSalesReportForm").submit();
   });
 
   $("#product").select2();
