@@ -378,7 +378,7 @@
         }
       },
       decoder :{
-        readers : ["code_128_reader", "ean_reader", "upc_reader"]
+        readers : ["code_128_reader", "ean_reader", "i2of5_reader"]
       },
       numOfWorkers: 2,
       frequency: 10,
