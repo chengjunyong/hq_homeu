@@ -213,6 +213,7 @@
   var scan_value = null;
   var cameraFeed = document.getElementById("quagga-scanner");
   var freeze = 0;
+  var time;
 
   $(document).ready(function(){
 
@@ -247,7 +248,7 @@
     {
       Swal.fire(
         'Failed!',
-        "Cannot get any data.",
+        "Cannot get any data. Make sure your url is HTTPS",
         'error'
       );
     }
@@ -421,7 +422,11 @@
       else if(scan_value != data.codeResult.code)
       {
         scan_value = data.codeResult.code;
-        checkProductBarcode(scan_value);
+
+        clearTimeout(time);
+        time = setTimeout(function(){checkProductBarcode(scan_value);},300);
+
+        // checkProductBarcode(scan_value);
       }
     });
   }
