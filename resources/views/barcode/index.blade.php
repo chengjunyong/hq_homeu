@@ -4,6 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DEVX15R54N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DEVX15R54N');
+  </script>
   <title>{{ config('app.name', 'Laravel') }}</title>
   <script src="{{ asset('js/jquery.js') }}"></script>
   <script src="{{ asset('bootstrap-4.0.0/js/bootstrap.min.js') }}"></script>

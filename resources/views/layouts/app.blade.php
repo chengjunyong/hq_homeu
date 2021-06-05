@@ -27,6 +27,16 @@
   <!-- Select2 -->
   <script src="{{ asset('select2/js/select2.full.min.js') }}"></script>
 
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DEVX15R54N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-DEVX15R54N');
+  </script>
+
 
 </head>
 <style>
