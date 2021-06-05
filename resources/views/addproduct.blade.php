@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<title>Add Product</title>
 @section('content')
 <style>
 .row > .col-md-12,.col-md-6{

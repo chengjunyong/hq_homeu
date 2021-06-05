@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<title>Branch Restock Management</title>
 @section('content')
 <style>
 	.container{

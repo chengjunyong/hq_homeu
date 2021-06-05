@@ -1,4 +1,5 @@
 @extends('layouts.app')
+<title>Stock Lost History</title>
 @section('content')
 <style>
 	.container{

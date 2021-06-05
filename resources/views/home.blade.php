@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<title>Home</title>
 @section('content')
 <style>
   #logout{

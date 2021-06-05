@@ -1,6 +1,14 @@
 <html>
 <head>
 <title>Purchase Order</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DEVX15R54N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-DEVX15R54N');
+  </script>
 </head>
 <style>
 	h2,h4{

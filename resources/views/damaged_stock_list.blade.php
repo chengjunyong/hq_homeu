@@ -1,4 +1,5 @@
 @extends('layouts.app')
+<title>Damaged Stock List</title>
 @section('content')
 <style>
 	.container{

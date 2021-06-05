@@ -5,6 +5,14 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <title>Error 404 - Not Found</title>
   <meta name="viewport" content="width=device-width">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DEVX15R54N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-DEVX15R54N');
+  </script>
 
   <script src="{{ asset('js/jquery.js') }}"></script>
   <script src="{{ asset('bootstrap-4.0.0/js/bootstrap.min.js') }}"></script>

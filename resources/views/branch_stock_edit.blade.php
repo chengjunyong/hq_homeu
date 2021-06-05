@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<title>Branch Product Edit</title>
 @section('content')
 <div class="container">
 	<h2 align="center">Branch Stock</h2>

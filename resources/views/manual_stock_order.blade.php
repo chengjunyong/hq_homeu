@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<title>Manual Branch Stock Ordering</title>
 @section('content')
 <script>
   Swal.fire({
