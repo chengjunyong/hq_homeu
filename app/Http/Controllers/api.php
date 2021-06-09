@@ -48,7 +48,7 @@ class api extends Controller
           'ip' => $data['ip'],
           'cashier_name' => $data['cashier_name'],
           'transaction_no' => $data['transaction_no'],
-          'invoice_no' => $data['invoice_no'],
+          'reference_no' => $data['reference_no'],
           'user_id' => $data['user_id'],
           'subtotal' => $data['subtotal'],
           'total_discount' => $data['total_discount'],
