@@ -140,7 +140,7 @@ class api extends Controller
       }
 
       // more than 10000, php will return error
-      $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
+      $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'promotion_start', 'promotion_end', 'promotion_price')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
 
       $response = new \stdClass();
       $response->error = 0;
@@ -182,7 +182,7 @@ class api extends Controller
         return response()->json($response);
       }
       
-      $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
+      $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'promotion_start', 'promotion_end', 'promotion_price')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
 
       $response = new \stdClass();
       $response->error = 0;
