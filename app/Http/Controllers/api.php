@@ -51,7 +51,7 @@ class api extends Controller
           'ip' => $data['ip'],
           'cashier_name' => $data['cashier_name'],
           'transaction_no' => $data['transaction_no'],
-          'invoice_no' => $data['invoice_no'],
+          'reference_no' => $data['reference_no'],
           'user_id' => $data['user_id'],
           'subtotal' => $data['subtotal'],
           'total_discount' => $data['total_discount'],
@@ -143,7 +143,7 @@ class api extends Controller
       }
 
       // more than 10000, php will return error
-      $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
+      $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'promotion_start', 'promotion_end', 'promotion_price')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
 
       $response = new \stdClass();
       $response->error = 0;
@@ -185,7 +185,7 @@ class api extends Controller
         return response()->json($response);
       }
       
-      $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
+      $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'promotion_start', 'promotion_end', 'promotion_price')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
 
       $response = new \stdClass();
       $response->error = 0;
