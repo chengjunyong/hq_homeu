@@ -7,7 +7,7 @@
     background: none;
     font-size: 27px;
     font-weight: 700;
-    margin: 10px 0px 10px 0px;
+    margin: 15px 0px 10px 5px;
   }
   body{
     overflow-x: hidden;
