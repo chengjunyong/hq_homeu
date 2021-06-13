@@ -220,9 +220,10 @@ class ProductController extends Controller
                       'price'=>$request->price,
                       'reorder_level'=>$request->reorder_level,
                       'recommend_quantity'=>$request->recommend_quantity,
+                      'promotion_start'=>$request->promotion_start,
+                      'promotion_end'=>$request->promotion_end,
+                      'promotion_price'=>$request->promotion_price,
                       'product_sync'=>0,
-                      'schedule_date'=>$request->schedule_date,
-                      'schedule_price'=>$request->schedule_price,
                     ]);
 
     Product_list::where('barcode',$request->barcode)
@@ -237,6 +238,9 @@ class ProductController extends Controller
                       'product_sync'=>0,
                       'schedule_date'=>$request->schedule_date,
                       'schedule_price'=>$request->schedule_price,
+                      'promotion_start'=>$request->promotion_start,
+                      'promotion_end'=>$request->promotion_end,
+                      'promotion_price'=>$request->promotion_price,
                     ]);
 
     Warehouse_stock::where('barcode',$request->barcode)

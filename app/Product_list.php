@@ -22,5 +22,8 @@ class Product_list extends Model
       'product_sync',
       'schedule_date',
       'schedule_price',
+      'promotion_start',
+      'promotion_end',
+      'promotion_price',
     ];
 }
