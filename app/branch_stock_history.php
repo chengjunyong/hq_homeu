@@ -24,6 +24,4 @@ class branch_stock_history extends Model
     'new_stock_count',
     'difference_count',
   ];
-
-
 }
