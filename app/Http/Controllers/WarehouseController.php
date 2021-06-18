@@ -11,7 +11,10 @@ use App\Purchase_order;
 use App\Purchase_order_detail;
 use App\Warehouse_restock_history;
 use App\Warehouse_restock_history_detail;
+use App\Branch_stock_history;
 use Illuminate\Support\Facades\DB;
+
+use Illuminate\Support\Facades\Auth;
 
 class WarehouseController extends Controller
 {
@@ -267,6 +270,47 @@ class WarehouseController extends Controller
     $detail = Warehouse_restock_history_detail::where('warehouse_history_id',$request->id)->get();
 
     return view('warehouse_restock_view',compact('url','invoice','detail','po'));
+  }
+
+  public function getWarehouseStockHistory()
+  {
+    $url = route('home')."?p=stock_menu";
+
+    $selected_date_from = date('Y-m-d', strtotime(now()));
+    $selected_date_to = date('Y-m-d', strtotime(now()));
+  
+
+    return view('warehouse.warehouse_stock_history',compact('selected_date_from', 'selected_date_to','url'));
+  }
+
+  public function getWarehouseStockHistoryDetail(Request $request)
+  {
+    $url = route('home')."?p=stock_menu";
+
+    $selected_branch = null;
+    $selected_branch_token = null;
+    $selected_date_from = date('Y-m-d', strtotime(now()));
+    $selected_date_to = date('Y-m-d', strtotime(now()));
+
+    $date = date('Y-m-d H:i:s', strtotime(now()));
+    $user = Auth::user();
+
+    if($request->report_date_from)
+    {
+      $selected_date_from = $request->report_date_from;
+    }
+
+    if($request->report_date_to)
+    {
+      $selected_date_to = $request->report_date_to;
+    }
+
+    $selected_date_start = $selected_date_from." 00:00:00";
+    $selected_date_end = $selected_date_to." 23:59:59";
+
+    $warehouse_stock_history = Branch_stock_history::where('stock_type', 'warehouse')->whereBetween('created_at', [$selected_date_start, $selected_date_end])->orderBy('created_at')->get();
+
+    return view('warehouse.warehouse_stock_history_detail',compact('selected_date_from', 'selected_date_to', 'warehouse_stock_history', 'url', 'date', 'user'));
   }
 
 }

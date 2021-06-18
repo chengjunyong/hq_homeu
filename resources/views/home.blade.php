@@ -431,9 +431,6 @@
         </div>
       </div>
     </div>
-    
-
-
   </div>
 </div>
 
@@ -658,6 +655,21 @@
             </div>
             <div class="col">
               <a href="{{route('getWarehouseRestockHistory')}}"><i class="fas fa-paste first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Warehouse Check Stock History</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getWarehouseStockHistory')}}"><i class="fas fa-barcode first stock-color"></i></a>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Branch Check Stock History</title>
+<title>Warehouse Check Stock History</title>
 </head>
 <style>
   h2,h4{
@@ -44,7 +44,7 @@
     <h2>HOME U(M) SDN BHD</h2>
     <h4>(125272-P)</h4>
     <h4>Tel: 09-7744243 &nbsp Email: assist@homeu.com.my</h4>
-    <h3 style="margin:20px 30%;border:1px solid black">BRANCH STOCK HISTORY REPORT</h3>
+    <h3 style="margin:20px 30%;border:1px solid black">WAREHOUSE STOCK HISTORY REPORT</h3>
   </div>
 
   <div class="second">
@@ -74,7 +74,7 @@
         <th>Updated at</th>
       </thead>
       <tbody class="border">
-        @foreach($branch_stock_history as $history)
+        @foreach($warehouse_stock_history as $history)
           <tr>
             <td>{{ $history->barcode }}</td>
             <td>{{ $history->product_name }}</td>

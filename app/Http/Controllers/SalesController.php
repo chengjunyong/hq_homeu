@@ -591,7 +591,7 @@ class SalesController extends Controller
     $sheet = $spreadsheet->getActiveSheet();
 
     $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
-    $sheet->setCellValue('A2', 'Total Sales Report');
+    $sheet->setCellValue('A2', 'Branch Report');
 
     $sheet->mergeCells('A1:G1');
     $sheet->mergeCells('A2:G2');
@@ -706,6 +706,91 @@ class SalesController extends Controller
 
     $writer = new Xlsx($spreadsheet);
     $path = 'storage/report/Branch Report.xlsx';
+    $writer->save($path);
+
+    return response()->download($path);
+  }
+
+  public function exportBranchStockReport(Request $request)
+  {
+    if(!Storage::exists('public/report'))
+    {
+      Storage::makeDirectory('public/report', 0775, true); //creates directory
+    }
+
+    $selected_date_from = date('Y-m-d', strtotime(now()));
+    $selected_date_to = date('Y-m-d', strtotime(now()));
+
+    if($request->report_date_from)
+    {
+      $selected_date_from = $request->report_date_from;
+    }
+
+    if($request->report_date_to)
+    {
+      $selected_date_to = $request->report_date_to;
+    }
+
+    $branch_token = $request->branch_token;
+
+    $selected_date_start = $selected_date_from." 00:00:00";
+    $selected_date_end = $selected_date_to." 23:59:59";
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
+    $sheet->setCellValue('A2', 'Branch Stock Report');
+
+    $sheet->mergeCells('A1:F1');
+    $sheet->mergeCells('A2:F2');
+
+    $sheet->setCellValue('A3', 'Date:');
+    $sheet->setCellValue('B3', date('d-m-Y', strtotime(now())));
+
+    $sheet->setCellValue('A5', 'Barcode');
+    $sheet->setCellValue('B5', 'Product name');
+    $sheet->setCellValue('C5', 'Updated stock');
+    $sheet->setCellValue('D5', 'Stock ( different )');
+    $sheet->setCellValue('E5', 'Updated by');
+    $sheet->setCellValue('F5', 'Updated at');
+
+    $sheet->getStyle('A1:F2')->getAlignment()->setHorizontal('center');
+
+    $branch = Branch::where('token', $branch_token)->first();
+    $branch_stock_history = [];
+    if($branch)
+    {
+      $branch_stock_history = Branch_stock_history::where('stock_type', 'branch')->whereBetween('created_at', [$selected_date_start, $selected_date_end])->where('branch_token', $branch->token)->orderBy('created_at')->get();
+    }
+    
+    $started_row = 6;
+
+    foreach($branch_stock_history as $history)
+    {
+      $sheet->setCellValue('A'.$started_row, $history->barcode);
+      $sheet->setCellValue('B'.$started_row, $history->product_name);
+      $sheet->setCellValue('C'.$started_row, $history->new_stock_count);
+      $sheet->setCellValue('D'.$started_row, $history->difference_count);
+      $sheet->setCellValue('E'.$started_row, $history->user_name);
+      $sheet->setCellValue('F'.$started_row, $history->created_at);
+
+      $started_row++;
+    }
+
+    $sheet->getColumnDimension('A')->setWidth(20);
+    $sheet->getColumnDimension('B')->setWidth(21);
+    $sheet->getColumnDimension('C')->setWidth(21);
+    $sheet->getColumnDimension('D')->setWidth(21);
+    $sheet->getColumnDimension('E')->setWidth(21);
+    $sheet->getColumnDimension('F')->setWidth(21);
+
+    $sheet->getStyle('A5:F'.($started_row - 1))->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+    $sheet->getStyle('A5:F5')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('B6:F'.($started_row - 1))->getAlignment()->setHorizontal('right');
+
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/report/Branch Stock Report.xlsx';
     $writer->save($path);
 
     return response()->download($path);
@@ -931,5 +1016,83 @@ class SalesController extends Controller
   {
 
 
+  }
+
+  public function exportWarehouseStockReport(Request $request)
+  {
+    if(!Storage::exists('public/report'))
+    {
+      Storage::makeDirectory('public/report', 0775, true); //creates directory
+    }
+
+    $selected_date_from = date('Y-m-d', strtotime(now()));
+    $selected_date_to = date('Y-m-d', strtotime(now()));
+
+    if($request->report_date_from)
+    {
+      $selected_date_from = $request->report_date_from;
+    }
+
+    if($request->report_date_to)
+    {
+      $selected_date_to = $request->report_date_to;
+    }
+
+    $selected_date_start = $selected_date_from." 00:00:00";
+    $selected_date_end = $selected_date_to." 23:59:59";
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
+    $sheet->setCellValue('A2', 'Warehouse Stock Report');
+
+    $sheet->mergeCells('A1:F1');
+    $sheet->mergeCells('A2:F2');
+
+    $sheet->setCellValue('A3', 'Date:');
+    $sheet->setCellValue('B3', date('d-m-Y', strtotime(now())));
+
+    $sheet->setCellValue('A5', 'Barcode');
+    $sheet->setCellValue('B5', 'Product name');
+    $sheet->setCellValue('C5', 'Updated stock');
+    $sheet->setCellValue('D5', 'Stock ( different )');
+    $sheet->setCellValue('E5', 'Updated by');
+    $sheet->setCellValue('F5', 'Updated at');
+
+    $sheet->getStyle('A1:F2')->getAlignment()->setHorizontal('center');
+
+    $warehouse_stock_history = Branch_stock_history::where('stock_type', 'warehouse')->whereBetween('created_at', [$selected_date_start, $selected_date_end])->orderBy('created_at')->get();
+    
+    $started_row = 6;
+
+    foreach($warehouse_stock_history as $history)
+    {
+      $sheet->setCellValue('A'.$started_row, $history->barcode);
+      $sheet->setCellValue('B'.$started_row, $history->product_name);
+      $sheet->setCellValue('C'.$started_row, $history->new_stock_count);
+      $sheet->setCellValue('D'.$started_row, $history->difference_count);
+      $sheet->setCellValue('E'.$started_row, $history->user_name);
+      $sheet->setCellValue('F'.$started_row, $history->created_at);
+
+      $started_row++;
+    }
+
+    $sheet->getColumnDimension('A')->setWidth(20);
+    $sheet->getColumnDimension('B')->setWidth(21);
+    $sheet->getColumnDimension('C')->setWidth(21);
+    $sheet->getColumnDimension('D')->setWidth(21);
+    $sheet->getColumnDimension('E')->setWidth(21);
+    $sheet->getColumnDimension('F')->setWidth(21);
+
+    $sheet->getStyle('A5:F'.($started_row - 1))->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+    $sheet->getStyle('A5:F5')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('B6:F'.($started_row - 1))->getAlignment()->setHorizontal('right');
+
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/report/Warehouse Stock Report.xlsx';
+    $writer->save($path);
+
+    return response()->download($path);
   }
 }

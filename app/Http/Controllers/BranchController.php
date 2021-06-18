@@ -638,11 +638,11 @@ class BranchController extends Controller
 
     if($selected_branch)
     {
-      $branch_stock_history = Branch_stock_history::whereBetween('created_at', [$selected_date_start, $selected_date_end])->where('branch_token', $selected_branch->token)->get();
+      $branch_stock_history = Branch_stock_history::where('stock_type', 'branch')->whereBetween('created_at', [$selected_date_start, $selected_date_end])->where('branch_token', $selected_branch->token)->orderBy('created_at')->get();
     }
     else
     {
-      $branch_stock_history = Branch_stock_history::whereBetween('created_at', [$selected_date_start, $selected_date_end])->where('branch_token', null)->get();
+      $branch_stock_history = Branch_stock_history::where('stock_type', 'branch')->whereBetween('created_at', [$selected_date_start, $selected_date_end])->where('branch_token', null)->orderBy('created_at')->get();
     }
 
     return view('branch/branch_stock_history_detail',compact('selected_branch', 'selected_date_from', 'selected_date_to', 'branch_stock_history', 'url', 'date', 'user'));

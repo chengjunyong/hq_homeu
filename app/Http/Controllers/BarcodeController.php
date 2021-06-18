@@ -25,10 +25,24 @@ class BarcodeController extends Controller
       $department_list = Department::get();
       $category_list = Category::get();
 
+      $barcode_type = [
+        'ean_reader',
+        'ean_8_reader',
+        'upc_reader',
+        'upc_e_reader',
+        'code_39_reader',
+        'code_39_vin_reader',
+        'codabar_reader',
+        'code_93_reader',
+        'code_128_reader',
+        'i2of5_reader',
+        '2of5_reader'
+      ];
+
       $user = Auth::user();
       $branch_stock_history = Branch_stock_history::where('branch_stock_history.user_id', $user->id)->leftJoin('branch', 'branch_stock_history.branch_id', '=', 'branch.id')->select('branch_stock_history.*', 'branch.branch_name')->paginate(15);
 
-      return view('barcode.index', compact('branch_list', 'branch_stock_history', 'department_list', 'category_list'));
+      return view('barcode.index', compact('branch_list', 'branch_stock_history', 'department_list', 'category_list', 'barcode_type'));
     }
 
     public function getProductByBarcode(Request $request)
