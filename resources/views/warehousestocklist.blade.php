@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<title>Warehouse Stock Checklist</title>
 @section('content')
 <style>
 	.container{

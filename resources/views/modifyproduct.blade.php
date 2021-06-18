@@ -1,8 +1,8 @@
 @extends('layouts.app')
-
+<title>Edit Product</title>
 @section('content')
 <style>
-.row > .col-md-12,.col-md-6{
+.row > .col-md-12,.col-md-6,.col-md-4{
 	margin-top: 10px;
 }
 </style>
@@ -64,8 +64,21 @@
             <label>Schedule Price</label>
             <input type="number" min="0" step="0.01" name="schedule_price" class="form-control" value="{{$product->schedule_price}}">
           </div>
+          <div class="col-md-4">
+            <label>Promotion Start Date</label>
+            <input type="datetime-local" id="promo_start" name="promotion_start" class="form-control" value="{{ str_replace(" ","T",$product->promotion_start)}}">
+          </div>
+          <div class="col-md-4">
+            <label>Promotion End Date</label>
+            <input type="datetime-local" id="promo_end" name="promotion_end" class="form-control" value="{{ str_replace(" ","T",$product->promotion_end)}}">
+          </div>
+          <div class="col-md-4">
+            <label>Promotion Price</label>
+            <input type="number" min="0" step="0.01" id="promo_price" name="promotion_price" class="form-control" value="{{$product->promotion_price}}">
+          </div>
 					<div class="col-md-12" style="text-align: center;margin-top: 20px">
 						<input type="submit" class="btn btn-primary" value="Update">
+            <input type="reset" class="btn btn-secondary" value="Reset">
 					</div>
 				</div>
 			</form>
@@ -108,6 +121,49 @@ $(document).ready(function(){
 		let price = (cost * price_ptg / 100) + cost;
 		$("#price").val(price.toFixed(2));
 	});
+
+  $("input[type=reset]").click(()=>{
+    $("#promo_start")[0].setCustomValidity('');
+    $("#promo_end")[0].setCustomValidity('');
+    $("#promo_price").prop("required",false);
+  });
+
+  $("#promo_start").change(()=>{
+    $("#promo_price").prop("required",true);
+    $("#promo_start")[0].setCustomValidity("");
+    if(!$("#promo_end").val() == ""){
+      let a = new Date($("#promo_start").val());
+      let b = new Date($("#promo_end").val());
+      if(a > b){
+        $("#promo_start")[0].setCustomValidity("Promotion Start Date Cannot Late Than Promotion End Date");
+      }else{
+        $("#promo_start")[0].setCustomValidity("");
+      }
+    }else{
+      $("#promo_end")[0].setCustomValidity("Promotion End Date Cannot Be Empty");
+    }
+  });
+
+  $("#promo_end").change(()=>{
+    $("#promo_price").prop("required",true);
+    $("#promo_end")[0].setCustomValidity("");
+    if(!$("#promo_start").val() == ""){
+      let a = new Date($("#promo_start").val());
+      let b = new Date($("#promo_end").val());
+      if(a > b){
+        $("#promo_end")[0].setCustomValidity("Promotion End Date Cannot Early Than Promotion Start Date");
+      }else{
+        $("#promo_end")[0].setCustomValidity("");
+      }
+    }else{
+      $("#promo_start")[0].setCustomValidity("Promotion Start Date Cannot Be Empty");
+    }
+  });
+
+  $("input[type=submit]").click(()=>{
+    if(($("#promo_start").val() != "" || $("#promo_end").val() != "") && $("#promo_price").val() == "")
+      $("#promo_price").prop("required",true);
+  });
 	
 });
 

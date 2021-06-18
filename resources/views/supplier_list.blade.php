@@ -1,4 +1,5 @@
 @extends('layouts.app')
+<title>Supplier List</title>
 @section('content')
 <style>
 	.container{

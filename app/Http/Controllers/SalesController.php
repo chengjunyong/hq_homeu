@@ -1014,8 +1014,135 @@ class SalesController extends Controller
 
   public function exportProductSalesReport(Request $request)
   {
+    $user = Auth::user();
+    //Clear the report folder
+    if(!Storage::exists('public/report'))
+    {
+      Storage::makeDirectory('public/report', 0775, true); //creates directory
+    }
+    $files = Storage::allFiles('public/report');
+    Storage::delete($files);
+
+    //Data Processing
+    $data[] = array();
+    $total_quantity = 0;
+    $total_sales = 0;
+    $total_quantity_day = array();
+    $total_sales_day = array();
+    $branch_total_quantity = array();
+    $branch_total_sales = array(); 
+
+    $from_date = $request->report_date_from;
+    $to_date = date('Y-m-d',strtotime($request->report_date_to."+1 day"));
+
+    $diff=strtotime($to_date)-strtotime($from_date);
+    $diff_date = $diff / 60 / 60 / 24;
+
+    $branch = Branch::orderBy('token')->get();
+    $product_detail = Product_list::where('barcode',$request->barcode)->first();
 
 
+    foreach($branch as $index => $result){
+      $data[$index] = array();
+      for($a=0;$a<$diff_date;$a++){
+        $tmp_d = date('Y-m-d',strtotime($request->report_date_from."+".$a." day"));
+        $tmp = Transaction_detail::selectRaw("SUM(quantity) as quantity,SUM(total) as total,created_at,branch_id")
+                                    ->where('barcode',$request->barcode)
+                                    ->where('branch_id',$result->token)
+                                    ->whereRaw("DATE(created_at) = '$tmp_d'")
+                                    ->first();
+
+        array_push($data[$index],$tmp);
+      }
+
+      $branch_total_sales[$index] = 0;
+      $branch_total_quantity[$index] = 0;
+
+      foreach($data[$index] as $result){
+        $total_quantity += intval($result->quantity);
+        $total_sales += $result->total;
+
+        $branch_total_sales[$index] += $result->total;
+        $branch_total_quantity[$index] += intval($result->quantity);
+      }
+    }
+
+    //Row Sum
+    for($a=0;$a<$diff_date;$a++){
+      $total_quantity_day[$a] = 0;
+      $total_sales_day[$a] = 0;
+      for($b=0;$b<count($data);$b++){
+        $total_sales_day[$a] += $data[$b][$a]->total;
+        $total_quantity_day[$a] += intval($data[$b][$a]->quantity);
+      }
+    }
+
+    //Start Build Excel File
+    $spreadsheet = new Spreadsheet();
+    $spreadsheet->getActiveSheet()->getDefaultColumnDimension()->setWidth(16);
+    $spreadsheet->getActiveSheet()->mergeCells('A1:C1');
+    $spreadsheet->getActiveSheet()->mergeCells('A2:C2');
+    $spreadsheet->getActiveSheet()->mergeCells('A5:C5');
+    $sheet = $spreadsheet->getActiveSheet();
+
+    //Header
+    $sheet->setCellValue('A1', 'HomeU (M) Sdh Bhd');
+    $sheet->setCellValue('A2', 'Product Sales Report');
+    $sheet->setCellValue('A4', 'Generate By : '.$user->name);
+    $sheet->setCellValue('B4', 'Time : '.now());
+    $sheet->setCellValue('A5', 'Product Name : '.$product_detail->product_name);
+
+    $row = 8;
+    for($a=0;$a<$diff_date;$a++){
+      $sheet->getCellByColumnAndRow(1,$row+$a)->setValue(date('d-M-Y',strtotime($from_date."+".$a." day")));
+      $c_row = $row+$a;
+    }
+    $sheet->getCellByColumnAndRow(1,$c_row+1)->setValue("Total");
+
+
+    $col = 2;
+    foreach($branch as $index => $result){
+      $sheet->getCellByColumnAndRow($col+$index,7)->setValue($result->branch_name);
+      $c_col = $col+$index;
+    }
+
+    $sheet->getStyle('A7:Z7')->getAlignment()->setHorizontal('right');
+
+    $sheet->getCellByColumnAndRow($c_col+1,7)->setValue("Total Quantity");
+    $sheet->getCellByColumnAndRow($c_col+2,7)->setValue("Total Sales");
+    $sheet->getStyle('A'.($c_row+1).':Z'.($c_row+1))->getFont()->setBold(true);
+
+    $row = 8; $col = 2;
+    foreach($data as $c){
+      foreach($c as $index => $d){
+        $sheet->getCellByColumnAndRow($col,$row+$index)->setValue(($d->quantity)?$d->quantity:0);
+      }
+      $col++;
+    }
+
+    $col = 7;
+    foreach($total_quantity_day as $index => $result){
+      $sheet->getCellByColumnAndRow($c_col+1,8+$index)->setValue($result);
+      $sheet->getCellByColumnAndRow($c_col+2,8+$index)->setValue($total_sales_day[$index]);
+      $bottom = 8+$index;
+    }
+
+    $sheet->getCellByColumnAndRow($c_col+1,$bottom+1)->setValue($total_quantity);
+    $sheet->getCellByColumnAndRow($c_col+2,$bottom+1)->setValue($total_sales);
+
+    $col = 2;
+    foreach($branch as $index => $result){
+      $sheet->getCellByColumnAndRow($col+$index,$bottom+1)->setValue($branch_total_quantity[$index]);
+
+    }
+
+    $time = date('d-M-Y h i s A');
+    $time = (string)$time;
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/report/Product Sales Report ('.$time.').xlsx';
+    $writer->save($path);
+
+    return response()->download($path);
   }
 
   public function exportWarehouseStockReport(Request $request)

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<title>Restock Confirmation</title>
 @section('content')
 <style>
 	.container{

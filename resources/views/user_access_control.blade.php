@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<title>User Access Control</title>
 @section('content')
 <style>
   body{

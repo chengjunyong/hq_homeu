@@ -102,6 +102,7 @@ class BranchController extends Controller
     $branch_product = Branch_product::join('department','department.id','=','branch_product.department_id')
                                       ->join('category','category.id','=','branch_product.category_id')
                                       ->where('branch_product.branch_id',$request->branch_id)
+                                      ->select('branch_product.*','department.department_name','category.category_name')
                                       ->paginate(25);
 
     foreach($branch as $key => $result){

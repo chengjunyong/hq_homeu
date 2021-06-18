@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<title>Branch Stock Checklist</title>
 @section('content')
 <style>
 	.container{
@@ -63,7 +63,7 @@
 								<td>{{$result->quantity}}</td>
 								<td>{{$result->reorder_level}}</td>
 								<td>{{$result->recommend_quantity}}</td>
-								<td>{{$result->updated_at}}</td>
+								<td>{{ $result->updated_at }}</td>
 							</tr>
 							@endforeach
 					</tbody>

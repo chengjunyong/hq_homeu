@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<title>Product Configuration</title>
 @section('content')
 <style>
 	.form-control{

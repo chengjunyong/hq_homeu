@@ -1,4 +1,5 @@
 @extends('layouts.app')
+<title>Good Return History</title>
 @section('content')
 <style>
 	.container{

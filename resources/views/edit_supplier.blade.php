@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<title>Edit Supplier</title>
 @section('content')
 <style>
 .row > .col-md-12,.col-md-6{

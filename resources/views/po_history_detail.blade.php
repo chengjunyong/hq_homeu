@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<title>Purchase Order Detail</title>
 @section('content')
 <style>
   .container{

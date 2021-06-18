@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<title>Sales Report</title>
 @section('content')
 <script src="{{ asset('datatable/datatables.min.js') }}"></script>
 <link rel="stylesheet" href="{{ asset('datatable/datatables.min.css')}}"/>

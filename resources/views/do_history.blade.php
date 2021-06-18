@@ -1,4 +1,5 @@
 @extends('layouts.app')
+<title>Delivery Order History</title>
 @section('content')
 <style>
 	.container{

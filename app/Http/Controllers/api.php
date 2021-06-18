@@ -7,6 +7,9 @@ use App\Transaction;
 use App\Transaction_detail;
 use App\Branch_product;
 use App\Branch;
+use App\Product_list;
+use Illuminate\Support\Facades\DB;
+use App\Warehouse_stock;
 
 class api extends Controller
 {
@@ -208,5 +211,34 @@ class api extends Controller
       $response->message = "Sync HQ product list completed";
 
       return response()->json($response);
+    }
+
+    public function CronPriceSync()
+    {
+      try{
+        $list = Product_list::whereRaw("schedule_date = DATE(NOW())")->get();
+        foreach($list as $result){
+          Branch_product::where('barcode',$result->barcode)
+                        ->update([
+                            'price' => $result->schedule_price,
+                            'product_sync' => 0,
+                          ]);
+
+          Warehouse_stock::where('barcode',$result->barcode)
+                        ->update([
+                            'price' => $result->schedule_price,
+                            'product_sync' => 0,
+                          ]);
+        }
+
+        DB::select(DB::raw("UPDATE product_list SET price = schedule_price WHERE schedule_date = DATE(NOW())"));
+
+        return "Success";
+
+      }catch(Throwable $e){
+
+        return "Something Wrong";
+
+      }
     }
 }

@@ -131,3 +131,4 @@ Route::get('/WarehouseRestock/{po_number}','WarehouseController@getWarehouseRest
 Route::post('/WarehouseRestockProcess','WarehouseController@postWarehouseRestock')->name('postWarehouseRestock');
 Route::get('/WarehouseRestockHistory','WarehouseController@getWarehouseRestockHistory')->name('getWarehouseRestockHistory');
 Route::get('/WarehouseRestockHistoryDetail/{id}/{po_number}','WarehouseController@getWarehouseRestockHistoryDetail')->name('getWarehouseRestockHistoryDetail');
+
