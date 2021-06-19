@@ -33,6 +33,8 @@ Route::get('/restockconfirmation/{do_number}','BranchController@getRestockConfir
 Route::post('restockconfirmation','BranchController@postRestockConfirmation')->name('postRestockConfirmation');
 Route::get('/branchrestockhistory','BranchController@getRestockHistory')->name('getRestockHistory');
 Route::get('/branchrestockhistorydetail/{id}','BranchController@getRestockHistoryDetail')->name('getRestockHistoryDetail');
+
+
 Route::get('/damagedstock','BranchController@getDamagedStock')->name('getDamagedStock');
 Route::post('/generatedamagedstock','BranchController@postDamagedStock')->name('postDamagedStock');
 Route::get('/damagedstockhistory','BranchController@getDamagedStockHistory')->name('getDamagedStockHistory');
@@ -43,6 +45,8 @@ Route::get('/SL/{sl_id}','BranchController@getGenerateSL')->name('getGenerateSL'
 Route::get('/stocklosthistory','BranchController@getStockLostHistory')->name('getStockLostHistory');
 Route::get('/branch_stock_history', 'BranchController@getBranchStockHistory')->name('getBranchStockHistory');
 Route::get('/branch_stock_history_detail', 'BranchController@getBranchStockHistoryDetail')->name('getBranchStockHistoryDetail');
+Route::get('/warehouse_stock_history', 'WarehouseController@getWarehouseStockHistory')->name('getWarehouseStockHistory');
+Route::get('/warehouse_stock_history_detail', 'WarehouseController@getWarehouseStockHistoryDetail')->name('getWarehouseStockHistoryDetail');
 Route::get('/ManualStockOrder','BranchController@getManualStockOrder')->name('getManualStockOrder');
 Route::get('/AddManualStockOrder','BranchController@ajaxAddManualStockOrder')->name('ajaxAddManualStockOrder');
 Route::get('/ManualOrderList','BranchController@getManualOrderList')->name('getManualOrderList');
@@ -79,6 +83,8 @@ Route::get('/branch_report', 'SalesController@getBranchReport')->name('getBranch
 Route::get('/branch_report_detail', 'SalesController@getBranchReportDetail')->name('getBranchReportDetail');
 Route::post('/exportSalesReport', 'SalesController@exportSalesReport')->name('exportSalesReport');
 Route::post('/exportBranchReport', 'SalesController@exportBranchReport')->name('exportBranchReport');
+Route::post('/exportBranchStockReport', 'SalesController@exportBranchStockReport')->name('exportBranchStockReport');
+Route::post('/exportWarehouseStockReport', 'SalesController@exportWarehouseStockReport')->name('exportWarehouseStockReport');
 
 Route::get('/stock_balance','SalesController@getStockBalance')->name('getStockBalance');
 Route::post('/stock_balance_report','SalesController@postStockBalanceReport')->name('postStockBalanceReport');
