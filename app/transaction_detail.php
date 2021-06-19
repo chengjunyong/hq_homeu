@@ -13,6 +13,8 @@ class transaction_detail extends Model
       'session_id',
       'branch_transaction_detail_id',
       'branch_transaction_id',
+      'department_id',
+      'category_id',
       'product_id',
       'barcode',
       'product_name',
