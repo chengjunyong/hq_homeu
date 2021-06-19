@@ -240,28 +240,30 @@
     </div>
 
     <h4>Branch Check Stock History</h4>
-    <table class="table table-responsive" id="history_table">
-      <thead>
-        <th>Branch</th>
-        <th>Barcode</th>
-        <th>Product Name</th>
-        <th>Updated Stock</th>
-        <th>Created at</th>
-      </thead>
-      <tbody>
-        @foreach($branch_stock_history as $history)
-          <tr>
-            <td>{{ $history->branch_name }}</td>
-            <td>{{ $history->barcode }}</td>
-            <td>{{ $history->product_name }}</td>
-            <td>{{ $history->new_stock_count }}</td>
-            <td>{{ $history->created_at }}</td>
-          </tr>
-        @endforeach
-      </tbody>
-    </table>
-    <div style="float:right;margin-top: 5px">
-      {{$branch_stock_history->links()}}
+    <div class="table-responsive">
+      <table class="table" id="history_table">
+        <thead style="width: 100%;">
+          <th>Branch</th>
+          <th>Barcode</th>
+          <th>Product Name</th>
+          <th>Updated Stock</th>
+          <th>Created at</th>
+        </thead>
+        <tbody>
+          @foreach($branch_stock_history as $history)
+            <tr>
+              <td>{{ $history->branch_name }}</td>
+              <td>{{ $history->barcode }}</td>
+              <td>{{ $history->product_name }}</td>
+              <td>{{ $history->new_stock_count }}</td>
+              <td>{{ $history->created_at }}</td>
+            </tr>
+          @endforeach
+        </tbody>
+      </table>
+      <div style="float:right;margin-top: 5px">
+        {{$branch_stock_history->links()}}
+      </div>
     </div>
   </div> 
 
@@ -380,6 +382,7 @@
     });
 
     $("#submit_stock").click(function(){
+      $("#submit_stock").attr("disabled", true);
       submitStock();
     });
 
@@ -392,6 +395,8 @@
     });
 
     $("#show_history").click(function(){
+      $(".header_menu").removeClass("active");
+      $(".black_panel").fadeOut();
       $("#history_box").show();
     });
 
@@ -609,10 +614,12 @@
     if(stock_count == "")
     {
       alert("Stock count cannot be empty");
+      $("#submit_stock").attr("disabled", false);
       return;
     }
 
     $.post("{{ route('updateBranchStockByScanner') }}", {"_token" : "{{ csrf_token() }}", "product_id" : product_id, "stock_count" : stock_count, "department_id" : department_id, "category_id" : category_id, "stock_type" : stock_type }, function(result){
+      $("#submit_stock").attr("disabled", false);
       if(result.error == 0)
       {
         $("#product_name").html("");
@@ -654,6 +661,7 @@
         alert(result.message);
       }
     }).fail(function(){
+      $("#submit_stock").attr("disabled", false);
       Swal.fire(
         'Failed!',
         "Something wrong, please refresh the page.",
