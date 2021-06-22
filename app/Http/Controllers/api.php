@@ -85,6 +85,8 @@ class api extends Controller
           'session_id' => $session_id,
           'branch_transaction_detail_id' => $data['id'],
           'branch_transaction_id' => $data['transaction_id'],
+          'department_id' => $data['department_id'],
+          'category_id' => $data['category_id'],
           'product_id' => $data['product_id'],
           'barcode' => $data['barcode'],
           'product_name' => $data['product_name'],
