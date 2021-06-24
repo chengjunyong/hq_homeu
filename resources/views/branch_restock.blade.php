@@ -55,7 +55,7 @@
 				<div class="card-body">
 					<table id="stock_list" class="display" style="width:99%">
 						<thead>
-							<tr style="background: #b2b43c;">
+							<tr style="background: #b8b8efd1;">
 								<td>No</td>
 								<td style="width:5%%">Barcode</td>
 								<td>Product Name</td>

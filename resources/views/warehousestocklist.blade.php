@@ -7,7 +7,7 @@
 	}
 
 	thead{
-		background-color: #aeef3ec9;
+		background-color: #b8b8efd1;
 	}
 
 	thead > tr > td{
@@ -44,7 +44,7 @@
 						<td>Price</td>
 						<td>Stock Quantity</td>
 						<td>Reorder Level</td>
-						<td>Reorder Recommend Quantity</td>
+						<td style="width:10%">Recommend QTY</td>
 						<td>Last Updated</td>
 					</tr>
 				</thead>
@@ -59,7 +59,7 @@
 							<td>{{$result->quantity}}</td>
 							<td>{{$result->reorder_level}}</td>
 							<td>{{$result->reorder_quantity}}</td>
-							<td>{{$result->updated_at}}</td>
+							<td>{{ date('d-M-Y', strtotime($result->updated_at))}} {{ date('h:i A', strtotime($result->updated_at))}}</td>
 						</tr>
 					@endforeach
 				</tbody>

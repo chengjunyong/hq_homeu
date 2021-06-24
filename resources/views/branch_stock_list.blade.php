@@ -7,7 +7,7 @@
 	}
 
 	thead{
-		background-color: #aeef3ec9;
+		background-color: #b8b8efd1;
 	}
 </style>
 
@@ -38,7 +38,7 @@
 			<table id="branch_stock_list" style="width: 100%">
 				<thead>
 					<tr>
-						<td>No</td>
+						<td style="padding:2vh">No</td>
 						<td>Barcode</td>
 						<td>Department</td>
 						<td>Category</td>
@@ -63,7 +63,7 @@
 								<td>{{$result->quantity}}</td>
 								<td>{{$result->reorder_level}}</td>
 								<td>{{$result->recommend_quantity}}</td>
-								<td>{{ $result->updated_at }}</td>
+								<td align="center">{{ date('d-M-Y', strtotime($result->updated_at))}} <br/> {{ date('h:i A', strtotime($result->updated_at))}}</td>
 							</tr>
 							@endforeach
 					</tbody>

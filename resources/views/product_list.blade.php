@@ -76,7 +76,7 @@
 									<td style="width:5%">{{number_format($result->price,2)}}</td>
 									<td align="center" style="width:2%">{{$result->reorder_level}}</td>
 									<td align="center" style="width:2%">{{$result->recommend_quantity}}</td>
-									<td align="center" style="width:9%">{{$result->created_at}}</td>
+									<td align="center" style="width:9%">{{ date('d-M-Y', strtotime($result->updated_at))}} <br/> {{ date('h:i A', strtotime($result->updated_at))}}</td>
 								</tr>
 							@endforeach
 						</tbody>
