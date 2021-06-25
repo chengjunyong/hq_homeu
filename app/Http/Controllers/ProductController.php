@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Branch_product;
 use App\Department;
@@ -10,7 +11,7 @@ use App\Product_list;
 use App\Product_configure;
 use App\Branch;
 use App\Warehouse_stock;
-
+use App\Voucher;
 
 class ProductController extends Controller
 {
@@ -256,6 +257,50 @@ class ProductController extends Controller
                     ]);                
 
     return back()->with('result','true');
+  }
+
+  public function getVoucher()
+  {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    if(!$access)
+    {
+      return view('not_access');
+    }
+    $url = route('home')."?p=product_menu";
+
+    $voucher = Voucher::paginate(20);
+
+    return view('voucher',compact('url','voucher'));
+  }
+
+  public function postVoucher(Request $request)
+  {
+    $user = Auth::user();
+
+    if($request->type == "validate_code"){
+      if(Voucher::where('code',$request->code)->count() == 0){
+        return json_encode(true);
+      }else{
+        return json_encode(false);
+      }
+    }else if($request->type == "create"){
+      $result = Voucher::create(['name'=>$request->name,'code'=>$request->code,'amount'=>$request->amount,'active'=>1,'creator_id'=>$user->id,'creator_name'=>$user->name]);
+      if($result){
+        return json_encode(true);
+      }else{
+        return json_encode(false);
+      }
+    }else if($request->type == "read"){
+      $voucher = Voucher::where('id',$request->id)->first();
+      return json_encode($voucher);
+    }else if($request->type == "edit"){
+      $result = Voucher::where('code',$request->code)->update(['name'=>$request->name,'amount'=>$request->amount]);
+      return json_encode($result);
+    }else if($request->type == "status"){
+      $result = Voucher::where('id',$request->id)->update(['active'=>$request->status]);
+      return json_encode($result);
+    }
+
   }
 
 }

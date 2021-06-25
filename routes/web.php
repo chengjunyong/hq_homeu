@@ -65,6 +65,8 @@ Route::post('/createproduct','ProductController@postAddProduct')->name('postAddP
 Route::get('/getbarcode','ProductController@ajaxGetBarcode')->name('ajaxGetBarcode');
 Route::get('/modifyproduct/{id}','ProductController@getModifyProduct')->name('getModifyProduct');
 Route::post('/modifyproduct','ProductController@postModifyProduct')->name('postModifyProduct');
+Route::get('/voucher','ProductController@getVoucher')->name('getVoucher');
+Route::post('/voucher','ProductController@postVoucher')->name('postVoucher');
 
 //Other
 Route::get('/Supplier','OtherController@getSupplier')->name('getSupplier');

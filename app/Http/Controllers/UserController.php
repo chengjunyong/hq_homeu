@@ -356,6 +356,12 @@ class UserController extends Controller
           'name' => 'Warehouse Restock History',
           'route' => 'getWarehouseRestockHistory'
         ],
+        [
+          'group' => 'Product',
+          'value' => 26,
+          'name' => 'Voucher Management',
+          'route' => 'getVoucher'
+        ],
       ];
 
       return $access_control;
