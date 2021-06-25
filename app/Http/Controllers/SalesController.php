@@ -87,19 +87,23 @@ class SalesController extends Controller
     $branch_list = Branch::get();
 
     $cash_total = 0;
-    $credit_card_total = 0;
+    $card_total = 0;
     $tng_total = 0;
+    $maybank_qr_total = 0;
+    $grab_pay_total = 0;
+    $boost_total = 0;
     $other_total = 0;
-    $credit_sales_total = 0;
     $total = 0;
 
     foreach($branch_list as $branch)
     { 
       $branch->cash = 0;
-      $branch->credit_card = 0;
+      $branch->card = 0;
       $branch->tng = 0;
+      $branch->maybank_qr = 0;
+      $branch->grab_pay = 0;
+      $branch->boost = 0;
       $branch->other = 0;
-      $branch->credit_sales = 0;
 
       $branch_other_total = 0;
       $branch_total = 0;
@@ -118,17 +122,35 @@ class SalesController extends Controller
 
           $cash_total += $value->payment_type_total;
         }
-        elseif($value->payment_type == "credit_card")
+        elseif($value->payment_type == "card")
         {
-          $branch->credit_card = $value->payment_type_total;
+          $branch->card = $value->payment_type_total;
 
-          $credit_card_total += $value->payment_type_total;
+          $card_total += $value->payment_type_total;
         }
         elseif($value->payment_type == "tng")
         {
           $branch->tng = $value->payment_type_total;
 
           $tng_total += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "maybank_qr")
+        {
+          $branch->maybank_qr = $value->payment_type_total;
+
+          $maybank_qr_total += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "grab_pay")
+        {
+          $branch->grab_pay = $value->payment_type_total;
+
+          $grab_pay_total += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "boost")
+        {
+          $branch->boost = $value->payment_type_total;
+
+          $boost_total += $value->payment_type_total;
         }
         else
         {
@@ -146,10 +168,12 @@ class SalesController extends Controller
 
     $total_summary = new \stdClass();
     $total_summary->cash = $cash_total;
-    $total_summary->credit_card = $credit_card_total;
+    $total_summary->card = $card_total;
     $total_summary->tng = $tng_total;
+    $total_summary->maybank_qr = $maybank_qr_total;
+    $total_summary->grab_pay = $grab_pay_total;
+    $total_summary->boost = $boost_total;
     $total_summary->other = $other_total;
-    $total_summary->credit_sales = $credit_sales_total;
     $total_summary->total = $total;
 
     return view('sales_report_transaction',compact('selected_date_from', 'selected_date_to', 'branch_list', 'total_summary', 'url', 'date', 'user'));
@@ -300,10 +324,12 @@ class SalesController extends Controller
     $branch = Branch::where('token', $request->branch)->first();
 
     $branch_cash = 0;
-    $branch_credit_card = 0;
+    $branch_card = 0;
     $branch_tng = 0;
+    $branch_maybank_qr = 0;
+    $branch_grab_pay = 0;
+    $branch_boost = 0;
     $branch_other = 0;
-    $branch_credit_sales = 0;
     $branch_total = 0;
 
     $cashier_transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $branch->token)->groupBy('ip')->get();
@@ -311,10 +337,12 @@ class SalesController extends Controller
     foreach($cashier_transaction as $cashier)
     {
       $cashier->cash = 0;
-      $cashier->credit_card = 0;
+      $cashier->card = 0;
       $cashier->tng = 0;
+      $cashier->maybank_qr = 0;
+      $cashier->grab_pay = 0;
+      $cashier->boost = 0;
       $cashier->other = 0;
-      $cashier->credit_sales = 0;
       $cashier->total = 0;
 
       $cashier_other_total = 0;
@@ -332,15 +360,30 @@ class SalesController extends Controller
           $cashier->cash = $value->payment_type_total;
           $branch_cash += $value->payment_type_total;
         }
-        elseif($value->payment_type == "credit_card")
+        elseif($value->payment_type == "card")
         {
-          $cashier->credit_card = $value->payment_type_total;
-          $branch_credit_card += $value->payment_type_total;
+          $cashier->card = $value->payment_type_total;
+          $branch_card += $value->payment_type_total;
         }
         elseif($value->payment_type == "tng")
         {
           $cashier->tng = $value->payment_type_total;
           $branch_tng += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "maybank_qr")
+        {
+          $cashier->maybank_qr = $value->payment_type_total;
+          $branch_maybank_qr += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "grab_pay")
+        {
+          $cashier->grab_pay = $value->payment_type_total;
+          $branch_grab_pay += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "boost")
+        {
+          $cashier->boost = $value->payment_type_total;
+          $branch_boost += $value->payment_type_total;
         }
         else
         {
@@ -359,10 +402,12 @@ class SalesController extends Controller
 
     $total_summary = new \stdClass();
     $total_summary->cash = $branch_cash;
-    $total_summary->credit_card = $branch_credit_card;
+    $total_summary->card = $branch_card;
     $total_summary->tng = $branch_tng;
+    $total_summary->maybank_qr = $branch_maybank_qr;
+    $total_summary->grab_pay = $branch_grab_pay;
+    $total_summary->boost = $branch_boost;
     $total_summary->other = $branch_other;
-    $total_summary->credit_sales = $branch_credit_sales;
     $total_summary->total = $branch_total;
 
     return view('branch_report_detail',compact('cashier_transaction', 'total_summary', 'branch', 'selected_date_from', 'selected_date_to', 'url', 'date', 'user'));
@@ -401,37 +446,47 @@ class SalesController extends Controller
     $sheet->mergeCells('A2:G2');
 
     $sheet->setCellValue('A3', 'Date:');
-    $sheet->setCellValue('B3', date('d-m-Y', strtotime(now())));
+    $sheet->setCellValue('B3', "Date from : ".$selected_date_from."\nDate to : ".$selected_date_to);
+
+    $sheet->setCellValue('H3', 'Generate Date:');
+    $sheet->setCellValue('I3', date('d-m-Y', strtotime(now())));
+
+    $sheet->getStyle("A1:I3")->getAlignment()->setWrapText(true);
 
     $sheet->setCellValue('B5', 'Cash');
-    $sheet->setCellValue('C5', 'Credit Card');
+    $sheet->setCellValue('C5', 'Card');
     $sheet->setCellValue('D5', 'T & Go');
-    $sheet->setCellValue('E5', 'Other');
-    $sheet->setCellValue('F5', 'Credit Sales');
-    $sheet->setCellValue('G5', 'Total');
+    $sheet->setCellValue('E5', 'Maybank QRPay');
+    $sheet->setCellValue('F5', 'Grab Pay');
+    $sheet->setCellValue('G5', 'Boost');
+    $sheet->setCellValue('H5', 'Other');
+    $sheet->setCellValue('I5', 'Total');
 
-    $sheet->getStyle('A1:G2')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A1:I2')->getAlignment()->setHorizontal('center');
 
     $branch_list = Branch::get();
 
     $started_row = 6;
 
     $cash_total = 0;
-    $credit_card_total = 0;
+    $card_total = 0;
     $tng_total = 0;
+    $maybank_qr_total = 0;
+    $grab_pay_total = 0;
+    $boost_total = 0;
     $other_total = 0;
-    $credit_sales_total = 0;
     $total = 0;
 
     foreach($branch_list as $branch)
     { 
       $branch->cash = 0;
-      $branch->credit_card = 0;
+      $branch->card = 0;
       $branch->tng = 0;
+      $branch->maybank_qr = 0;
+      $branch->grab_pay = 0;
+      $branch->boost = 0;
       $branch->other = 0;
-      $branch->credit_sales = 0;
 
-      $branch_other_total = 0;
       $branch_total = 0;
 
       $transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $branch->token)->selectRaw('*, sum(total) as payment_type_total')->groupBy('payment_type')->get();
@@ -448,11 +503,11 @@ class SalesController extends Controller
 
           $cash_total += $value->payment_type_total;
         }
-        elseif($value->payment_type == "credit_card")
+        elseif($value->payment_type == "card")
         {
-          $branch->credit_card = $value->payment_type_total;
+          $branch->card = $value->payment_type_total;
 
-          $credit_card_total += $value->payment_type_total;
+          $card_total += $value->payment_type_total;
         }
         elseif($value->payment_type == "tng")
         {
@@ -460,26 +515,41 @@ class SalesController extends Controller
 
           $tng_total += $value->payment_type_total;
         }
+        elseif($value->payment_type == "maybank_qr")
+        {
+          $branch->maybank_qr = $value->payment_type_total;
+
+          $maybank_qr_total += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "grab_pay")
+        {
+          $branch->grab_pay = $value->payment_type_total;
+
+          $grab_pay_total += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "boost")
+        {
+          $branch->boost = $value->payment_type_total;
+
+          $boost_total += $value->payment_type_total;
+        }
         else
         {
-          $branch_other_total += $value->payment_type_total;
+          $branch->other += $value->payment_type_total;
 
           $other_total += $value->payment_type_total;
         }
       }
 
-      if($branch_other_total > 0)
-      {
-        $branch->other = $branch_other_total;
-      }
-
       $sheet->setCellValue('A'.$started_row, $branch->branch_name);
       $sheet->setCellValue('B'.$started_row, number_format($branch->cash, 2));
-      $sheet->setCellValue('C'.$started_row, number_format($branch->credit_card, 2));
+      $sheet->setCellValue('C'.$started_row, number_format($branch->card, 2));
       $sheet->setCellValue('D'.$started_row, number_format($branch->tng, 2));
-      $sheet->setCellValue('E'.$started_row, number_format($branch->other, 2));
-      $sheet->setCellValue('F'.$started_row, number_format($branch->credit_sales, 2));
-      $sheet->setCellValue('G'.$started_row, number_format($branch_total, 2));
+      $sheet->setCellValue('E'.$started_row, number_format($branch->maybank_qr, 2));
+      $sheet->setCellValue('F'.$started_row, number_format($branch->grab_pay, 2));
+      $sheet->setCellValue('G'.$started_row, number_format($branch->boost, 2));
+      $sheet->setCellValue('H'.$started_row, number_format($branch->other, 2));
+      $sheet->setCellValue('I'.$started_row, number_format($branch_total, 2));
 
       $started_row++;
     }
@@ -487,73 +557,68 @@ class SalesController extends Controller
     $started_row++;
 
     if($cash_total == 0)
-    {
       $cash_total = "";
-    }
     else
-    {
       $cash_total = number_format($cash_total, 2);
-    }
-    if($credit_card_total == 0)
-    {
-      $credit_card_total = "";
-    }
+
+    if($card_total == 0)
+      $card_total = "";
     else
-    {
-      $credit_card_total = number_format($credit_card_total);
-    }
+      $card_total = number_format($card_total);
+
     if($tng_total == 0)
-    {
       $tng_total = "";
-    }
     else
-    {
       $tng_total = number_format($tng_total, 2);
-    }
+
+    if($maybank_qr_total == 0)
+      $maybank_qr_total = "";
+    else
+      $maybank_qr_total = number_format($maybank_qr_total, 2);
+
+    if($grab_pay_total == 0)
+      $grab_pay_total = "";
+    else
+      $grab_pay_total = number_format($grab_pay_total, 2);
+
+    if($boost_total == 0)
+      $boost_total = "";
+    else
+      $boost_total = number_format($boost_total, 2);
+
     if($other_total == 0)
-    {
       $other_total = "";
-    }
     else
-    {
       $other_total = number_format($other_total, 2);
-    }
-    if($credit_sales_total == 0)
-    {
-      $credit_sales_total = "";
-    }
-    else
-    {
-      $credit_sales_total = number_format($credit_sales_total, 2);
-    }
+
     if($total == 0)
-    {
       $total = "";
-    }
     else
-    {
       $total = number_format($total, 2);
-    }
 
     $sheet->setCellValue('A'.$started_row, "Jumlah:");
     $sheet->setCellValue('B'.$started_row, $cash_total);
-    $sheet->setCellValue('C'.$started_row, $credit_card_total);
+    $sheet->setCellValue('C'.$started_row, $card_total);
     $sheet->setCellValue('D'.$started_row, $tng_total);
-    $sheet->setCellValue('E'.$started_row, $other_total);
-    $sheet->setCellValue('F'.$started_row, $credit_sales_total);
-    $sheet->setCellValue('G'.$started_row, $total);
+    $sheet->setCellValue('E'.$started_row, $maybank_qr_total);
+    $sheet->setCellValue('F'.$started_row, $grab_pay_total);
+    $sheet->setCellValue('G'.$started_row, $boost_total);
+    $sheet->setCellValue('H'.$started_row, $other_total);
+    $sheet->setCellValue('I'.$started_row, $total);
 
     $sheet->getColumnDimension('A')->setWidth(20);
-    $sheet->getColumnDimension('B')->setWidth(11);
+    $sheet->getColumnDimension('B')->setWidth(25);
     $sheet->getColumnDimension('C')->setWidth(11);
     $sheet->getColumnDimension('D')->setWidth(11);
-    $sheet->getColumnDimension('E')->setWidth(11);
+    $sheet->getColumnDimension('E')->setWidth(20);
     $sheet->getColumnDimension('F')->setWidth(11);
     $sheet->getColumnDimension('G')->setWidth(11);
+    $sheet->getColumnDimension('H')->setWidth(11);
+    $sheet->getColumnDimension('I')->setWidth(11);
 
-    $sheet->getStyle('A5:G'.$started_row)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-    $sheet->getStyle('A5:G5')->getAlignment()->setHorizontal('center');
-    $sheet->getStyle('B6:G100')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('A5:I'.$started_row)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+    $sheet->getStyle('A5:I5')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('B6:I100')->getAlignment()->setHorizontal('right');
 
     $writer = new Xlsx($spreadsheet);
     $path = 'storage/report/Sales Report.xlsx';
@@ -593,20 +658,27 @@ class SalesController extends Controller
     $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
     $sheet->setCellValue('A2', 'Branch Report');
 
+
     $sheet->mergeCells('A1:G1');
     $sheet->mergeCells('A2:G2');
 
     $sheet->setCellValue('A3', 'Date:');
-    $sheet->setCellValue('B3', date('d-m-Y', strtotime(now())));
+    $sheet->setCellValue('B3', "Date from : ".$selected_date_from."\nDate to : ".$selected_date_to);
+    $sheet->getStyle("A1:I3")->getAlignment()->setWrapText(true);
+
+    $sheet->setCellValue('H3', 'Generate Date:');
+    $sheet->setCellValue('I3', date('d-m-Y', strtotime(now())));
 
     $sheet->setCellValue('B5', 'Cash');
     $sheet->setCellValue('C5', 'Credit Card');
     $sheet->setCellValue('D5', 'T & Go');
-    $sheet->setCellValue('E5', 'Other');
-    $sheet->setCellValue('F5', 'Credit Sales');
-    $sheet->setCellValue('G5', 'Total');
+    $sheet->setCellValue('E5', 'Maybank QRPay');
+    $sheet->setCellValue('F5', 'Grab Pay');
+    $sheet->setCellValue('G5', 'Boost');
+    $sheet->setCellValue('H5', 'Other');
+    $sheet->setCellValue('I5', 'Total');
 
-    $sheet->getStyle('A1:G2')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A1:I2')->getAlignment()->setHorizontal('center');
 
     $branch = Branch::where('token', $branch_token)->first();
 
@@ -616,10 +688,12 @@ class SalesController extends Controller
     $sheet->setCellValue('B'.$started_row, $branch->branch_name);
 
     $branch_cash = 0;
-    $branch_credit_card = 0;
+    $branch_card = 0;
     $branch_tng = 0;
+    $branch_maybank_qr = 0;
+    $branch_grab_pay = 0;
+    $branch_boost = 0;
     $branch_other = 0;
-    $branch_credit_sales = 0;
     $branch_total = 0;
 
     $cashier_transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $branch->token)->groupBy('cashier_name')->get();
@@ -629,12 +703,13 @@ class SalesController extends Controller
     foreach($cashier_transaction as $cashier)
     {
       $cashier->cash = 0;
-      $cashier->credit_card = 0;
+      $cashier->card = 0;
       $cashier->tng = 0;
+      $cashier->maybank_qr = 0;
+      $cashier->grab_pay = 0;
+      $cashier->boost = 0;
       $cashier->other = 0;
-      $cashier->credit_sales = 0;
 
-      $cashier_other_total = 0;
       $cashier_total = 0;
 
       $transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $branch->token)->where('ip', $cashier->ip)->selectRaw('*, sum(total) as payment_type_total')->groupBy('payment_type')->get();
@@ -649,10 +724,25 @@ class SalesController extends Controller
           $cashier->cash = $value->payment_type_total;
           $branch_cash += $value->payment_type_total;
         }
-        elseif($value->payment_type == "credit_card")
+        elseif($value->payment_type == "card")
         {
-          $cashier->credit_card = $value->payment_type_total;
-          $branch_credit_card += $value->payment_type_total;
+          $cashier->card = $value->payment_type_total;
+          $branch_card += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "maybank_qr")
+        {
+          $cashier->maybank_qr = $value->payment_type_total;
+          $branch_maybank_qr += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "grab_pay")
+        {
+          $cashier->grab_pay = $value->payment_type_total;
+          $branch_grab_pay += $value->payment_type_total;
+        }
+        elseif($value->payment_type == "boost")
+        {
+          $cashier->boost = $value->payment_type_total;
+          $branch_boost += $value->payment_type_total;
         }
         elseif($value->payment_type == "tng")
         {
@@ -666,18 +756,15 @@ class SalesController extends Controller
         }
       }
 
-      if($cashier_other_total > 0)
-      {
-        $cashier->other = $cashier_other_total;
-      }
-
       $sheet->setCellValue('A'.$started_row, $cashier->cashier_name);
       $sheet->setCellValue('B'.$started_row, number_format($cashier->cash, 2));
-      $sheet->setCellValue('C'.$started_row, number_format($cashier->credit_card, 2));
+      $sheet->setCellValue('C'.$started_row, number_format($cashier->card, 2));
       $sheet->setCellValue('D'.$started_row, number_format($cashier->tng, 2));
-      $sheet->setCellValue('E'.$started_row, number_format($cashier->other, 2));
-      $sheet->setCellValue('F'.$started_row, number_format($cashier->credit_sales, 2));
-      $sheet->setCellValue('G'.$started_row, number_format($cashier_total, 2));
+      $sheet->setCellValue('E'.$started_row, number_format($cashier->maybank_qr, 2));
+      $sheet->setCellValue('F'.$started_row, number_format($cashier->grab_pay, 2));
+      $sheet->setCellValue('G'.$started_row, number_format($cashier->boost, 2));
+      $sheet->setCellValue('H'.$started_row, number_format($cashier->other, 2));
+      $sheet->setCellValue('I'.$started_row, number_format($cashier_total, 2));
 
       $started_row++;
     }
@@ -686,23 +773,27 @@ class SalesController extends Controller
 
     $sheet->setCellValue('A'.$started_row, "Jumlah: ");
     $sheet->setCellValue('B'.$started_row, number_format($branch_cash, 2));
-    $sheet->setCellValue('C'.$started_row, number_format($branch_credit_card, 2));
+    $sheet->setCellValue('C'.$started_row, number_format($branch_card, 2));
     $sheet->setCellValue('D'.$started_row, number_format($branch_tng, 2));
-    $sheet->setCellValue('E'.$started_row, number_format($branch_other, 2));
-    $sheet->setCellValue('F'.$started_row, number_format($branch_credit_sales, 2));
-    $sheet->setCellValue('G'.$started_row, number_format($branch_total, 2));
+    $sheet->setCellValue('E'.$started_row, number_format($branch_maybank_qr, 2));
+    $sheet->setCellValue('F'.$started_row, number_format($branch_grab_pay, 2));
+    $sheet->setCellValue('G'.$started_row, number_format($branch_boost, 2));
+    $sheet->setCellValue('H'.$started_row, number_format($branch_other, 2));
+    $sheet->setCellValue('I'.$started_row, number_format($branch_total, 2));
 
     $sheet->getColumnDimension('A')->setWidth(20);
-    $sheet->getColumnDimension('B')->setWidth(11);
+    $sheet->getColumnDimension('B')->setWidth(25);
     $sheet->getColumnDimension('C')->setWidth(11);
     $sheet->getColumnDimension('D')->setWidth(11);
-    $sheet->getColumnDimension('E')->setWidth(11);
+    $sheet->getColumnDimension('E')->setWidth(20);
     $sheet->getColumnDimension('F')->setWidth(11);
     $sheet->getColumnDimension('G')->setWidth(11);
+    $sheet->getColumnDimension('H')->setWidth(11);
+    $sheet->getColumnDimension('I')->setWidth(11);
 
-    $sheet->getStyle('A5:G'.$started_row)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-    $sheet->getStyle('A5:G5')->getAlignment()->setHorizontal('center');
-    $sheet->getStyle('B6:G100')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('A5:I'.$started_row)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+    $sheet->getStyle('A5:I5')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('B6:I100')->getAlignment()->setHorizontal('right');
 
     $writer = new Xlsx($spreadsheet);
     $path = 'storage/report/Branch Report.xlsx';

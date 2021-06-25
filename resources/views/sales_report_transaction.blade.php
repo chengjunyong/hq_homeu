@@ -78,12 +78,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="main" style="padding-bottom: 2.5rem;">
     <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
       <thead style="background: #adade0;">
-        <th style="text-align: right">CASHIER NAME</th>
+        <th style="text-align: right">BRANCH NAME</th>
         <th style="text-align: right">CASH</th>
-        <th style="text-align: right">CREDIT CARD</th>
+        <th style="text-align: right">CARD</th>
         <th style="text-align: right">T & GO</th>
-        <th style="text-align: right">OTHER</th>
-        <th style="text-align: right">CREDIT SALES</th>
+        <th style="text-align: right">Maybank QRPAy</th>
+        <th style="text-align: right">Grab pay</th>
+        <th style="text-align: right">Boost</th>
+        <th style="text-align: right">Other</th>
         <th style="text-align: right">TOTAL</th>
         <!-- <th>DETAIL</th> -->
       </thead>
@@ -92,10 +94,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <tr>
             <td style="text-align: right;">{{ $branch->branch_name }}</td>
             <td style="text-align: right;">{{ number_format($branch->cash, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($branch->credit_card, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($branch->card, 2) }}</td>
             <td style="text-align: right;">{{ number_format($branch->tng, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($branch->maybank_qr, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($branch->grab_pay, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($branch->boost, 2) }}</td>
             <td style="text-align: right;">{{ number_format($branch->other, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($branch->credit_sales, 2) }}</td>
             <td style="text-align: right;">{{ number_format($branch->total, 2) }}</td>
           </tr>
         @endforeach
@@ -104,10 +108,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <tr>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">Jumlah :</td>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->cash, 2) }}</td>
-          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->credit_card, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->card, 2) }}</td>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->tng, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->maybank_qr, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->grab_pay, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->boost, 2) }}</td>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->other, 2) }}</td>
-          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->credit_sales, 2) }}</td>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->total, 2) }}</td>
         </tr>
       </tfoot>
