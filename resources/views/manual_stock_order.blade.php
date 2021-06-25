@@ -117,6 +117,12 @@ $(document).ready(function(){
     });
   });
 
+  $("input[type=search]").keyup(()=>{
+    $(".add-list").click(function(){
+      quantityHandle($(this).val());
+    });
+  });
+
 });
 
 function quantityHandle(target){
