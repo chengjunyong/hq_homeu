@@ -10,6 +10,7 @@ use App\Branch;
 use App\Product_list;
 use Illuminate\Support\Facades\DB;
 use App\Warehouse_stock;
+use App\Voucher;
 
 class api extends Controller
 {
@@ -55,6 +56,7 @@ class api extends Controller
           'user_id' => $data['user_id'],
           'subtotal' => $data['subtotal'],
           'total_discount' => $data['total_discount'],
+          'voucher_code' => $data['voucher_code'],
           'payment' => $data['payment'],
           'payment_type' => $data['payment_type'],
           'payment_type_text' => $data['payment_type_text'],
@@ -189,10 +191,13 @@ class api extends Controller
       
       $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'promotion_start', 'promotion_end', 'promotion_price')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
 
+      $voucher_list = Voucher::get();
+
       $response = new \stdClass();
       $response->error = 0;
       $response->message = "Syncing branch product list.";
       $response->product_list = $product_list;
+      $response->voucher_list = $voucher_list;
 
       return response()->json($response);
     }
