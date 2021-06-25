@@ -19,6 +19,7 @@ class transaction extends Model
       'user_id',
       'subtotal',
       'total_discount',
+      'voucher_code',
       'payment',
       'payment_type',
       'payment_type_text',
