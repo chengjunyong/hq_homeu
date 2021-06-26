@@ -345,7 +345,6 @@ class SalesController extends Controller
       $cashier->other = 0;
       $cashier->total = 0;
 
-      $cashier_other_total = 0;
       $cashier_total = 0;
 
       $transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $branch->token)->where('ip', $cashier->ip)->selectRaw('*, sum(total) as payment_type_total')->groupBy('payment_type')->get();
@@ -387,14 +386,9 @@ class SalesController extends Controller
         }
         else
         {
-          $cashier_other_total += $value->payment_type_total;
+          $cashier->total += $value->payment_type_total;
           $branch_other += $value->payment_type_total;
         }
-      }
-
-      if($cashier_other_total > 0)
-      {
-        $cashier->other = $cashier_other_total;
       }
 
       $cashier->total = $cashier_total;
@@ -751,7 +745,7 @@ class SalesController extends Controller
         }
         else
         {
-          $cashier_other_total += $value->payment_type_total;
+          $cashier->other += $value->payment_type_total;
           $branch_other += $value->payment_type_total;
         }
       }
