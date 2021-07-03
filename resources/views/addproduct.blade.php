@@ -40,6 +40,17 @@
 						<label>Product Name</label>
 						<input type="text" name="product_name" class="form-control" required>
 					</div>
+          <div class="col-md-12">
+            <label>UOM</label>
+            <select name="uom" id="uom" class="form-control" required>
+              <option name="Bag">Bag</option>
+              <option name="Carton">Carton</option>
+              <option name="Box">Box</option>
+              <option name="Dozen">Dozen</option>
+              <option name="Piece">Piece</option>
+              <option name="Set">Set</option>
+            </select>
+          </div>
 					<div class="col-md-6">
 						<label>Cost</label>
 						<input type="number" min="0" step="0.01" name="cost" id="cost" class="form-control" required>

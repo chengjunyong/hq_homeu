@@ -57,6 +57,7 @@
 								<td>Department</td>
 								<td>Category</td>
 								<td>Product Name</td>
+                <td>UOM</td>
 								<td>Cost</td>
 								<td>Price</td>
 								<td>Reorder Level</td>
@@ -72,6 +73,7 @@
 									<td>{{$result->department_name}}</td>
 									<td>{{$result->category_name}}</td>
 									<td><a href="{{route('getModifyProduct',$result->id)}}">{{$result->product_name}}</a></td>
+                  <td>{{$result->uom}}</td>
 									<td style="width:5%">{{number_format($result->cost,2)}}</td>
 									<td style="width:5%">{{number_format($result->price,2)}}</td>
 									<td align="center" style="width:2%">{{$result->reorder_level}}</td>

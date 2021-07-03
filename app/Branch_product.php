@@ -3,9 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Branch_product extends Model
 {
+    use SoftDeletes;
     protected $table = 'branch_product';
     protected $fillable = 
     [
@@ -14,6 +16,7 @@ class Branch_product extends Model
       'category_id',
       'barcode',
       'product_name',
+      'uom',
       'cost',
       'price',
       'quantity',

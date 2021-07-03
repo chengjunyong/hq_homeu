@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class branch_stock_history extends Model
 {
-
   protected $table = 'branch_stock_history';
   protected $fillable = 
   [

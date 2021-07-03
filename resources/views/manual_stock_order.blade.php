@@ -36,9 +36,9 @@
       <div class="row">
         <div class="col-md-3">
           <select name="from" id="from" class="form-control">
-            <option value="0" selected>HQ Warehouse</option>
+            <option value="0" {{ (isset($_GET['from']) && $_GET['from'] == 0) ? 'selected' : '' }}>HQ Warehouse</option>
             @foreach($branch as $result)
-              <option value="{{$result->id}}">{{$result->branch_name}}</option>
+              <option value="{{$result->id}}" {{ (isset($_GET['from']) && $result->id == $_GET['from']) ? 'selected' : '' }}>{{$result->branch_name}}</option>
             @endforeach
           </select>
         </div>
@@ -50,6 +50,7 @@
             @foreach($branch as $result)
               <option value="{{$result->id}}" {{ ($result->id == $_GET['branch_id']) ? 'selected' : '' }}>{{$result->branch_name}}</option>
             @endforeach
+              <option value="hq" {{ ($_GET['branch_id'] == 'hq') ? 'selected' : '' }}>HQ Warehouse</option>
           </select>
         </div>
         <div class="col" style="text-align:right;margin-right: 20px;">
@@ -104,7 +105,7 @@ $(document).ready(function(){
   });
 
   $("#to").change(function(){
-    window.location.assign("{{route('getManualStockOrder')}}?branch_id="+$(this).val());
+    window.location.assign("{{route('getManualStockOrder')}}?branch_id="+$(this).val()+"&from="+$("#from").val());
   });
 
   $(".add-list").click(function(){

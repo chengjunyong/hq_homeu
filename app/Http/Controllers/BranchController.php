@@ -49,7 +49,7 @@ class BranchController extends Controller
       'token' => $request->token
     ]);
 
-    $product_list = Product_list::select('department_id','category_id','barcode','product_name','cost','price','reorder_level','recommend_quantity','unit_type')
+    $product_list = Product_list::select('department_id','category_id','barcode','product_name','uom','cost','price','reorder_level','recommend_quantity','unit_type')
                                  ->get()
                                  ->toArray();
 
@@ -343,6 +343,7 @@ class BranchController extends Controller
         $restock_quantity = 0;
       }
 
+      $do_list = Do_list::where('do_number',$request->do_number)->first();
       $do_detail = Do_detail::where('id',$request->do_detail_id[$x])
                               ->update([
                                 'stock_lost_quantity' => $stock_lost_quantity,
@@ -351,13 +352,23 @@ class BranchController extends Controller
                                 'stock_lost_review' => $stock_lost_review,
                               ]);
 
-      $branch_product = Branch_product::where('id',$request->product_id[$x])->first();
-      $total_restock_quantity = $restock_quantity + intval($branch_product->quantity);
+      //Decide to take branch product or warehouse product                        
+      if($do_list->to == "HQ"){
+        $warehouse_stock = Warehouse_stock::where('id',$request->product_id[$x])->first();
+        $total_restock_quantity = $restock_quantity + intval($warehouse_stock->quantity);
+        Warehouse_stock::where('id',$request->product_id[$x])
+                ->update([
+                  'quantity' => $total_restock_quantity,
+                ]);
+      }else{  
+        $branch_product = Branch_product::where('id',$request->product_id[$x])->first();
+        $total_restock_quantity = $restock_quantity + intval($branch_product->quantity);
+        Branch_product::where('id',$request->product_id[$x])
+                ->update([
+                  'quantity' => $total_restock_quantity,
+                ]);
+      }
 
-      Branch_product::where('id',$request->product_id[$x])
-                      ->update([
-                        'quantity' => $total_restock_quantity,
-                      ]);
     }         
     
     Do_list::where('do_number',$request->do_number)
@@ -655,10 +666,15 @@ class BranchController extends Controller
 
     $branch_product = new \stdClass();
 
+    // Remember change paginate to get()
     if(isset($_GET['branch_id']) && $_GET['branch_id'] != ''){
 
       $branch_product = Branch_product::where('branch_id',$_GET['branch_id'])
                                     ->get(); 
+    }
+
+    if($_GET['branch_id'] == 'hq'){
+      $branch_product = Warehouse_stock::get();
     }
 
     $branch = Branch::get();
@@ -668,7 +684,11 @@ class BranchController extends Controller
 
   public function ajaxAddManualStockOrder(Request $request)
   {
-    $product_detail = Branch_product::where('id',$request->branch_product_id)->first();
+    if($request->to == "hq"){
+      $product_detail = Warehouse_stock::where('id',$request->branch_product_id)->first();
+    }else{
+      $product_detail = Branch_product::where('id',$request->branch_product_id)->first();
+    }
 
     try{
       $result = Tmp_order_list::updateOrCreate(
@@ -694,6 +714,7 @@ class BranchController extends Controller
     $branch = Branch::first();
     $url = route('getManualStockOrder')."?branch_id=".$branch->id;
     $from = new \stdClass();
+    $to = new \stdClass();
 
     $branch_group = Tmp_order_list::select(DB::raw('DISTINCT from_branch,to_branch'))->first();
 
@@ -710,7 +731,10 @@ class BranchController extends Controller
     else
       $from = Branch::where('id',$branch_group->from_branch)->select('branch_name')->first();
 
-    $to = Branch::where('id',$branch_group->to_branch)->select('branch_name')->first();
+    if($branch_group->to_branch == 0)
+      $to->branch_name = "HQ";
+    else  
+      $to = Branch::where('id',$branch_group->to_branch)->select('branch_name')->first();
 
     $tmp = Tmp_order_list::where('from_branch',$branch_group->from_branch)
                           ->where('to_branch',$branch_group->to_branch)

@@ -143,6 +143,7 @@ class ProductController extends Controller
         'category_id'=>$request->category,
         'barcode'=>$request->barcode,
         'product_name'=>$request->product_name,
+        'uom'=>$request->uom,
         'cost'=>$request->cost,
         'price'=>$request->price,
         'quantity'=>0,
@@ -158,6 +159,7 @@ class ProductController extends Controller
       'category_id'=>$request->category,
       'barcode'=>$request->barcode,
       'product_name'=>$request->product_name,
+      'uom'=>$request->uom,
       'cost'=>$request->cost,
       'price'=>$request->price,
       'quantity'=>0,
@@ -171,6 +173,7 @@ class ProductController extends Controller
       'category_id'=>$request->category,
       'barcode'=>$request->barcode,
       'product_name'=>$request->product_name,
+      'uom'=>$request->uom,
       'cost'=>$request->cost,
       'price'=>$request->price,
       'quantity'=>0,
@@ -217,6 +220,7 @@ class ProductController extends Controller
                       'department_id'=>$request->department,
                       'category_id'=>$request->category,
                       'product_name'=>$request->product_name,
+                      'uom'=>$request->uom,
                       'cost'=>$request->cost,
                       'price'=>$request->price,
                       'reorder_level'=>$request->reorder_level,
@@ -232,6 +236,7 @@ class ProductController extends Controller
                       'department_id'=>$request->department,
                       'category_id'=>$request->category,
                       'product_name'=>$request->product_name,
+                      'uom'=>$request->uom,
                       'cost'=>$request->cost,
                       'price'=>$request->price,
                       'reorder_level'=>$request->reorder_level,
@@ -249,6 +254,7 @@ class ProductController extends Controller
                       'department_id'=>$request->department,
                       'category_id'=>$request->category,
                       'product_name'=>$request->product_name,
+                      'uom'=>$request->uom,
                       'cost'=>$request->cost,
                       'price'=>$request->price,
                       'reorder_level'=>0,
@@ -301,6 +307,10 @@ class ProductController extends Controller
       return json_encode($result);
     }
 
+  }
+
+  public function test(){
+    Product_list::where('id',1)->restore();
   }
 
 }
