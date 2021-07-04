@@ -101,7 +101,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
   <br/><br/><br/>
   <div class="main" style="">
-    <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
+    <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;margin-bottom:20px;">
         <thead>
           <td align="center" style="width: 1%;">No</td>
           <td align="center" style="width: 3%;">Cashier</td>
