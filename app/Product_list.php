@@ -28,5 +28,6 @@ class Product_list extends Model
       'promotion_start',
       'promotion_end',
       'promotion_price',
+      'deleted_by',
     ];
 }

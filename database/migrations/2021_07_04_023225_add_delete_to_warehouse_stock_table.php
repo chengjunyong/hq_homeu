@@ -15,7 +15,6 @@ class AddDeleteToWarehouseStockTable extends Migration
     {
         Schema::table('warehouse_stock', function (Blueprint $table) {
             $table->softDeletes();
-            $table->text('deleted_by');
         });
     }
 
@@ -28,7 +27,6 @@ class AddDeleteToWarehouseStockTable extends Migration
     {
         Schema::table('warehouse_stock', function (Blueprint $table) {
             $table->dropSoftDeletes();
-            $table->dropColumn('deleted_by');
         });
     }
 }

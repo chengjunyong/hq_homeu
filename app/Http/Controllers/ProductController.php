@@ -309,6 +309,22 @@ class ProductController extends Controller
 
   }
 
+  public function postDeleteProduct(Request $request)
+  {
+    if(Auth::check()){
+
+      Product_list::where('barcode',$request->barcode)->update(['deleted_by'=>Auth::user()->name]);
+      Product_list::where('barcode',$request->barcode)->delete();
+      Branch_product::where('barcode',$request->barcode)->delete();
+      Warehouse_stock::where('barcode',$request->barcode)->delete();
+
+      return json_encode(true);
+    }else{
+      return json_encode(false);
+    }
+
+  }
+
   public function test(){
     Product_list::where('id',1)->restore();
   }

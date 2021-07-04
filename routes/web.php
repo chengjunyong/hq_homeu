@@ -67,6 +67,7 @@ Route::get('/modifyproduct/{id}','ProductController@getModifyProduct')->name('ge
 Route::post('/modifyproduct','ProductController@postModifyProduct')->name('postModifyProduct');
 Route::get('/voucher','ProductController@getVoucher')->name('getVoucher');
 Route::post('/voucher','ProductController@postVoucher')->name('postVoucher');
+Route::post('/DeleteProduct','ProductController@postDeleteProduct')->name('postDeleteProduct');
 
 //Other
 Route::get('/Supplier','OtherController@getSupplier')->name('getSupplier');
@@ -98,6 +99,9 @@ Route::post('/stock_report_report','SalesController@getStockReorderReport')->nam
 Route::get('/ProductSalesReport','SalesController@getProductSalesReport')->name('getProductSalesReport');
 Route::post('/ProductSalesReport','SalesController@postProductSalesReport')->name('postProductSalesReport');
 Route::post('/ExportProductSalesReport','SalesController@exportProductSalesReport')->name('exportProductSalesReport');
+
+Route::get('/DailySalesTransactionReport','SalesController@getDailySalesTransactionReport')->name('getDailySalesTransactionReport');
+Route::post('/DailySalesTransactionReport','SalesController@postDailySalesTransactionReport')->name('postDailySalesTransactionReport');
 
 // User access control
 Route::get('/user_access_control', 'UserController@getUserAccessControl')->name('getUserAccessControl'); 

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class SalesController extends Controller
 {
@@ -1306,5 +1307,30 @@ class SalesController extends Controller
     $writer->save($path);
 
     return response()->download($path);
+  }
+
+  public function getDailySalesTransactionReport()
+  {
+    $url = route('home')."?p=sales_menu";
+    $branch = Branch::get();
+
+    return view('daily_sales_transaction_report',compact('url','branch'));
+  }
+
+  public function postDailySalesTransactionReport(Request $request)
+  {
+    $branch = Branch::where('id',$request->branch_id)->first();
+    $from_date = $request->report_date_from;
+    $to_date = $request->report_date_to;
+    $date = Carbon::parse($request->report_date_to);
+
+    $transaction = Transaction::where('branch_id',$branch->token)
+                                ->whereBetween('transaction_date',[$request->report_date_from,$date->addDays(1)])
+                                ->orderBy('transaction_date','asc')
+                                ->get();
+
+    $user = Auth::user();                            
+
+    return view('report.daily_sales_transaction_report',compact('branch','transaction','from_date','to_date','user'));
   }
 }

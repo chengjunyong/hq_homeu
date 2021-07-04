@@ -10,7 +10,14 @@
 	<h2 align="center">Edit Product</h2>
 	<div class="card" style="border-radius: 1.25rem">
 		<div class="card-title" style="padding: 10px">
-			<h4>Modify Product Information</h4>
+      <div class="row">
+        <div class="col">
+  			 <h4 style="float:left">Modify Product Information</h4>
+        </div>
+        <div class="col">
+          <button type="button" id="delete_product" class="btn btn-danger" style="float:right;">Delete Product</button>
+        </div>
+      </div>
 		</div>
 		<div class="card-body">
 			<form method="post" action="{{route('postModifyProduct')}}" id="form">
@@ -174,6 +181,48 @@ $(document).ready(function(){
   $("input[type=submit]").click(()=>{
     if(($("#promo_start").val() != "" || $("#promo_end").val() != "") && $("#promo_price").val() == "")
       $("#promo_price").prop("required",true);
+  });
+
+  $("#delete_product").click(function(){
+    let product = $("input[name=product_name]").val()
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this product ("+product+")!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        let barcode = $("input[name=barcode]").val();
+        $.post('{{route('postDeleteProduct')}}',
+        {
+          '_token':'{{csrf_token()}}',
+          'barcode':barcode,
+
+        },function(data){ 
+          if(data){
+            swal.fire({
+              title:'Delete Successful',
+              text:'Items has been deleted',
+              icon:'success',
+              confirmButtonText: 'OK',
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+            }).then(()=>{
+              window.location.replace('{{route('getProductList')}}');
+            });
+
+          }else{
+            swal.fire('Delete Fail','Delete Unsuccessful, Please Contact IT Support','error');
+          }
+          
+
+        },'json');
+      }
+    })
+
   });
 	
 });
