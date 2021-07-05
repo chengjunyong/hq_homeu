@@ -1326,7 +1326,7 @@ class SalesController extends Controller
 
     $transaction = Transaction::where('branch_id',$branch->token)
                                 ->whereBetween('transaction_date',[$request->report_date_from,$date->addDays(1)])
-                                ->orderBy('transaction_date','asc')
+                                ->orderBy('transaction_no','asc')
                                 ->get();
 
     $user = Auth::user();                            
