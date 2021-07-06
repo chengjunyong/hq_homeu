@@ -31,6 +31,7 @@ class api extends Controller
 
       transaction::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->delete();
       transaction_detail::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->delete();
+      
       $branch_detail = Branch::where('token', $branch_id)->first();
 
       if(!$branch_detail)
@@ -75,7 +76,7 @@ class api extends Controller
 
       $transaction_query = array_chunk($transaction_query,500);
       foreach($transaction_query as $query){
-        transaction::insert($query);
+        Transaction::insert($query);
       }
 
       $transaction_product = array();
@@ -133,7 +134,7 @@ class api extends Controller
 
       $transaction_detail_query = array_chunk($transaction_detail_query,500);
       foreach($transaction_detail_query as $query){
-        transaction_detail::insert($query);
+        Transaction_detail::insert($query);
       }
 
       foreach($transaction_product as $transaction_product_detail)
