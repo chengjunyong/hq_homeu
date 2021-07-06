@@ -21,6 +21,7 @@ class api extends Controller
 
     public function branchSync(Request $request)
     {
+      $now = date('Y-m-d H:i:s');
       $transaction = $request->transaction;
       $transaction_detail = $request->transaction_detail;
 
@@ -67,8 +68,8 @@ class api extends Controller
           'void' => $data['void'],
           'completed' => $data['completed'],
           'transaction_date' => $data['transaction_date'],
-          'created_at' => $data['created_at'],
-          'updated_at' => $data['updated_at']
+          'created_at' => $now,
+          'updated_at' => $now
         ];
 
         array_push($transaction_query, $query);
@@ -102,8 +103,8 @@ class api extends Controller
           'subtotal' => $data['subtotal'],
           'total' => $data['total'],
           'void' => $data['void'],
-          'created_at' => $data['created_at'],
-          'updated_at' => $data['updated_at']
+          'created_at' => $now,
+          'updated_at' => $now
         ];
 
         $product_name = "product_".$data['product_id'];
