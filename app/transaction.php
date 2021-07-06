@@ -25,6 +25,7 @@ class transaction extends Model
       'payment_type_text',
       'balance',
       'total',
+      'round_off',
       'void',
       'completed',
       'transaction_date',

@@ -25,12 +25,12 @@ class api extends Controller
       $transaction_detail = $request->transaction_detail;
 
       $branch_id = $request->branch_id;
-      $session_id = $request->session_id;
+      $session_list = $request->session_list;
 
-      $previous_transaction_detail = transaction_detail::where('branch_id', $branch_id)->where('session_id', $session_id)->selectRaw('*, sum(quantity) as total_quantity')->groupBy('product_id')->get();
+      $previous_transaction_detail = transaction_detail::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->selectRaw('*, sum(quantity) as total_quantity')->groupBy('product_id')->get();
 
-      transaction::where('branch_id', $branch_id)->where('session_id', $session_id)->delete();
-      transaction_detail::where('branch_id', $branch_id)->where('session_id', $session_id)->delete();
+      transaction::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->delete();
+      transaction_detail::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->delete();
       $branch_detail = Branch::where('token', $branch_id)->first();
 
       if(!$branch_detail)
@@ -48,7 +48,7 @@ class api extends Controller
         $query = [
           'branch_transaction_id' => $data['id'],
           'branch_id' => $branch_id,
-          'session_id' => $session_id,
+          'session_id' => $data['session_id'],
           'ip' => $data['ip'],
           'cashier_name' => $data['cashier_name'],
           'transaction_no' => $data['transaction_no'],
@@ -62,6 +62,7 @@ class api extends Controller
           'payment_type_text' => $data['payment_type_text'],
           'balance' => $data['balance'],
           'total' => $data['total'],
+          'round_off' => $data['round_off'],
           'void' => $data['void'],
           'completed' => $data['completed'],
           'transaction_date' => $data['transaction_date'],
@@ -84,7 +85,7 @@ class api extends Controller
       {
         $query = [
           'branch_id' => $branch_id,
-          'session_id' => $session_id,
+          'session_id' => $data['session_id'],
           'branch_transaction_detail_id' => $data['id'],
           'branch_transaction_id' => $data['transaction_id'],
           'department_id' => $data['department_id'],
@@ -94,6 +95,8 @@ class api extends Controller
           'product_name' => $data['product_name'],
           'quantity' => $data['quantity'],
           'price' => $data['price'],
+          'wholesale_quantity' => $data['wholesale_quantity'],
+          'wholesale_price' => $data['wholesale_price'],
           'discount' => $data['discount'],
           'subtotal' => $data['subtotal'],
           'total' => $data['total'],
@@ -147,7 +150,7 @@ class api extends Controller
       }
 
       // more than 10000, php will return error
-      $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'promotion_start', 'promotion_end', 'promotion_price')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
+      $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'promotion_start', 'promotion_end', 'promotion_price')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->withTrashed()->get();
 
       $response = new \stdClass();
       $response->error = 0;
@@ -164,7 +167,7 @@ class api extends Controller
 
       $branch_detail = Branch::where('token', $branch_id)->first();
 
-      Branch_product::where('product_sync', 0)->where('branch_id', $branch_detail->id)->whereIn('barcode', $barcode_array)->update([
+      Branch_product::where('product_sync', 0)->where('branch_id', $branch_detail->id)->whereIn('barcode', $barcode_array)->withTrashed()->update([
         'product_sync' => 1
       ]);
 
