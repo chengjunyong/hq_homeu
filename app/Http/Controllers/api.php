@@ -27,10 +27,10 @@ class api extends Controller
       $branch_id = $request->branch_id;
       $session_id = $request->session_id;
 
-      $previous_transaction_detail = transaction_detail::where('branch_id', $branch_id)->where('session_id', $session_id)->selectRaw('*, sum(quantity) as total_quantity')->groupBy('product_id')->get();
+      $previous_transaction_detail = Transaction_detail::where('branch_id', $branch_id)->where('session_id', $session_id)->selectRaw('*, sum(quantity) as total_quantity')->groupBy('product_id')->get();
 
-      transaction::where('branch_id', $branch_id)->where('session_id', $session_id)->delete();
-      transaction_detail::where('branch_id', $branch_id)->where('session_id', $session_id)->delete();
+      Transaction::where('branch_id', $branch_id)->where('session_id', $session_id)->delete();
+      Transaction_detail::where('branch_id', $branch_id)->where('session_id', $session_id)->delete();
       $branch_detail = Branch::where('token', $branch_id)->first();
 
       if(!$branch_detail)
@@ -74,7 +74,7 @@ class api extends Controller
 
       $transaction_query = array_chunk($transaction_query,500);
       foreach($transaction_query as $query){
-        transaction::insert($query);
+        Transaction::insert($query);
       }
 
       $transaction_product = array();
@@ -130,7 +130,7 @@ class api extends Controller
 
       $transaction_detail_query = array_chunk($transaction_detail_query,500);
       foreach($transaction_detail_query as $query){
-        transaction_detail::insert($query);
+        Transaction_detail::insert($query);
       }
 
       foreach($transaction_product as $transaction_product_detail)
