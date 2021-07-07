@@ -315,6 +315,7 @@ class ProductController extends Controller
 
       Product_list::where('barcode',$request->barcode)->update(['deleted_by'=>Auth::user()->name]);
       Product_list::where('barcode',$request->barcode)->delete();
+      Branch_product::where('barcode',$request->barcode)->update(['product_sync'=>0]);
       Branch_product::where('barcode',$request->barcode)->delete();
       Warehouse_stock::where('barcode',$request->barcode)->delete();
 
