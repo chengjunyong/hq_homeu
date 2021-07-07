@@ -152,7 +152,7 @@ class api extends Controller
       }
 
       // more than 10000, php will return error
-      $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'promotion_start', 'promotion_end', 'promotion_price', 'uom')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->withTrashed()->get();
+      $product_list = Branch_product::withTrashed()->select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'promotion_start', 'promotion_end', 'promotion_price', 'uom', 'deleted_at')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
 
       $response = new \stdClass();
       $response->error = 0;
@@ -169,7 +169,7 @@ class api extends Controller
 
       $branch_detail = Branch::where('token', $branch_id)->first();
 
-      Branch_product::where('product_sync', 0)->where('branch_id', $branch_detail->id)->whereIn('barcode', $barcode_array)->withTrashed()->update([
+      Branch_product::withTrashed()->where('product_sync', 0)->where('branch_id', $branch_detail->id)->whereIn('barcode', $barcode_array)->update([
         'product_sync' => 1
       ]);
 
@@ -194,7 +194,7 @@ class api extends Controller
         return response()->json($response);
       }
       
-      $product_list = Branch_product::select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'promotion_start', 'promotion_end', 'promotion_price', 'uom')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
+      $product_list = Branch_product::withTrashed()->select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'promotion_start', 'promotion_end', 'promotion_price', 'uom', 'deleted_at')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
 
       $voucher_list = Voucher::get();
 
@@ -214,7 +214,7 @@ class api extends Controller
 
       $branch_detail = Branch::where('token', $branch_id)->first();
 
-      Branch_product::where('product_sync', 0)->where('branch_id', $branch_detail->id)->whereIn('barcode', $barcode_array)->update([
+      Branch_product::withTrashed()->where('product_sync', 0)->where('branch_id', $branch_detail->id)->whereIn('barcode', $barcode_array)->update([
         'product_sync' => 1
       ]);
 
