@@ -138,5 +138,5 @@ Route::post('/WarehouseRestockProcess','WarehouseController@postWarehouseRestock
 Route::get('/WarehouseRestockHistory','WarehouseController@getWarehouseRestockHistory')->name('getWarehouseRestockHistory');
 Route::get('/WarehouseRestockHistoryDetail/{id}/{po_number}','WarehouseController@getWarehouseRestockHistoryDetail')->name('getWarehouseRestockHistoryDetail');
 
-//Testing Purpose
-Route::get('/test','ProductController@test');
+//Transaction Number Correction Function
+Route::get('/TransactionCorrection/{target_date}/{branch_code}/{token}','SalesController@transactionCorrection');

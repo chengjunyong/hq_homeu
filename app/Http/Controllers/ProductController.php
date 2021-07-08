@@ -197,7 +197,6 @@ class ProductController extends Controller
     }
   }
 
-
   public function getModifyProduct(Request $request)
   {
     $url = route('getProductList');
@@ -228,6 +227,10 @@ class ProductController extends Controller
                       'promotion_start'=>$request->promotion_start,
                       'promotion_end'=>$request->promotion_end,
                       'promotion_price'=>$request->promotion_price,
+                      'wholesale_price'=>$request->wholesales_price,
+                      'wholesale_quantity'=>$request->wholesales_quantity,
+                      'wholesale_start_date'=>$request->wholesales_start,
+                      'wholesale_end_date'=>$request->wholesales_end,
                       'product_sync'=>0,
                     ]);
 
@@ -241,12 +244,16 @@ class ProductController extends Controller
                       'price'=>$request->price,
                       'reorder_level'=>$request->reorder_level,
                       'recommend_quantity'=>$request->recommend_quantity,
-                      'product_sync'=>0,
                       'schedule_date'=>$request->schedule_date,
                       'schedule_price'=>$request->schedule_price,
                       'promotion_start'=>$request->promotion_start,
                       'promotion_end'=>$request->promotion_end,
                       'promotion_price'=>$request->promotion_price,
+                      'wholesale_price'=>$request->wholesales_price,
+                      'wholesale_quantity'=>$request->wholesales_quantity,
+                      'wholesale_start_date'=>$request->wholesales_start,
+                      'wholesale_end_date'=>$request->wholesales_end,
+                      'product_sync'=>0,
                     ]);
 
     Warehouse_stock::where('barcode',$request->barcode)
@@ -323,11 +330,6 @@ class ProductController extends Controller
     }else{
       return json_encode(false);
     }
-
-  }
-
-  public function test(){
-    Product_list::where('id',1)->restore();
   }
 
 }

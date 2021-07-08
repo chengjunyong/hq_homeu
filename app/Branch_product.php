@@ -29,5 +29,9 @@ class Branch_product extends Model
       'promotion_start',
       'promotion_end',
       'promotion_price',
+      'wholesale_price',
+      'wholesale_quantity',
+      'wholesale_start_date',
+      'wholesale_end_date',
     ];
 }

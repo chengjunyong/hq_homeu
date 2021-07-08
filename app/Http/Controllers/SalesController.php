@@ -1333,4 +1333,29 @@ class SalesController extends Controller
 
     return view('report.daily_sales_transaction_report',compact('branch','transaction','from_date','to_date','user'));
   }
+
+  public function transactionCorrection(Request $request)
+  {
+    if($request->target_date == "" || $request->branch_code == ""){
+      return json_encode('Done');
+    }else{
+      $target_date = date("Ymd",strtotime($request->target_date));
+      $prefix = $request->branch_code.$target_date;
+      $transaction = Transaction::whereBetween('transaction_date',[$request->target_date,date("Y-m-d",strtotime($request->target_date.'+1 day'))])
+                                  ->where('branch_id',$request->token)
+                                  ->get();
+      $i=5;
+      foreach($transaction as $a => $result){
+        $number = $a+1;
+         while($i>strlen($number)){
+            $number = "0".$number;
+          }
+        $invoice = $prefix.$number;
+        Transaction::where('id',$result->id)->update(['transaction_no'=>$invoice]);
+      }
+
+      return "Completed Correction";
+    }
+  }
+
 }

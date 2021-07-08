@@ -82,6 +82,7 @@
             <label>Schedule Price</label>
             <input type="number" min="0" step="0.01" name="schedule_price" class="form-control" value="{{$product->schedule_price}}">
           </div>
+          <div class="col-md-12" style="text-align: center; margin: 5% 0px 0px 0px;"><label style='font-weight: bold;;font-size: 24px;'>Promotion Option</label></div>
           <div class="col-md-4">
             <label>Promotion Start Date</label>
             <input type="datetime-local" id="promo_start" name="promotion_start" class="form-control" value="{{ str_replace(" ","T",$product->promotion_start)}}">
@@ -93,6 +94,23 @@
           <div class="col-md-4">
             <label>Promotion Price</label>
             <input type="number" min="0" step="0.01" id="promo_price" name="promotion_price" class="form-control" value="{{$product->promotion_price}}">
+          </div>
+          <div class="col-md-12" style="text-align: center; margin: 5% 0px 0px 0px;"><label style='font-weight: bold;;font-size: 24px;'>Wholesale Option</label></div>
+          <div class="col-md-6">
+            <label>Wholesales Start Date</label>
+            <input type="datetime-local" id="wholesales_start" name="wholesales_start" class="form-control" value="{{ str_replace(" ","T",$product->wholesale_start_date)}}">
+          </div>
+          <div class="col-md-6">
+            <label>Wholesales End Date</label>
+            <input type="datetime-local" id="wholesales_end" name="wholesales_end" class="form-control" value="{{ str_replace(" ","T",$product->wholesale_end_date)}}">
+          </div>
+          <div class="col-md-6">
+            <label>Wholesales Price (Each Product)</label>
+            <input type="number" min="0" step="0.01" id="wholesales_price" name="wholesales_price" class="form-control" value="{{$product->wholesale_price}}">
+          </div>
+          <div class="col-md-6">
+            <label>Wholesales Minimum Quantity</label>
+            <input type="number" min="2" id="wholesales_quantity" name="wholesales_quantity" class="form-control" value="{{$product->wholesale_quantity}}">
           </div>
 					<div class="col-md-12" style="text-align: center;margin-top: 20px">
 						<input type="submit" class="btn btn-primary" value="Update">
@@ -200,7 +218,6 @@ $(document).ready(function(){
         {
           '_token':'{{csrf_token()}}',
           'barcode':barcode,
-
         },function(data){ 
           if(data){
             swal.fire({
@@ -213,17 +230,48 @@ $(document).ready(function(){
             }).then(()=>{
               window.location.replace('{{route('getProductList')}}');
             });
-
           }else{
             swal.fire('Delete Fail','Delete Unsuccessful, Please Contact IT Support','error');
           }
-          
-
         },'json');
       }
     })
-
   });
+
+  $("#wholesales_start").change(()=>{
+    $("#wholesales_price").prop("required",true);
+    $("#wholesales_quantity").prop("required",true);
+    $("#wholesales_start")[0].setCustomValidity("");
+    if(!$("#wholesales_end").val() == ""){
+      let a = new Date($("#wholesales_start").val());
+      let b = new Date($("#wholesales_end").val());
+      if(a > b){
+        $("#wholesales_start")[0].setCustomValidity("Wholesales Start Date Cannot Late Than Wholesales End Date");
+      }else{
+        $("#wholesales_start")[0].setCustomValidity("");
+      }
+    }else{
+      $("#wholesales_end")[0].setCustomValidity("Wholesales End Date Cannot Be Empty");
+    }
+  });
+
+  $("#wholesales_end").change(()=>{
+    $("#wholesales_price").prop("required",true);
+    $("#wholesales_quantity").prop("required",true);
+    $("#wholesales_end")[0].setCustomValidity("");
+    if(!$("#wholesales_start").val() == ""){
+      let a = new Date($("#wholesales_start").val());
+      let b = new Date($("#wholesales_end").val());
+      if(a > b){
+        $("#wholesales_end")[0].setCustomValidity("Wholesales End Date Cannot Early Than Wholesales Start Date");
+      }else{
+        $("#wholesales_end")[0].setCustomValidity("");
+      }
+    }else{
+      $("#wholesales_start")[0].setCustomValidity("Wholesales Start Date Cannot Be Empty");
+    }
+  });
+
 	
 });
 
