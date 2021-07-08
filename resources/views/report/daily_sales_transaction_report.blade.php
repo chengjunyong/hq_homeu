@@ -65,21 +65,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <h4 style="margin:20px 30%;border:1px solid black">Daily Sales Transaction Report</h3>
   </div>
 
-  <div class="first">
-    <table style="float:left">
-      <tr>
-        <td><b>Date From</b></td>
-        <td>:</td>
-        <td align="right">{{ $from_date }}</td>
-      </tr>
-      <tr>
-        <td><b>Date To</b></td>
-        <td>:</td>
-        <td align="right">{{ $to_date }}</td>
-      </tr>
-    </table>
-  </div>
-
   <div class="second">
     <table style="float:right">
       <tr>
