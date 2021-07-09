@@ -235,9 +235,11 @@ class WarehouseController extends Controller
                     'invoice_number' => $request->invoice_number,
                   ]);
 
+    $id = $warehouse->id;
+
     foreach($request->product_id as $key => $result){
       Warehouse_restock_history_detail::create([
-        'warehouse_history_id' => $warehouse->id,
+        'warehouse_history_id' => $id,
         'product_id' => $request->product_id[$key],
         'barcode' => $request->barcode[$key],
         'product_name' => $request->product_name[$key],
@@ -259,7 +261,6 @@ class WarehouseController extends Controller
                         'quantity' => DB::raw('quantity +'.$request->received_quantity[$key]),
                       ]);
       }
-      
     }
 
     return redirect(route('getPoList'))->with('success','success');
