@@ -35,7 +35,7 @@
               <tr>
                 <td>{{$key + 1}}</td>
                 <td>{{$result->invoice_number}}</td>
-                <td>{{$result->po_number}}</td>
+                <td>{{($result->po_number == null) ? 'Not Available' : $result->po_number}}</td>
                 <td>{{$result->supplier_code}}</td>
                 <td>{{$result->supplier_name}}</td>
                 <td>{{$result->created_at}}</td>

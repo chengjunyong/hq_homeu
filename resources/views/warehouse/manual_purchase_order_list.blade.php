@@ -21,22 +21,21 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-6">
-            <label>From:</label>
-            <input readonly class="form-control" type="text" name="from" value="{{$from->branch_name}}">
-            <input hidden class="form-control" type="text" name="from_branch_id" value="{{$tmp[0]->from_branch}}">
-          </div>
-          <div class="col-md-6">
-            <label>To:</label>
-            <input readonly class="form-control" type="text" name="to" value="{{$to->branch_name}}">
-            <input hidden class="form-control" type="text" name="to_branch_id" value="{{$tmp[0]->to_branch}}">
+            <label>Supplier:</label>
+            <input readonly class="form-control" type="text" name="supplier" value="{{$supplier->supplier_name}}">
+            <input hidden class="form-control" type="text" name="supplier_id" value="{{$tmp[0]->supplier_id}}">
           </div>
           <div class="col-md-6">
             <label>Total Items:</label>
             <input readonly class="form-control" type="text" name="total_item" value="{{$total_item}}">
           </div>
           <div class="col-md-6">
+            <label>Total Items:</label>
+            <input readonly class="form-control" type="text" name="total_cost" value="{{$total_cost}}">
+          </div>
+          <div class="col-md-6">
             <label>Date Issue:</label>
-            <input readonly class="form-control" type="text" name="created_at" value="{{$tmp[0]->created_at}}">
+            <input readonly class="form-control" type="text" name="issue_date" value="{{date("Y-m-d")}}">
           </div>
 
         <div style="overflow-y: auto;height:425px;margin-top:25px;width:100%">
@@ -55,7 +54,7 @@
             <tbody>
               @foreach($tmp as $key => $result)
                 <tr id="{{$result->id}}">
-                  <td>{{$key+1}}<input type="text" name="product_id[]" value="{{$result->branch_product_id}}" hidden /></td>
+                  <td>{{$key+1}}<input type="text" name="product_id[]" value="{{$result->warehouse_stock_id}}" hidden /></td>
                   <td>{{$result->barcode}}<input type="text" name="barcode[]" value="{{$result->barcode}}" hidden /></td>
                   <td>{{$result->product_name}}<input type="text" name="product_name[]" value="{{$result->product_name}}" hidden /></td>
                   <td align="right">{{number_format($result->cost,2)}}<input type="text" name="cost[]" value="{{$result->cost}}" hidden /></td>
@@ -71,7 +70,7 @@
       
       <div class="row">
         <div class="col-md-12" style="text-align: center">
-          <input class="btn btn-primary" type="submit" value="Generate DO"/>
+          <input class="btn btn-primary" type="submit" value="Generate Purchase Order"/>
         </div>
       </div>
 
@@ -92,7 +91,7 @@ $(document).ready(function(){
     }).then((result)=>{
       if(result.isConfirmed){
         $("#"+id).remove();
-        $.get('{{route('ajaxRemoveItem')}}',
+        $.get('{{route('ajaxRemovePurchaseOrderListItem')}}',
         {
           'id' : id
         },function(data){
@@ -116,17 +115,17 @@ $(document).ready(function(){
   $("form").submit(function(e){
     e.preventDefault();
     Swal.fire({
-      title: 'Generate DO',
+      title: 'Generate PO',
       html: 'Please make sure all the items in the list are correct, this action is irreversible',
       icon: 'warning',
       confirmButtonText: `Yes`,
       showCancelButton: true,
     }).then((result)=>{
       if(result.isConfirmed){
-        $.post('{{route('postManualOrderList')}}',$("form").serialize(),
+        $.post('{{route('postManualPurchaseOrderList')}}',$("form").serialize(),
         function(data){
           if(data == true){
-            Swal.fire('Success','DO generate completed','success').then(()=>{window.location.assign('{{route('getDoHistory')}}')});
+            Swal.fire('Success','Purchase order generate completed','success').then(()=>{window.location.assign('{{route('getPurchaseOrderHistory')}}')});
           }else{
             Swal.fire('Fail','Item remove fail, please contact IT support','error');
           }

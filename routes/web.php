@@ -137,6 +137,11 @@ Route::get('/WarehouseRestock/{po_number}','WarehouseController@getWarehouseRest
 Route::post('/WarehouseRestockProcess','WarehouseController@postWarehouseRestock')->name('postWarehouseRestock');
 Route::get('/WarehouseRestockHistory','WarehouseController@getWarehouseRestockHistory')->name('getWarehouseRestockHistory');
 Route::get('/WarehouseRestockHistoryDetail/{id}/{po_number}','WarehouseController@getWarehouseRestockHistoryDetail')->name('getWarehouseRestockHistoryDetail');
+Route::get('/ManualIssuePurchaseOrder','WarehouseController@getManualIssuePurchaseOrder')->name('getManualIssuePurchaseOrder');
+Route::get('/AddManualPurchaseOrder','WarehouseController@ajaxAddManualStock')->name('ajaxAddManualStock');
+Route::get('/PurchaseOrderList','WarehouseController@getPurchaseOrderList')->name('getPurchaseOrderList');
+Route::get('/RemovePurchaseOrderListItem','WarehouseController@ajaxRemovePurchaseOrderListItem')->name('ajaxRemovePurchaseOrderListItem');
+Route::post('/GeneratePO','WarehouseController@postManualPurchaseOrderList')->name('postManualPurchaseOrderList');
 
 //Transaction Number Correction Function
 Route::get('/TransactionCorrection/{target_date}/{branch_code}/{token}','SalesController@transactionCorrection');

@@ -439,7 +439,7 @@
               <h4 class="card-title">Manual Stock Order</h4>
             </div>
             <div class="col">
-              <a href="{{route('getManualStockOrder')}}?branch_id={{$branch->id}}"><i class="fas fa-file-signature first branch-color"></i></a>
+              <a href="{{route('getManualStockOrder')}}"><i class="fas fa-file-signature first branch-color"></i></a>
             </div>
           </div>
         </div>
@@ -650,10 +650,40 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
+              <h4 class="card-title">Manual Issue Purchase Order</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getManualIssuePurchaseOrder')}}"><i class="fas fa-shopping-cart first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
               <h4 class="card-title">Purchase Order History</h4>
             </div>
             <div class="col">
               <a href="{{route('getPurchaseOrderHistory')}}"><i class="fas fa-history first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Stock Purchase (Invoice)</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getPoList')}}"><i class="fas fa-file-invoice first stock-color"></i></a>
             </div>
           </div>
         </div>

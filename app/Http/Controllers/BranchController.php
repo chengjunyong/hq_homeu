@@ -177,6 +177,7 @@ class BranchController extends Controller
     if(isset($_GET['branch_id'])){
       $branch_product = Branch_product::whereRaw('reorder_level >= quantity')
                                       ->where('branch_id',$_GET['branch_id'])
+                                      ->where('quantity','!=',null)
                                       ->get();
       if($branch_product->count() != 0){
         $branch_id = $_GET['branch_id'];
@@ -673,7 +674,7 @@ class BranchController extends Controller
                                     ->get(); 
     }
 
-    if($_GET['branch_id'] == 'hq'){
+    if(isset($_GET['branch_id']) && $_GET['branch_id'] == 'hq'){
       $branch_product = Warehouse_stock::get();
     }
 
