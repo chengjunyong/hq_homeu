@@ -675,7 +675,7 @@
       </div>
     </div>
 
-<!--     <div class="col-md-4">
+    <div class="col-md-4">
       <div class="card icon">
         <div class="card-body">
           <div class="row">
@@ -683,13 +683,13 @@
               <h4 class="card-title">Stock Purchase (Invoice)</h4>
             </div>
             <div class="col">
-              <a href="{{route('getPoList')}}"><i class="fas fa-file-invoice first stock-color"></i></a>
+              <a href="{{route('getStockPurchase')}}"><i class="fas fa-file-invoice first stock-color"></i></a>
             </div>
           </div>
         </div>
       </div>
     </div>
- -->
+
     <div class="col-md-4">
       <div class="card icon">
         <div class="card-body">

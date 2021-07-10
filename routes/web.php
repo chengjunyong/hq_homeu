@@ -68,6 +68,8 @@ Route::post('/modifyproduct','ProductController@postModifyProduct')->name('postM
 Route::get('/voucher','ProductController@getVoucher')->name('getVoucher');
 Route::post('/voucher','ProductController@postVoucher')->name('postVoucher');
 Route::post('/DeleteProduct','ProductController@postDeleteProduct')->name('postDeleteProduct');
+Route::get('/Import','ProductController@getImport')->name('getImport');
+Route::post('/ImportProcess','ProductController@postImport')->name('postImport');
 
 //Other
 Route::get('/Supplier','OtherController@getSupplier')->name('getSupplier');
@@ -142,6 +144,9 @@ Route::get('/AddManualPurchaseOrder','WarehouseController@ajaxAddManualStock')->
 Route::get('/PurchaseOrderList','WarehouseController@getPurchaseOrderList')->name('getPurchaseOrderList');
 Route::get('/RemovePurchaseOrderListItem','WarehouseController@ajaxRemovePurchaseOrderListItem')->name('ajaxRemovePurchaseOrderListItem');
 Route::post('/GeneratePO','WarehouseController@postManualPurchaseOrderList')->name('postManualPurchaseOrderList');
+Route::get('/StockPurchase','WarehouseController@getStockPurchase')->name('getStockPurchase');
+Route::get('/SearchBarcode','WarehouseController@ajaxSearchBar')->name('ajaxSearchBar');
+Route::get('/AddPurchaseListItem','WarehouseController@ajaxAddPurchaseListItem')->name('ajaxAddPurchaseListItem');
 
 //Transaction Number Correction Function
 Route::get('/TransactionCorrection/{target_date}/{branch_code}/{token}','SalesController@transactionCorrection');

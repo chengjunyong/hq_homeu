@@ -12,6 +12,8 @@ use App\Product_configure;
 use App\Branch;
 use App\Warehouse_stock;
 use App\Voucher;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ProductController extends Controller
 {
@@ -330,6 +332,103 @@ class ProductController extends Controller
     }else{
       return json_encode(false);
     }
+  }
+
+  public function getImport()
+  {
+    return view('product_import');
+  }
+
+  public function postImport(Request $request)
+  {
+    $branch = Branch::get();
+    $file = $request->file('product_list');
+    $path = "storage/import";
+    $target = $path."/".$file->getClientOriginalName();
+    $file->move($path,$file->getClientOriginalName());
+
+    $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($target);
+    $reader->setReadDataOnly(true);
+    $spreadsheet = $reader->load($target);
+    $spreadsheet = $spreadsheet->getActiveSheet();
+    $data = $spreadsheet->toArray();
+
+    foreach($data as $index => $result){
+      $counter = Product_list::where('barcode',$result[0])->count();
+
+      //if barcode doesn't exist
+      if($counter == 0){
+        Product_list::create([
+                      'department'=>1,
+                      'category_id'=>1,
+                      'barcode'=>$result[0],
+                      'product_name'=>$result[1],
+                      'uom'=>null,
+                      'cost'=>$result[2],
+                      'price'=>$result[3],
+                      'quantity'=>0,
+                      'reorder_level'=>null,
+                      'recommend_quantity'=>null,
+                      'product_sync'=>0,
+                    ]);
+
+        Warehouse_stock::create([
+                      'department'=>1,
+                      'category_id'=>1,
+                      'barcode'=>$result[0],
+                      'product_name'=>$result[1],
+                      'uom'=>null,
+                      'cost'=>$result[2],
+                      'price'=>$result[3],
+                      'quantity'=>0,
+                      'reorder_level'=>null,
+                      'recommend_quantity'=>null,
+                      'product_sync'=>null,
+                    ]);
+
+        foreach($branch as $a){
+          Branch_product::create([
+                      'branch_id' => $a->id,
+                      'department'=>1,
+                      'category_id'=>1,
+                      'barcode'=>$result[0],
+                      'product_name'=>$result[1],
+                      'uom'=>null,
+                      'cost'=>$result[2],
+                      'price'=>$result[3],
+                      'quantity'=>null,
+                      'reorder_level'=>null,
+                      'recommend_quantity'=>null,
+                      'product_sync'=>0,
+                    ]);
+        }
+
+      }else{
+        Product_list::where('barcode',$result[0])
+                      ->update([
+                        'cost'=>$result[2],
+                        'price'=>$result[3],
+                        'product_sync'=>0,
+                      ]);
+
+        Warehouse_stock::where('barcode',$result[0])
+                      ->update([
+                      'cost'=>$result[2],
+                      'price'=>$result[3],
+                      'product_sync'=>null,
+                    ]);
+
+        Branch_product::where('barcode',$result[0])
+                    ->update([
+                      'barcode'=>$result[0],
+                      'cost'=>$result[2],
+                      'price'=>$result[3],
+                      'product_sync'=>0,
+                    ]);
+      }
+    }
+
+    return json_encode(true);
   }
 
 }

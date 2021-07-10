@@ -13,6 +13,9 @@ use App\Warehouse_restock_history;
 use App\Warehouse_restock_history_detail;
 use App\Branch_stock_history;
 use App\Tmp_purchase_list;
+use App\Tmp_invoice_purchase;
+use App\Invoice_purchase;
+use App\Invoice_purchase_detail;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Auth;
@@ -254,11 +257,13 @@ class WarehouseController extends Controller
         Warehouse_stock::where('id',$request->product_id[$key])
                       ->update([
                         'quantity' => $request->received_quantity[$key],
+                        'cost' => $request->cost[$key],
                       ]);
       }else{
         Warehouse_stock::where('id',$request->product_id[$key])
                       ->update([
                         'quantity' => DB::raw('quantity +'.$request->received_quantity[$key]),
+                        'cost' => $request->cost[$key],
                       ]);
       }
     }
@@ -434,6 +439,44 @@ class WarehouseController extends Controller
                     ->delete();
 
     return json_encode(true);
+  }
+
+  public function getStockPurchase()
+  {
+    $url = route('home')."?p=stock_menu";
+    $supplier = Supplier::get();
+    $tmp = Tmp_invoice_purchase::orderBy('updated_at','desc')->get();
+
+
+    return view('warehouse.stock_purchase',compact('url','supplier','tmp'));
+  }
+
+  public function ajaxSearchBar(Request $request)
+  {
+    if(!$request->barcode)
+      return json_encode(false);
+    $product = Warehouse_stock::where('barcode',$request->barcode)->first();
+    if(!$product){
+      return json_encode(false);
+    }else{
+      return $product;
+    }
+  }
+
+  public function ajaxAddPurchaseListItem(Request $request)
+  {
+    $result = Tmp_invoice_purchase::updateOrCreate(
+                                ['barcode'=>$request->barcode],
+                                [
+                                'product_name'=>$request->product_name,
+                                'cost'=>$request->cost,
+                                'quantity'=>$request->quantity,
+                                ]);
+    if($result){
+      return $result;
+    }else{
+      return json_encode(false);
+    }
 
   }
 
