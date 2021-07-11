@@ -94,17 +94,41 @@
                 <th>Product</th>
                 <th>Costs</th>
                 <th>Quantity</th>
+                <th></th>
               </thead>
               <tbody id="purchase_list">
+              @if(count($tmp) == 0)
+                <tr id="no_data">
+                  <td colspan=4 align="center">No data</td>
+                </tr>
+              @endif
               @foreach($tmp as $result)
-                <tr id="{{$result->barcode}}">
+                <tr class="data" id="{{$result->barcode}}">
                   <td>{{$result->barcode}}</td>
                   <td>{{$result->product_name}}</td>
                   <td>{{$result->cost}}</td>
                   <td>{{$result->quantity}}</td>
+                  <td align="center" style="width:25%">
+                    <button type="button" class="btn btn-secondary edit" val="{{$result->barcode}}" style="margin-right: 20px;">Edit</button>
+                    <button type="button" class="btn btn-success delete" val="{{$result->id}}">Delete</button>
+                  </td>
                 </tr>
               @endforeach
               </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan=4 style="border:2px solid gray">Total Product :</td>
+                  <td align="right" style="border:2px solid gray" id="total_product">{{$total->product}}</td>
+                </tr>
+                <tr>
+                  <td colspan=4 style="border:2px solid gray">Total Quantity :</td>
+                  <td align="right" style="border:2px solid gray" id="total_quantity">{{$total->quantity}}</td>
+                </tr>
+                <tr>
+                  <td colspan=4 style="border:2px solid gray">Total Amount :</td>
+                  <td align="right" style="border:2px solid gray">Rm <label id="total_amount" val="{{$total->amount}}" style="margin-bottom: 0px;">{{number_format($total->amount,2)}}</label></td>
+                </tr>
+              </tfoot>
             </table>
           </div>
         </div>
@@ -220,15 +244,21 @@ $(document).ready(function(){
         'quantity': $("#modal_quantity").val(),
       },function(data){
         if(data != false){
+          $("#no_data").remove();
           $("#"+data['barcode']).remove();
-          let html = `<tr id=${data['barcode']}>`;
+
+          let html = `<tr class="data" id=${data['barcode']}>`;
           html += `<td>${data['barcode']}</td>`;
           html += `<td>${data['product_name']}</td>`;
           html += `<td>${data['cost']}</td>`;
           html += `<td>${data['quantity']}</td>`;
+          html += `<td align="center" style="width:25%"><button type="button" class="btn btn-secondary edit" style="margin-right: 20px;" val="${data['barcode']}">Edit</button><button type="button" class="btn btn-success delete" val=${data['id']}>Delete</button></td>`
           html += `</tr>`;
           $("#purchase_list").prepend(html);
           $("#add_product").modal('hide');
+          declareDelete();
+          declareEdit();
+          calTotal();
         }else{
           Swal.fire('Error','Please Try Again','error');
         }
@@ -250,10 +280,57 @@ $(document).ready(function(){
         $("form").unbind('submit').submit();
       }
     });
-
   })
 
+declareDelete();
+declareEdit();
+
 });
+
+function convertNumber(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function declareDelete(){
+  $(".delete").click(function(){
+    let target = $(this).parent().parent();
+    $.get("{{route('ajaxDeletePurchaseListItem')}}",
+    {
+      'id':$(this).attr('val'),
+    },function(data){
+      target.remove();
+      calTotal();
+    },'json');
+  });
+}
+
+function declareEdit(){
+  $(".edit").click(function(){
+    let barcode = $(this).attr('val');
+    $("input[name=searched_value]").val(barcode);
+    $("#check_barcode").click();
+  });
+}
+
+function calTotal(){
+  let total_quantity = 0;
+  let total_product = 0;
+  let total_amount = 0;
+  $(".data").each(function(i){
+    cost = parseFloat($(this).children().eq(2).text());
+    quantity = parseInt($(this).children().eq(3).text());
+
+    total_quantity += quantity;
+    total_product = i+1;
+    total_amount += (cost * quantity);
+    console.log(total_quantity,total_product,total_amount);
+  });
+
+  $("#total_product").text(total_product);
+  $("#total_quantity").text(total_quantity);
+  $("#total_amount").text(convertNumber(total_amount.toFixed(2)));
+}
+
 </script>
 
 @if(session()->has('success'))

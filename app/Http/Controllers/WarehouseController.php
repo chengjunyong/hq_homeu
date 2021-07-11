@@ -448,9 +448,15 @@ class WarehouseController extends Controller
     $url = route('home')."?p=stock_menu";
     $supplier = Supplier::get();
     $tmp = Tmp_invoice_purchase::orderBy('updated_at','desc')->get();
+    $total = new \stdClass();
+    $total->quantity = $tmp->sum('quantity');
+    $total->product = count($tmp);
+    $total->amount = 0;
+    foreach($tmp as $result){
+      $total->amount += ($result->quantity * $result->cost);
+    }
 
-
-    return view('warehouse.stock_purchase',compact('url','supplier','tmp'));
+    return view('warehouse.stock_purchase',compact('url','supplier','tmp','total'));
   }
 
   public function ajaxSearchBar(Request $request)
@@ -547,6 +553,14 @@ class WarehouseController extends Controller
     $invoice_detail = Invoice_purchase_detail::where('invoice_purchase_id',$request->invoice_id)->get();
 
     return view('warehouse.invoice_history_detail',compact('url','invoice','invoice_detail'));
+  }
+
+  public function ajaxDeletePurchaseListItem(Request $request)
+  {
+    $target = Tmp_invoice_purchase::where('id',$request->id)->first();
+    Tmp_invoice_purchase::where('id',$request->id)->delete();
+
+    return json_encode($target);
   }
 
 }

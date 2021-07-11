@@ -147,6 +147,7 @@ Route::post('/GeneratePO','WarehouseController@postManualPurchaseOrderList')->na
 Route::get('/StockPurchase','WarehouseController@getStockPurchase')->name('getStockPurchase');
 Route::get('/SearchBarcode','WarehouseController@ajaxSearchBar')->name('ajaxSearchBar');
 Route::get('/AddPurchaseListItem','WarehouseController@ajaxAddPurchaseListItem')->name('ajaxAddPurchaseListItem');
+Route::get('/DeletePurchaseListItem','WarehouseController@ajaxDeletePurchaseListItem')->name('ajaxDeletePurchaseListItem');
 Route::post('/StockPurchase','WarehouseController@postStockPurchase')->name('postStockPurchase');
 Route::get('/InvoicePurchaseHistory','WarehouseController@getInvoicePurchaseHistory')->name('getInvoicePurchaseHistory');
 Route::get('/InvoicePurchaseHistoryDetail/{invoice_id}','WarehouseController@getInvoicePurchaseHistoryDetail')->name('getInvoicePurchaseHistoryDetail');

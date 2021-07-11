@@ -39,7 +39,7 @@
         </div>
         <div class="col-md-6">
           <label>Total Value:</label>
-          <input readonly class="form-control" type="text" name="total_item" value="{{$invoice->total_cost}}">
+          <input readonly class="form-control" type="text" name="total_item" value="Rm {{number_format($invoice->total_cost,2)}}">
         </div>
         <div class="col-md-6">
           <label>Record Creator:</label>
