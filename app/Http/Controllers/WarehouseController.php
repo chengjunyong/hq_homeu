@@ -7,6 +7,8 @@ use App\Warehouse_stock;
 use App\Department;
 use App\Category;
 use App\Supplier;
+use App\Product_list;
+use App\Branch_product;
 use App\Purchase_order;
 use App\Purchase_order_detail;
 use App\Warehouse_restock_history;
@@ -478,6 +480,73 @@ class WarehouseController extends Controller
       return json_encode(false);
     }
 
+  }
+
+  public function postStockPurchase(Request $request)
+  {
+    $user = Auth::user();
+    $purchase_items = Tmp_invoice_purchase::get();
+    $supplier = Supplier::where('id',$request->supplier_id)->first();
+    $total_item = $purchase_items->sum('quantity');
+    $total_cost = 0;
+
+    foreach($purchase_items as $result){
+      Warehouse_stock::where('barcode',$result->barcode)
+                      ->update([
+                        'cost'=>$result->cost,
+                        'quantity'=>DB::raw('IF (quantity IS null,0,quantity) +'.$result->quantity),
+                      ]);
+
+      Product_list::where('barcode',$result->barcode)->update(['cost'=>$result->cost]);
+      Branch_product::where('barcode',$result->barcode)->update(['cost'=>$result->cost]);
+
+      $total_cost += ($result->cost * $result->quantity);
+    }
+
+    $invoice_purchase = Invoice_purchase::create([
+                                            'invoice_date'=>$request->invoice_date,
+                                            'invoice_no'=>$request->invoice_no,
+                                            'total_item'=>$total_item,
+                                            'total_cost'=>$total_cost,
+                                            'total_different_item'=>count($purchase_items),
+                                            'supplier_id'=>$supplier->id,
+                                            'supplier_name'=>$supplier->supplier_name,
+                                            'creator_id'=>$user->id,
+                                            'creator_name'=>$user->name,
+                                            'completed'=>1,
+                                          ]);
+
+    foreach($purchase_items as $result){
+      Invoice_purchase_detail::create([
+                                'invoice_purchase_id'=>$invoice_purchase->id,
+                                'barcode'=>$result->barcode,
+                                'product_name'=>$result->product_name,
+                                'cost'=>$result->cost,
+                                'quantity'=>$result->quantity,
+                              ]);
+    }
+
+    Tmp_invoice_purchase::truncate();
+
+    return back()->with('success','success');
+  }
+
+  public function getInvoicePurchaseHistory()
+  {
+    $url = route('home')."?p=stock_menu";
+
+    $history = Invoice_purchase::paginate(15);
+
+    return view('warehouse.invoice_history',compact('url','history'));
+  }
+
+  public function getInvoicePurchaseHistoryDetail(Request $request)
+  {
+    $url = route('getInvoicePurchaseHistory');
+    $invoice = Invoice_purchase::where('id',$request->invoice_id)->first();
+    $invoice_detail = Invoice_purchase_detail::where('invoice_purchase_id',$request->invoice_id)->get();
+
+    return view('warehouse.invoice_history_detail',compact('url','invoice','invoice_detail'));
   }
 
 }

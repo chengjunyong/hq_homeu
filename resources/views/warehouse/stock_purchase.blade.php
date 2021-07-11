@@ -46,7 +46,7 @@
     </div>
 
     <div class="card-body">
-      <form action="" method="post">
+      <form action="{{route('postStockPurchase')}}" method="post">
         @csrf
         <div class="row">
           <div class="col-md-4">
@@ -192,6 +192,8 @@ $(document).ready(function(){
         $("#add_product").modal('show');
         $("#modal_barcode").val(data['barcode']);
         $("#modal_product_name").val(data['product_name']);
+        $("#modal_cost").val('');
+        $("#modal_quantity").val('');
       }else{
         Swal.fire('Error','Barcode Not Found','error');
       }
@@ -219,7 +221,7 @@ $(document).ready(function(){
       },function(data){
         if(data != false){
           $("#"+data['barcode']).remove();
-          let html = `<tr>`;
+          let html = `<tr id=${data['barcode']}>`;
           html += `<td>${data['barcode']}</td>`;
           html += `<td>${data['product_name']}</td>`;
           html += `<td>${data['cost']}</td>`;
@@ -233,10 +235,31 @@ $(document).ready(function(){
         $("#modal_submit").prop('disabled',false);
       },'json');
     }
-
-
   });
+
+  $("form").submit(function(e){
+    e.preventDefault();
+    Swal.fire({
+      title: 'Important',
+      html: 'Please make sure all the information is correct. This action is irreversible.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: "I'm Confirm",
+    }).then((result) => {
+      if(result.isConfirmed){
+        $("form").unbind('submit').submit();
+      }
+    });
+
+  })
 
 });
 </script>
+
+@if(session()->has('success'))
+<script>
+  Swal.fire('Success','Invoice Recorded Successful','success');
+</script>
+@endif
+
 @endsection

@@ -680,21 +680,6 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Stock Purchase (Invoice)</h4>
-            </div>
-            <div class="col">
-              <a href="{{route('getStockPurchase')}}"><i class="fas fa-file-invoice first stock-color"></i></a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card icon">
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
               <h4 class="card-title">Warehouse Restock</h4>
             </div>
             <div class="col">
@@ -714,6 +699,36 @@
             </div>
             <div class="col">
               <a href="{{route('getWarehouseRestockHistory')}}"><i class="fas fa-paste first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Stock Purchase (Invoice)</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getStockPurchase')}}"><i class="fas fa-file-invoice first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Stock Purchase History</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getInvoicePurchaseHistory')}}"><i class="fas fa-clock first stock-color"></i></a>
             </div>
           </div>
         </div>
