@@ -541,7 +541,7 @@ class WarehouseController extends Controller
   {
     $url = route('home')."?p=stock_menu";
 
-    $history = Invoice_purchase::paginate(15);
+    $history = Invoice_purchase::orderby('created_at','desc')->paginate(15);
 
     return view('warehouse.invoice_history',compact('url','history'));
   }
