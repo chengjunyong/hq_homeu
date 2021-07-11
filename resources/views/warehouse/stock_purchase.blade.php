@@ -94,6 +94,7 @@
                 <th>Product</th>
                 <th>Costs</th>
                 <th>Quantity</th>
+                <th>Sub Total</th>
                 <th></th>
               </thead>
               <tbody id="purchase_list">
@@ -106,8 +107,9 @@
                 <tr class="data" id="{{$result->barcode}}">
                   <td>{{$result->barcode}}</td>
                   <td>{{$result->product_name}}</td>
-                  <td>{{$result->cost}}</td>
+                  <td>{{$result->cost,2}}</td>
                   <td>{{$result->quantity}}</td>
+                  <td>{{number_format($result->quantity * $result->cost,2)}}</td>
                   <td align="center" style="width:25%">
                     <button type="button" class="btn btn-secondary edit" val="{{$result->barcode}}" style="margin-right: 20px;">Edit</button>
                     <button type="button" class="btn btn-success delete" val="{{$result->id}}">Delete</button>
@@ -117,15 +119,15 @@
               </tbody>
               <tfoot>
                 <tr>
-                  <td colspan=4 style="border:2px solid gray">Total Product :</td>
+                  <td colspan=5 style="border:2px solid gray">Total Product :</td>
                   <td align="right" style="border:2px solid gray" id="total_product">{{$total->product}}</td>
                 </tr>
                 <tr>
-                  <td colspan=4 style="border:2px solid gray">Total Quantity :</td>
+                  <td colspan=5 style="border:2px solid gray">Total Quantity :</td>
                   <td align="right" style="border:2px solid gray" id="total_quantity">{{$total->quantity}}</td>
                 </tr>
                 <tr>
-                  <td colspan=4 style="border:2px solid gray">Total Amount :</td>
+                  <td colspan=5 style="border:2px solid gray">Total Amount :</td>
                   <td align="right" style="border:2px solid gray">Rm <label id="total_amount" val="{{$total->amount}}" style="margin-bottom: 0px;">{{number_format($total->amount,2)}}</label></td>
                 </tr>
               </tfoot>
@@ -246,12 +248,15 @@ $(document).ready(function(){
         if(data != false){
           $("#no_data").remove();
           $("#"+data['barcode']).remove();
-
+          let display_cost = parseFloat(data['cost']).toFixed(2);
+          let display_total = data['quantity'] * data['cost'];
+          display_total = convertNumber(display_total.toFixed(2));
           let html = `<tr class="data" id=${data['barcode']}>`;
           html += `<td>${data['barcode']}</td>`;
           html += `<td>${data['product_name']}</td>`;
-          html += `<td>${data['cost']}</td>`;
+          html += `<td>${display_cost}</td>`;
           html += `<td>${data['quantity']}</td>`;
+          html += `<td>${display_total}</td>`;
           html += `<td align="center" style="width:25%"><button type="button" class="btn btn-secondary edit" style="margin-right: 20px;" val="${data['barcode']}">Edit</button><button type="button" class="btn btn-success delete" val=${data['id']}>Delete</button></td>`
           html += `</tr>`;
           $("#purchase_list").prepend(html);
@@ -323,7 +328,6 @@ function calTotal(){
     total_quantity += quantity;
     total_product = i+1;
     total_amount += (cost * quantity);
-    console.log(total_quantity,total_product,total_amount);
   });
 
   $("#total_product").text(total_product);
