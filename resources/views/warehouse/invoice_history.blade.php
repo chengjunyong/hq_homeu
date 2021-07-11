@@ -37,7 +37,7 @@
                 <td>{{$result->invoice_no}}</td>
                 <td>{{$result->supplier_name}}</td>
                 <td>{{$result->total_item}}</td>
-                <td>{{$result->total_cost}}</td>
+                <td>Rm {{number_format($result->total_cost,2)}}</td>
                 <td>{{$result->created_at}}</td>
                 <td><button class="btn btn-primary" onclick="window.location.assign('{{route('getInvoicePurchaseHistoryDetail',$result->id)}}')">Details</button></td>
               </tr>
