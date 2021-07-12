@@ -446,6 +446,21 @@ class WarehouseController extends Controller
   public function getStockPurchase()
   {
     $url = route('home')."?p=stock_menu";
+    $a = Invoice_purchase::withTrashed()
+                          ->whereRaw('YEAR(created_at) = '.date("Y"))
+                          ->select('id')
+                          ->orderBy('id','desc')
+                          ->first();
+    if(!$a){
+      $last_id = 1;
+    }else{
+      $last_id = intval($a->id) + 1;
+    }
+    $i=5;
+    while($i>strlen($last_id)){
+      $last_id = "0".$last_id;
+    }
+    $reference_no = "HOMEU".date("Y").$last_id;
     $supplier = Supplier::get();
     $tmp = Tmp_invoice_purchase::orderBy('updated_at','desc')->get();
     $total = new \stdClass();
@@ -456,7 +471,7 @@ class WarehouseController extends Controller
       $total->amount += ($result->quantity * $result->cost);
     }
 
-    return view('warehouse.stock_purchase',compact('url','supplier','tmp','total'));
+    return view('warehouse.stock_purchase',compact('url','supplier','tmp','total','reference_no'));
   }
 
   public function ajaxSearchBar(Request $request)
@@ -510,6 +525,7 @@ class WarehouseController extends Controller
     }
 
     $invoice_purchase = Invoice_purchase::create([
+                                            'reference_no'=>$request->reference_no,
                                             'invoice_date'=>$request->invoice_date,
                                             'invoice_no'=>$request->invoice_no,
                                             'total_item'=>$total_item,

@@ -22,6 +22,7 @@
           <thead style="background: #b8b8efd1">
             <tr>
               <td>No</td>
+              <td>Reference No</td>
               <td>Invoice Number</td>
               <td>Supplier Name</td>
               <td>Total Item</td>
@@ -34,6 +35,7 @@
             @foreach($history as $key => $result)
               <tr>
                 <td>{{$key + 1}}</td>
+                <td>{{$result->reference_no}}</td>
                 <td>{{$result->invoice_no}}</td>
                 <td>{{$result->supplier_name}}</td>
                 <td>{{$result->total_item}}</td>

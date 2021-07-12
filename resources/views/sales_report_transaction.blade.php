@@ -78,15 +78,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="main" style="padding-bottom: 2.5rem;">
     <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
       <thead style="background: #adade0;">
-        <th style="text-align: right">BRANCH NAME</th>
+        <th style="text-align: right">Branch Name</th>
         <th style="text-align: right">CASH</th>
         <th style="text-align: right">CARD</th>
         <th style="text-align: right">T & GO</th>
-        <th style="text-align: right">Maybank QRPAy</th>
+        <th style="text-align: right">Maybank QR Pay</th>
         <th style="text-align: right">Grab pay</th>
         <th style="text-align: right">Boost</th>
         <th style="text-align: right">Other</th>
-        <th style="text-align: right">TOTAL</th>
+        <th style="text-align: right">Total</th>
         <!-- <th>DETAIL</th> -->
       </thead>
       <tbody class="border" style="border-bottom-color:black !important">

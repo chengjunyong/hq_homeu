@@ -38,7 +38,7 @@
 
 </style>
 
-<div class="container" style="padding-bottom: 5vh;">
+<div class="container" style="padding-bottom: 5vh;max-width: 1300px;">
   <div class="card" style="margin-top: 10px">
 
     <div class="card-title" style="margin:5px;">
@@ -48,6 +48,15 @@
     <div class="card-body">
       <form action="{{route('postStockPurchase')}}" method="post">
         @csrf
+        <div class="row">
+          <div class="col-md-4">
+            <label class="title">Reference No :</label>
+          </div>
+          <div class="col-md-8">
+            <input type="text" name="reference_no" class="form-control" readonly value="{{$reference_no}}" />
+          </div>
+        </div>
+
         <div class="row">
           <div class="col-md-4">
             <label class="title">Invoice Date :</label>
@@ -282,6 +291,7 @@ $(document).ready(function(){
       confirmButtonText: "I'm Confirm",
     }).then((result) => {
       if(result.isConfirmed){
+        $("input[type=submit]").prop('disabled',true);
         $("form").unbind('submit').submit();
       }
     });

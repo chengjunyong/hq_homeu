@@ -17,37 +17,41 @@
     </div>
     <div class="card-body">
       <div class="row">
+        <div class="col-md-12">
+          <label>Reference No:</label>
+          <input readonly class="form-control" type="text" value="{{$invoice->reference_no}}">
+        </div>
         <div class="col-md-6">
           <label>Invoice Date:</label>
-          <input readonly class="form-control" type="text" name="created_at" value="{{$invoice->invoice_date}}">
+          <input readonly class="form-control" type="text" value="{{$invoice->invoice_date}}">
         </div>
         <div class="col-md-6">
           <label>Invoice No:</label>
-          <input readonly class="form-control" type="text" name="created_at" value="{{$invoice->invoice_no}}">
+          <input readonly class="form-control" type="text" value="{{$invoice->invoice_no}}">
         </div>
         <div class="col-md-6">
           <label>Supplier Name:</label>
-          <input readonly class="form-control" type="text" name="supplier_name" value="{{$invoice->supplier_name}}">
+          <input readonly class="form-control" type="text" value="{{$invoice->supplier_name}}">
         </div>
         <div class="col-md-6">
           <label>Total Items:</label>
-          <input readonly class="form-control" type="text" name="total_item" value="{{$invoice->total_different_item}}">
+          <input readonly class="form-control" type="text" value="{{$invoice->total_different_item}}">
         </div>
         <div class="col-md-6">
           <label>Total Items Quantity:</label>
-          <input readonly class="form-control" type="text" name="total_item" value="{{$invoice->total_item}}">
+          <input readonly class="form-control" type="text" value="{{$invoice->total_item}}">
         </div>
         <div class="col-md-6">
           <label>Total Value:</label>
-          <input readonly class="form-control" type="text" name="total_item" value="Rm {{number_format($invoice->total_cost,2)}}">
+          <input readonly class="form-control" type="text" value="Rm {{number_format($invoice->total_cost,2)}}">
         </div>
         <div class="col-md-6">
           <label>Record Creator:</label>
-          <input readonly class="form-control" type="text" name="created_at" value="{{$invoice->creator_name}}">
+          <input readonly class="form-control" type="text" value="{{$invoice->creator_name}}">
         </div>
         <div class="col-md-6">
           <label>Created At:</label>
-          <input readonly class="form-control" type="text" name="created_at" value="{{$invoice->created_at}}">
+          <input readonly class="form-control" type="text" value="{{$invoice->created_at}}">
         </div>
       </div>
 
