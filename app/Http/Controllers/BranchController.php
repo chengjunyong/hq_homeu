@@ -713,7 +713,7 @@ class BranchController extends Controller
   public function getManualOrderList()
   {
     $branch = Branch::first();
-    $url = route('getManualStockOrder')."?branch_id=".$branch->id;
+    $url = route('getManualStockOrder')."?branch_id=0";
     $from = new \stdClass();
     $to = new \stdClass();
 
