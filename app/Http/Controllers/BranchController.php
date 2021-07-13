@@ -717,13 +717,15 @@ class BranchController extends Controller
     $from = new \stdClass();
     $to = new \stdClass();
 
-    $branch_group = Tmp_order_list::select(DB::raw('DISTINCT from_branch,to_branch'))->first();
+    $branch_group = Tmp_order_list::groupBy(['to_branch','from_branch'])
+                                    ->where('to_branch',$_GET['id'])
+                                    ->first();
 
     if($branch_group == null){ 
       $branch = Branch::first();
       return "<script>
               alert('No order data, you will be redirect to order page shortly');
-              window.location.assign('".route('getManualStockOrder')."?branch_id=".$branch->id."');
+              window.location.assign('".route('getManualStockOrder')."?branch_id=0');
               </script>";
     }
 

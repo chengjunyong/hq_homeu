@@ -47,17 +47,24 @@
         </div>
         <div class="col-md-3">
           <select name="to" id="to" class="form-control" id="to">
-            <option>No Branch Selected</option>
+            <option {{ (isset($_GET['branch_id']) && $_GET['branch_id'] == 0) ? 'selected' : '' }}>No Branch Selected</option>
             @foreach($branch as $result)
               <option value="{{$result->id}}" {{ (isset($_GET['branch_id']) && $result->id == $_GET['branch_id']) ? 'selected' : '' }}>{{$result->branch_name}}</option>
             @endforeach
               <option value="hq" {{ (isset($_GET['branch_id']) && $_GET['branch_id'] == 'hq') ? 'selected' : '' }}>HQ Warehouse</option>
           </select>
         </div>
-        <div class="col" style="text-align:right;margin-right: 20px;">
-          <button class="btn btn-primary" onclick="window.location.assign('{{route('getManualOrderList')}}')">Order List</button>
+      </div> 
+      <div class="row" style="margin-top: 20px;">
+        <div class="col-md-12">
+          <select class="form-control" id="branch_order_list" style="width:17%;float:right;margin-right:20px;">
+            @foreach($branch as $result)
+              <option value="{{$result->id}}">{{$result->branch_name}}</option>
+            @endforeach
+          </select>
+          <button class="btn btn-primary" id="order_list" style="float:right;margin-right:5px">Order List</button>
         </div>
-      </div>  
+      </div> 
     </div>
 
     <div class="card-body">
@@ -123,6 +130,11 @@ $(document).ready(function(){
     $(".add-list").click(function(){
       quantityHandle($(this).val());
     });
+  });
+
+  $("#order_list").click(function(){
+    let a = $("#branch_order_list").val();
+    window.location.assign(`{{route('getManualOrderList')}}?id=${a}`);
   });
 
 });
