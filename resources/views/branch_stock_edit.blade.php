@@ -29,7 +29,7 @@
 						<input type="text" name="product_name" class="form-control" value="{{$product->product_name}}" disabled>
 					</div>
           <div class="col-md-12">
-            <label>Product Name</label>
+            <label>UOM</label>
             <input type="text" name="uom" class="form-control" value="{{$product->uom}}" disabled>
           </div>
 					<div class="col-md-6">

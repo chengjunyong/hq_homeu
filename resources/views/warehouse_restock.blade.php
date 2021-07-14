@@ -93,11 +93,12 @@
 </div>
 @if(session()->has('success'))
   <script>
-    swal.fire(
-      'success',
-      'Invoice has been successfully record',
-      'success',
-    ).then((result)=>{
+    Swal.fire({
+      title: 'Success',
+      html: 'Invoice has been successfully record',
+      icon: 'success',
+      confirmButtonText: `Yes`,
+    }).then((result)=>{
       window.location.assign('{{route('getPoList')}}');
     });
   </script>

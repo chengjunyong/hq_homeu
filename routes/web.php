@@ -68,6 +68,8 @@ Route::post('/modifyproduct','ProductController@postModifyProduct')->name('postM
 Route::get('/voucher','ProductController@getVoucher')->name('getVoucher');
 Route::post('/voucher','ProductController@postVoucher')->name('postVoucher');
 Route::post('/DeleteProduct','ProductController@postDeleteProduct')->name('postDeleteProduct');
+Route::get('/Import','ProductController@getImport')->name('getImport');
+Route::post('/ImportProcess','ProductController@postImport')->name('postImport');
 
 //Other
 Route::get('/Supplier','OtherController@getSupplier')->name('getSupplier');
@@ -137,6 +139,18 @@ Route::get('/WarehouseRestock/{po_number}','WarehouseController@getWarehouseRest
 Route::post('/WarehouseRestockProcess','WarehouseController@postWarehouseRestock')->name('postWarehouseRestock');
 Route::get('/WarehouseRestockHistory','WarehouseController@getWarehouseRestockHistory')->name('getWarehouseRestockHistory');
 Route::get('/WarehouseRestockHistoryDetail/{id}/{po_number}','WarehouseController@getWarehouseRestockHistoryDetail')->name('getWarehouseRestockHistoryDetail');
+Route::get('/ManualIssuePurchaseOrder','WarehouseController@getManualIssuePurchaseOrder')->name('getManualIssuePurchaseOrder');
+Route::get('/AddManualPurchaseOrder','WarehouseController@ajaxAddManualStock')->name('ajaxAddManualStock');
+Route::get('/PurchaseOrderList','WarehouseController@getPurchaseOrderList')->name('getPurchaseOrderList');
+Route::get('/RemovePurchaseOrderListItem','WarehouseController@ajaxRemovePurchaseOrderListItem')->name('ajaxRemovePurchaseOrderListItem');
+Route::post('/GeneratePO','WarehouseController@postManualPurchaseOrderList')->name('postManualPurchaseOrderList');
+Route::get('/StockPurchase','WarehouseController@getStockPurchase')->name('getStockPurchase');
+Route::get('/SearchBarcode','WarehouseController@ajaxSearchBar')->name('ajaxSearchBar');
+Route::get('/AddPurchaseListItem','WarehouseController@ajaxAddPurchaseListItem')->name('ajaxAddPurchaseListItem');
+Route::get('/DeletePurchaseListItem','WarehouseController@ajaxDeletePurchaseListItem')->name('ajaxDeletePurchaseListItem');
+Route::post('/StockPurchase','WarehouseController@postStockPurchase')->name('postStockPurchase');
+Route::get('/InvoicePurchaseHistory','WarehouseController@getInvoicePurchaseHistory')->name('getInvoicePurchaseHistory');
+Route::get('/InvoicePurchaseHistoryDetail/{invoice_id}','WarehouseController@getInvoicePurchaseHistoryDetail')->name('getInvoicePurchaseHistoryDetail');
 
 //Transaction Number Correction Function
 Route::get('/TransactionCorrection/{target_date}/{branch_code}/{token}','SalesController@transactionCorrection');

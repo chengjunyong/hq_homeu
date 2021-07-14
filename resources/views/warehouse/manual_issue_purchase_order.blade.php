@@ -1,5 +1,5 @@
 @extends('layouts.app')
-<title>Manual Branch Stock Ordering</title>
+<title>Issue Purchase Order</title>
 @section('content')
 <script>
   Swal.fire({
@@ -16,7 +16,7 @@
     max-width: 90%;
   }
 
-  #branch_product_list_paginate{
+  #warehouse_stock_list_paginate{
     margin-top: 15px;
   }
 
@@ -26,49 +26,30 @@
   }
 </style>
 <div class="container">
-  <h2 align="center">Manual Branch Stock Ordering</h2>
+  <h2 align="center">Manual Issue Purchase Order</h2>
   <div class="card" style="border-radius: 1.25rem;bottom:15px;margin-top: 15px;">
     <div class="card-title" style="padding: 10px">
-      <h4>Branch Stock</h4>
+      <h4>Warehouse Stock</h4>
     </div>
 
     <div style="margin-left: 5px;">
       <div class="row">
-        <div class="col-md-3">
-          <select name="from" id="from" class="form-control">
-            <option value="0" {{ (isset($_GET['from']) && $_GET['from'] == 0) ? 'selected' : '' }}>HQ Warehouse</option>
-            @foreach($branch as $result)
-              <option value="{{$result->id}}" {{ (isset($_GET['from']) && $result->id == $_GET['from']) ? 'selected' : '' }}>{{$result->branch_name}}</option>
+        <div class="col">
+          <h5>Supplier</h5>
+          <select name="supplier_id" id="supplier_id" class="form-control">
+            @foreach($supplier as $result)
+              <option value="{{$result->id}}">{{$result->supplier_name}}</option>
             @endforeach
           </select>
         </div>
-        <div class="col-md-1" style="font-size:25px;text-align: center">
-          <i class="fa fa-random"></i>
+        <div class="col" style="text-align:right;margin-right: 20px;">
+          <button class="btn btn-primary" onclick="window.location.assign('{{route('getPurchaseOrderList')}}')">Purchase Order List</button>
         </div>
-        <div class="col-md-3">
-          <select name="to" id="to" class="form-control" id="to">
-            <option {{ (isset($_GET['branch_id']) && $_GET['branch_id'] == 0) ? 'selected' : '' }}>No Branch Selected</option>
-            @foreach($branch as $result)
-              <option value="{{$result->id}}" {{ (isset($_GET['branch_id']) && $result->id == $_GET['branch_id']) ? 'selected' : '' }}>{{$result->branch_name}}</option>
-            @endforeach
-              <option value="hq" {{ (isset($_GET['branch_id']) && $_GET['branch_id'] == 'hq') ? 'selected' : '' }}>HQ Warehouse</option>
-          </select>
-        </div>
-      </div> 
-      <div class="row" style="margin-top: 20px;">
-        <div class="col-md-12">
-          <select class="form-control" id="branch_order_list" style="width:17%;float:right;margin-right:20px;">
-            @foreach($branch as $result)
-              <option value="{{$result->id}}">{{$result->branch_name}}</option>
-            @endforeach
-          </select>
-          <button class="btn btn-primary" id="order_list" style="float:right;margin-right:5px">Order List</button>
-        </div>
-      </div> 
+      </div>  
     </div>
 
     <div class="card-body">
-      <table id="branch_product_list" class="table-striped" style="width: 100%">
+      <table id="warehouse_stock_list" class="table-striped" style="width: 100%">
         <thead>
           <tr style="font-weight: bold;">
             <td>No</td>
@@ -83,7 +64,7 @@
           </tr>
         </thead>
         <tbody>
-          @foreach($branch_product as $key => $result)
+          @foreach($warehouse_stock as $key => $result)
             <tr>
               <td>{{$key+1}}</td>
               <td>{{$result->barcode}}</td>
@@ -102,25 +83,21 @@
     </div>
   </div>
 </div>
-
-
 <script>
+
 $(document).ready(function(){
   Swal.close();
-  $('#branch_product_list').DataTable({
+
+  $('#warehouse_stock_list').DataTable({
     responsive: true,
     lengthMenu: [25,50,100],
-  });
-
-  $("#to").change(function(){
-    window.location.assign("{{route('getManualStockOrder')}}?branch_id="+$(this).val()+"&from="+$("#from").val());
   });
 
   $(".add-list").click(function(){
     quantityHandle($(this).val());
   });
 
-  $("thead,#branch_product_list_paginate").click(function(){
+  $("thead,#warehouse_stock_list_paginate").click(function(){
     $(".add-list").click(function(){
       quantityHandle($(this).val());
     });
@@ -130,11 +107,6 @@ $(document).ready(function(){
     $(".add-list").click(function(){
       quantityHandle($(this).val());
     });
-  });
-
-  $("#order_list").click(function(){
-    let a = $("#branch_order_list").val();
-    window.location.assign(`{{route('getManualOrderList')}}?id=${a}`);
   });
 
 });
@@ -151,11 +123,10 @@ function quantityHandle(target){
     showLoaderOnConfirm : true,
     preConfirm: (result) => {
       if(result != 0 && result != '' && result != null){
-        $.get('{{route('ajaxAddManualStockOrder')}}',
+        $.get('{{route('ajaxAddManualStock')}}',
         {
-          'branch_product_id' : target,
-          'from' : $("#from").val(),
-          'to' : $("#to").val(),
+          'supplier_id' : $("#supplier_id").val(),
+          'warehouse_stock_id' : target,
           'order_quantity' : result,
         },function(data){
           if(data == true || data == 'true'){
@@ -188,7 +159,6 @@ function quantityHandle(target){
 
   });
 }
+
 </script>
-
-
 @endsection

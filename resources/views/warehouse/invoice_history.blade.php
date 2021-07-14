@@ -1,5 +1,5 @@
 @extends('layouts.app')
-<title>Warehouse Restock History</title>
+<title>Invoice History</title>
 @section('content')
 <style>
   .container{
@@ -11,7 +11,7 @@
 <div class="container">
   <div class="card">
     <div class="title">
-      <h4 style="margin:20px">Warehouse Restock History</h4>
+      <h4 style="margin:20px">Invoice History Record</h4>
     </div>
     <div class="card-body">
       <div style="float:right">
@@ -22,10 +22,11 @@
           <thead style="background: #b8b8efd1">
             <tr>
               <td>No</td>
+              <td>Reference No</td>
               <td>Invoice Number</td>
-              <td>PO Number</td>
-              <td>Supplier Code</td>
               <td>Supplier Name</td>
+              <td>Total Item</td>
+              <td>Total Value</td>
               <td>Date Completed</td>
               <td></td>
             </tr>
@@ -34,12 +35,13 @@
             @foreach($history as $key => $result)
               <tr>
                 <td>{{$key + 1}}</td>
-                <td>{{$result->invoice_number}}</td>
-                <td>{{($result->po_number == null) ? 'Not Available' : $result->po_number}}</td>
-                <td>{{$result->supplier_code}}</td>
+                <td>{{$result->reference_no}}</td>
+                <td>{{$result->invoice_no}}</td>
                 <td>{{$result->supplier_name}}</td>
+                <td>{{$result->total_item}}</td>
+                <td>Rm {{number_format($result->total_cost,2)}}</td>
                 <td>{{$result->created_at}}</td>
-                <td><button class="btn btn-primary" onclick="window.location.assign('{{route('getWarehouseRestockHistoryDetail',[$result->id,$result->po_number])}}')">Details</button></td>
+                <td><button class="btn btn-primary" onclick="window.location.assign('{{route('getInvoicePurchaseHistoryDetail',$result->id)}}')">Details</button></td>
               </tr>
             @endforeach
           </tbody>

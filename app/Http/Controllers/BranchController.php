@@ -177,6 +177,7 @@ class BranchController extends Controller
     if(isset($_GET['branch_id'])){
       $branch_product = Branch_product::whereRaw('reorder_level >= quantity')
                                       ->where('branch_id',$_GET['branch_id'])
+                                      ->where('quantity','!=',null)
                                       ->get();
       if($branch_product->count() != 0){
         $branch_id = $_GET['branch_id'];
@@ -673,7 +674,7 @@ class BranchController extends Controller
                                     ->get(); 
     }
 
-    if($_GET['branch_id'] == 'hq'){
+    if(isset($_GET['branch_id']) && $_GET['branch_id'] == 'hq'){
       $branch_product = Warehouse_stock::get();
     }
 
@@ -712,17 +713,19 @@ class BranchController extends Controller
   public function getManualOrderList()
   {
     $branch = Branch::first();
-    $url = route('getManualStockOrder')."?branch_id=".$branch->id;
+    $url = route('getManualStockOrder')."?branch_id=0";
     $from = new \stdClass();
     $to = new \stdClass();
 
-    $branch_group = Tmp_order_list::select(DB::raw('DISTINCT from_branch,to_branch'))->first();
+    $branch_group = Tmp_order_list::groupBy(['to_branch','from_branch'])
+                                    ->where('to_branch',$_GET['id'])
+                                    ->first();
 
     if($branch_group == null){ 
       $branch = Branch::first();
       return "<script>
               alert('No order data, you will be redirect to order page shortly');
-              window.location.assign('".route('getManualStockOrder')."?branch_id=".$branch->id."');
+              window.location.assign('".route('getManualStockOrder')."?branch_id=0');
               </script>";
     }
 

@@ -105,6 +105,7 @@ class SalesController extends Controller
       $branch->grab_pay = 0;
       $branch->boost = 0;
       $branch->other = 0;
+      $branch->total = 0;
 
       $branch_other_total = 0;
       $branch_total = 0;
@@ -116,6 +117,8 @@ class SalesController extends Controller
         $branch_total += $value->payment_type_total;
 
         $total += $value->payment_type_total;
+
+        $branch->total += $value->payment_type_total;
 
         if($value->payment_type == "cash")
         {
@@ -166,6 +169,7 @@ class SalesController extends Controller
         $branch->other = $branch_other_total;
       }
     }
+
 
     $total_summary = new \stdClass();
     $total_summary->cash = $cash_total;
