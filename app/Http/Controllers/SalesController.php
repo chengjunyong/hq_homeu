@@ -559,7 +559,7 @@ class SalesController extends Controller
     if($card_total == 0)
       $card_total = "";
     else
-      $card_total = number_format($card_total);
+      $card_total = number_format($card_total, 2);
 
     if($tng_total == 0)
       $tng_total = "";
