@@ -28,7 +28,7 @@ class api extends Controller
       $branch_id = $request->branch_id;
       $session_list = $request->session_list;
 
-      $previous_transaction_detail = transaction_detail::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->selectRaw('*, sum(quantity) as total_quantity')->groupBy('product_id')->get();
+      $previous_transaction_detail = transaction_detail::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->selectRaw('*, sum(quantity + wholesale_quantity) as total_quantity')->groupBy('product_id')->get();
 
       transaction::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->delete();
       transaction_detail::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->delete();
@@ -115,7 +115,7 @@ class api extends Controller
           $transaction_product[$product_name]->quantity = 0;
         }
 
-        $transaction_product[$product_name]->quantity += $data['quantity'];
+        $transaction_product[$product_name]->quantity += ($data['quantity'] + $data['wholesale_quantity']);
 
         array_push($transaction_detail_query, $query);
       }
@@ -136,7 +136,7 @@ class api extends Controller
       $transaction_detail_query = array_chunk($transaction_detail_query,500);
       foreach($transaction_detail_query as $query){
         Transaction_detail::insert($query);
-      }
+      } 
 
       foreach($transaction_product as $transaction_product_detail)
       {
