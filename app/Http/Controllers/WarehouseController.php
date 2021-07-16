@@ -579,4 +579,21 @@ class WarehouseController extends Controller
     return json_encode($target);
   }
 
+  public function ajaxDeleteInvoice(Request $request)
+  {
+    $invoice = Invoice_purchase::where('reference_no',$request->ref_id)->first();
+    $invoice_detail = Invoice_purchase_detail::where('invoice_purchase_id',$invoice->id)->get();
+
+    foreach($invoice_detail as $result){
+      Warehouse_stock::where('barcode',$result->barcode)
+                      ->update([
+                        'quantity'=>DB::raw('IF (quantity IS null,0,quantity) -'.$result->quantity),
+                      ]);
+    }
+
+    Invoice_purchase::where('reference_no',$request->ref_id)->delete();
+
+    return json_encode(true);
+  }
+
 }

@@ -41,7 +41,10 @@
                 <td>{{$result->total_item}}</td>
                 <td>Rm {{number_format($result->total_cost,2)}}</td>
                 <td>{{$result->created_at}}</td>
-                <td><button class="btn btn-primary" onclick="window.location.assign('{{route('getInvoicePurchaseHistoryDetail',$result->id)}}')">Details</button></td>
+                <td>
+                  <button class="btn btn-primary" onclick="window.location.assign('{{route('getInvoicePurchaseHistoryDetail',$result->id)}}')">Details</button>
+                  <button val="{{$result->reference_no}}" class="btn btn-danger delete">Delete</button>
+                </td>
               </tr>
             @endforeach
           </tbody>
@@ -51,5 +54,39 @@
     </div>
   </div>
 </div>
+<script>
+$(document).ready(function(){
+  $(".delete").click(function(){
+    let a = $(this).attr('val');
+    Swal.fire({
+      title:'Delete Invoice',
+      html:'Are you sure to delete this invoice. This action is irreversible',
+      icon:'warning',
+      showCancelButton:'Cancel',
+      confirmButtonText:'Delete It !',
+      reverseButtons: true,
+    }).then((result)=>{
+      if(result.isConfirmed){
+        $.post("{{route('ajaxDeleteInvoice')}}",
+        {
+          '_token': '{{csrf_token()}}',
+          'ref_id':a,
+        },function(data){
+          if(data){
+            swal.fire({
+              title:"Success",
+              html:"Record Removed Successful",
+              icon:'success'
+            }).then(()=>{
+              window.location.reload();
+            });
+          }
+        },'json');
+        
+      }
+    });
+  });
 
+});
+</script>
 @endsection
