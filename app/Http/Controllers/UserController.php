@@ -275,7 +275,7 @@ class UserController extends Controller
         [
           'group' => 'Report',
           'value' => 12,
-          'name' => 'Sales Report',
+          'name' => 'Total Sales Report',
           'route' => 'getSalesReport'
         ],
         // [
@@ -362,6 +362,43 @@ class UserController extends Controller
           'name' => 'Voucher Management',
           'route' => 'getVoucher'
         ],
+        [
+          'group' => 'Stock',
+          'value' => 27,
+          'name' => 'Manual Issue Purchase Order',
+          'route' => 'getManualIssuePurchaseOrder'
+        ],
+        [
+          'group' => 'Stock',
+          'value' => 28,
+          'name' => 'Stock Purchase (Invoice)',
+          'route' => 'getStockPurchase'
+        ],
+        [
+          'group' => 'Stock',
+          'value' => 29,
+          'name' => 'Stock Purchase History',
+          'route' => 'getInvoicePurchaseHistory'
+        ],
+        [
+          'group' => 'Stock',
+          'value' => 30,
+          'name' => 'Warehouse Check Stock History',
+          'route' => 'getWarehouseStockHistory'
+        ],
+        [
+          'group' => 'Report',
+          'value' => 31,
+          'name' => 'Product Sales Report',
+          'route' => 'getProductSalesReport'
+        ],
+        [
+          'group' => 'Report',
+          'value' => 32,
+          'name' => 'Daily Sales Transaction Report',
+          'route' => 'getDailySalesTransactionReport'
+        ],
+
       ];
 
       return $access_control;

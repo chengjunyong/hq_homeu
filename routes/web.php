@@ -45,8 +45,6 @@ Route::get('/SL/{sl_id}','BranchController@getGenerateSL')->name('getGenerateSL'
 Route::get('/stocklosthistory','BranchController@getStockLostHistory')->name('getStockLostHistory');
 Route::get('/branch_stock_history', 'BranchController@getBranchStockHistory')->name('getBranchStockHistory');
 Route::get('/branch_stock_history_detail', 'BranchController@getBranchStockHistoryDetail')->name('getBranchStockHistoryDetail');
-Route::get('/warehouse_stock_history', 'WarehouseController@getWarehouseStockHistory')->name('getWarehouseStockHistory');
-Route::get('/warehouse_stock_history_detail', 'WarehouseController@getWarehouseStockHistoryDetail')->name('getWarehouseStockHistoryDetail');
 Route::get('/ManualStockOrder','BranchController@getManualStockOrder')->name('getManualStockOrder');
 Route::get('/AddManualStockOrder','BranchController@ajaxAddManualStockOrder')->name('ajaxAddManualStockOrder');
 Route::get('/ManualOrderList','BranchController@getManualOrderList')->name('getManualOrderList');
@@ -128,6 +126,8 @@ Route::get('/AddWarehouseProduct','WarehouseController@getAddWarehouseProduct')-
 Route::post('/AddWarehouseProduct','WarehouseController@postAddWarehouseProduct')->name('postAddWarehouseProduct');
 Route::get('/EditWarehouseProduct/{id}','WarehouseController@getEditWarehouseProduct')->name('getEditWarehouseProduct');
 Route::post('EditWarehouseProduct','WarehouseController@postModifyWarehouseProduct')->name('postModifyWarehouseProduct');
+Route::get('/warehouse_stock_history', 'WarehouseController@getWarehouseStockHistory')->name('getWarehouseStockHistory');
+Route::get('/warehouse_stock_history_detail', 'WarehouseController@getWarehouseStockHistoryDetail')->name('getWarehouseStockHistoryDetail');
 Route::get('/PurchaseOrder','WarehouseController@getPurchaseOrder')->name('getPurchaseOrder');
 Route::get('/ajaxGetSupplier','WarehouseController@ajaxGetSupplier')->name('ajaxGetSupplier');
 Route::post('/sendPurchaseOrder','WarehouseController@ajaxPO')->name('ajaxPO');
