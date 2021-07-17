@@ -14,5 +14,7 @@ class Invoice_purchase_detail extends Model
       'product_name',
       'cost',
       'quantity',
+      'total_cost',
+      'update_by',
     ];
 }

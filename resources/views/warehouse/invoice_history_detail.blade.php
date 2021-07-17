@@ -55,37 +55,69 @@
         </div>
       </div>
 
-      <div style="overflow-y: auto;height:425px;margin-top:25px">
-        <table style="width:100%;">
-          <thead style="background-color: #b8b8efd1">
-            <tr>
-              <td>No</td>
-              <td>Barcode</td>
-              <td>Product Name</td>
-              <td align="center">Cost</td>
-              <td align="center">Quantity</td>
-              <td align="right">Total Value</td>
-            </tr>
-            <tbody>
-              @foreach($invoice_detail as $key => $result)
-                <tr>
-                  <td>{{$key +1}}</td>
-                  <td>{{$result->barcode}}</td>
-                  <td>{{$result->product_name}}</td>
-                  <td align="center">Rm {{number_format($result->cost,2)}}</td>
-                  <td align="center">{{$result->quantity}}</td>
-                  <td align="right">Rm {{number_format($result->quantity * $result->cost,2)}}</td>
-                </tr>
-              @endforeach
-            </tbody>
-          </thead>
-        </table>
-      </div>
-
+      <form method="post" action="{{route('postInvoicePurchaseHistoryDetail')}}">
+        @csrf
+        <input type="text" name="ref_no" value="{{$invoice->reference_no}}" hidden/>
+        <div style="overflow-y: auto;height:425px;margin-top:25px">
+          <table style="width:100%;">
+            <thead style="background-color: #b8b8efd1">
+              <tr>
+                <td>No</td>
+                <td>Barcode</td>
+                <td>Product Name</td>
+                <td align="center">Cost</td>
+                <td align="center">Quantity</td>
+                <td align="right">Total Value</td>
+              </tr>
+              <tbody>
+                @foreach($invoice_detail as $key => $result)
+                  <input type="text" name="invoice_purchase_detail_id[]" value="{{$result->id}}" hidden/>
+                  <tr>
+                    <td>{{$key +1}}</td>
+                    <td>{{$result->barcode}}</td>
+                    <td>{{$result->product_name}}</td>
+                    <td align="center">Rm <input type="number" class="cost" name="cost[]" min="0.01" step="0.01" value="{{$result->cost}}" style="text-align: right;width:7vw"/></td>
+                    <td align="center">{{$result->quantity}}</td>
+                    <td align="right">Rm <input type="number" class="total" name="total[]" min="0.01" step="0.01" value="{{$result->total_cost}}" style="text-align: right;width:10vw"/></td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </thead>
+          </table>
+        </div>
+        <div class="row" style="margin-top:30px;">
+          <div class="col-md-12" style="text-align: center">
+            <input type="submit" class="btn btn-primary" value="Modify"/>
+          </div>
+        </div>
+      </form>
 
     </div>
   </div>
 </div>
+<script>
+$(document).ready(function(){
+  $(".total").keyup(function(){
+    let quantity = parseInt($(this).parent().siblings().eq(4).text());
+    let total = parseFloat($(this).val());
+    let result = total / quantity;
+    $(this).parent().siblings().eq(3).children().val(result.toFixed(2));
+  });
 
+  $(".cost").keyup(function(){
+    let quantity = parseInt($(this).parent().siblings().eq(3).text());
+    let cost = parseFloat($(this).val());
+    let result = cost * quantity;
+    $(this).parent().siblings().eq(4).children().val(result.toFixed(2));
+  });
+
+});
+</script>
+
+@if(session()->has('success'))
+  <script>
+    Swal.fire("Success","Update Successful",'success');
+  </script>
+@endif
 
 @endsection

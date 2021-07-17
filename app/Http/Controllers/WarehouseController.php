@@ -456,11 +456,11 @@ class WarehouseController extends Controller
     }else{
       $last_id = intval($a->id) + 1;
     }
-    $i=5;
+    $i=7;
     while($i>strlen($last_id)){
       $last_id = "0".$last_id;
     }
-    $reference_no = "HOMEU".date("Y").$last_id;
+    $reference_no = $last_id;
     $supplier = Supplier::get();
     $tmp = Tmp_invoice_purchase::orderBy('updated_at','desc')->get();
     $total = new \stdClass();
@@ -536,15 +536,18 @@ class WarehouseController extends Controller
                                             'creator_id'=>$user->id,
                                             'creator_name'=>$user->name,
                                             'completed'=>1,
-                                          ]);
-
+                                          ]);     
     foreach($purchase_items as $result){
+      $item_cost = 0;
+      $item_cost = $result->cost * $result->quantity;
       Invoice_purchase_detail::create([
                                 'invoice_purchase_id'=>$invoice_purchase->id,
                                 'barcode'=>$result->barcode,
                                 'product_name'=>$result->product_name,
                                 'cost'=>$result->cost,
                                 'quantity'=>$result->quantity,
+                                'total_cost'=>$total_cost,
+                                'update_by'=>$user->name,
                               ]);
     }
 
@@ -594,6 +597,19 @@ class WarehouseController extends Controller
     Invoice_purchase::where('reference_no',$request->ref_id)->delete();
 
     return json_encode(true);
+  }
+
+  public function postInvoicePurchaseHistoryDetail(Request $request)
+  {
+    $user = Auth::user();
+    foreach($request->invoice_purchase_detail_id as $key => $result){
+      $total_cost = 0;
+      $total_cost += floatval($request->total[$key]); 
+      Invoice_purchase_detail::where('id',$result)->update(['cost'=>$request->cost[$key],'update_by'=>$user->name,'total_cost'=>$total_cost]);
+    }
+    Invoice_purchase::where('reference_no',$request->ref_no)->update(['total_cost'=>$total_cost]);
+
+    return back()->with('success','success');
   }
 
 }

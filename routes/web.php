@@ -151,6 +151,7 @@ Route::get('/DeletePurchaseListItem','WarehouseController@ajaxDeletePurchaseList
 Route::post('/StockPurchase','WarehouseController@postStockPurchase')->name('postStockPurchase');
 Route::get('/InvoicePurchaseHistory','WarehouseController@getInvoicePurchaseHistory')->name('getInvoicePurchaseHistory');
 Route::get('/InvoicePurchaseHistoryDetail/{invoice_id}','WarehouseController@getInvoicePurchaseHistoryDetail')->name('getInvoicePurchaseHistoryDetail');
+Route::post('/InvoicePurchaseHistoryDetail','WarehouseController@postInvoicePurchaseHistoryDetail')->name('postInvoicePurchaseHistoryDetail');
 Route::post('/DeleteInvoice','WarehouseController@ajaxDeleteInvoice')->name('ajaxDeleteInvoice');
 
 //Transaction Number Correction Function
