@@ -546,7 +546,7 @@ class WarehouseController extends Controller
                                 'product_name'=>$result->product_name,
                                 'cost'=>$result->cost,
                                 'quantity'=>$result->quantity,
-                                'total_cost'=>$total_cost,
+                                'total_cost'=>$item_cost,
                                 'update_by'=>$user->name,
                               ]);
     }
