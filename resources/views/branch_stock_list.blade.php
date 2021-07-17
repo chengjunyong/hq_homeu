@@ -43,7 +43,6 @@
 						<td>Department</td>
 						<td>Category</td>
 						<td>Product Name</td>
-            <td>UOM</td>
 						<td>Cost</td>
 						<td>Price</td>
 						<td>Stock Quantity</td>
@@ -59,7 +58,6 @@
 								<td>{{$result->department_name}}</td>
 								<td>{{$result->category_name}}</td>
 								<td><a href={{route('getModifyBranchStock',[$branch_id,$result->id])}}>{{$result->product_name}}</a></td>
-								<td>{{$result->uom}}</td>
                 <td>{{$result->cost}}</td>
 								<td>{{$result->price}}</td>
 								<td>{{$result->quantity}}</td>
