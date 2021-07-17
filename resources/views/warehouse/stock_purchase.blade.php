@@ -118,7 +118,7 @@
                   <td>{{$result->product_name}}</td>
                   <td>{{$result->cost,2}}</td>
                   <td>{{$result->quantity}}</td>
-                  <td>{{number_format($result->quantity * $result->cost,2)}}</td>
+                  <td val="{{$result->total}}">{{number_format($result->total,2)}}</td>
                   <td align="center" style="width:25%">
                     <button type="button" class="btn btn-secondary edit" val="{{$result->barcode}}" style="margin-right: 20px;">Edit</button>
                     <button type="button" class="btn btn-success delete" val="{{$result->id}}">Delete</button>
@@ -185,6 +185,14 @@
         </div>
         <div class="row">
           <div class="col-3">
+            Quantity : 
+          </div>
+          <div class="col-9">
+            <input type="number" min=1 id="modal_quantity" class="form-control" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-3">
             Cost : 
           </div>
           <div class="col-9">
@@ -193,10 +201,10 @@
         </div>
         <div class="row">
           <div class="col-3">
-            Quantity : 
+            Total : 
           </div>
           <div class="col-9">
-            <input type="number" min=1 id="modal_quantity" class="form-control" />
+            <input type="number" id="modal_total" class="form-control" />
           </div>
         </div>
       </div>
@@ -229,6 +237,7 @@ $(document).ready(function(){
         $("#modal_product_name").val(data['product_name']);
         $("#modal_cost").val('');
         $("#modal_quantity").val('');
+        $("#modal_total").val('');
       }else{
         Swal.fire('Error','Barcode Not Found','error');
       }
@@ -253,19 +262,19 @@ $(document).ready(function(){
         'product_name':$("#modal_product_name").val(),
         'cost': $("#modal_cost").val(),
         'quantity': $("#modal_quantity").val(),
+        'total': $("#modal_total").val(),
       },function(data){
         if(data != false){
           $("#no_data").remove();
           $("#"+data['barcode']).remove();
           let display_cost = parseFloat(data['cost']).toFixed(2);
-          let display_total = data['quantity'] * data['cost'];
-          display_total = convertNumber(display_total.toFixed(2));
+          let display_total = data['total'];
           let html = `<tr class="data" id=${data['barcode']}>`;
           html += `<td>${data['barcode']}</td>`;
           html += `<td>${data['product_name']}</td>`;
           html += `<td>${display_cost}</td>`;
           html += `<td>${data['quantity']}</td>`;
-          html += `<td>${display_total}</td>`;
+          html += `<td val=${data['total']}>${display_total}</td>`;
           html += `<td align="center" style="width:25%"><button type="button" class="btn btn-secondary edit" style="margin-right: 20px;" val="${data['barcode']}">Edit</button><button type="button" class="btn btn-success delete" val=${data['id']}>Delete</button></td>`
           html += `</tr>`;
           $("#purchase_list").prepend(html);
@@ -295,7 +304,21 @@ $(document).ready(function(){
         $("form").unbind('submit').submit();
       }
     });
-  })
+  });
+
+  $("#modal_cost").keyup(function(){
+    let quantity = $("#modal_quantity").val();
+    let cost = $(this).val();
+    let total = quantity * cost;
+    $("#modal_total").val(total.toFixed(2));
+  });
+
+  $("#modal_total").keyup(function(){
+    let quantity = $("#modal_quantity").val();
+    let total = $(this).val();
+    let cost = total / quantity;
+    $("#modal_cost").val(cost.toFixed(2));
+  });
 
 declareDelete();
 declareEdit();
@@ -334,10 +357,11 @@ function calTotal(){
   $(".data").each(function(i){
     cost = parseFloat($(this).children().eq(2).text());
     quantity = parseInt($(this).children().eq(3).text());
+    total = parseFloat($(this).children().eq(4).attr('val'));
 
     total_quantity += quantity;
     total_product = i+1;
-    total_amount += (cost * quantity);
+    total_amount += total;
   });
 
   $("#total_product").text(total_product);

@@ -468,7 +468,7 @@ class WarehouseController extends Controller
     $total->product = count($tmp);
     $total->amount = 0;
     foreach($tmp as $result){
-      $total->amount += ($result->quantity * $result->cost);
+      $total->amount += $result->total;
     }
 
     return view('warehouse.stock_purchase',compact('url','supplier','tmp','total','reference_no'));
@@ -494,6 +494,7 @@ class WarehouseController extends Controller
                                 'product_name'=>$request->product_name,
                                 'cost'=>$request->cost,
                                 'quantity'=>$request->quantity,
+                                'total'=>$request->total,
                                 ]);
     if($result){
       return $result;
@@ -521,7 +522,7 @@ class WarehouseController extends Controller
       Product_list::where('barcode',$result->barcode)->update(['cost'=>$result->cost]);
       Branch_product::where('barcode',$result->barcode)->update(['cost'=>$result->cost]);
 
-      $total_cost += ($result->cost * $result->quantity);
+      $total_cost += $result->total;
     }
 
     $invoice_purchase = Invoice_purchase::create([
@@ -539,7 +540,7 @@ class WarehouseController extends Controller
                                           ]);     
     foreach($purchase_items as $result){
       $item_cost = 0;
-      $item_cost = $result->cost * $result->quantity;
+      $item_cost = $result->total;
       Invoice_purchase_detail::create([
                                 'invoice_purchase_id'=>$invoice_purchase->id,
                                 'barcode'=>$result->barcode,
@@ -602,12 +603,14 @@ class WarehouseController extends Controller
   public function postInvoicePurchaseHistoryDetail(Request $request)
   {
     $user = Auth::user();
+    $total = 0;
     foreach($request->invoice_purchase_detail_id as $key => $result){
       $total_cost = 0;
-      $total_cost += floatval($request->total[$key]); 
+      $total_cost += floatval($request->total[$key]);
+      $total += floatval($request->total[$key]);  
       Invoice_purchase_detail::where('id',$result)->update(['cost'=>$request->cost[$key],'update_by'=>$user->name,'total_cost'=>$total_cost]);
     }
-    Invoice_purchase::where('reference_no',$request->ref_no)->update(['total_cost'=>$total_cost]);
+    Invoice_purchase::where('reference_no',$request->ref_no)->update(['total_cost'=>$total]);
 
     return back()->with('success','success');
   }

@@ -13,5 +13,6 @@ class Tmp_invoice_purchase extends Model
       'product_name',
       'cost',
       'quantity',
+      'total',
     ];
 }
