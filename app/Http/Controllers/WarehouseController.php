@@ -460,7 +460,7 @@ class WarehouseController extends Controller
     while($i>strlen($last_id)){
       $last_id = "0".$last_id;
     }
-    $reference_no = $last_id;
+    $reference_no = "P".$last_id;
     $supplier = Supplier::get();
     $tmp = Tmp_invoice_purchase::orderBy('updated_at','desc')->get();
     $total = new \stdClass();
