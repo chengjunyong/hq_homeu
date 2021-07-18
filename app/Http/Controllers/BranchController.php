@@ -121,8 +121,7 @@ class BranchController extends Controller
     $branch = Branch::get();
     $branch_product = Branch_product::where('branch_id',$request->branch_id)
                                     ->where(function($query) use ($request) {
-                                      $query->where('barcode','LIKE','%'.$request->search.'%')
-                                            ->orWhere('product_name','LIKE','%'.$request->search.'%');
+                                      $query->where('barcode',$request->search);
                                     })
                                     ->paginate(25);
 
