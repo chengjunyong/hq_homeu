@@ -671,11 +671,12 @@ class BranchController extends Controller
     if(isset($_GET['branch_id']) && $_GET['branch_id'] != ''){
 
       $branch_product = Branch_product::where('branch_id',$_GET['branch_id'])
+                                    ->orderBy('updated_at','desc')
                                     ->get(); 
     }
 
     if(isset($_GET['branch_id']) && $_GET['branch_id'] == 'hq'){
-      $branch_product = Warehouse_stock::get();
+      $branch_product = Warehouse_stock::orderBy('updated_at','desc')->get();
     }
 
     $branch = Branch::get();

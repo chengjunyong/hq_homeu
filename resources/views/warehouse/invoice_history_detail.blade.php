@@ -72,12 +72,13 @@
               <tbody>
                 @foreach($invoice_detail as $key => $result)
                   <input type="text" name="invoice_purchase_detail_id[]" value="{{$result->id}}" hidden/>
+                  <input type="text" name="barcode[]" value="{{$result->barcode}}" hidden/>
                   <tr>
                     <td>{{$key +1}}</td>
                     <td>{{$result->barcode}}</td>
                     <td>{{$result->product_name}}</td>
                     <td align="center">Rm <input type="number" class="cost" name="cost[]" min="0.01" step="0.01" value="{{$result->cost}}" style="text-align: right;width:7vw"/></td>
-                    <td align="center">{{$result->quantity}}</td>
+                    <td align="center"><input type="number" class="quantity" name="quantity[]" min="1" step="1" value="{{$result->quantity}}" style="text-align: right;width:5vw"/></td>
                     <td align="right">Rm <input type="number" class="total" name="total[]" min="0.01" step="0.01" value="{{$result->total_cost}}" style="text-align: right;width:10vw"/></td>
                   </tr>
                 @endforeach
@@ -97,18 +98,30 @@
 </div>
 <script>
 $(document).ready(function(){
-  $(".total").keyup(function(){
-    let quantity = parseInt($(this).parent().siblings().eq(4).text());
+  $(".total").on("keyup change",function(){
+    let quantity = parseInt($(this).parent().siblings().eq(4).children().val());
     let total = parseFloat($(this).val());
     let result = total / quantity;
     $(this).parent().siblings().eq(3).children().val(result.toFixed(2));
   });
 
-  $(".cost").keyup(function(){
-    let quantity = parseInt($(this).parent().siblings().eq(3).text());
+  $(".cost").on("keyup change",function(){
+    let quantity = parseInt($(this).parent().siblings().eq(3).children().val());
+    console.log(quantity);
     let cost = parseFloat($(this).val());
     let result = cost * quantity;
     $(this).parent().siblings().eq(4).children().val(result.toFixed(2));
+  });
+
+  $(".quantity").on("keyup change",function(){
+    let total = parseFloat($(this).parent().siblings().eq(4).children().val());
+    let cost = parseInt($(this).parent().siblings().eq(3).children().val())
+    let quantity = $(this).val();
+    if(total){
+      let result = total / quantity;
+      $(this).parent().siblings().eq(3).children().val(result.toFixed(2));
+    }
+    
   });
 
 });

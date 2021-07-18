@@ -29,7 +29,11 @@
 
 		<div>
 			<form action="{{route('getWarehouseStockList')}}" method="get">
-<!-- 	<button type="button" class="btn btn-primary" style="float:left;margin-left: 1%" onclick='window.location.assign("{{route('getAddWarehouseProduct')}}")'>Add Product</button> -->				<input type="text" id="search" name="search" class="form-control" placeholder="Search" style="width:25%;margin:0 73%">
+<!-- 	<button type="button" class="btn btn-primary" style="float:left;margin-left: 1%" onclick='window.location.assign("{{route('getAddWarehouseProduct')}}")'>Add Product</button> -->
+        <div>
+        <button type="button" onclick="window.location.assign('{{route('getWarehouseStockList')}}')" class="btn btn-primary" style="float:right;margin-right:2%;margin-left:10px;">Reset</button>
+        <input type="text" id="search" name="search" class="form-control" placeholder="Barcode" style="width:25%;float:right">
+        </div>
 			</form>	
 		</div>	
 
