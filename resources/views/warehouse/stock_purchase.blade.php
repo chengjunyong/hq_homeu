@@ -169,7 +169,7 @@
       <div class="modal-body">
         <div class="row">
           <div class="col-3">
-            Barcode : 
+            Barcode
           </div>
           <div class="col-9">
             <input type="text" readonly id="modal_barcode" class="form-control" />
@@ -177,7 +177,7 @@
         </div>
         <div class="row">
           <div class="col-3">
-            Product Name : 
+            Product Name
           </div>
           <div class="col-9">
             <input type="text" readonly id="modal_product_name" class="form-control" />
@@ -185,7 +185,19 @@
         </div>
         <div class="row">
           <div class="col-3">
-            Quantity : 
+            Measurement
+          </div>
+          <div class="col-9">
+            <select id="modal_measurement" class="form-control">
+              <option value="unit" selected>Unit</option>
+              <option value="weight">Weight</option>
+              <option value="length">Length</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-3">
+            Quantity
           </div>
           <div class="col-9">
             <input type="number" min=1 id="modal_quantity" class="form-control" />
@@ -193,7 +205,7 @@
         </div>
         <div class="row">
           <div class="col-3">
-            Cost : 
+            Cost
           </div>
           <div class="col-9">
             <input type="number" min=0.01 step=0.01 id="modal_cost" class="form-control" />
@@ -201,7 +213,7 @@
         </div>
         <div class="row">
           <div class="col-3">
-            Total : 
+            Total
           </div>
           <div class="col-9">
             <input type="number" id="modal_total" class="form-control" />

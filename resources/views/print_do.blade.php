@@ -81,7 +81,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 			<tr>
 				<td><b>Date</b></td>
 				<td>:</td>
-				<td align="right">20/01/2021</td>
+				<td align="right">{{date("d-M-Y",strtotime($do_list->updated_at))}}</td>
 			</tr>
 			<tr>
 				<td><b>DO Number</b></td>

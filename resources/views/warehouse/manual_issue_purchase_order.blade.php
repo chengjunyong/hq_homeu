@@ -52,27 +52,23 @@
       <table id="warehouse_stock_list" class="table-striped" style="width: 100%">
         <thead>
           <tr style="font-weight: bold;">
-            <td>No</td>
             <td>Barcode</td>
             <td>Product Name</td>
             <td align="right">Cost</td>
             <td align="right">Price</td>
-            <td align="center">Stock Quantity</td>
-            <td align="center" style="width:7%;">Reorder Level</td>
-            <td align="center" style="width:7%;">Reorder Recommend Quantity</td>
+            <td align="center">Stock Qty</td>
+            <td align="center" style="width:7%;">Recommend Qty</td>
             <td align="center">Add To List</td>
           </tr>
         </thead>
         <tbody>
           @foreach($warehouse_stock as $key => $result)
             <tr>
-              <td>{{$key+1}}</td>
               <td>{{$result->barcode}}</td>
               <td>{{$result->product_name}}</a></td>
               <td align="right">{{number_format($result->cost,2)}}</td>
               <td align="right">{{number_format($result->price,2)}}</td>
               <td align="center">{{$result->quantity}}</td>
-              <td align="center" style="width:7%;">{{$result->reorder_level}}</td>
               <td align="center" style="width:7%;">{{$result->reorder_quantity}}</td>
               <td align="center"><button class="btn btn-primary add-list" value="{{$result->id}}">Add</button></td>
             </tr>

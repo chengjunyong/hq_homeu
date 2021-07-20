@@ -347,7 +347,7 @@ class WarehouseController extends Controller
   {
     $url = route('home')."?p=stock_menu";
 
-    $warehouse_stock = Warehouse_stock::get();
+    $warehouse_stock = Warehouse_stock::orderBy('updated_at','desc')->get();
     $supplier = Supplier::get();
 
 
