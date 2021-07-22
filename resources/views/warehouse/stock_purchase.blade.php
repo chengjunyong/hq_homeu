@@ -183,7 +183,9 @@
             <input type="text" readonly id="modal_product_name" class="form-control" />
           </div>
         </div>
-        <div class="row">
+
+<!-- Decimal Feature -->
+<!--         <div class="row">
           <div class="col-3">
             Measurement
           </div>
@@ -194,7 +196,9 @@
               <option value="length">Length</option>
             </select>
           </div>
-        </div>
+        </div> -->
+
+
         <div class="row">
           <div class="col-3">
             Quantity

@@ -439,7 +439,7 @@
               <h4 class="card-title">Manual Stock Order</h4>
             </div>
             <div class="col">
-              <a href="{{route('getManualStockOrder')}}"><i class="fas fa-file-signature first branch-color"></i></a>
+              <a href="{{route('getManualStockOrder')}}?branch_id=0&from=0"><i class="fas fa-file-signature first branch-color"></i></a>
             </div>
           </div>
         </div>

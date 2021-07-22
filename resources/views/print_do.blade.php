@@ -91,7 +91,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 			<tr>
 				<td><b>Reference</b></td>
 				<td>:</td>
-				<td align="right">.......</td>
+				<td align="right"></td>
 			</tr>
 		</table>
 	</div>
@@ -100,14 +100,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 	<div class="main" style="padding-bottom: 2.5rem;">
 		<table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
 			<thead style="background: #adade0;">
+        <th align="left" style="width:5%">NO</th>
 				<th style="width:15%" align="left">BARCODE</th>
 				<th>ITEMS</th>
 				<th>QTY</th>
 				<th>PRICE</th>
 			</thead>
 			<tbody class="border">
-				@foreach($do_detail as $result)
+				@foreach($do_detail as $index => $result)
 					<tr>
+            <td>{{$index+1}}</td>
 						<td>{{ $result->barcode }}</td>
 						<td>{{ $result->product_name }}</td>
 						<td align="center">{{ number_format($result->quantity,0) }}</td>
