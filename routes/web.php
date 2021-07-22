@@ -88,6 +88,9 @@ Route::post('/exportSalesReport', 'SalesController@exportSalesReport')->name('ex
 Route::post('/exportBranchReport', 'SalesController@exportBranchReport')->name('exportBranchReport');
 Route::post('/exportBranchStockReport', 'SalesController@exportBranchStockReport')->name('exportBranchStockReport');
 Route::post('/exportWarehouseStockReport', 'SalesController@exportWarehouseStockReport')->name('exportWarehouseStockReport');
+Route::get('/branch_cashier_report', 'SalesController@getBranchCashierReport')->name('getBranchCashierReport');
+Route::get('/branch_cashier_report_detail', 'SalesController@getBranchCashierReportDetail')->name('getBranchCashierReportDetail');
+Route::post('/exportBranchCashierReport', 'SalesController@exportBranchCashierReport')->name('exportBranchCashierReport');
 
 Route::get('/stock_balance','SalesController@getStockBalance')->name('getStockBalance');
 Route::post('/stock_balance_report','SalesController@postStockBalanceReport')->name('postStockBalanceReport');

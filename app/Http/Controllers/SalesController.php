@@ -11,6 +11,10 @@ use App\Branch_stock_history;
 use App\Branch_product;
 use App\Do_list;
 use App\Do_detail;
+use App\Branch_shift;
+use App\Cash_float;
+use App\Refund;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -57,6 +61,17 @@ class SalesController extends Controller
     $branch = Branch::get();
 
     return view('branch_report',compact('branch', 'selected_date_from', 'selected_date_to','url'));
+  }
+
+  public function getBranchCashierReport()
+  {
+    $url = route('home')."?p=sales_menu";
+
+    $selected_date = date('Y-m-d', strtotime(now()));
+    
+    $branch = Branch::get();
+
+    return view('report.branch_cashier_report',compact('branch', 'selected_date', 'url'));
   }
 
   public function getSalesTransactionReport(Request $request)
@@ -410,6 +425,228 @@ class SalesController extends Controller
     $total_summary->total = $branch_total;
 
     return view('branch_report_detail',compact('cashier_transaction', 'total_summary', 'branch', 'selected_date_from', 'selected_date_to', 'url', 'date', 'user'));
+  }
+
+  public function getBranchCashierReportDetail(Request $request)
+  {
+    $url = route('home')."?p=sales_menu";
+
+    $date = date('Y-m-d H:i:s', strtotime(now()));
+    $user = Auth::user();
+
+    $selected_date = date('Y-m-d', strtotime(now()));
+
+    if($request->report_date)
+    {
+      $selected_date = $request->report_date;
+    }
+
+    $selected_date_from = $selected_date." 00:00:00";
+    $selected_date_to = $selected_date." 23:59:59";
+
+    $branch = Branch::where('token', $request->branch)->first();
+
+    $transaction = Transaction::whereBetween('transaction_date', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
+
+    $payment_type = ['cash', 'card', 'tng', 'maybank_qr', 'grab_pay', 'boost', 'other'];
+    
+    $cashier_list = array();
+    $cashier_ip_array = array();
+
+    $branch_shift = Branch_shift::whereBetween('shift_created_at', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
+    foreach($branch_shift as $shift)
+    {
+      if(!in_array($shift->ip, $cashier_ip_array))
+      {
+        $cashier_detail = new \stdClass();
+        $cashier_detail->ip = $shift->ip;
+
+        $cashier_name = $shift->cashier_name;
+        if(!$cashier_name)
+        {
+          $cashier_name = $shift->ip;
+        }
+
+        $cashier_detail->cashier_name = $cashier_name;
+        $cashier_detail->opening = $shift->opening_amount;
+        $cashier_detail->float_in = 0;
+        $cashier_detail->cash = 0;
+        $cashier_detail->total = 0;
+        $cashier_detail->float_out = 0;
+        $cashier_detail->refund = 0;
+        $cashier_detail->boss = 0;
+        $cashier_detail->remain = 0;
+
+        $payment_type_list = array();
+        foreach($payment_type as $type)
+        {
+          $payment_type_detail = new \stdClass();
+          $payment_type_detail->type = $type;
+          $payment_type_detail->total = 0;
+
+          array_push($payment_type_list, $payment_type_detail);
+        }
+
+        $cashier_detail->payment_type = $payment_type_list;
+
+        array_push($cashier_ip_array, $shift->ip);
+        array_push($cashier_list, $cashier_detail);
+      }
+    }
+
+    $total = 0;
+    $total_payment_type = array();
+    foreach($payment_type as $type)
+    {
+      $total_payment_detail = new \stdClass();
+      $total_payment_detail->type = $type;
+      $total_payment_detail->total = 0;
+
+      array_push($total_payment_type, $total_payment_detail);
+    }
+
+    foreach($transaction as $value)
+    {
+      $total += $value->total;
+      if(!in_array($value->ip, $cashier_ip_array))
+      {
+        $cashier_detail = new \stdClass();
+        $cashier_detail->ip = $value->ip;
+
+        $cashier_name = $value->cashier_name;
+        if(!$cashier_name)
+        {
+          $cashier_name = $value->ip;
+        }
+        $cashier_detail->cashier_name = $cashier_name;
+        $cashier_detail->opening = 0; 
+        $cashier_detail->float_in = 0;
+        $cashier_detail->cash = 0;
+        $cashier_detail->total = 0;
+        $cashier_detail->float_out = 0;
+        $cashier_detail->refund = 0;
+        $cashier_detail->boss = 0;
+        $cashier_detail->remain = 0;
+
+        $payment_type_list = array();
+        foreach($payment_type as $type)
+        {
+          $payment_type_detail = new \stdClass();
+          $payment_type_detail->type = $type;
+          $payment_type_detail->total = 0;
+
+          array_push($payment_type_list, $payment_type_detail);
+        }
+
+        $cashier_detail->payment_type = $payment_type_list;
+
+        array_push($cashier_ip_array, $value->ip);
+        array_push($cashier_list, $cashier_detail);
+      }
+
+      if($value->payment_type == "debit_card" || $value->payment_type == "credit_card")
+      {
+        $value->payment_type = "card";
+      }
+
+      foreach($cashier_list as $cashier)
+      {
+        if($cashier->ip == $value->ip)
+        {
+          $cashier->total += $value->total;
+
+          foreach($cashier->payment_type as $cashier_payment_type)
+          {
+            if($cashier_payment_type->type == $value->payment_type)
+            {
+              $cashier_payment_type->total += $value->total;
+              break;
+            }
+          }
+
+          if($value->payment_type == "cash")
+          {
+            $cashier->cash += $value->total;
+          }
+          break;
+        }
+      }
+
+      foreach($total_payment_type as $total_payment)
+      {
+        if($total_payment->type == $value->payment_type)
+        {
+          $total_payment->total += $value->total;
+          break;
+        }
+      }
+    }
+
+    $cash_float = Cash_float::whereBetween('cash_float_created_at', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
+
+    foreach($cash_float as $cash_float_detail)
+    {
+      foreach($cashier_list as $cashier)
+      {
+        if($cashier->ip == $cash_float_detail->ip)
+        {
+          if($cash_float_detail->type == "in")
+          {
+            $cashier->float_in += $cash_float_detail->amount;
+          }
+          elseif($cash_float_detail->type == "out")
+          {
+            $cashier->float_out += $cash_float_detail->amount;
+          }
+          elseif($cash_float_detail->type == "boss")
+          {
+            $cashier->boss += $cash_float_detail->amount;
+          }
+          break;
+        }
+      }
+    }
+
+    $refund = Refund::whereBetween('refund_created_at', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
+
+    foreach($refund as $refund_info)
+    {
+      foreach($cashier_list as $cashier)
+      {
+        if($cashier->ip == $refund_info->ip)
+        {
+          $cashier->refund += $refund_info->total;
+          break;
+        }
+      }
+    }
+
+    $cashier_total = new \stdClass();
+    $cashier_total->opening = 0; 
+    $cashier_total->float_in = 0;
+    $cashier_total->cash = 0;
+    $cashier_total->total = 0;
+    $cashier_total->float_out = 0;
+    $cashier_total->refund = 0;
+    $cashier_total->boss = 0;
+    $cashier_total->remain = 0;
+
+    foreach($cashier_list as $cashier)
+    {
+      $remain = $cashier->float_in + $cashier->cash - $cashier->float_out - $cashier->refund - $cashier->boss;
+      $cashier->remain = $remain;
+
+      $cashier_total->opening += $cashier->opening;
+      $cashier_total->float_in += $cashier->float_in;
+      $cashier_total->cash += $cashier->cash;
+      $cashier_total->total += $cashier->total;
+      $cashier_total->float_out += $cashier->float_out;
+      $cashier_total->refund += $cashier->refund;
+      $cashier_total->boss += $cashier->boss;
+      $cashier_total->remain += $cashier->remain;
+    }
+
+    return view('report.branch_cashier_report_detail',compact('cashier_list', 'payment_type', 'total_payment_type', 'total', 'cashier_total', 'branch', 'selected_date', 'url', 'date', 'user'));
   }
 
   public function exportSalesReport(Request $request)
