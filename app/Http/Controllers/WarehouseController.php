@@ -346,12 +346,25 @@ class WarehouseController extends Controller
   public function getManualIssuePurchaseOrder()
   {
     $url = route('home')."?p=stock_menu";
+    $target = new \stdClass();
 
-    $warehouse_stock = Warehouse_stock::orderBy('updated_at','desc')->get();
+    if(isset($_GET['search']) && $_GET['search'] != ""){
+      $target = Warehouse_stock::where('barcode',$_GET['search'])->first();
+
+      $warehouse_stock = Warehouse_stock::where('barcode','LIKE',$_GET['search'].'%')
+                                          ->where('barcode','!=',$_GET['search'])
+                                          ->orderBy('updated_at','desc')
+                                          ->paginate(20);
+
+    }else{
+      $warehouse_stock = Warehouse_stock::orderBy('updated_at','desc')
+                                        ->paginate(20);
+    }
+    
     $supplier = Supplier::get();
 
 
-    return view('warehouse.manual_issue_purchase_order',compact('url','warehouse_stock','supplier'));
+    return view('warehouse.manual_issue_purchase_order',compact('url','warehouse_stock','supplier','target'));
   }
 
   public function ajaxAddManualStock(Request $request)

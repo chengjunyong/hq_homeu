@@ -1,16 +1,6 @@
 @extends('layouts.app')
 <title>Manual Branch Stock Ordering</title>
 @section('content')
-<script>
-  Swal.fire({
-    title: 'Fetching Product',
-    html: 'Please wait, we are loading your product list.<br/><br/><b>Approximate In 1-2 Minutes</b>',
-    allowOutsideClick: false,
-    didOpen: () => {
-      Swal.showLoading();
-    },
-  });
-</script>
 <style>
   .container{
     max-width: 90%;
@@ -29,7 +19,7 @@
   <h2 align="center">Manual Branch Stock Ordering</h2>
   <div class="card" style="border-radius: 1.25rem;bottom:15px;margin-top: 15px;">
     <div class="card-title" style="padding: 10px">
-      <h4>Branch Stock</h4>
+      <h4>Branch Stock Selector</h4>
     </div>
 
     <div style="margin-left: 5px;">
@@ -47,7 +37,7 @@
         </div>
         <div class="col-md-3">
           <select name="to" id="to" class="form-control" id="to">
-            <option {{ (isset($_GET['branch_id']) && $_GET['branch_id'] == 0) ? 'selected' : '' }}>No Branch Selected</option>
+            <option value="null" {{ (isset($_GET['branch_id']) && $_GET['branch_id'] == 0) ? 'selected' : '' }}>No Branch Selected</option>
             @foreach($branch as $result)
               <option value="{{$result->id}}" {{ (isset($_GET['branch_id']) && $result->id == $_GET['branch_id']) ? 'selected' : '' }}>{{$result->branch_name}}</option>
             @endforeach
@@ -56,8 +46,19 @@
         </div>
       </div> 
       <div class="row" style="margin-top: 20px;">
-        <div class="col-md-12">
-          <select class="form-control" id="branch_order_list" style="width:17%;float:right;margin-right:20px;">
+        <div class="col-md-12" style="margin-top: 10px;">
+          <h4 align="center">Branch Stock Detail</h4>
+        </div>
+        <div class="col-md-6">
+          <form method="get" action="{{route('getManualStockOrder')}}?branch_id=null&from=0" id="search_form">
+            <input type="text" name="branch_id" value="{{$_GET['branch_id']}}" hidden/>
+            <input type="text" name="from" value="{{$_GET['from']}}" hidden />
+            <button type="button" class="btn btn-primary" onclick="window.location.assign('{{route('getManualStockOrder')}}?branch_id=0&from=0')" style="float:left;margin-right: 5px;margin-left: 5px;">Reset</button>
+            <input type="text" name="search" class="form-control" placeholder="Barcode" value="{{ (isset($_GET['search']) ? $_GET['search'] : '') }}" style="margin-left: 5px;width:50%;"/>
+          </form>
+        </div>
+        <div class="col-md-6">
+          <select class="form-control" id="branch_order_list" style="width:35%;float:right;margin-right:20px;">
             @foreach($branch as $result)
               <option value="{{$result->id}}">{{$result->branch_name}}</option>
             @endforeach
@@ -66,6 +67,7 @@
         </div>
       </div> 
     </div>
+
 
     <div class="card-body">
       <table id="branch_product_list" class="table-striped" style="width: 100%">
@@ -77,12 +79,21 @@
             <td align="right">Price</td>
             <td align="center">Stock Qty</td>
             <td align="center" style="width:7%;">Recommend Qty</td>
-<!-- 
- -->
             <td align="center">Add To List</td>
           </tr>
         </thead>
         <tbody>
+          @if(isset($_GET['search']) && $_GET['search'] != "" && $target != null)
+            <tr>
+                <td>{{$target->barcode}}</td>
+                <td style="width:25%">{{$target->product_name}}</a></td>
+                <td align="right">{{number_format($target->cost,2)}}</td>
+                <td align="right">{{number_format($target->price,2)}}</td>
+                <td align="center">{{$target->quantity}}</td>
+                <td align="center" style="width:7%;">{{$target->reorder_quantity}}</td>
+                <td align="center"><button class="btn btn-primary add-list" value="{{$target->id}}">Add</button></td>
+            </tr>
+          @endif
           @foreach($branch_product as $key => $result)
             <tr>
               <td>{{$result->barcode}}</td>
@@ -91,13 +102,18 @@
               <td align="right">{{number_format($result->price,2)}}</td>
               <td align="center">{{$result->quantity}}</td>
               <td align="center" style="width:7%;">{{$result->reorder_quantity}}</td>
-<!--               <td align="center">{{date("d-M-Y h:i:s A",strtotime($result->updated_at))}}</td> -->
               <td align="center"><button class="btn btn-primary add-list" value="{{$result->id}}">Add</button></td>
             </tr>
           @endforeach
         </tbody>
       </table>
-
+      <div style="float:right;margin-top:15px;">
+        @if(isset($_GET['search']) && $search != null)
+          {{ $branch_product->appends(['branch_id'=>$branch_id,'from'=>$from,'search'=>$search])->links() }}
+        @else
+          {{ $branch_product->appends(['branch_id'=>$branch_id,'from'=>$from])->links() }}
+        @endif
+      </div>
     </div>
   </div>
 </div>
@@ -105,13 +121,6 @@
 
 <script>
 $(document).ready(function(){
-  Swal.close();
-  var table = $('#branch_product_list').DataTable({
-    responsive: true,
-    lengthMenu: [25,50,100],
-    order: [[ 6, "asc" ]],
-  });
-
   $("#to").change(function(){
     window.location.assign("{{route('getManualStockOrder')}}?branch_id="+$(this).val()+"&from="+$("#from").val());
   });
@@ -135,6 +144,12 @@ $(document).ready(function(){
   $("#order_list").click(function(){
     let a = $("#branch_order_list").val();
     window.location.assign(`{{route('getManualOrderList')}}?id=${a}`);
+  });
+
+  $("input[name=search]").keydown(function(e){
+    if(e.keyCode == 13){
+      $("#search_form").submit();
+    }
   });
 
 });

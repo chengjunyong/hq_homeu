@@ -1,16 +1,6 @@
 @extends('layouts.app')
 <title>Issue Purchase Order</title>
 @section('content')
-<script>
-  Swal.fire({
-    title: 'Fetching Product',
-    html: 'Please wait, we are loading your product list.<br/><br/><b>Approximate In 1-2 Minutes</b>',
-    allowOutsideClick: false,
-    didOpen: () => {
-      Swal.showLoading();
-    },
-  });
-</script>
 <style>
   .container{
     max-width: 90%;
@@ -45,6 +35,12 @@
         <div class="col" style="text-align:right;margin-right: 20px;">
           <button class="btn btn-primary" onclick="window.location.assign('{{route('getPurchaseOrderList')}}')">Purchase Order List</button>
         </div>
+      </div>
+      <div class="col-md-12">
+        <form method="get" action="{{route('getManualIssuePurchaseOrder')}}" id="search_form">
+          <input type="text" name="search" class="form-control" placeholder="Barcode" value="{{ (isset($_GET['search']) ? $_GET['search'] : '') }}" style="width:20%;float:right"/>
+          <button type="button" class="btn btn-primary" onclick="window.location.assign('{{route('getManualIssuePurchaseOrder')}}')" style="float:right;margin-right:5px;">Reset</button>
+        </form>
       </div>  
     </div>
 
@@ -62,6 +58,17 @@
           </tr>
         </thead>
         <tbody>
+          @if(isset($_GET['search']) && $_GET['search'] != "" && $target != null)
+            <tr>
+              <td>{{$target->barcode}}</td>
+              <td>{{$target->product_name}}</a></td>
+              <td align="right">{{number_format($target->cost,2)}}</td>
+              <td align="right">{{number_format($target->price,2)}}</td>
+              <td align="center">{{$target->quantity}}</td>
+              <td align="center" style="width:7%;">{{$target->reorder_quantity}}</td>
+              <td align="center"><button class="btn btn-primary add-list" value="{{$target->id}}">Add</button></td>
+            </tr>
+          @endif
           @foreach($warehouse_stock as $key => $result)
             <tr>
               <td>{{$result->barcode}}</td>
@@ -75,22 +82,27 @@
           @endforeach
         </tbody>
       </table>
-
+      <div style="float:right;margin-top:15px;">
+        @if(isset($_GET['search']))
+          {{ $warehouse_stock->appends(['search'=>$_GET['search']])->links() }}
+        @else
+          {{ $warehouse_stock->links() }}
+        @endif
+      </div>
     </div>
   </div>
 </div>
 <script>
 
 $(document).ready(function(){
-  Swal.close();
-
-  $('#warehouse_stock_list').DataTable({
-    responsive: true,
-    lengthMenu: [25,50,100],
-  });
-
   $(".add-list").click(function(){
     quantityHandle($(this).val());
+  });
+
+  $("input[name=search]").keydown(function(e){
+    if(e.keyCode == 13){
+      $("#search_form").submit();
+    }
   });
 
   $("thead,#warehouse_stock_list_paginate").click(function(){

@@ -665,22 +665,45 @@ class BranchController extends Controller
     $url = route('home')."?p=branch_menu";
 
     $branch_product = new \stdClass();
+    $target = new \stdClass();
 
-    // Remember change paginate to get()
-    if(isset($_GET['branch_id']) && $_GET['branch_id'] != ''){
+    if(isset($_GET['search'])){
+      if($_GET['branch_id'] != 'hq'){
+        $target = Branch_product::where('branch_id',$_GET['branch_id'])
+                                  ->where('barcode',$_GET['search'])
+                                  ->first();
 
-      $branch_product = Branch_product::where('branch_id',$_GET['branch_id'])
-                                    ->orderBy('updated_at','desc')
-                                    ->get(); 
+        $branch_product = Branch_product::where('branch_id',$_GET['branch_id'])
+                                  ->where('barcode','!=',$_GET['search'])
+                                  ->where('barcode','LIKE',$_GET['search'].'%')
+                                  ->paginate(15);
+      }else{
+        $target = Warehouse_stock::where('barcode',$_GET['search'])
+                                  ->first();
+
+        $branch_product = Warehouse_stock::where('barcode','!=',$_GET['search'])
+                                          ->where('barcode','LIKE',$_GET['search'].'%')
+                                          ->paginate(15);
+      }
+
+    }else{
+      if($_GET['branch_id'] != 'hq'){
+        $branch_product = Branch_product::where('branch_id',$_GET['branch_id'])
+                                      ->orderBy('updated_at','desc')
+                                      ->paginate(15);
+      }else{
+        $branch_product = Warehouse_stock::orderBy('updated_at','desc')
+                                          ->paginate(15);
+      }
     }
 
-    if(isset($_GET['branch_id']) && $_GET['branch_id'] == 'hq'){
-      $branch_product = Warehouse_stock::orderBy('updated_at','desc')->get();
-    }
 
     $branch = Branch::get();
+    $from = $_GET['from'];
+    $branch_id = $_GET['branch_id'];
+    $search = (isset($_GET['search'])) ? $_GET['search'] : null;
 
-    return view('manual_stock_order',compact('url','branch_product','branch'));
+    return view('manual_stock_order',compact('url','branch_product','branch','from','branch_id','target','search'));
   }
 
   public function ajaxAddManualStockOrder(Request $request)
@@ -713,7 +736,7 @@ class BranchController extends Controller
   public function getManualOrderList()
   {
     $branch = Branch::first();
-    $url = route('getManualStockOrder')."?branch_id=0";
+    $url = route('getManualStockOrder')."?branch_id=0&from=0";
     $from = new \stdClass();
     $to = new \stdClass();
 
@@ -725,7 +748,7 @@ class BranchController extends Controller
       $branch = Branch::first();
       return "<script>
               alert('No order data, you will be redirect to order page shortly');
-              window.location.assign('".route('getManualStockOrder')."?branch_id=0');
+              window.location.assign('".route('getManualStockOrder')."?branch_id=0&from=0');
               </script>";
     }
 
