@@ -284,12 +284,12 @@ class UserController extends Controller
         //   'name' => 'Daily Report',
         //   'route' => 'getDailyReport'
         // ],
-        [
-          'group' => 'Report',
-          'value' => 14,
-          'name' => 'Branch Sales Report',
-          'route' => 'getBranchReport'
-        ],
+        // [
+        //   'group' => 'Report',
+        //   'value' => 14,
+        //   'name' => 'Branch Sales Report',
+        //   'route' => 'getBranchReport'
+        // ],
         [
           'group' => 'Branch',
           'value' => 15,
@@ -398,7 +398,12 @@ class UserController extends Controller
           'name' => 'Daily Sales Transaction Report',
           'route' => 'getDailySalesTransactionReport'
         ],
-
+        [
+          'group' => 'Report',
+          'value' => 33,
+          'name' => 'Branch Sales Report',
+          'route' => 'getBranchCashierReport'
+        ],
       ];
 
       return $access_control;

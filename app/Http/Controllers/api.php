@@ -236,6 +236,8 @@ class api extends Controller
 
       // prevent duplicate
       Refund::where('branch_id', $branch_id)->whereIn('branch_refund_id', $branch_refund_id_array)->delete();
+      Refund_detail::where('branch_id', $branch_id)->whereIn('branch_refund_id', $branch_refund_id_array)->delete();
+
       Refund::insert($branch_refund_query);
       // end
 
@@ -270,7 +272,7 @@ class api extends Controller
           $transaction_product[$product_name]->quantity = 0;
         }
         
-        $transaction_product[$product_name]->quantity -= $refund_detail_info['quantity'];
+        $transaction_product[$product_name]->quantity += $refund_detail_info['quantity'];
 
         array_push($branch_refund_detail_id_array, $refund_detail_info['id']);
         array_push($branch_refund_detail_query, $query);
