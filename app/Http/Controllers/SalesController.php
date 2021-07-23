@@ -625,7 +625,7 @@ class SalesController extends Controller
     $cashier_total->opening = 0; 
     $cashier_total->float_in = 0;
     $cashier_total->cash = 0;
-    $cashier_total->total = 0;
+    $cashier_total->closing = 0;
     $cashier_total->float_out = 0;
     $cashier_total->refund = 0;
     $cashier_total->boss = 0;
@@ -639,7 +639,8 @@ class SalesController extends Controller
       $cashier_total->opening += $cashier->opening;
       $cashier_total->float_in += $cashier->float_in;
       $cashier_total->cash += $cashier->cash;
-      $cashier_total->total += $cashier->total;
+      // $cashier_total->total += $cashier->total;
+      $cashier_total->closing += $cashier->opening;
       $cashier_total->float_out += $cashier->float_out;
       $cashier_total->refund += $cashier->refund;
       $cashier_total->boss += $cashier->boss;
