@@ -167,7 +167,7 @@ class api extends Controller
           'calculated_amount' => $shift['calculated_amount'],
           'diff' => $shift['diff'],
           'closing_date_time' => $shift['closing_date_time'],
-          'shift_created_at' => $shift['created_at'],
+          'shift_created_at' => date('Y-m-d H:i:s', strtotime($shift['created_at'])),
           'created_at' => $now,
           'updated_at' => $now
         ];
@@ -196,7 +196,7 @@ class api extends Controller
           'type' => $cash_float_detail['type'],
           'amount' => $cash_float_detail['amount'],
           'remarks' => $cash_float_detail['remarks'],
-          'cash_float_created_at' => $cash_float_detail['created_at'],
+          'cash_float_created_at' => date('Y-m-d H:i:s', strtotime($cash_float_detail['created_at'])),
           'created_at' => $now,
           'updated_at' => $now
         ];
@@ -225,7 +225,7 @@ class api extends Controller
           'subtotal' => $refund_info['subtotal'],
           'round_off' => $refund_info['round_off'],
           'total' => $refund_info['total'],
-          'refund_created_at' => $refund_info['created_at'],
+          'refund_created_at' => date('Y-m-d H:i:s', strtotime($refund_info['created_at'])),
           'created_at' => $now,
           'updated_at' => $now
         ];
@@ -259,7 +259,7 @@ class api extends Controller
           'price' => $refund_detail_info['price'],
           'subtotal' => $refund_detail_info['subtotal'],
           'total' => $refund_detail_info['total'],
-          'refund_detail_created_at' => $refund_detail_info['created_at'],
+          'refund_detail_created_at' => date('Y-m-d H:i:s', strtotime($refund_detail_info['created_at'])),
           'created_at' => $now,
           'updated_at' => $now
         ];
