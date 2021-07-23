@@ -130,7 +130,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <th style="text-align: right">Modal utk<br>esok</th>
         <th style="text-align: right">Expenses /<br>Purchases</th>
         <th style="text-align: right">Refund</th>
-        <th style="text-align: right">Bagi ke ketua</th>
         <th style="text-align: right">Baki Tunai Syarikat</th>
       </thead>
       <tbody class="border" style="border-bottom-color:black !important">
@@ -143,7 +142,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <td style="text-align: right;">{{ number_format($cashier->opening, 2) }}</td>
             <td style="text-align: right;">{{ number_format($cashier->float_out, 2) }}</td>
             <td style="text-align: right;">{{ number_format($cashier->refund, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($cashier->boss, 2) }}</td>
             <td style="text-align: right;">{{ number_format($cashier->remain, 2) }}</td>
           </tr>
         @endforeach

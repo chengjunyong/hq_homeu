@@ -474,7 +474,7 @@ class SalesController extends Controller
         $cashier_detail->total = 0;
         $cashier_detail->float_out = 0;
         $cashier_detail->refund = 0;
-        $cashier_detail->boss = 0;
+        // $cashier_detail->boss = 0;
         $cashier_detail->remain = 0;
 
         $payment_type_list = array();
@@ -525,7 +525,7 @@ class SalesController extends Controller
         $cashier_detail->total = 0;
         $cashier_detail->float_out = 0;
         $cashier_detail->refund = 0;
-        $cashier_detail->boss = 0;
+        // $cashier_detail->boss = 0;
         $cashier_detail->remain = 0;
 
         $payment_type_list = array();
@@ -598,10 +598,10 @@ class SalesController extends Controller
           {
             $cashier->float_out += $cash_float_detail->amount;
           }
-          elseif($cash_float_detail->type == "boss")
-          {
-            $cashier->boss += $cash_float_detail->amount;
-          }
+          // elseif($cash_float_detail->type == "boss")
+          // {
+          //   $cashier->boss += $cash_float_detail->amount;
+          // }
           break;
         }
       }
@@ -628,12 +628,12 @@ class SalesController extends Controller
     $cashier_total->closing = 0;
     $cashier_total->float_out = 0;
     $cashier_total->refund = 0;
-    $cashier_total->boss = 0;
+    // $cashier_total->boss = 0;
     $cashier_total->remain = 0;
 
     foreach($cashier_list as $cashier)
     {
-      $remain = $cashier->float_in + $cashier->cash - $cashier->float_out - $cashier->refund - $cashier->boss;
+      $remain = $cashier->float_in + $cashier->cash - $cashier->float_out - $cashier->refund;
       $cashier->remain = $remain;
 
       $cashier_total->opening += $cashier->opening;
@@ -643,7 +643,7 @@ class SalesController extends Controller
       $cashier_total->closing += $cashier->opening;
       $cashier_total->float_out += $cashier->float_out;
       $cashier_total->refund += $cashier->refund;
-      $cashier_total->boss += $cashier->boss;
+      // $cashier_total->boss += $cashier->boss;
       $cashier_total->remain += $cashier->remain;
     }
 
