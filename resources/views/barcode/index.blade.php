@@ -43,7 +43,7 @@
   .header_menu_icon { font-size: 20px; padding: 20px; cursor: pointer; }
   .header_menu_icon:hover { background: #eee; }
   .header_title { text-align: center; padding-right: 57.5px; text-align: center; flex: 1; }
-  .header_menu { position: fixed; width: 350px; min-height: 100%; left: -350px; top: 0px; background: #eee; z-index: 2; transition: left 300ms linear; }
+  .header_menu { position: fixed; width: 350px; height: 100%; overflow-y: scroll; left: -350px; top: 0px; background: #eee; z-index: 2; transition: left 300ms linear; }
   .header_menu.active { left: 0px; }
 
   .scanner-body { margin : 20px; }
