@@ -58,7 +58,7 @@
           </tr>
         </thead>
         <tbody>
-          @if(isset($_GET['search']) && $_GET['search'] != "" && $target != null)
+          @if(isset($_GET['search']) && $_GET['search'] != "" && $target != null && ($page == 1 || $page == null))
             <tr>
               <td>{{$target->barcode}}</td>
               <td>{{$target->product_name}}</a></td>

@@ -353,6 +353,10 @@ class WarehouseController extends Controller
 
       $warehouse_stock = Warehouse_stock::where('barcode','LIKE',$_GET['search'].'%')
                                           ->where('barcode','!=',$_GET['search'])
+                                          ->orWhere(function($query){
+                                            $query->where('barcode','!=',$_GET['search'])
+                                                  ->where('product_name','LIKE','%'.$_GET['search'].'%');
+                                          })
                                           ->orderBy('updated_at','desc')
                                           ->paginate(20);
 
@@ -362,9 +366,10 @@ class WarehouseController extends Controller
     }
     
     $supplier = Supplier::get();
+    $page = isset($_GET['page']) ? $_GET['page'] : null;
 
 
-    return view('warehouse.manual_issue_purchase_order',compact('url','warehouse_stock','supplier','target'));
+    return view('warehouse.manual_issue_purchase_order',compact('url','warehouse_stock','supplier','target','page'));
   }
 
   public function ajaxAddManualStock(Request $request)
