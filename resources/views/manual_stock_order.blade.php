@@ -54,7 +54,7 @@
             <input type="text" name="branch_id" value="{{$_GET['branch_id']}}" hidden/>
             <input type="text" name="from" value="{{$_GET['from']}}" hidden />
             <button type="button" class="btn btn-primary" onclick="window.location.assign('{{route('getManualStockOrder')}}?branch_id=0&from=0')" style="float:left;margin-right: 5px;margin-left: 5px;">Reset</button>
-            <input type="text" name="search" class="form-control" placeholder="Barcode" value="{{ (isset($_GET['search']) ? $_GET['search'] : '') }}" style="margin-left: 5px;width:50%;"/>
+            <input type="text" name="search" class="form-control" placeholder="Barcode / Name" value="{{ (isset($_GET['search']) ? $_GET['search'] : '') }}" style="margin-left: 5px;width:50%;"/>
           </form>
         </div>
         <div class="col-md-6">
@@ -83,7 +83,7 @@
           </tr>
         </thead>
         <tbody>
-          @if(isset($_GET['search']) && $_GET['search'] != "" && $target != null)
+          @if(isset($_GET['search']) && $_GET['search'] != "" && $target != null && ($page == 1 || $page == null))
             <tr>
                 <td>{{$target->barcode}}</td>
                 <td style="width:25%">{{$target->product_name}}</a></td>

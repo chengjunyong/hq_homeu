@@ -387,10 +387,4 @@ function calTotal(){
 
 </script>
 
-@if(session()->has('success'))
-<script>
-  Swal.fire('Success','Invoice Recorded Successful','success');
-</script>
-@endif
-
 @endsection

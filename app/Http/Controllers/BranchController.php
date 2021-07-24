@@ -675,14 +675,25 @@ class BranchController extends Controller
 
         $branch_product = Branch_product::where('branch_id',$_GET['branch_id'])
                                   ->where('barcode','!=',$_GET['search'])
-                                  ->where('barcode','LIKE',$_GET['search'].'%')
+                                  ->where('barcode','LIKE','%'.$_GET['search'].'%')
+                                  ->orWhere(function($query){
+                                      $query->where('product_name','LIKE','%'.$_GET['search'].'%')
+                                            ->where('branch_id',$_GET['branch_id'])
+                                            ->where('barcode','!=',$_GET['search']);
+                                  })
                                   ->paginate(15);
+
       }else{
         $target = Warehouse_stock::where('barcode',$_GET['search'])
                                   ->first();
 
         $branch_product = Warehouse_stock::where('barcode','!=',$_GET['search'])
-                                          ->where('barcode','LIKE',$_GET['search'].'%')
+                                          ->where('barcode','LIKE','%'.$_GET['search'].'%')
+                                           ->orWhere(function($query){
+                                              $query->where('product_name','LIKE','%'.$_GET['search'].'%')
+                                                    ->where('branch_id',$_GET['branch_id'])
+                                                    ->where('barcode','!=',$_GET['search']);
+                                          })
                                           ->paginate(15);
       }
 
@@ -702,8 +713,9 @@ class BranchController extends Controller
     $from = $_GET['from'];
     $branch_id = $_GET['branch_id'];
     $search = (isset($_GET['search'])) ? $_GET['search'] : null;
+    $page = isset($_GET['page']) ? $_GET['page'] : null;
 
-    return view('manual_stock_order',compact('url','branch_product','branch','from','branch_id','target','search'));
+    return view('manual_stock_order',compact('url','branch_product','branch','from','branch_id','target','search','page'));
   }
 
   public function ajaxAddManualStockOrder(Request $request)
