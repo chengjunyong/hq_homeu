@@ -675,7 +675,7 @@ class BranchController extends Controller
 
         $branch_product = Branch_product::where('branch_id',$_GET['branch_id'])
                                   ->where('barcode','!=',$_GET['search'])
-                                  ->where('barcode','LIKE',$_GET['search'].'%')
+                                  ->where('barcode','LIKE','%'.$_GET['search'].'%')
                                   ->orWhere(function($query){
                                       $query->where('product_name','LIKE','%'.$_GET['search'].'%')
                                             ->where('branch_id',$_GET['branch_id'])
@@ -688,7 +688,7 @@ class BranchController extends Controller
                                   ->first();
 
         $branch_product = Warehouse_stock::where('barcode','!=',$_GET['search'])
-                                          ->where('barcode','LIKE',$_GET['search'].'%')
+                                          ->where('barcode','LIKE','%'.$_GET['search'].'%')
                                            ->orWhere(function($query){
                                               $query->where('product_name','LIKE','%'.$_GET['search'].'%')
                                                     ->where('branch_id',$_GET['branch_id'])

@@ -351,7 +351,7 @@ class WarehouseController extends Controller
     if(isset($_GET['search']) && $_GET['search'] != ""){
       $target = Warehouse_stock::where('barcode',$_GET['search'])->first();
 
-      $warehouse_stock = Warehouse_stock::where('barcode','LIKE',$_GET['search'].'%')
+      $warehouse_stock = Warehouse_stock::where('barcode','LIKE','%'.$_GET['search'].'%')
                                           ->where('barcode','!=',$_GET['search'])
                                           ->orWhere(function($query){
                                             $query->where('barcode','!=',$_GET['search'])
