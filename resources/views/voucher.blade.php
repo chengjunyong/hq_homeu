@@ -53,6 +53,7 @@
               <th>Creator</th>
               <th>Last Update</th>
               <th></th>
+              <th></th>
             </thead>
             @foreach($voucher as $index => $result)
               <tr>
