@@ -30,7 +30,7 @@
             <input readonly class="form-control" type="text" name="total_item" value="{{$total_item}}">
           </div>
           <div class="col-md-6">
-            <label>Total Items:</label>
+            <label>Total Cost:</label>
             <input readonly class="form-control" type="text" name="total_cost" value="{{$total_cost}}">
           </div>
           <div class="col-md-6">
