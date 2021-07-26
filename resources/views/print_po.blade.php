@@ -78,13 +78,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 					<td>{{ucwords($supplier->supplier_name)}}</td>
 				</tr>
 				<tr>
-					<td>{{ucwords($supplier->address1)}}</td>
+					<td>{{ ($supplier->address1 != "null") ? ucwords($supplier->address1) : ''}}</td>
 				</tr>
 				<tr>
-					<td>{{ucwords($supplier->address2)}}</td>
+					<td>{{ ($supplier->address2 != "null") ? ucwords($supplier->address2) : ''}}</td>
 				</tr>
         <tr>
-          <td>{{ucwords($supplier->address3)}}</td>
+          <td>{{ ($supplier->address3 != "null") ? ucwords($supplier->address3) : ''}}</td>
         </tr>
 			</table>
 
@@ -145,12 +145,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 	</div>
 
 </div>	
-<script>
+<!-- <script>
   window.print();
   window.addEventListener('afterprint', (event) => {
     window.close();
   });
-
-</script>
+</script> -->
 </body>
 </html>

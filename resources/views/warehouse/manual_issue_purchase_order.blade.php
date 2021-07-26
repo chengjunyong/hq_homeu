@@ -27,9 +27,15 @@
         <div class="col">
           <h5>Supplier</h5>
           <select name="supplier_id" id="supplier_id" class="form-control">
-            @foreach($supplier as $result)
-              <option value="{{$result->id}}">{{$result->supplier_name}}</option>
-            @endforeach
+            @if(isset($_GET['supplier']) && $_GET['supplier'] != "")
+              @foreach($supplier as $result)
+                  <option value="{{$result->id}}" {{($_GET['supplier'] == $result->id) ? 'selected' : '' }}>{{$result->supplier_name}}</option>
+              @endforeach
+            @else
+              @foreach($supplier as $result)
+                  <option value="{{$result->id}}">{{$result->supplier_name}}</option>
+              @endforeach
+            @endif
           </select>
         </div>
         <div class="col" style="text-align:right;margin-right: 20px;">
@@ -38,7 +44,8 @@
       </div>
       <div class="col-md-12">
         <form method="get" action="{{route('getManualIssuePurchaseOrder')}}" id="search_form">
-          <input type="text" name="search" class="form-control" placeholder="Barcode" value="{{ (isset($_GET['search']) ? $_GET['search'] : '') }}" style="width:20%;float:right"/>
+          <input type="text" name="search" class="form-control" placeholder="Barcode" value="{{ (isset($_GET['search'])) ? $_GET['search'] : '' }}" style="width:20%;float:right"/>
+          <input type="number" name="supplier" id="search_supplier" hidden value="{{ isset($_GET['supplier']) ? $_GET['supplier'] : $supplier->first()->id}}" />
           <button type="button" class="btn btn-primary" onclick="window.location.assign('{{route('getManualIssuePurchaseOrder')}}')" style="float:right;margin-right:5px;">Reset</button>
         </form>
       </div>  
@@ -83,8 +90,12 @@
         </tbody>
       </table>
       <div style="float:right;margin-top:15px;">
-        @if(isset($_GET['search']))
+        @if(isset($_GET['search']) && isset($_GET['supplier']))
+          {{ $warehouse_stock->appends(['search'=>$_GET['search'],'supplier'=>$_GET['supplier']])->links() }}
+        @elseif(isset($_GET['search']))
           {{ $warehouse_stock->appends(['search'=>$_GET['search']])->links() }}
+        @elseif(isset($_GET['supplier']))
+          {{ $warehouse_stock->appends(['search'=>$_GET['supplier']])->links() }}
         @else
           {{ $warehouse_stock->links() }}
         @endif
@@ -115,6 +126,10 @@ $(document).ready(function(){
     $(".add-list").click(function(){
       quantityHandle($(this).val());
     });
+  });
+
+  $("#supplier_id").change(function(){
+    $("#search_supplier").val($(this).val());
   });
 
 });
