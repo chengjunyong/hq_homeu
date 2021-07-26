@@ -299,7 +299,7 @@ class ProductController extends Controller
         return json_encode(false);
       }
     }else if($request->type == "create"){
-      $result = Voucher::create(['name'=>$request->name,'code'=>$request->code,'amount'=>$request->amount,'active'=>1,'creator_id'=>$user->id,'creator_name'=>$user->name]);
+      $result = Voucher::create(['name'=>$request->name,'code'=>$request->code,'type'=>$request->dis_type,'amount'=>$request->amount,'active'=>1,'creator_id'=>$user->id,'creator_name'=>$user->name]);
       if($result){
         return json_encode(true);
       }else{
@@ -309,10 +309,13 @@ class ProductController extends Controller
       $voucher = Voucher::where('id',$request->id)->first();
       return json_encode($voucher);
     }else if($request->type == "edit"){
-      $result = Voucher::where('code',$request->code)->update(['name'=>$request->name,'amount'=>$request->amount]);
+      $result = Voucher::where('code',$request->code)->update(['name'=>$request->name,'type'=>$request->dis_type,'amount'=>$request->amount]);
       return json_encode($result);
     }else if($request->type == "status"){
       $result = Voucher::where('id',$request->id)->update(['active'=>$request->status]);
+      return json_encode($result);
+    }else if($request->type == "delete"){
+      $result = Voucher::where('id',$request->id)->delete();
       return json_encode($result);
     }
 

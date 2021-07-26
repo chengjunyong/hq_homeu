@@ -47,11 +47,11 @@
               <th>No</th>
               <th>Code</th>
               <th>Name</th>
-              <th>Type</th>
+              <th>Discount Type</th>
               <th>Amount</th>
               <th style="text-align: center">Status</th>
               <th>Creator</th>
-              <th>Created Date</th>
+              <th>Last Update</th>
               <th></th>
             </thead>
             @foreach($voucher as $index => $result)
@@ -59,14 +59,15 @@
                 <td>{{$index+1}}</td>
                 <td>{{$result->code}}</td>
                 <td>{{$result->name}}</td>
-                <td>{{ ($result->type == 'fixed') ? 'Fixed' : 'Percentage' }}</td>
+                <td align="center">{{ ($result->type == 'fixed') ? 'Fixed' : 'Percentage' }}</td>
                 <td>{{$result->amount}}</td>
                 <td align="center">
                   <input type="checkbox" class="status" ref-id="{{$result->id}}" data-toggle="toggle" data-on="Active" data-off="Deactivate" {{ ($result->active == 1) ? 'checked' : '' }}>
                 </td>
                 <td>{{$result->creator_name}}</td>
-                <td>{{$result->created_at}}</td>
+                <td>{{date("d-M-Y H:i:s A",strtotime($result->updated_at))}}</td>
                 <td><button type="button" class="btn btn-primary modify" ref-id="{{$result->id}}">Modify</button></td>
+                <td><button type="button" class="btn btn-danger delete" ref-id="{{$result->id}}">Delete</button></td>
               </tr>
             @endforeach
           </table>
@@ -95,6 +96,13 @@
           <div class="col-md-12">
             <label>Voucher Name</label><br/>
             <input class="form-control" name="edit_name" type="text"/>
+          </div>
+          <div class="col-md-12">
+            <label>Discount Type</label><br/>
+            <select id="edit_dis" name="dis_type" class="form-control">
+              <option value="fixed">Fixed Amount</option>
+              <option value="percentage">Percentage</option>
+            </select>
           </div>
           <div class="col-md-12">
             <label>Amount</label><br/>
@@ -130,6 +138,13 @@
             <input class="form-control" name="create_name" type="text"/>
           </div>
           <div class="col-md-12">
+            <label>Discount Type</label><br/>
+            <select id="create_dis" name="dis_type" class="form-control">
+              <option value="fixed">Fixed Amount</option>
+              <option value="percentage">Percentage</option>
+            </select>
+          </div>
+          <div class="col-md-12">
             <label>Amount</label><br/>
             <input class="form-control" name="create_amount" type="number" step="0.01" min="0.01"/>
           </div>
@@ -156,6 +171,7 @@ $(document).ready(function(){
       $("input[name=edit_code]").val(data['code']);
       $("input[name=edit_name]").val(data['name']);
       $("input[name=edit_amount]").val(data['amount']);
+      $("#edit_dis").val(data['type']);
       $("#edit_voucher").modal();
     },'json');
   });
@@ -170,6 +186,8 @@ $(document).ready(function(){
       swal.fire('Empty Result','Please Fill Up All The Data','error');
     }else if(parseFloat($("input[name=create_amount]").val()) < 0.01){
       swal.fire('Invalid Value','Please Change A Valid Amount','error');
+    }else if($("#create_dis").val() == "percentage" && $("input[name=create_amount]").val() > 100){
+      swal.fire('Invalid Value','Percentage Discount Cannot Exceed 100%','error');
     }else{
       $.post('{{route('postVoucher')}}',
       {
@@ -182,11 +200,12 @@ $(document).ready(function(){
         }else{
           $.post('{{route('postVoucher')}}',
           {
-            'type' : 'create',
-            'code' : $("input[name=create_code]").val(),
-            'name' : $("input[name=create_name]").val(),
-            'amount' : $("input[name=create_amount]").val(),
-            '_token' : '{{ csrf_token()}}',
+            'type'    : 'create',
+            'code'    : $("input[name=create_code]").val(),
+            'name'    : $("input[name=create_name]").val(),
+            'dis_type': $("#create_dis").val(),
+            'amount'  : $("input[name=create_amount]").val(),
+            '_token'  : '{{ csrf_token()}}',
           },function(data){
             $("#create_voucher").modal('hide');
             if(data == true){
@@ -216,12 +235,15 @@ $(document).ready(function(){
       swal.fire('Empty Result','Please Fill Up All The Data','error');
     }else if(parseFloat($("input[name=edit_amount]").val()) < 0.01){
       swal.fire('Invalid Value','Please Change A Valid Amount','error');
+    }else if($("#edit_dis").val() == "percentage" && $("input[name=edit_amount]").val() > 100){
+      swal.fire('Invalid Value','Percentage Discount Cannot Exceed 100%','error');
     }else{
       $.post('{{route('postVoucher')}}',
       {
         'type' : 'edit',
         'code' : $("input[name=edit_code]").val(),
         'name' : $("input[name=edit_name]").val(),
+        'dis_type': $("#edit_dis").val(),
         'amount' : $("input[name=edit_amount]").val(),
         '_token' : '{{ csrf_token() }}' ,
       },function(data){
@@ -271,7 +293,40 @@ $(document).ready(function(){
       }
 
     },'json');
-  })
+  });
+
+  $(".delete").click(function(){
+    swal.fire({
+      title: 'Delete Voucher',
+      html: 'Are you sure to delete this voucher',
+      icon:'warning',
+      confirmButtonText:'Delete It',
+      showCancelButton: true,
+    }).then((result)=>{
+      if(result.isConfirmed){
+        $.post('{{route('getVoucher')}}',
+        {
+          '_token': '{{csrf_token()}}',
+          'type': 'delete',
+          'id': $(this).attr('ref-id'),
+        },function(data){
+          swal.fire({
+            'title': 'Success',
+            'text': 'Voucher Delete Successful',
+            'icon': 'success',
+            'allowOutsideClick': false,
+          }).then((result)=>{
+            if(result.isConfirmed){
+              location.reload();
+            }else{
+              location.reload();
+            }
+          });
+        },'json');
+      }
+    });
+
+  });
 
 });
 </script>
