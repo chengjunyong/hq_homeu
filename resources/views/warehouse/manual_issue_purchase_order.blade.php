@@ -95,7 +95,7 @@
         @elseif(isset($_GET['search']))
           {{ $warehouse_stock->appends(['search'=>$_GET['search']])->links() }}
         @elseif(isset($_GET['supplier']))
-          {{ $warehouse_stock->appends(['search'=>$_GET['supplier']])->links() }}
+          {{ $warehouse_stock->appends(['supplier'=>$_GET['supplier']])->links() }}
         @else
           {{ $warehouse_stock->links() }}
         @endif

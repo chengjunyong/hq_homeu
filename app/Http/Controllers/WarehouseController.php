@@ -346,7 +346,6 @@ class WarehouseController extends Controller
   public function getManualIssuePurchaseOrder()
   {
     $url = route('home')."?p=stock_menu";
-    $selected_supplier = isset($_GET['supplier']) ? $_GET['supplier'] : null; 
     $target = new \stdClass();
 
     if(isset($_GET['search']) && $_GET['search'] != ""){
@@ -371,7 +370,7 @@ class WarehouseController extends Controller
     $page = isset($_GET['page']) ? $_GET['page'] : null;
 
 
-    return view('warehouse.manual_issue_purchase_order',compact('url','warehouse_stock','supplier','target','page','selected_supplier'));
+    return view('warehouse.manual_issue_purchase_order',compact('url','warehouse_stock','supplier','target','page'));
   }
 
   public function ajaxAddManualStock(Request $request)
