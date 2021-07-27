@@ -125,7 +125,7 @@ $(document).ready(function(){
         $.post('{{route('postManualPurchaseOrderList')}}',$("form").serialize(),
         function(data){
           if(data == true){
-            Swal.fire('Success','Purchase order generate completed','success').then(()=>{window.location.assign('{{route('getPurchaseOrderHistory')}}')});
+            Swal.fire('Success','Purchase order generate completed','success').then(()=>{window.location.assign('{{route('getManualIssuePurchaseOrder')}}')});
           }else{
             Swal.fire('Fail','Item remove fail, please contact IT support','error');
           }

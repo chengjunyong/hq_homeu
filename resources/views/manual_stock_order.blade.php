@@ -155,12 +155,12 @@ $(document).ready(function(){
 });
 
 function quantityHandle(target){
-    Swal.fire({
+  Swal.fire({
     title : 'Quantity Order',
     input : 'number',
     inputAttributes : {
-      step: 1,
-      min: 1,
+      step: 0.01,
+      min: 0.01,
     },
     confirmButtonText : 'Add',
     showLoaderOnConfirm : true,
@@ -192,13 +192,12 @@ function quantityHandle(target){
       if(result == ''){
         return null;
       }else{
-        if(!Number.isInteger(+result) || result <= 0){
-          return 'Must be a real number & Quantity cannot smaller than 0';
+        if(result <= 0){
+          return 'Quantity cannot smaller than 0';
         }else{
           return null;
         }
       }
-
     },
 
   });

@@ -14,5 +14,6 @@ class Tmp_invoice_purchase extends Model
       'cost',
       'quantity',
       'total',
+      'user_id',
     ];
 }

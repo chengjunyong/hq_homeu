@@ -19,5 +19,6 @@ class Tmp_order_list extends Model
       'cost',
       'price',
       'order_quantity',
+      'user_id',
     ];
 }

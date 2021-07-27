@@ -18,5 +18,6 @@ class Purchase_order extends Model
 			'stock_lost',
       'issue_date',
 			'completed',
+      'user_id',
     ];
 }

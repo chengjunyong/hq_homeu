@@ -728,7 +728,12 @@ class BranchController extends Controller
 
     try{
       $result = Tmp_order_list::updateOrCreate(
-                              ['from_branch' => $request->from,'to_branch' => $request->to,'branch_product_id' => $product_detail->id,]
+                              [
+                                'from_branch' => $request->from,
+                                'to_branch' => $request->to,
+                                'branch_product_id' => $product_detail->id,
+                                'user_id' => Auth::user()->id,
+                              ]
                               ,[
                                 'department_id' => $product_detail->department_id,
                                 'category_id' => $product_detail->category_id,
@@ -747,6 +752,7 @@ class BranchController extends Controller
 
   public function getManualOrderList()
   {
+    $user = Auth::user()->id;
     $branch = Branch::first();
     $url = route('getManualStockOrder')."?branch_id=0&from=0";
     $from = new \stdClass();
@@ -754,6 +760,7 @@ class BranchController extends Controller
 
     $branch_group = Tmp_order_list::groupBy(['to_branch','from_branch'])
                                     ->where('to_branch',$_GET['id'])
+                                    ->where('user_id',$user)
                                     ->first();
 
     if($branch_group == null){ 
@@ -776,6 +783,7 @@ class BranchController extends Controller
 
     $tmp = Tmp_order_list::where('from_branch',$branch_group->from_branch)
                           ->where('to_branch',$branch_group->to_branch)
+                          ->where('user_id',$user)
                           ->get();
     $total_item = 0;
     foreach($tmp as $result){
@@ -787,6 +795,7 @@ class BranchController extends Controller
 
   public function postManualOrderList(Request $request)
   {
+    $user = Auth::user()->id;
     $do_configure = Do_configure::first();
     $header = $do_configure->do_prefix_number.$do_configure->next_do_number;
     $do_number = intval($do_configure->next_do_number);
@@ -806,6 +815,7 @@ class BranchController extends Controller
       'total_item' => array_sum($request->order_quantity),
       'description' => "",
       'completed' => 0,
+      'user_id'=> $user,
     ]);
 
     for($a=0;$a < count($request->barcode);$a++){
@@ -842,6 +852,7 @@ class BranchController extends Controller
 
     Tmp_order_list::where('from_branch',$request->from_branch_id)
                     ->where('to_branch',$request->to_branch_id)
+                    ->where('user_id',$user)
                     ->delete();
 
     return "true";

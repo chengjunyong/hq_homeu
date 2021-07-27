@@ -19,5 +19,6 @@ class Do_list extends Model
       'completed',
       'completed_time',
       'stock_lost',
+      'user_id',
     ];
 }

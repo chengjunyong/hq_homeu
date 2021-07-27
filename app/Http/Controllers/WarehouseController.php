@@ -377,10 +377,11 @@ class WarehouseController extends Controller
   { 
     $warehouse_stock = Warehouse_stock::where('id',$request->warehouse_stock_id)->first();
     $supplier = Supplier::where('id',$request->supplier_id)->first();
+    $user = Auth::user()->id;
 
     try{
       $result = Tmp_purchase_list::updateOrCreate(
-                              ['supplier_id'=>$request->supplier_id,'warehouse_stock_id' => $warehouse_stock->id,]
+                              ['supplier_id'=>$request->supplier_id,'warehouse_stock_id' => $warehouse_stock->id,'user_id'=>$user]
                               ,[
                                 'supplier_name' => $supplier->supplier_name,
                                 'department_id' => $warehouse_stock->department_id,
@@ -402,7 +403,10 @@ class WarehouseController extends Controller
   public function getPurchaseOrderList()
   {
     $url = route('getManualIssuePurchaseOrder');
-    $warehouse_group = Tmp_purchase_list::select(DB::raw('DISTINCT supplier_id'))->first();
+    $user = Auth::user()->id;
+    $warehouse_group = Tmp_purchase_list::select(DB::raw('DISTINCT supplier_id'))
+                                        ->where('user_id',$user)
+                                        ->first();
     if($warehouse_group == null){ 
       return "<script>
               alert('No order data, you will be redirect to order page shortly');
@@ -410,7 +414,9 @@ class WarehouseController extends Controller
               </script>";
     }
     $supplier = Supplier::where('id',$warehouse_group->supplier_id)->first();
-    $tmp = Tmp_purchase_list::where('supplier_id',$warehouse_group->supplier_id)->get();
+    $tmp = Tmp_purchase_list::where('supplier_id',$warehouse_group->supplier_id)
+                            ->where('user_id',$user)
+                            ->get();
 
     $total_item = 0;
     $total_cost = 0;
@@ -438,6 +444,7 @@ class WarehouseController extends Controller
     $supplier = Supplier::where('id',$request->supplier_id)->first();
     $date = strtotime(date("Y-m-d h:i:s"));
     $po_number = "PO".$date;
+    $user = Auth::user()->id;
 
     $purchase_order = Purchase_order::create([
                         'po_number' => $po_number,
@@ -447,6 +454,7 @@ class WarehouseController extends Controller
                         'total_quantity_items' => array_sum($request->order_quantity),
                         'total_amount' => $request->total_cost,
                         'issue_date' => $request->issue_date,
+                        'user_id' => $user,
                       ]);
 
     foreach($warehouse_stock as $key => $result){
@@ -464,13 +472,15 @@ class WarehouseController extends Controller
 
     //Delete item from Tmp_order_list
     Tmp_purchase_list::where('supplier_id',$request->supplier_id)
-                    ->delete();
+                      ->where('user_id',$user)
+                      ->delete();
 
     return json_encode(true);
   }
 
   public function getStockPurchase()
   {
+    $user = Auth::user()->id;
     $url = route('home')."?p=stock_menu";
     $a = Invoice_purchase::withTrashed()
                           ->whereRaw('YEAR(created_at) = '.date("Y"))
@@ -488,7 +498,7 @@ class WarehouseController extends Controller
     }
     $reference_no = "P".$last_id;
     $supplier = Supplier::get();
-    $tmp = Tmp_invoice_purchase::orderBy('updated_at','desc')->get();
+    $tmp = Tmp_invoice_purchase::where('user_id',$user)->orderBy('updated_at','desc')->get();
     $total = new \stdClass();
     $total->quantity = $tmp->sum('quantity');
     $total->product = count($tmp);
@@ -514,8 +524,9 @@ class WarehouseController extends Controller
 
   public function ajaxAddPurchaseListItem(Request $request)
   {
+    $user = Auth::user()->id;
     $result = Tmp_invoice_purchase::updateOrCreate(
-                                ['barcode'=>$request->barcode],
+                                ['barcode'=>$request->barcode,'user_id'=>$user],
                                 [
                                 'product_name'=>$request->product_name,
                                 'cost'=>$request->cost,
@@ -533,10 +544,26 @@ class WarehouseController extends Controller
   public function postStockPurchase(Request $request)
   {
     $user = Auth::user();
-    $purchase_items = Tmp_invoice_purchase::get();
+    $purchase_items = Tmp_invoice_purchase::where('user_id',$user->id)->get();
     $supplier = Supplier::where('id',$request->supplier_id)->first();
     $total_item = $purchase_items->sum('quantity');
     $total_cost = 0;
+
+    $a = Invoice_purchase::withTrashed()
+                          ->whereRaw('YEAR(created_at) = '.date("Y"))
+                          ->select('id')
+                          ->orderBy('id','desc')
+                          ->first();
+    if(!$a){
+      $last_id = 1;
+    }else{
+      $last_id = intval($a->id) + 1;
+    }
+    $i=7;
+    while($i>strlen($last_id)){
+      $last_id = "0".$last_id;
+    }
+    $reference_no = "P".$last_id;
 
     foreach($purchase_items as $result){
       Warehouse_stock::where('barcode',$result->barcode)
@@ -552,7 +579,7 @@ class WarehouseController extends Controller
     }
 
     $invoice_purchase = Invoice_purchase::create([
-                                            'reference_no'=>$request->reference_no,
+                                            'reference_no'=>$reference_no,
                                             'invoice_date'=>$request->invoice_date,
                                             'invoice_no'=>$request->invoice_no,
                                             'total_item'=>$total_item,
@@ -578,7 +605,7 @@ class WarehouseController extends Controller
                               ]);
     }
 
-    Tmp_invoice_purchase::truncate();
+    Tmp_invoice_purchase::where('user_id',$user->id)->delete();
 
     return back()->with('success','success');
   }
