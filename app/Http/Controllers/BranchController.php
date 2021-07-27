@@ -238,7 +238,7 @@ class BranchController extends Controller
       for($i=0;$i<count($request->barcode);$i++){
         Warehouse_stock::where('barcode',$request->barcode[$i])
                           ->update([
-                            'quantity' => DB::raw('quantity -'.$request->reorder_quantity[$i]),
+                            'quantity' => DB::raw('IF (quantity IS null,0,quantity) -'.$request->reorder_quantity[$i]),
                           ]);
       }
       
@@ -247,7 +247,7 @@ class BranchController extends Controller
         Branch_product::where('branch_id',$from_branch_id)
                         ->where('barcode',$request->barcode[$i])
                         ->update([
-                          'quantity' => DB::raw('quantity -'.$request->reorder_quantity[$i]),
+                          'quantity' => DB::raw('IF (quantity IS null,0,quantity) -'.$request->reorder_quantity[$i]),
                         ]);
       }
     }
@@ -276,6 +276,35 @@ class BranchController extends Controller
     }
 
     return view('do_history',compact('do_list','url'));
+  }
+
+  public function postDeleteDo(Request $request)
+  {
+    $user = Auth::user();
+    $do = Do_list::where('id',$request->id)->first();
+    $list = Do_detail::where('do_number',$do->do_number)->get();
+
+    if($do->from_branch_id == 0){
+      foreach($list as $result){
+        Warehouse_stock::where('barcode',$result->barcode)
+                        ->update([
+                          'quantity'=>DB::raw('IF (quantity IS null,0,quantity) +'.$result->quantity),
+                        ]);
+      }
+    }else{
+      foreach($list as $result){
+        Branch_product::where('branch_id',$do->from_branch_id)
+                        ->where('barcode',$result->barcode)
+                        ->update([
+                          'quantity' => DB::raw('IF (quantity IS null,0,quantity) +'.$result->quantity),
+                        ]);
+      }
+    }
+
+    Do_list::where('id',$request->id)->update(['deleted_by'=>$user->name]);
+    Do_list::where('id',$request->id)->delete();
+
+    return json_encode(true);
   }
 
   public function getDoHistoryDetail(Request $request)
@@ -834,7 +863,7 @@ class BranchController extends Controller
       for($i=0;$i<count($request->barcode);$i++){
         Warehouse_stock::where('barcode',$request->barcode[$i])
                           ->update([
-                            'quantity' => DB::raw('quantity -'.$request->order_quantity[$i]),
+                            'quantity' => DB::raw('IF (quantity IS null,0,quantity) -'.$request->order_quantity[$i]),
                           ]);
       }
       
@@ -843,7 +872,7 @@ class BranchController extends Controller
         Branch_product::where('branch_id',$request->from_branch_id)
                         ->where('barcode',$request->barcode[$i])
                         ->update([
-                          'quantity' => DB::raw('quantity -'.$request->order_quantity[$i]),
+                          'quantity' => DB::raw('IF (quantity IS null,0,quantity) -'.$request->order_quantity[$i]),
                         ]);
       }
     }

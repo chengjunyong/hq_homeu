@@ -41,8 +41,11 @@
 								<td>{{$result->total_item}}</td>
 								<td>{{($result->completed == 0)? 'No' : 'Yes'}}</td>
 								<td>{{$result->created_at}}</td>
-								<td><buttton class="btn btn-primary" onclick="window.open('{{route('getPrintDo',$result->do_number)}}')">Print</buttton></td>
-							</tr>
+								<td>
+                  <buttton class="btn btn-primary" onclick="window.open('{{route('getPrintDo',$result->do_number)}}')">Print</buttton>
+                  <buttton class="btn btn-danger delete" ref_id="{{$result->id}}">Delete</buttton>
+                </td>
+              </tr>
 						@endforeach
 					</tbody>
 				</table>
@@ -62,6 +65,31 @@ $(document).ready(function(){
 			window.location.assign(header);
 		}
 	});
+
+  $(".delete").click(function(){
+    let id = $(this).attr('ref_id');
+    swal.fire({
+      title:'Delele DO',
+      html:'Are you sure to delete this delivery order',
+      icon:'warning',
+      confirmButtonText:'Delete It',
+      showCancelButton: true,
+    }).then((result)=>{
+      if(result.isConfirmed){       
+        $.get('{{route('postDeleteDo')}}',
+        {
+          'id': id,
+        },function(data){
+          if(data){
+            swal.fire('Successful','Delete Successful. You will be redirect in few second','success');
+            setTimeout(()=>{window.location.reload()},'2000');
+          }else{
+            swal.fire('Error','Delete Unsuccessful, Please Contact IT Support','error');
+          }
+        },'json');
+      }
+    });
+  });
 
 });
 </script>

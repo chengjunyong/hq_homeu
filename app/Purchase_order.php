@@ -3,9 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Purchase_order extends Model
 {
+    use SoftDeletes;
     protected $table = 'purchase_order';
     protected $fillable = 
     [
@@ -19,5 +21,6 @@ class Purchase_order extends Model
       'issue_date',
 			'completed',
       'user_id',
+      'deleted_by',
     ];
 }

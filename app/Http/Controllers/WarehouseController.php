@@ -190,6 +190,15 @@ class WarehouseController extends Controller
     return view('purchase_order_history',compact('url','po'));
   }
 
+  public function getDeletePurchaseOrder(Request $request)
+  {
+    $user = Auth::user();
+    Purchase_order::where('id',$request->id)->update(['deleted_by'=>$user->name]);
+    Purchase_order::where('id',$request->id)->delete();
+
+    return json_encode(true);
+  }
+
   public function getPoHistoryDetail(Request $request)
   {
     $url = route('getPurchaseOrderHistory');
@@ -271,7 +280,7 @@ class WarehouseController extends Controller
       }else{
         Warehouse_stock::where('id',$request->product_id[$key])
                       ->update([
-                        'quantity' => DB::raw('quantity +'.$request->received_quantity[$key]),
+                        'quantity' => DB::raw('IF (quantity IS null,0,quantity) +'.$request->received_quantity[$key]),
                         'cost' => $request->cost[$key],
                       ]);
       }
@@ -666,7 +675,7 @@ class WarehouseController extends Controller
       Warehouse_stock::where('barcode',$request->barcode[$key])
                         ->update([
                           'cost'=>$request->cost[$key],
-                          'quantity' => DB::raw('quantity +'.$diff_qty),
+                          'quantity' => DB::raw('IF (quantity IS null,0,quantity) +'.$diff_qty),
                         ]);
 
       //Update Invoice Purchase Information

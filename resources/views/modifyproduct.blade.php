@@ -48,14 +48,10 @@
 						<input type="text" name="product_name" class="form-control" required value="{{$product->product_name}}">
 					</div>
           <div class="col-md-12">
-            <label>UOM</label>
+            <label>Measurement Type</label>
             <select name="uom" id="uom" class="form-control" required>
-              <option name="Bag" {{ ($product->uom == "Bag") ? 'selected' : ''}}>Bag</option>
-              <option name="Carton" {{ ($product->uom == "Carton") ? 'selected' : ''}}>Carton</option>
-              <option name="Box" {{ ($product->uom == "Box") ? 'selected' : ''}}>Box</option>
-              <option name="Dozen" {{ ($product->uom == "Dozen") ? 'selected' : ''}}>Dozen</option>
-              <option name="Piece" {{ ($product->uom == "Piece") ? 'selected' : ''}}>Piece</option>
-              <option name="Set" {{ ($product->uom == "Set") ? 'selected' : ''}}>Set</option>
+              <option value="Pcs" {{ ($product->uom == "Bag") ? 'selected' : ''}}>Bag</option>
+              <option value="Carton" {{ ($product->uom == "Carton") ? 'selected' : ''}}>Carton</option>
             </select>
           </div>
 					<div class="col-md-6">

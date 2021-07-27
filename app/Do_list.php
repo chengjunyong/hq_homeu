@@ -3,9 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Do_list extends Model
 {
+    use SoftDeletes;
     protected $table = 'do_list';
     protected $fillable = 
     [
@@ -20,5 +22,6 @@ class Do_list extends Model
       'completed_time',
       'stock_lost',
       'user_id',
+      'deleted_by',
     ];
 }

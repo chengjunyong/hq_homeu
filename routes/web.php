@@ -27,6 +27,7 @@ Route::get('/restock','BranchController@getBranchRestock')->name('getBranchResto
 Route::post('/generatedo','BranchController@postBranchStock')->name('postBranchStock');
 Route::get('/printdo/{do_number}','BranchController@getPrintDo')->name('getPrintDo');
 Route::get('/dohistory','BranchController@getDoHistory')->name('getDoHistory');
+Route::get('/deletedo','BranchController@postDeleteDo')->name('postDeleteDo');
 Route::get('/dohistorydetail/{do_number}','BranchController@getDoHistoryDetail')->name('getDoHistoryDetail');
 Route::get('/restocklist','BranchController@getRestocklist')->name('getRestocklist');
 Route::get('/restockconfirmation/{do_number}','BranchController@getRestockConfirmation')->name('getRestockConfirmation');
@@ -136,6 +137,7 @@ Route::get('/ajaxGetSupplier','WarehouseController@ajaxGetSupplier')->name('ajax
 Route::post('/sendPurchaseOrder','WarehouseController@ajaxPO')->name('ajaxPO');
 Route::get('/GeneratePurchaseOrder/{id}','WarehouseController@getGeneratePurchaseOrder')->name('getGeneratePurchaseOrder');
 Route::get('/PurchaseOrderHistory','WarehouseController@getPurchaseOrderHistory')->name('getPurchaseOrderHistory');
+Route::get('/DeletePurchaseOrder','WarehouseController@getDeletePurchaseOrder')->name('getDeletePurchaseOrder');
 Route::get('/PoHistoryDetail/{po_number}','WarehouseController@getPoHistoryDetail')->name('getPoHistoryDetail');
 Route::get('/PoList','WarehouseController@getPoList')->name('getPoList');
 Route::get('/WarehouseRestock/{po_number}','WarehouseController@getWarehouseRestock')->name('getWarehouseRestock');
