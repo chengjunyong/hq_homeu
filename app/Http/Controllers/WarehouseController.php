@@ -575,16 +575,23 @@ class WarehouseController extends Controller
     $reference_no = "P".$last_id;
 
     foreach($purchase_items as $result){
-      Warehouse_stock::where('barcode',$result->barcode)
-                      ->update([
-                        'cost'=>$result->cost,
-                        'quantity'=>DB::raw('IF (quantity IS null,0,quantity) +'.$result->quantity),
-                      ]);
+      if($result->cost != 0){
+        Warehouse_stock::where('barcode',$result->barcode)
+                        ->update([
+                          'cost'=>$result->cost,
+                          'quantity'=>DB::raw('IF (quantity IS null,0,quantity) +'.$result->quantity),
+                        ]);
 
-      Product_list::where('barcode',$result->barcode)->update(['cost'=>$result->cost]);
-      Branch_product::where('barcode',$result->barcode)->update(['cost'=>$result->cost]);
+        Product_list::where('barcode',$result->barcode)->update(['cost'=>$result->cost]);
+        Branch_product::where('barcode',$result->barcode)->update(['cost'=>$result->cost]);
 
-      $total_cost += $result->total;
+        $total_cost += $result->total;
+      }else{
+        Warehouse_stock::where('barcode',$result->barcode)
+                        ->update([
+                          'quantity'=>DB::raw('IF (quantity IS null,0,quantity) +'.$result->quantity),
+                        ]);
+      }
     }
 
     $invoice_purchase = Invoice_purchase::create([
@@ -672,11 +679,19 @@ class WarehouseController extends Controller
       //Calculate Stock Different & Update In Warehouse Stock Table
       $qty1 = Invoice_purchase_detail::where('id',$result)->select("quantity")->first();
       $diff_qty = intval($request->quantity[$key]) - intval($qty1->quantity);
-      Warehouse_stock::where('barcode',$request->barcode[$key])
-                        ->update([
-                          'cost'=>$request->cost[$key],
-                          'quantity' => DB::raw('IF (quantity IS null,0,quantity) +'.$diff_qty),
-                        ]);
+
+      if($request->cost[$key] != 0){
+        Warehouse_stock::where('barcode',$request->barcode[$key])
+                          ->update([
+                            'cost'=>$request->cost[$key],
+                            'quantity' => DB::raw('IF (quantity IS null,0,quantity) +'.$diff_qty),
+                          ]);
+      }else{
+        Warehouse_stock::where('barcode',$request->barcode[$key])
+                  ->update([
+                    'quantity' => DB::raw('IF (quantity IS null,0,quantity) +'.$diff_qty),
+                  ]);
+      }
 
       //Update Invoice Purchase Information
       $total_cost = floatval($request->total[$key]);

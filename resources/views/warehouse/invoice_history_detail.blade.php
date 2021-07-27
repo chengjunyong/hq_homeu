@@ -77,9 +77,9 @@
                     <td>{{$key +1}}</td>
                     <td>{{$result->barcode}}</td>
                     <td>{{$result->product_name}}</td>
-                    <td align="center">Rm <input type="number" class="cost" name="cost[]" min="0.01" step="0.01" value="{{$result->cost}}" style="text-align: right;width:7vw"/></td>
+                    <td align="center">Rm <input type="number" class="cost" name="cost[]" min="0.00" step="0.01" value="{{$result->cost}}" style="text-align: right;width:7vw"/></td>
                     <td align="center"><input type="number" class="quantity" name="quantity[]" min="1" step="1" value="{{$result->quantity}}" style="text-align: right;width:5vw"/></td>
-                    <td align="right">Rm <input type="number" class="total" name="total[]" min="0.01" step="0.01" value="{{$result->total_cost}}" style="text-align: right;width:10vw"/></td>
+                    <td align="right">Rm <input type="number" class="total" name="total[]" min="0.00" step="0.01" value="{{$result->total_cost}}" style="text-align: right;width:10vw"/></td>
                   </tr>
                 @endforeach
               </tbody>

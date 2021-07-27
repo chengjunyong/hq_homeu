@@ -265,7 +265,7 @@ $(document).ready(function(){
   $("#modal_submit").click(function(data){
     $("#modal_submit").prop('disabled',true);
 
-    if($("#modal_cost").val() == "" || $("#modal_cost").val() <= 0){
+    if($("#modal_cost").val() == "" || $("#modal_cost").val() < 0){
       Swal.fire('Error','Value Cost Invalid','error');
       $("#modal_submit").prop('disabled',false);
     }else if($("#modal_quantity").val() == "" || $("#modal_quantity").val() <= 0 || $("#modal_quantity").val() % 1 != 0){

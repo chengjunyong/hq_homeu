@@ -60,7 +60,7 @@
                 <td>{{$index+1}}</td>
                 <td>{{$result->code}}</td>
                 <td>{{$result->name}}</td>
-                <td align="center">{{ ($result->type == 'fixed') ? 'Fixed' : 'Percentage' }}</td>
+                <td>{{ ($result->type == 'fixed') ? 'Fixed' : 'Percentage' }}</td>
                 <td>{{$result->amount}}</td>
                 <td align="center">
                   <input type="checkbox" class="status" ref-id="{{$result->id}}" data-toggle="toggle" data-on="Active" data-off="Deactivate" {{ ($result->active == 1) ? 'checked' : '' }}>
