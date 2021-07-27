@@ -41,7 +41,7 @@
 						<input type="text" name="product_name" class="form-control" readonly value="{{$warehouse_stock->product_name}}">
 					</div>
           <div class="col-md-12">
-            <label>UOM</label>
+            <label>Measurement Type</label>
             <input type="text" name="uom" class="form-control" readonly value="{{$warehouse_stock->uom}}">
           </div>
 					<div class="col-md-6">

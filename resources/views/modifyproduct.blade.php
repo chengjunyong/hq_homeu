@@ -50,8 +50,9 @@
           <div class="col-md-12">
             <label>Measurement Type</label>
             <select name="uom" id="uom" class="form-control" required>
-              <option value="Pcs" {{ ($product->uom == "Bag") ? 'selected' : ''}}>Bag</option>
-              <option value="Carton" {{ ($product->uom == "Carton") ? 'selected' : ''}}>Carton</option>
+              <option value="Pcs" {{ ($product->uom == "Pcs") ? 'selected' : ''}}>Pcs</option>
+              <option value="Kg" {{ ($product->uom == "Kg") ? 'selected' : ''}}>Kilogram</option>
+              <option value="Meter" {{ ($product->uom == "Meter") ? 'selected' : ''}}>Meter</option>
             </select>
           </div>
 					<div class="col-md-6">
