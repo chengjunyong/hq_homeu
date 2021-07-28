@@ -212,7 +212,7 @@
             Cost
           </div>
           <div class="col-9">
-            <input type="number" min=0.01 step=0.01 id="modal_cost" class="form-control" />
+            <input type="number" min=0.01 step=0.001 id="modal_cost" class="form-control" />
           </div>
         </div>
         <div class="row">
@@ -220,7 +220,7 @@
             Total
           </div>
           <div class="col-9">
-            <input type="number" id="modal_total" class="form-control" />
+            <input type="number" step=0.001 id="modal_total" class="form-control" />
           </div>
         </div>
       </div>
@@ -283,7 +283,7 @@ $(document).ready(function(){
         if(data != false){
           $("#no_data").remove();
           $("#"+data['barcode']).remove();
-          let display_cost = parseFloat(data['cost']).toFixed(2);
+          let display_cost = parseFloat(data['cost']).toFixed(3);
           let display_total = data['total'];
           let html = `<tr class="data" id=${data['barcode']}>`;
           html += `<td>${data['barcode']}</td>`;
@@ -326,14 +326,14 @@ $(document).ready(function(){
     let quantity = $("#modal_quantity").val();
     let cost = $(this).val();
     let total = quantity * cost;
-    $("#modal_total").val(total.toFixed(2));
+    $("#modal_total").val(total.toFixed(3));
   });
 
   $("#modal_total").keyup(function(){
     let quantity = $("#modal_quantity").val();
     let total = $(this).val();
     let cost = total / quantity;
-    $("#modal_cost").val(cost.toFixed(2));
+    $("#modal_cost").val(cost.toFixed(3));
   });
 
 declareDelete();
@@ -382,7 +382,7 @@ function calTotal(){
 
   $("#total_product").text(total_product);
   $("#total_quantity").text(total_quantity);
-  $("#total_amount").text(convertNumber(total_amount.toFixed(2)));
+  $("#total_amount").text(convertNumber(total_amount.toFixed(3)));
 }
 
 </script>

@@ -57,7 +57,7 @@
           </div>
 					<div class="col-md-6">
 						<label>Cost</label>
-						<input type="number" min="0" step="0.01" name="cost" id="cost" class="form-control" required value="{{$product->cost}}">
+						<input type="number" min="0" step="0.001" name="cost" id="cost" class="form-control" required value="{{number_format($product->cost,3)}}">
 					</div>
 					<div class="col-md-6">
 						<label>Price <a href="{{route('getProductConfig')}}">(Auto Increase {{$default_price->default_price_margin}}%)</a></label>
@@ -102,12 +102,20 @@
             <input type="datetime-local" id="wholesales_end" name="wholesales_end" class="form-control" value="{{ str_replace(" ","T",$product->wholesale_end_date)}}">
           </div>
           <div class="col-md-6">
-            <label>Wholesales Price (Each Product)</label>
-            <input type="number" min="0" step="0.01" id="wholesales_price" name="wholesales_price" class="form-control" value="{{$product->wholesale_price}}">
+            <label>Wholesales Price (Each Product) - Level 1</label>
+            <input type="number" min="0" step="0.001" id="wholesales_price" name="wholesales_price" class="form-control" value="{{($product->wholesale_price != '') ? number_format($product->wholesale_price,3) : ''}}">
           </div>
           <div class="col-md-6">
-            <label>Wholesales Minimum Quantity</label>
+            <label>Wholesales Minimum Quantity - Level 1</label>
             <input type="number" min="2" id="wholesales_quantity" name="wholesales_quantity" class="form-control" value="{{$product->wholesale_quantity}}">
+          </div>
+          <div class="col-md-6">
+            <label>Wholesales Price (Each Product) - Level 2</label>
+            <input type="number" min="0" step="0.001" id="wholesales_price2" name="wholesales_price2" class="form-control" value="{{($product->wholesale_price2 != '') ? number_format($product->wholesale_price2,3) : ''}}">
+          </div>
+          <div class="col-md-6">
+            <label>Wholesales Minimum Quantity - Level 2</label>
+            <input type="number" min="2" id="wholesales_quantity2" name="wholesales_quantity2" class="form-control" value="{{$product->wholesale_quantity2}}">
           </div>
 					<div class="col-md-12" style="text-align: center;margin-top: 20px">
 						<input type="submit" class="btn btn-primary" value="Update">

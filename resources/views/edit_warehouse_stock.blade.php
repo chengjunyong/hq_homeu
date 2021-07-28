@@ -46,7 +46,7 @@
           </div>
 					<div class="col-md-6">
 						<label>Cost</label>
-						<input type="number" min="0" step="0.01" name="cost" id="cost" class="form-control" required value="{{$warehouse_stock->cost}}">
+						<input type="number" min="0" step="0.01" name="cost" id="cost" class="form-control" required value="{{number_format($warehouse_stock->cost,3)}}">
 					</div>
           <div class="col-md-6">
             <label>Stock Quantity</label>

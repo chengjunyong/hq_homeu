@@ -45,7 +45,6 @@
 						<td>Barcode</td>
 						<td>Product Name</td>
 						<td>Cost</td>
-						<td>Price</td>
 						<td>Stock Quantity</td>
 						<td>Reorder Level</td>
 						<td style="width:10%">Recommend QTY</td>
@@ -58,8 +57,7 @@
 							<td>{{$key+1}}</td>
 							<td>{{$result->barcode}}</td>
 							<td><a href="{{route('getEditWarehouseProduct',$result->id)}}">{{$result->product_name}}</a></td>
-							<td>{{number_format($result->cost,2)}}</td>
-							<td>{{number_format($result->price,2)}}</td>
+							<td>{{number_format($result->cost,3)}}</td>
 							<td>{{$result->quantity}}</td>
 							<td>{{$result->reorder_level}}</td>
 							<td>{{$result->reorder_quantity}}</td>
