@@ -36,7 +36,7 @@ class api extends Controller
       $branch_id = $request->branch_id;
       $session_list = $request->session_list;
 
-      $previous_transaction_detail = transaction_detail::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->selectRaw('*, sum(quantity + wholesale_quantity) as total_quantity')->groupBy('product_id')->get();
+      $previous_transaction_detail = transaction_detail::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->groupBy('product_id')->get();
 
       transaction::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->delete();
       transaction_detail::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->delete();
@@ -105,7 +105,6 @@ class api extends Controller
           'product_name' => $data['product_name'],
           'quantity' => $data['quantity'],
           'price' => $data['price'],
-          'wholesale_quantity' => $data['wholesale_quantity'],
           'wholesale_price' => $data['wholesale_price'],
           'discount' => $data['discount'],
           'subtotal' => $data['subtotal'],
@@ -123,7 +122,7 @@ class api extends Controller
           $transaction_product[$product_name]->quantity = 0;
         }
 
-        $transaction_product[$product_name]->quantity += ($data['quantity'] + $data['wholesale_quantity']);
+        $transaction_product[$product_name]->quantity -= $data['quantity'];
 
         array_push($transaction_detail_query, $query);
       }
@@ -131,11 +130,12 @@ class api extends Controller
       foreach($transaction_product as $key => $transaction_product_detail)
       {
         $product_id = str_replace("product_", "", $key);
+
         foreach($previous_transaction_detail as $previous_transaction)
         {
           if($product_id == $previous_transaction->product_id)
           {
-            $transaction_product[$key]->quantity = $transaction_product_detail->quantity - $previous_transaction->total_quantity;
+            $transaction_product[$key]->quantity = $transaction_product_detail->quantity + $previous_transaction->quantity;
             break;
           }
         }
@@ -236,8 +236,6 @@ class api extends Controller
 
       // prevent duplicate
       Refund::where('branch_id', $branch_id)->whereIn('branch_refund_id', $branch_refund_id_array)->delete();
-      Refund_detail::where('branch_id', $branch_id)->whereIn('branch_refund_id', $branch_refund_id_array)->delete();
-
       Refund::insert($branch_refund_query);
       // end
 
@@ -283,7 +281,7 @@ class api extends Controller
       foreach($prev_refund_detail as $prev_refund)
       {
         $product_name = "product_".$prev_refund->product_id;
-        $transaction_product[$product_name]->quantity += $prev_refund->quantity;
+        $transaction_product[$product_name]->quantity -= $prev_refund->quantity;
       }
 
       // prevent duplicate
@@ -297,7 +295,12 @@ class api extends Controller
 
         if($branch_product)
         {
-          $stock = $branch_product->quantity - $transaction_product_detail->quantity;
+          if(!$branch_product->quantity)
+          {
+            $branch_product->quantity = 0;
+          }
+          
+          $stock = $branch_product->quantity + $transaction_product_detail->quantity;
           Branch_product::where('id', $branch_product->id)->update([
             'quantity' => $stock
           ]);
@@ -305,7 +308,7 @@ class api extends Controller
       }
 
       // more than 10000, php will return error
-      $product_list = Branch_product::withTrashed()->select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'wholesale_price', 'wholesale_quantity', 'wholesale_start_date', 'wholesale_end_date', 'promotion_start', 'promotion_end', 'promotion_price', 'uom', 'deleted_at')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
+      $product_list = Branch_product::withTrashed()->select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'wholesale_price', 'wholesale_price2', 'wholesale_quantity', 'wholesale_quantity2', 'wholesale_start_date', 'wholesale_end_date', 'promotion_start', 'promotion_end', 'promotion_price', 'uom', 'deleted_at')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
 
       $response = new \stdClass();
       $response->error = 0;
@@ -347,7 +350,7 @@ class api extends Controller
         return response()->json($response);
       }
       
-      $product_list = Branch_product::withTrashed()->select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'wholesale_price', 'wholesale_quantity', 'wholesale_start_date', 'wholesale_end_date', 'promotion_start', 'promotion_end', 'promotion_price', 'uom', 'deleted_at')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
+      $product_list = Branch_product::withTrashed()->select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'wholesale_price', 'wholesale_price2', 'wholesale_quantity', 'wholesale_quantity2', 'wholesale_start_date', 'wholesale_end_date', 'promotion_start', 'promotion_end', 'promotion_price', 'uom', 'deleted_at')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
 
       $voucher_list = Voucher::get();
 
