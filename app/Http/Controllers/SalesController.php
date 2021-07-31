@@ -444,210 +444,333 @@ class SalesController extends Controller
     $selected_date_from = $selected_date." 00:00:00";
     $selected_date_to = $selected_date." 23:59:59";
 
-    $branch = Branch::where('token', $request->branch)->first();
-
-    $transaction = Transaction::whereBetween('transaction_date', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
-
-    $payment_type = ['cash', 'card', 'tng', 'maybank_qr', 'grab_pay', 'boost', 'other'];
-    
-    $cashier_list = array();
-    $cashier_ip_array = array();
-
-    $branch_shift = Branch_shift::whereBetween('shift_created_at', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
-    foreach($branch_shift as $shift)
+    if($request->report_type == "single")
     {
-      if(!in_array($shift->ip, $cashier_ip_array))
+      $branch = Branch::where('token', $request->branch)->first();
+
+      $transaction = Transaction::whereBetween('transaction_date', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
+
+      $payment_type = ['cash', 'card', 'tng', 'maybank_qr', 'grab_pay', 'boost', 'other'];
+      
+      $cashier_list = array();
+      $cashier_ip_array = array();
+
+      $branch_shift = Branch_shift::whereBetween('shift_created_at', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
+      foreach($branch_shift as $shift)
       {
-        $cashier_detail = new \stdClass();
-        $cashier_detail->ip = $shift->ip;
-
-        $cashier_name = $shift->cashier_name;
-        if(!$cashier_name)
+        if(!in_array($shift->ip, $cashier_ip_array))
         {
-          $cashier_name = $shift->ip;
+          $cashier_detail = new \stdClass();
+          $cashier_detail->ip = $shift->ip;
+
+          $cashier_name = $shift->cashier_name;
+          if(!$cashier_name)
+          {
+            $cashier_name = $shift->ip;
+          }
+
+          $cashier_detail->cashier_name = $cashier_name;
+          $cashier_detail->opening = $shift->opening_amount;
+          $cashier_detail->float_in = 0;
+          $cashier_detail->cash = 0;
+          $cashier_detail->total = 0;
+          $cashier_detail->float_out = 0;
+          $cashier_detail->refund = 0;
+          // $cashier_detail->boss = 0;
+          $cashier_detail->remain = 0;
+
+          $payment_type_list = array();
+          foreach($payment_type as $type)
+          {
+            $payment_type_detail = new \stdClass();
+            $payment_type_detail->type = $type;
+            $payment_type_detail->total = 0;
+
+            array_push($payment_type_list, $payment_type_detail);
+          }
+
+          $cashier_detail->payment_type = $payment_type_list;
+
+          array_push($cashier_ip_array, $shift->ip);
+          array_push($cashier_list, $cashier_detail);
         }
-
-        $cashier_detail->cashier_name = $cashier_name;
-        $cashier_detail->opening = $shift->opening_amount;
-        $cashier_detail->float_in = 0;
-        $cashier_detail->cash = 0;
-        $cashier_detail->total = 0;
-        $cashier_detail->float_out = 0;
-        $cashier_detail->refund = 0;
-        // $cashier_detail->boss = 0;
-        $cashier_detail->remain = 0;
-
-        $payment_type_list = array();
-        foreach($payment_type as $type)
-        {
-          $payment_type_detail = new \stdClass();
-          $payment_type_detail->type = $type;
-          $payment_type_detail->total = 0;
-
-          array_push($payment_type_list, $payment_type_detail);
-        }
-
-        $cashier_detail->payment_type = $payment_type_list;
-
-        array_push($cashier_ip_array, $shift->ip);
-        array_push($cashier_list, $cashier_detail);
-      }
-    }
-
-    $total = 0;
-    $total_payment_type = array();
-    foreach($payment_type as $type)
-    {
-      $total_payment_detail = new \stdClass();
-      $total_payment_detail->type = $type;
-      $total_payment_detail->total = 0;
-
-      array_push($total_payment_type, $total_payment_detail);
-    }
-
-    foreach($transaction as $value)
-    {
-      $total += $value->total;
-      if(!in_array($value->ip, $cashier_ip_array))
-      {
-        $cashier_detail = new \stdClass();
-        $cashier_detail->ip = $value->ip;
-
-        $cashier_name = $value->cashier_name;
-        if(!$cashier_name)
-        {
-          $cashier_name = $value->ip;
-        }
-        $cashier_detail->cashier_name = $cashier_name;
-        $cashier_detail->opening = 0; 
-        $cashier_detail->float_in = 0;
-        $cashier_detail->cash = 0;
-        $cashier_detail->total = 0;
-        $cashier_detail->float_out = 0;
-        $cashier_detail->refund = 0;
-        // $cashier_detail->boss = 0;
-        $cashier_detail->remain = 0;
-
-        $payment_type_list = array();
-        foreach($payment_type as $type)
-        {
-          $payment_type_detail = new \stdClass();
-          $payment_type_detail->type = $type;
-          $payment_type_detail->total = 0;
-
-          array_push($payment_type_list, $payment_type_detail);
-        }
-
-        $cashier_detail->payment_type = $payment_type_list;
-
-        array_push($cashier_ip_array, $value->ip);
-        array_push($cashier_list, $cashier_detail);
       }
 
-      if($value->payment_type == "debit_card" || $value->payment_type == "credit_card")
+      $total = 0;
+      $total_payment_type = array();
+      foreach($payment_type as $type)
       {
-        $value->payment_type = "card";
+        $total_payment_detail = new \stdClass();
+        $total_payment_detail->type = $type;
+        $total_payment_detail->total = 0;
+
+        array_push($total_payment_type, $total_payment_detail);
       }
+
+      foreach($transaction as $value)
+      {
+        $total += $value->total;
+        if(!in_array($value->ip, $cashier_ip_array))
+        {
+          $cashier_detail = new \stdClass();
+          $cashier_detail->ip = $value->ip;
+
+          $cashier_name = $value->cashier_name;
+          if(!$cashier_name)
+          {
+            $cashier_name = $value->ip;
+          }
+          $cashier_detail->cashier_name = $cashier_name;
+          $cashier_detail->opening = 0; 
+          $cashier_detail->float_in = 0;
+          $cashier_detail->cash = 0;
+          $cashier_detail->total = 0;
+          $cashier_detail->float_out = 0;
+          $cashier_detail->refund = 0;
+          // $cashier_detail->boss = 0;
+          $cashier_detail->remain = 0;
+
+          $payment_type_list = array();
+          foreach($payment_type as $type)
+          {
+            $payment_type_detail = new \stdClass();
+            $payment_type_detail->type = $type;
+            $payment_type_detail->total = 0;
+
+            array_push($payment_type_list, $payment_type_detail);
+          }
+
+          $cashier_detail->payment_type = $payment_type_list;
+
+          array_push($cashier_ip_array, $value->ip);
+          array_push($cashier_list, $cashier_detail);
+        }
+
+        if($value->payment_type == "debit_card" || $value->payment_type == "credit_card")
+        {
+          $value->payment_type = "card";
+        }
+
+        foreach($cashier_list as $cashier)
+        {
+          if($cashier->ip == $value->ip)
+          {
+            $cashier->total += $value->total;
+
+            foreach($cashier->payment_type as $cashier_payment_type)
+            {
+              if($cashier_payment_type->type == $value->payment_type)
+              {
+                $cashier_payment_type->total += $value->total;
+                break;
+              }
+            }
+
+            if($value->payment_type == "cash")
+            {
+              $cashier->cash += $value->total;
+            }
+            break;
+          }
+        }
+
+        foreach($total_payment_type as $total_payment)
+        {
+          if($total_payment->type == $value->payment_type)
+          {
+            $total_payment->total += $value->total;
+            break;
+          }
+        }
+      }
+
+      $cash_float = Cash_float::whereBetween('cash_float_created_at', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
+
+      foreach($cash_float as $cash_float_detail)
+      {
+        foreach($cashier_list as $cashier)
+        {
+          if($cashier->ip == $cash_float_detail->ip)
+          {
+            if($cash_float_detail->type == "in")
+            {
+              $cashier->float_in += $cash_float_detail->amount;
+            }
+            elseif($cash_float_detail->type == "out")
+            {
+              $cashier->float_out += $cash_float_detail->amount;
+            }
+            // elseif($cash_float_detail->type == "boss")
+            // {
+            //   $cashier->boss += $cash_float_detail->amount;
+            // }
+            break;
+          }
+        }
+      }
+
+      $refund = Refund::whereBetween('refund_created_at', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
+
+      foreach($refund as $refund_info)
+      {
+        foreach($cashier_list as $cashier)
+        {
+          if($cashier->ip == $refund_info->ip)
+          {
+            $cashier->refund += $refund_info->total;
+            break;
+          }
+        }
+      }
+
+      $cashier_total = new \stdClass();
+      $cashier_total->opening = 0; 
+      $cashier_total->float_in = 0;
+      $cashier_total->cash = 0;
+      $cashier_total->closing = 0;
+      $cashier_total->float_out = 0;
+      $cashier_total->refund = 0;
+      // $cashier_total->boss = 0;
+      $cashier_total->remain = 0;
 
       foreach($cashier_list as $cashier)
       {
-        if($cashier->ip == $value->ip)
-        {
-          $cashier->total += $value->total;
+        $remain = $cashier->float_in + $cashier->cash - $cashier->float_out - $cashier->refund;
+        $cashier->remain = $remain;
 
-          foreach($cashier->payment_type as $cashier_payment_type)
+        $cashier_total->opening += $cashier->opening;
+        $cashier_total->float_in += $cashier->float_in;
+        $cashier_total->cash += $cashier->cash;
+        // $cashier_total->total += $cashier->total;
+        $cashier_total->closing += $cashier->opening;
+        $cashier_total->float_out += $cashier->float_out;
+        $cashier_total->refund += $cashier->refund;
+        // $cashier_total->boss += $cashier->boss;
+        $cashier_total->remain += $cashier->remain;
+      }
+
+      return view('report.branch_cashier_report_detail',compact('cashier_list', 'payment_type', 'total_payment_type', 'total', 'cashier_total', 'branch', 'selected_date', 'url', 'date', 'user'));
+    }
+    elseif($request->report_type == "all")
+    {
+      $branch_list = Branch::get();
+
+      $payment_type = ['cash', 'card', 'tng', 'maybank_qr', 'grab_pay', 'boost', 'other'];
+
+      $total = 0;
+
+      $total_payment_type = array();
+      foreach($payment_type as $type)
+      {
+        $total_payment_detail = new \stdClass();
+        $total_payment_detail->type = $type;
+        $total_payment_detail->total = 0;
+
+        array_push($total_payment_type, $total_payment_detail);
+      }
+
+      $branch_total = new \stdClass();
+      $branch_total->opening = 0; 
+      $branch_total->float_in = 0;
+      $branch_total->cash = 0;
+      $branch_total->closing = 0;
+      $branch_total->float_out = 0;
+      $branch_total->refund = 0;
+      $branch_total->remain = 0;
+
+      foreach($branch_list as $branch)
+      {
+        $transaction_list = Transaction::whereBetween('transaction_date', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
+
+        $branch->total = 0;
+        foreach($payment_type as $type)
+        {
+          $branch->$type = 0;
+        }
+
+        foreach($transaction_list as $transaction)
+        {
+          $total += $transaction->total;
+          $branch->total += $transaction->total;
+          if($transaction->payment_type == "credit_card" || $transaction->payment_type == "debit_card")
           {
-            if($cashier_payment_type->type == $value->payment_type)
+            $transaction->payment_type = "card";
+          }
+
+          $payment_type_found = 0;
+          foreach($payment_type as $type)
+          {
+            if($transaction->payment_type == $type)
             {
-              $cashier_payment_type->total += $value->total;
+              $payment_type_found = 1;
               break;
             }
           }
 
-          if($value->payment_type == "cash")
+          if($payment_type_found == 0)
           {
-            $cashier->cash += $value->total;
+            $transaction->payment_type = "other";
           }
-          break;
-        }
-      }
 
-      foreach($total_payment_type as $total_payment)
-      {
-        if($total_payment->type == $value->payment_type)
-        {
-          $total_payment->total += $value->total;
-          break;
-        }
-      }
-    }
-
-    $cash_float = Cash_float::whereBetween('cash_float_created_at', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
-
-    foreach($cash_float as $cash_float_detail)
-    {
-      foreach($cashier_list as $cashier)
-      {
-        if($cashier->ip == $cash_float_detail->ip)
-        {
-          if($cash_float_detail->type == "in")
+          foreach($total_payment_type as $total_payment_detail)
           {
-            $cashier->float_in += $cash_float_detail->amount;
+            if($total_payment_detail->type == $transaction->payment_type)
+            {
+              $total_payment_detail->total += $transaction->total;
+              break;
+            }
           }
-          elseif($cash_float_detail->type == "out")
-          {
-            $cashier->float_out += $cash_float_detail->amount;
-          }
-          // elseif($cash_float_detail->type == "boss")
-          // {
-          //   $cashier->boss += $cash_float_detail->amount;
-          // }
-          break;
+
+          $transaction_payment_type = $transaction->payment_type;
+          $branch->$transaction_payment_type += $transaction->total;
         }
-      }
-    }
 
-    $refund = Refund::whereBetween('refund_created_at', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
+        $branch_shift = Branch_shift::whereBetween('shift_created_at', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->groupBy('ip')->get();
 
-    foreach($refund as $refund_info)
-    {
-      foreach($cashier_list as $cashier)
-      {
-        if($cashier->ip == $refund_info->ip)
+        $branch->opening = 0;
+        $branch->float_in = 0;
+        $branch->float_out = 0;
+        $branch->refund = 0;
+        $branch->remain = 0;
+
+        foreach($branch_shift as $shift)
         {
-          $cashier->refund += $refund_info->total;
-          break;
+          $branch->opening += $shift->opening_amount;
         }
+
+        $total_float_in = Cash_float::whereBetween('cash_float_created_at', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->where('type', 'in')->selectRaw('*, sum(amount) as cash_float_total')->groupBy('type')->first();
+        $total_float_out = Cash_float::whereBetween('cash_float_created_at', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->where('type', 'out')->selectRaw('*, sum(amount) as cash_float_total')->groupBy('type')->first();
+
+        if($total_float_in)
+        {
+          $branch->float_in = $total_float_in->cash_float_total;
+        }
+
+        if($total_float_out)
+        {
+          $branch->float_out = $total_float_out->cash_float_total;
+        }
+
+        $refund_list = Refund::whereBetween('refund_created_at', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->selectRaw('*, sum(total) as refund_total')->first();
+
+        if($refund_list)
+        {
+          $branch->refund = $refund_list->refund_total;
+        }
+
+        $branch->remain = $branch->float_in + $branch->cash - $branch->float_out - $branch->refund;
+
+        $branch_total->opening += $branch->opening; 
+        $branch_total->float_in += $branch->float_in;
+        $branch_total->cash += $branch->cash;
+        $branch_total->float_out += $branch->float_out;
+        $branch_total->refund += $branch->refund;
+        $branch_total->remain += $branch->remain;
       }
+
+      return view('report.branch_full_report_detail',compact('branch_list', 'payment_type', 'total', 'total_payment_type', 'branch_total', 'selected_date', 'url', 'date', 'user'));
     }
-
-    $cashier_total = new \stdClass();
-    $cashier_total->opening = 0; 
-    $cashier_total->float_in = 0;
-    $cashier_total->cash = 0;
-    $cashier_total->closing = 0;
-    $cashier_total->float_out = 0;
-    $cashier_total->refund = 0;
-    // $cashier_total->boss = 0;
-    $cashier_total->remain = 0;
-
-    foreach($cashier_list as $cashier)
-    {
-      $remain = $cashier->float_in + $cashier->cash - $cashier->float_out - $cashier->refund;
-      $cashier->remain = $remain;
-
-      $cashier_total->opening += $cashier->opening;
-      $cashier_total->float_in += $cashier->float_in;
-      $cashier_total->cash += $cashier->cash;
-      // $cashier_total->total += $cashier->total;
-      $cashier_total->closing += $cashier->opening;
-      $cashier_total->float_out += $cashier->float_out;
-      $cashier_total->refund += $cashier->refund;
-      // $cashier_total->boss += $cashier->boss;
-      $cashier_total->remain += $cashier->remain;
-    }
-
-    return view('report.branch_cashier_report_detail',compact('cashier_list', 'payment_type', 'total_payment_type', 'total', 'cashier_total', 'branch', 'selected_date', 'url', 'date', 'user'));
+    
   }
 
   public function exportSalesReport(Request $request)

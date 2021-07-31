@@ -31,6 +31,20 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-12 form-group">
+            <div class="checkbox icheck" style="display: inline-block; margin-right: 10px;">
+              <label style="cursor: pointer;">
+                <input class="form-check-input" type="radio" name="report_type" value="single" checked /> Single branch
+              </label>
+            </div>
+
+            <div class="checkbox icheck" style="display: inline-block; margin-right: 10px;">
+              <label style="cursor: pointer;">
+                <input class="form-check-input" type="radio" name="report_type" value="all" /> All branch
+              </label>
+            </div>
+          </div>
+
+          <div class="col-md-12 form-group" id="branch_list">
             <label>Branch</label>
             <!-- <button type="button" class="btn btn-primary" id="export_report" style="float: right; margin-bottom: 10px;">Export Report</button> -->
             <select class="form-control" style="width: 100%;" name="branch">
@@ -59,6 +73,7 @@
   @csrf
   <input type="hidden" id="report_branch" name="branch" />
   <input type="hidden" id="report_date" name="report_date" value="{{ $selected_date }}" />
+  <input type="hidden" id="report_type" name="report_type" value="single" />
 </form>
 
 <script>
@@ -66,6 +81,23 @@
   $(document).ready(function(){
 
     $(".select2").select2();
+
+    $('.form-check-input').iCheck({
+      checkboxClass: 'icheckbox_square-blue',
+      radioClass: 'iradio_square-blue',
+      increaseArea: '20%' /* optional */
+    });
+
+    $("input[name='report_type']").on("ifChecked", function(){
+      if($(this).val() == "all")
+      {
+        $("#branch_list").hide();
+      }
+      else
+      {
+        $("#branch_list").show();
+      }
+    });
 
     $("#export_report").click(function(){
       var report_date_from = $("input[name='report_date']").val();
