@@ -763,10 +763,13 @@ class SalesController extends Controller
         $branch_total->opening += $branch->opening; 
         $branch_total->float_in += $branch->float_in;
         $branch_total->cash += $branch->cash;
+        $branch_total->closing += $branch->opening; 
         $branch_total->float_out += $branch->float_out;
         $branch_total->refund += $branch->refund;
         $branch_total->remain += $branch->remain;
       }
+
+      dd($branch_total);
 
       return view('report.branch_full_report_detail',compact('branch_list', 'payment_type', 'total', 'total_payment_type', 'branch_total', 'selected_date', 'url', 'date', 'user'));
     }
