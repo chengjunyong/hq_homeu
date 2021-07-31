@@ -769,8 +769,6 @@ class SalesController extends Controller
         $branch_total->remain += $branch->remain;
       }
 
-      dd($branch_total);
-
       return view('report.branch_full_report_detail',compact('branch_list', 'payment_type', 'total', 'total_payment_type', 'branch_total', 'selected_date', 'url', 'date', 'user'));
     }
     
