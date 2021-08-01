@@ -18,6 +18,9 @@ use App\Tmp_purchase_list;
 use App\Tmp_invoice_purchase;
 use App\Invoice_purchase;
 use App\Invoice_purchase_detail;
+use App\Good_return;
+use App\Good_return_detail;
+use App\Tmp_good_return;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Auth;
@@ -554,6 +557,11 @@ class WarehouseController extends Controller
   {
     $user = Auth::user();
     $purchase_items = Tmp_invoice_purchase::where('user_id',$user->id)->get();
+
+    if(count($purchase_items) <= 0){
+      return back()->with('fail','fail'); 
+    }
+    
     $supplier = Supplier::where('id',$request->supplier_id)->first();
     $total_item = $purchase_items->sum('quantity');
     $total_cost = 0;
@@ -712,6 +720,214 @@ class WarehouseController extends Controller
                       ->update([
                         'total_cost'=>$total,
                         'total_item'=>$total_quantity,
+                      ]);
+
+    return back()->with('success','success');
+  }
+
+  public function getGoodReturn()
+  {
+    $user = Auth::user()->id;
+    $url = route('home')."?p=stock_menu";
+    $a = Good_return::withTrashed()
+                          ->whereRaw('YEAR(created_at) = '.date("Y"))
+                          ->select('id')
+                          ->orderBy('id','desc')
+                          ->first();
+    if(!$a){
+      $last_id = 1;
+    }else{
+      $last_id = intval($a->id) + 1;
+    }
+    $i=7;
+    while($i>strlen($last_id)){
+      $last_id = "0".$last_id;
+    }
+    $gr_no = "GR".$last_id;
+    $supplier = Supplier::get();
+    $tmp = Tmp_good_return::where('user_id',$user)->orderBy('updated_at','desc')->get();
+    $total = new \stdClass();
+    $total->quantity = $tmp->sum('quantity');
+    $total->product = count($tmp);
+    $total->amount = 0;
+    foreach($tmp as $result){
+      $total->amount += $result->total;
+    }
+
+    return view('warehouse.good_return',compact('url','supplier','tmp','total','gr_no'));
+  }
+
+  public function ajaxAddGoodReturnItem(Request $request)
+  {
+    $user = Auth::user();
+    $result = Tmp_good_return::updateOrCreate(
+                            ['user_id'=>$user->id,'barcode'=>$request->barcode],
+                            [
+                              'product_name' => $request->product_name,
+                              'cost' => 0,
+                              'quantity' => $request->quantity,
+                              'total' => $request->total,
+                            ]);
+
+    return $result;
+  }
+
+  public function ajaxDeleteGoodReturnItem(Request $request)
+  {
+    $target = Tmp_invoice_purchase::where('id',$request->id)->first();
+    Tmp_good_return::where('id',$request->id)->delete();
+
+    return json_encode($target);
+  }
+
+  public function postGoodReturn(Request $request)
+  {
+    $user = Auth::user();
+    $good_list = Tmp_good_return::where('user_id',$user->id)->get();
+
+    if(count($good_list) <= 0){
+      return back()->with('fail','fail'); 
+    }
+
+    $supplier = Supplier::where('id',$request->supplier_id)->first();
+    $total_item = $good_list->sum('quantity');
+
+    $a = Good_return::withTrashed()
+                          ->whereRaw('YEAR(created_at) = '.date("Y"))
+                          ->select('id')
+                          ->orderBy('id','desc')
+                          ->first();
+    if(!$a){
+      $last_id = 1;
+    }else{
+      $last_id = intval($a->id) + 1;
+    }
+
+    $i=7;
+    while($i>strlen($last_id)){
+      $last_id = "0".$last_id;
+    }
+
+    $gr_no = "GR".$last_id;
+
+    $total_cost = 0;
+    foreach($good_list as $result){
+      Warehouse_stock::where('barcode',$result->barcode)
+                      ->update([
+                        'quantity' => DB::raw('IF (quantity IS null,0,quantity) -'.$result->quantity),
+                      ]);
+
+    $total_cost += $result->total;
+    }
+
+    $good_return = Good_return::create([
+                                  'gr_no'=>$gr_no,
+                                  'gr_date'=>$request->gr_date,
+                                  'ref_no'=>$request->ref_no,
+                                  'total_quantity'=>$total_item,
+                                  'total_cost'=>$total_cost,
+                                  'total_different_item'=>count($good_list),
+                                  'supplier_id'=>$supplier->id,
+                                  'supplier_name'=>$supplier->supplier_name,
+                                  'creator_id'=>$user->id,
+                                  'creator_name'=>$user->name,
+                                  'completed'=>1,
+                                ]); 
+
+    foreach($good_list as $result){
+      $item_cost = 0;
+      $item_cost = $result->total;
+      Good_return_detail::create([
+                                'good_return_id'=>$good_return->id,
+                                'barcode'=>$result->barcode,
+                                'product_name'=>$result->product_name,
+                                'cost'=>0,
+                                'quantity'=>$result->quantity,
+                                'total_cost'=>$item_cost,
+                                'update_by'=>$user->name,
+                              ]);
+    }
+
+    Tmp_good_return::where('user_id',$user->id)->delete();
+
+    return back()->with('success','success');
+
+  }
+
+  public function getGoodReturnHistory()
+  {
+    $url = route('home')."?p=stock_menu";
+
+    $gr_list = Good_return::orderby('id','desc')->paginate(15);
+
+    return view('warehouse.good_return_history',compact('gr_list','url'));
+  }
+
+  public function getGoodReturnHistoryDetail(Request $request)
+  {
+    $url = route('getGoodReturnHistory');
+
+    $gr = Good_return::where('id',$request->id)->first();
+
+    if($gr == null){
+      return redirect($url);
+    }
+
+    $gr_detail = Good_return_detail::where('good_return_id',$gr->id)->get();
+
+    return view('warehouse.good_return_history_detail',compact('url','gr_detail','gr'));
+  }
+
+  public function ajaxDeleteGr(Request $request)
+  {
+    $gr = Good_return::where('gr_no',$request->gr_id)->first();
+    $gr_detail = Good_return_detail::where('good_return_id',$gr->id)->get();
+
+    foreach($gr_detail as $result){
+      Warehouse_stock::where('barcode',$result->barcode)
+                      ->update([
+                        'quantity'=>DB::raw('IF (quantity IS null,0,quantity) +'.$result->quantity),
+                      ]);
+    }
+
+    Good_return::where('gr_no',$request->gr_id)->delete();
+
+    return json_encode(true);
+  }
+
+  public function postGoodReturnHistoryDetail(Request $request)
+  {
+    $user = Auth::user();
+    $total = 0;
+    $total_quantity = 0;
+    foreach($request->gr_detail_id as $key => $result){
+
+      //Calculate Stock Different & Update In Warehouse Stock Table
+      $qty1 = Good_return_detail::where('id',$result)->select("quantity")->first();
+      $diff_qty = intval($request->quantity[$key]) - intval($qty1->quantity);
+
+      Warehouse_stock::where('barcode',$request->barcode[$key])
+                      ->update([
+                        'quantity' => DB::raw('IF (quantity IS null,0,quantity) -'.$diff_qty),
+                      ]);
+      
+      //Update Invoice Purchase Information
+      $total_cost = floatval($request->total[$key]);
+      $total += floatval($request->total[$key]);  
+      $total_quantity += intval($request->quantity[$key]);
+      Good_return_detail::where('id',$result)
+                              ->update([
+                                'update_by'=>$user->name,
+                                'total_cost'=>$total_cost,
+                                'quantity'=>$request->quantity[$key],
+                              ]);
+
+    }
+
+    Good_return::where('gr_no',$request->gr_no)
+                      ->update([
+                        'total_cost'=>$total,
+                        'total_quantity'=>$total_quantity,
                       ]);
 
     return back()->with('success','success');

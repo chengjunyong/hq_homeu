@@ -158,6 +158,14 @@ Route::get('/InvoicePurchaseHistory','WarehouseController@getInvoicePurchaseHist
 Route::get('/InvoicePurchaseHistoryDetail/{invoice_id}','WarehouseController@getInvoicePurchaseHistoryDetail')->name('getInvoicePurchaseHistoryDetail');
 Route::post('/InvoicePurchaseHistoryDetail','WarehouseController@postInvoicePurchaseHistoryDetail')->name('postInvoicePurchaseHistoryDetail');
 Route::post('/DeleteInvoice','WarehouseController@ajaxDeleteInvoice')->name('ajaxDeleteInvoice');
+Route::get('/GoodReturn','WarehouseController@getGoodReturn')->name('getGoodReturn');
+Route::get('/AddGoodReturnItem','WarehouseController@ajaxAddGoodReturnItem')->name('ajaxAddGoodReturnItem');
+Route::get('/DeleteGoodReturnItem','WarehouseController@ajaxDeleteGoodReturnItem')->name('ajaxDeleteGoodReturnItem');
+Route::post('/GoodReturn','WarehouseController@postGoodReturn')->name('postGoodReturn');
+Route::get('/GoodReturnHistory','WarehouseController@getGoodReturnHistory')->name('getGoodReturnHistory');
+Route::get('/GoodReturnHistoryDetail/{id}','WarehouseController@getGoodReturnHistoryDetail')->name('getGoodReturnHistoryDetail');
+Route::post('/DeleteGr','WarehouseController@ajaxDeleteGr')->name('ajaxDeleteGr');
+Route::post('/GoodReturnHistoryDetail','WarehouseController@postGoodReturnHistoryDetail')->name('postGoodReturnHistoryDetail');
 
 //Transaction Number Correction Function
 Route::get('/TransactionCorrection/{target_date}/{branch_code}/{token}','SalesController@transactionCorrection');

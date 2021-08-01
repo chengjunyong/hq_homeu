@@ -765,6 +765,38 @@
       </div>
     </div>
 
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Good Return</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getGoodReturn')}}"><i class="fas fa-house-damage first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Good Return History</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getGoodReturnHistory')}}"><i class="fas fa-clipboard first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+
   </div>
 </div>
 

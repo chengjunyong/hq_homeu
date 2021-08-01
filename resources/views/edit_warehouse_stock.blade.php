@@ -46,11 +46,11 @@
           </div>
 					<div class="col-md-6">
 						<label>Cost</label>
-						<input type="number" min="0" step="0.01" name="cost" id="cost" class="form-control" required value="{{number_format($warehouse_stock->cost,3)}}">
+						<input type="number" min="0" step="0.001" name="cost" id="cost" class="form-control" required value="{{number_format($warehouse_stock->cost,3)}}">
 					</div>
           <div class="col-md-6">
             <label>Stock Quantity</label>
-            <input type="number" name="quantity" id="quantity" class="form-control" required value="{{$warehouse_stock->quantity}}">
+            <input type="number" name="quantity" step="0.01" id="quantity" class="form-control" required value="{{$warehouse_stock->quantity}}">
           </div>
 					<div class="col-md-6">
 						<label>Reorder Level</label>
