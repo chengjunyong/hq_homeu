@@ -5,7 +5,14 @@
 .row > .col-md-12,.col-md-6,.col-md-4{
 	margin-top: 10px;
 }
+
+.fa-arrow-alt-circle-down{
+  color: #6dd410;
+  font-size: 27px;
+  margin-left:8px;
+}
 </style>
+
 <div class="container">
 	<h2 align="center">Edit Product</h2>
 	<div class="card" style="border-radius: 1.25rem">
@@ -92,31 +99,59 @@
             <label>Promotion Price</label>
             <input type="number" min="0" step="0.01" id="promo_price" name="promotion_price" class="form-control" value="{{$product->promotion_price}}">
           </div>
-          <div class="col-md-12" style="text-align: center; margin: 5% 0px 0px 0px;"><label style='font-weight: bold;;font-size: 24px;'>Wholesale Option</label></div>
-          <div class="col-md-6">
-            <label>Wholesales Start Date</label>
-            <input type="datetime-local" id="wholesales_start" name="wholesales_start" class="form-control" value="{{ str_replace(" ","T",$product->wholesale_start_date)}}">
-          </div>
-          <div class="col-md-6">
-            <label>Wholesales End Date</label>
-            <input type="datetime-local" id="wholesales_end" name="wholesales_end" class="form-control" value="{{ str_replace(" ","T",$product->wholesale_end_date)}}">
+
+          <!-- Normal Wholesales Option -->
+          <div class="col-md-12" style="text-align: center; margin: 5% 0px 0px 0px;">
+            <label style='font-weight: bold;;font-size: 24px;'>Wholesales Option</label>
           </div>
           <div class="col-md-6">
             <label>Wholesales Price (Each Product) - Level 1</label>
-            <input type="number" min="0" step="0.001" id="wholesales_price" name="wholesales_price" class="form-control" value="{{($product->wholesale_price != '') ? number_format($product->wholesale_price,3) : ''}}">
+            <input type="number" min="0" step="0.001" id="normal_wholesales_price" name="normal_wholesales_price" class="form-control" value="{{($product->normal_wholesale_price != '') ? number_format($product->normal_wholesale_price,3) : ''}}">
           </div>
           <div class="col-md-6">
             <label>Wholesales Minimum Quantity - Level 1</label>
-            <input type="number" min="2" id="wholesales_quantity" name="wholesales_quantity" class="form-control" value="{{$product->wholesale_quantity}}">
+            <input type="number" min="2" id="normal_wholesales_quantity" name="normal_wholesales_quantity" class="form-control" value="{{$product->normal_wholesale_quantity}}">
           </div>
           <div class="col-md-6">
             <label>Wholesales Price (Each Product) - Level 2</label>
-            <input type="number" min="0" step="0.001" id="wholesales_price2" name="wholesales_price2" class="form-control" value="{{($product->wholesale_price2 != '') ? number_format($product->wholesale_price2,3) : ''}}">
+            <input type="number" min="0" step="0.001" id="normal_wholesales_price2" name="normal_wholesales_price2" class="form-control" value="{{($product->normal_wholesale_price2 != '') ? number_format($product->normal_wholesale_price2,3) : ''}}">
           </div>
           <div class="col-md-6">
             <label>Wholesales Minimum Quantity - Level 2</label>
+            <input type="number" min="2" id="normal_wholesales_quantity2" name="normal_wholesales_quantity2" class="form-control" value="{{$product->normal_wholesale_quantity2}}">
+          </div>
+          <!-- Normal Wholesales Option -->
+
+          <!-- Promotion Wholesales Option -->
+          <div class="col-md-12" style="text-align: center; margin: 5% 0px 0px 0px;">
+            <label style='font-weight: bold;;font-size: 24px;'>Wholesales Promotion Option</label>
+          </div>
+          <div class="col-md-6">
+            <label>Wholesales Promotion Start Date</label>
+            <input type="datetime-local" id="wholesales_start" name="wholesales_start" class="form-control" value="{{ str_replace(" ","T",$product->wholesale_start_date)}}">
+          </div>
+          <div class="col-md-6">
+            <label>Wholesales Promotion End Date</label>
+            <input type="datetime-local" id="wholesales_end" name="wholesales_end" class="form-control" value="{{ str_replace(" ","T",$product->wholesale_end_date)}}">
+          </div>
+          <div class="col-md-6">
+            <label>Wholesales Promotion Price (Each Product) - Level 1</label>
+            <input type="number" min="0" step="0.001" id="wholesales_price" name="wholesales_price" class="form-control" value="{{($product->wholesale_price != '') ? number_format($product->wholesale_price,3) : ''}}">
+          </div>
+          <div class="col-md-6">
+            <label>Wholesales Promotion Minimum Quantity - Level 1</label>
+            <input type="number" min="2" id="wholesales_quantity" name="wholesales_quantity" class="form-control" value="{{$product->wholesale_quantity}}">
+          </div>
+          <div class="col-md-6">
+            <label>Wholesales Promotion Price (Each Product) - Level 2</label>
+            <input type="number" min="0" step="0.001" id="wholesales_price2" name="wholesales_price2" class="form-control" value="{{($product->wholesale_price2 != '') ? number_format($product->wholesale_price2,3) : ''}}">
+          </div>
+          <div class="col-md-6">
+            <label>Wholesales Promotion Minimum Quantity - Level 2</label>
             <input type="number" min="2" id="wholesales_quantity2" name="wholesales_quantity2" class="form-control" value="{{$product->wholesale_quantity2}}">
           </div>
+          <!-- Promotion Wholesales Option -->
+
 					<div class="col-md-12" style="text-align: center;margin-top: 20px">
 						<input type="submit" class="btn btn-primary" value="Update">
             <input type="reset" class="btn btn-secondary" value="Reset">
@@ -274,6 +309,26 @@ $(document).ready(function(){
       }
     }else{
       $("#wholesales_start")[0].setCustomValidity("Wholesales Start Date Cannot Be Empty");
+    }
+  });
+
+  $("#normal_wholesales_price,#normal_wholesales_quantity").change(()=>{
+    if($("#normal_wholesales_price").val() != "" || $("#normal_wholesales_quantity").val() != ""){
+      $("#normal_wholesales_price").prop("required",true);
+      $("#normal_wholesales_quantity").prop("required",true);
+    }else{
+      $("#normal_wholesales_price").prop("required",false);
+      $("#normal_wholesales_quantity").prop("required",false);  
+    }
+  });
+
+  $("#normal_wholesales_price2,#normal_wholesales_quantity2").change(()=>{
+    if($("#normal_wholesales_price2").val() != "" || $("#normal_wholesales_quantity2").val() != ""){
+      $("#normal_wholesales_price2").prop("required",true);
+      $("#normal_wholesales_quantity2").prop("required",true);
+    }else{
+      $("#normal_wholesales_price2").prop("required",false);
+      $("#normal_wholesales_quantity2").prop("required",false);  
     }
   });
 

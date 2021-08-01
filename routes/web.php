@@ -70,6 +70,7 @@ Route::post('/DeleteProduct','ProductController@postDeleteProduct')->name('postD
 Route::get('/Import','ProductController@getImport')->name('getImport');
 Route::post('/ImportProcess','ProductController@postImport')->name('postImport');
 
+
 //Other
 Route::get('/Supplier','OtherController@getSupplier')->name('getSupplier');
 Route::get('/EditSupplier/{id}','OtherController@getEditSupplier')->name('getEditSupplier');
