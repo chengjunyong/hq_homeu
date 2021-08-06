@@ -96,6 +96,10 @@
 $(document).ready(function(){
 	let price_ptg = parseFloat({{$default_price->default_price_margin}});
 
+  $("form").submit(()=>{
+    $("input[type='submit']").prop('disabled',true);
+  })
+
 	$("#department").change(function(){
 		$.get('{{route('ajaxGetCategory')}}',{'department_id' : $("#department").val()},
 			function(data){
@@ -113,6 +117,7 @@ $(document).ready(function(){
 	});
 
 	$("input[name=barcode]").on("input",function(){
+
 		let barcode = $(this).val();
 		let target = $(this)[0];
 		$.get('{{route('ajaxGetBarcode')}}',{'barcode': barcode},
