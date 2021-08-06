@@ -391,7 +391,7 @@ function calTotal(){
   });
 
   $("#total_product").text(total_product);
-  $("#total_quantity").text(total_quantity);
+  $("#total_quantity").text(total_quantity.toFixed(2));
   $("#total_amount").text(convertNumber(total_amount.toFixed(3)));
 }
 

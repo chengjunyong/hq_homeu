@@ -31,9 +31,9 @@
     <div class="card">
       <div class="card-body">
         <div class="row">
-<!--           <div class="col-md-12 form-group">
+          <div class="col-md-12 form-group">
             <button type="button" class="btn btn-primary" id="export_report" style="float: right; margin-bottom: 10px;">Export Report</button>
-          </div> -->
+          </div>
           <div class="col-md-12" style="margin-bottom: 10px;">
             <label>Branch</label>
             <select class="form-control" name="branch_id">
@@ -44,11 +44,11 @@
           </div>
           <div class="col-md-6">
             <label>Report date from</label>
-            <input type="date" name="report_date_from" class="form-control" value="" required>
+            <input type="date" name="report_date_from" class="form-control" value="{{date('Y-m-d',strtotime(now().'-1 days'))}}" required>
           </div>
           <div class="col-md-6">
             <label>Report date to</label>
-            <input type="date" name="report_date_to" class="form-control" value="" required>
+            <input type="date" name="report_date_to" class="form-control" value="{{date('Y-m-d',strtotime(now().'-1 days'))}}" required>
           </div>
         </div>
         <div class="row">
@@ -60,6 +60,25 @@
     </div>
   </div>
 </form>
+<script>
+  $(document).ready(function(){
+    $("#export_report").click(function(){
+      let branch_id = $("select[name=branch_id]").val();
+      let start = $("input[name=report_date_from]").val();
+      let end = $("input[name=report_date_to]").val();
 
+      $.get("{{route('ajaxExportSalesTransactionReport')}}",
+      {
+        'branch_id' : branch_id,
+        'start' : start,
+        'end' : end,
+      },function(data){
+
+        window.open(data);
+        
+      },'json');
+    });
+  });
+</script>
 
 @endsection

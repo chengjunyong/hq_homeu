@@ -62,6 +62,7 @@
             @foreach($branch as $result)
               <option value="{{$result->id}}">{{$result->branch_name}}</option>
             @endforeach
+              <option value="0">HQ Warehouse</option>
           </select>
           <button class="btn btn-primary" id="order_list" style="float:right;margin-right:5px">Order List</button>
         </div>

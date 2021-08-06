@@ -102,6 +102,7 @@
                 <th>Barcode</th>
                 <th>Product</th>
                 <th>Quantity</th>
+                <th>Cost</th>
                 <th>Sub Total</th>
                 <th></th>
               </thead>
@@ -116,6 +117,7 @@
                   <td>{{$result->barcode}}</td>
                   <td>{{$result->product_name}}</td>
                   <td>{{$result->quantity}}</td>
+                  <td>{{number_format($result->cost,3)}}</td>
                   <td val="{{$result->total}}">{{number_format($result->total,2)}}</td>
                   <td align="center" style="width:25%">
                     <button type="button" class="btn btn-secondary edit" val="{{$result->barcode}}" style="margin-right: 20px;">Edit</button>
@@ -126,15 +128,15 @@
               </tbody>
               <tfoot>
                 <tr>
-                  <td colspan=4 style="border:2px solid gray">Total Product :</td>
+                  <td colspan=5 style="border:2px solid gray">Total Product :</td>
                   <td align="right" style="border:2px solid gray" id="total_product">{{$total->product}}</td>
                 </tr>
                 <tr>
-                  <td colspan=4 style="border:2px solid gray">Total Quantity :</td>
+                  <td colspan=5 style="border:2px solid gray">Total Quantity :</td>
                   <td align="right" style="border:2px solid gray" id="total_quantity">{{$total->quantity}}</td>
                 </tr>
                 <tr>
-                  <td colspan=4 style="border:2px solid gray">Total Amount :</td>
+                  <td colspan=5 style="border:2px solid gray">Total Amount :</td>
                   <td align="right" style="border:2px solid gray">Rm <label id="total_amount" val="{{$total->amount}}" style="margin-bottom: 0px;">{{number_format($total->amount,2)}}</label></td>
                 </tr>
               </tfoot>
@@ -191,10 +193,18 @@
         </div>
         <div class="row">
           <div class="col-3">
+            Cost
+          </div>  
+          <div class="col-9">
+            <input type="number" min=0.01 step=0.001 id="modal_cost" class="form-control" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-3">
             Total
           </div>
           <div class="col-9">
-            <input type="number" step=0.001 id="modal_total" class="form-control" />
+            <input type="number" step=0.01 id="modal_total" class="form-control" />
           </div>
         </div>
       </div>
@@ -226,6 +236,7 @@ $(document).ready(function(){
         $("#modal_barcode").val(data['barcode']);
         $("#modal_product_name").val(data['product_name']);
         $("#modal_quantity").val('');
+        $("#modal_cost").val(parseFloat(data['cost']).toFixed(3));
         $("#modal_total").val('');
       }else{
         Swal.fire('Error','Barcode Not Found','error');
@@ -238,11 +249,11 @@ $(document).ready(function(){
   $("#modal_submit").click(function(data){
     $("#modal_submit").prop('disabled',true);
 
-    if($("#modal_quantity").val() == "" || $("#modal_quantity").val() <= 0){
-      Swal.fire('Error','Invalid Quantity Value','error');
+    if($("#modal_cost").val() == "" || $("#modal_cost").val() < 0){
+      Swal.fire('Error','Value Cost Invalid','error');
       $("#modal_submit").prop('disabled',false);
-    }else if($("#modal_total").val() == "" || $("#modal_total").val <= 0){
-      Swal.fire('Error','Invalid Total Value','error');
+    }else if($("#modal_quantity").val() == "" || $("#modal_quantity").val() <= 0){
+      Swal.fire('Error','Value Quantity Invalid','error');
       $("#modal_submit").prop('disabled',false);
     }else{
       $.get('{{route('ajaxAddGoodReturnItem')}}',
@@ -250,16 +261,19 @@ $(document).ready(function(){
         'barcode':$("#modal_barcode").val(),
         'product_name':$("#modal_product_name").val(),
         'quantity': $("#modal_quantity").val(),
+        'cost': $("#modal_cost").val(),
         'total': $("#modal_total").val(),
       },function(data){
         if(data != false){
           $("#no_data").remove();
           $("#"+data['barcode']).remove();
+          let display_cost = parseFloat(data['cost']).toFixed(3);
           let display_total = data['total'];
           let html = `<tr class="data" id=${data['barcode']}>`;
           html += `<td>${data['barcode']}</td>`;
           html += `<td>${data['product_name']}</td>`;
           html += `<td>${data['quantity']}</td>`;
+          html += `<td>${display_cost}</td>`;
           html += `<td val=${data['total']}>${display_total}</td>`;
           html += `<td align="center" style="width:25%"><button type="button" class="btn btn-secondary edit" style="margin-right: 20px;" val="${data['barcode']}">Edit</button><button type="button" class="btn btn-success delete" val=${data['id']}>Delete</button></td>`
           html += `</tr>`;
@@ -296,8 +310,16 @@ $(document).ready(function(){
     let quantity = $("#modal_quantity").val();
     let cost = $(this).val();
     let total = quantity * cost;
-    $("#modal_total").val(total.toFixed(3));
+    $("#modal_total").val(total.toFixed(2));
   });
+
+  $("#modal_quantity").keyup(function(){
+    let quantity = $(this).val();
+    let cost = $("#modal_cost").val();
+    let total = quantity * cost;
+    $("#modal_total").val(total.toFixed(2));
+  });
+  
 
   $("#modal_total").keyup(function(){
     let quantity = $("#modal_quantity").val();
@@ -341,8 +363,9 @@ function calTotal(){
   let total_product = 0;
   let total_amount = 0;
   $(".data").each(function(i){
+    cost = parseFloat($(this).children().eq(3).text());
     quantity = parseFloat($(this).children().eq(2).text());
-    total = parseFloat($(this).children().eq(3).attr('val'));
+    total = parseFloat($(this).children().eq(4).attr('val'));
 
     total_quantity += quantity;
     total_product = i+1;
@@ -358,6 +381,10 @@ function calTotal(){
 @if(session()->has('fail'))
 <script>
   swal.fire('Empty','No items added in list','warning');
+</script>
+@elseif(session()->has('success'))
+<script>
+  window.open("{{ route('getPrintGr',session()->get('gr')) }}");
 </script>
 @endif
 

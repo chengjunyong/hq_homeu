@@ -764,7 +764,7 @@ class WarehouseController extends Controller
                             ['user_id'=>$user->id,'barcode'=>$request->barcode],
                             [
                               'product_name' => $request->product_name,
-                              'cost' => 0,
+                              'cost' =>$request->cost,
                               'quantity' => $request->quantity,
                               'total' => $request->total,
                             ]);
@@ -841,7 +841,7 @@ class WarehouseController extends Controller
                                 'good_return_id'=>$good_return->id,
                                 'barcode'=>$result->barcode,
                                 'product_name'=>$result->product_name,
-                                'cost'=>0,
+                                'cost'=>$result->cost,
                                 'quantity'=>$result->quantity,
                                 'total_cost'=>$item_cost,
                                 'update_by'=>$user->name,
@@ -850,7 +850,7 @@ class WarehouseController extends Controller
 
     Tmp_good_return::where('user_id',$user->id)->delete();
 
-    return back()->with('success','success');
+    return back()->with('success','success')->with('gr',$good_return->id);
 
   }
 
@@ -918,12 +918,12 @@ class WarehouseController extends Controller
       Good_return_detail::where('id',$result)
                               ->update([
                                 'update_by'=>$user->name,
+                                'cost'=>$request->cost[$key],
                                 'total_cost'=>$total_cost,
                                 'quantity'=>$request->quantity[$key],
                               ]);
-
     }
-
+    
     Good_return::where('gr_no',$request->gr_no)
                       ->update([
                         'total_cost'=>$total,
@@ -931,6 +931,15 @@ class WarehouseController extends Controller
                       ]);
 
     return back()->with('success','success');
+  }
+
+  public function getPrintGr(Request $request)
+  {
+    $gr = Good_return::where('id',$request->id)->first();
+    $supplier = Supplier::where('id',$gr->supplier_id)->first();
+    $gr_detail = Good_return_detail::where('good_return_id',$gr->id)->get();
+
+    return view('print.print_gr',compact('supplier','gr','gr_detail'));
   }
 
 }

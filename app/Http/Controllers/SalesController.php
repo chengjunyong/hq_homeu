@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\CelL\DataType;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -1722,6 +1723,65 @@ class SalesController extends Controller
 
       return "Completed Correction";
     }
+  }
+
+  public function ajaxExportSalesTransactionReport(Request $request)
+  {
+    $branch = Branch::where('id',$request->branch_id)->first();
+    $from_date = $request->start;
+    $to_date = $request->end;
+    $date = Carbon::parse($request->end);
+
+    $transaction = Transaction::where('branch_id',$branch->token)
+                                ->whereBetween('transaction_date',[$from_date,$date->addDays(1)])
+                                ->orderBy('transaction_no','asc')
+                                ->get();
+
+    $files = Storage::allFiles('public/report');
+    Storage::delete($files);                  
+    if(!Storage::exists('public/report'))
+    {
+      Storage::makeDirectory('public/report', 0775, true); //creates directory
+    }
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->mergeCells('A1:E1');
+    $sheet->mergeCells('A2:E2');
+    $sheet->getStyle('A1:E1')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A2:E2')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('E')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('D')->getAlignment()->setHorizontal('right');
+
+    $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
+    $sheet->setCellValue('A2', 'Warehouse Stock Report');
+    $sheet->setCellValue('A4','No');
+    $sheet->setCellValue('B4','Invoice No');
+    $sheet->setCellValue('C4','Payment Type');
+    $sheet->setCellValue('D4','Total');
+    $sheet->setCellValue('E4','Reference No');
+
+    $start = 5;
+    foreach($transaction as $index => $result){
+      $sheet->setCellValue('A'.$start, $index+1);
+      $sheet->setCellValue('B'.$start, $result->transaction_no);
+      $sheet->setCellValue('C'.$start, $result->payment_type_text);
+      $sheet->setCellValue('D'.$start, $result->total);
+      $sheet->setCellValueExplicit('E'.$start, $result->reference_no,DataType::TYPE_STRING2);
+      $start++;
+    }
+
+    $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/report/Daily Sales Transaction Report.xlsx';
+    $writer->save($path);
+
+    return response()->json($path);
   }
 
 }

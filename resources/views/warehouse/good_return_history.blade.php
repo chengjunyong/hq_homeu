@@ -44,6 +44,7 @@
                 <td>
                   <button class="btn btn-primary" onclick="window.location.assign('{{route('getGoodReturnHistoryDetail',$result->id)}}')">Details</button>
                   <button val="{{$result->gr_no}}" class="btn btn-danger delete">Delete</button>
+                  <button class="btn btn-dark" onclick="window.open('{{route('getPrintGr',$result->id)}}')">Print</button>
                 </td>
               </tr>
             @endforeach

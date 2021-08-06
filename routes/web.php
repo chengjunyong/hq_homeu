@@ -108,6 +108,9 @@ Route::post('/ExportProductSalesReport','SalesController@exportProductSalesRepor
 Route::get('/DailySalesTransactionReport','SalesController@getDailySalesTransactionReport')->name('getDailySalesTransactionReport');
 Route::post('/DailySalesTransactionReport','SalesController@postDailySalesTransactionReport')->name('postDailySalesTransactionReport');
 
+Route::get('/ExportSalesTransactionReport','SalesController@ajaxExportSalesTransactionReport')->name('ajaxExportSalesTransactionReport');
+
+
 // User access control
 Route::get('/user_access_control', 'UserController@getUserAccessControl')->name('getUserAccessControl'); 
 Route::post('/createNewUser', 'UserController@createNewUser')->name('createNewUser');
@@ -167,6 +170,7 @@ Route::get('/GoodReturnHistory','WarehouseController@getGoodReturnHistory')->nam
 Route::get('/GoodReturnHistoryDetail/{id}','WarehouseController@getGoodReturnHistoryDetail')->name('getGoodReturnHistoryDetail');
 Route::post('/DeleteGr','WarehouseController@ajaxDeleteGr')->name('ajaxDeleteGr');
 Route::post('/GoodReturnHistoryDetail','WarehouseController@postGoodReturnHistoryDetail')->name('postGoodReturnHistoryDetail');
+Route::get('/GenerateGr/{id}','WarehouseController@getPrintGr')->name('getPrintGr');
 
 //Transaction Number Correction Function
 Route::get('/TransactionCorrection/{target_date}/{branch_code}/{token}','SalesController@transactionCorrection');
