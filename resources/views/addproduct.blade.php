@@ -94,6 +94,7 @@
 
 <script>
 $(document).ready(function(){
+  let starget;
 	let price_ptg = parseFloat({{$default_price->default_price_margin}});
 
   $("form").submit(()=>{
@@ -116,19 +117,21 @@ $(document).ready(function(){
 		$("#price").val(price.toFixed(2));
 	});
 
-	$("input[name=barcode]").on("input",function(){
-
-		let barcode = $(this).val();
-		let target = $(this)[0];
-		$.get('{{route('ajaxGetBarcode')}}',{'barcode': barcode},
-			function(data){
-				if(data != "true"){
-					target.setCustomValidity('');
-				}else{
-					target.setCustomValidity('Barcode duplicate, please use other code');
-				}
-			},"html");
-	});
+	$("input[name=barcode]").on("keyup",function(){
+    clearTimeout(starget);
+    starget = setTimeout(()=>{
+      let barcode = $("input[name=barcode]").val();
+      let target = $("input[name=barcode]")[0];
+      $.get('{{route('ajaxGetBarcode')}}',{'barcode': barcode},
+        function(data){
+          if(data != "true"){
+            target.setCustomValidity('');
+          }else{
+            target.setCustomValidity('Barcode duplicate, please use other code');
+          }
+        },"html");
+    },500);
+  });
 	
 });
 
