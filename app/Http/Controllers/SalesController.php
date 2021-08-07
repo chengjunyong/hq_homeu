@@ -1373,6 +1373,24 @@ class SalesController extends Controller
         $sheet->getCellByColumnAndRow($col+$key1, $row+$key2+1)->setValue($final['quantity']); 
       }
     }
+    $sheet->getStyle('D')->getAlignment()->setHorizontal('left');
+    $sheet->getStyle('A5:A25000')->getAlignment()->setHorizontal('left');
+    $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(17);
+    $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(17);
+    $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(20);
+    $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(47);
+    $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(10);
+    $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(10);
+    $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(10);
+    $spreadsheet->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('N')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('P')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getStyle('D')->getNumberFormat()->setFormatCode('################################');
 
     $time = date('d-M-Y h i s A');
     $time = (string)$time;
