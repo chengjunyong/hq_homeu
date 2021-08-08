@@ -14,6 +14,7 @@ class Refund extends Model
       'ip',
       'cashier_name',
       'created_by',
+      'transaction_no',
       'subtotal',
       'round_off',
       'total',

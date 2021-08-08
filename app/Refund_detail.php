@@ -13,6 +13,7 @@ class Refund_detail extends Model
       'branch_refund_id',
       'department_id',
       'category_id',
+      'transaction_no',
       'product_id',
       'barcode',
       'product_name',
