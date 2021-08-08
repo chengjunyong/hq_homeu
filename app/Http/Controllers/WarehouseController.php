@@ -649,6 +649,8 @@ class WarehouseController extends Controller
     $invoice = Invoice_purchase::where('id',$request->invoice_id)->first();
     $invoice_detail = Invoice_purchase_detail::where('invoice_purchase_id',$request->invoice_id)->get();
 
+    
+
     return view('warehouse.invoice_history_detail',compact('url','invoice','invoice_detail'));
   }
 
