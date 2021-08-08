@@ -14,6 +14,7 @@ use App\Do_detail;
 use App\Branch_shift;
 use App\Cash_float;
 use App\Refund;
+use App\Refund_detail;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -1797,6 +1798,139 @@ class SalesController extends Controller
 
     $writer = new Xlsx($spreadsheet);
     $path = 'storage/report/Daily Sales Transaction Report.xlsx';
+    $writer->save($path);
+
+    return response()->json($path);
+  }
+
+  public function getRefundReport()
+  {
+    $url = route('home')."?p=sales_menu";
+
+    $branch = Branch::get();
+
+    return view('report.refund_report',compact('url','branch'));
+  }
+
+  public function postRefundReport(Request $request)
+  {
+    $user = Auth::user();
+    $target_date = $request->report_date;
+    $branch = Branch::where('id',$request->branch_id)->first();
+
+    $refund = Refund::whereBetween('refund_created_at',[$target_date,date('Y-m-d',strtotime($target_date.'+1 days'))])
+                      ->where('branch_id',$branch->token)
+                      ->orderBy('branch_refund_id','asc')
+                      ->get();
+
+    $branch_refund_id = array_column($refund->toArray(),'branch_refund_id');
+
+    $refund_detail = Refund_detail::where('branch_id',$branch->token)
+                                    ->whereIn('branch_refund_id',$branch_refund_id)
+                                    ->orderBy('branch_refund_id','asc')
+                                    ->get();
+
+    return view('print.print_refund',compact('user','target_date','refund','refund_detail','branch'));
+  }
+
+  public function ajaxRefundReport(Request $request)
+  {
+    $branch = Branch::where('id',$request->branch_id)->first();
+    $target_date = $request->target_date;
+
+    $refund = Refund::whereBetween('refund_created_at',[$target_date,date('Y-m-d',strtotime($target_date.'+1 days'))])
+                      ->where('branch_id',$branch->token)
+                      ->orderBy('branch_refund_id','asc')
+                      ->get();
+
+    $branch_refund_id = array_column($refund->toArray(),'branch_refund_id');
+
+    $refund_detail = Refund_detail::where('branch_id',$branch->token)
+                                    ->whereIn('branch_refund_id',$branch_refund_id)
+                                    ->orderBy('branch_refund_id','asc')
+                                    ->get();
+
+    $files = Storage::allFiles('public/report');
+    Storage::delete($files);                  
+    if(!Storage::exists('public/report'))
+    {
+      Storage::makeDirectory('public/report', 0775, true); //creates directory
+    }
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->mergeCells('A1:G1');
+    $sheet->mergeCells('A2:G2');
+    $sheet->getStyle('A1:E1')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A2:E2')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('E')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('G')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('F')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('D')->getAlignment()->setHorizontal('left');
+    $sheet->getStyle('A')->getAlignment()->setHorizontal('left');
+    $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal('center');
+    $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
+    $sheet->setCellValue('A2', 'Refund Report');
+
+    $start = 4;
+    foreach($refund as $index => $a){
+      $sheet->getStyle($start)->getFont()->setBold(true);
+      $sheet->setCellValue('A'.$start,'No');
+      $sheet->setCellValue('B'.$start,'Refund No');
+      $sheet->setCellValue('C'.$start,'Counter Name');
+      $sheet->setCellValue('D'.$start,'Cashier Name');
+      $sheet->setCellValue('E'.$start,'Refund Date');
+      $sheet->mergeCells('E'.$start.':F'.$start);
+      $sheet->getStyle('E'.$start)->getAlignment()->setHorizontal('center');
+      $start++;
+      $sheet->setCellValue('A'.$start,$index+1);
+      $sheet->setCellValueExplicit('B'.$start,$a->branch_refund_id,DataType::TYPE_STRING2);
+      $sheet->setCellValue('C'.$start,$a->cashier_name);
+      $sheet->setCellValue('D'.$start,$a->created_by);
+      $sheet->setCellValue('E'.$start,date("d-M (h:i:s A)",strtotime($a->refund_created_at)));
+      $sheet->mergeCells('E'.$start.':F'.$start);
+      $sheet->getStyle('E'.$start)->getAlignment()->setHorizontal('center');
+      $start++;
+      $sheet->getStyle($start)->getFont()->setBold(true);
+      $sheet->setCellValue('C'.$start,'Barcode');
+      $sheet->setCellValue('D'.$start,'Product');
+      $sheet->setCellValue('E'.$start,'Unit Price');
+      $sheet->setCellValue('F'.$start,'Quantity');
+      $sheet->getStyle('F'.$start)->getAlignment()->setHorizontal('center');
+      $sheet->setCellValue('G'.$start,'Sub Total');
+      $start++;
+      foreach($refund_detail as $index => $b){
+        $sheet->setCellValueExplicit('C'.$start, $b->barcode,DataType::TYPE_STRING2);
+        $sheet->setCellValue('D'.$start, $b->product_name);
+        $sheet->setCellValue('E'.$start, number_format($b->price,2));
+        $sheet->setCellValue('F'.$start, $b->quantity);
+        $sheet->setCellValue('G'.$start, number_format($b->total,2));
+        $start++;
+      }
+      $sheet->mergeCells('C'.$start.':F'.$start);
+      $sheet->getStyle('C'.$start)->getAlignment()->setHorizontal('center');
+      $sheet->getStyle($start)->getFont()->setBold(true);
+      $sheet->setCellValue('C'.$start, 'Total');
+      $sheet->setCellValue('G'.$start, number_format($a->total,2));
+      $start++;$start++;
+    }
+
+    $sheet->getStyle($start)->getFont()->setBold(true);
+    $sheet->setCellValue('F'.$start, 'Total Quantity Transaction');
+    $sheet->setCellValue('G'.$start, count($refund));
+    $start++;
+    $sheet->getStyle($start)->getFont()->setBold(true);
+    $sheet->setCellValue('F'.$start, 'Total Refund Amount');
+    $sheet->setCellValue('G'.$start, number_format($refund->sum('total'),2));
+
+    $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/report/Refund Report.xlsx';
     $writer->save($path);
 
     return response()->json($path);

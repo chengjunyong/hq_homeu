@@ -93,22 +93,20 @@ Route::post('/exportWarehouseStockReport', 'SalesController@exportWarehouseStock
 Route::get('/branch_cashier_report', 'SalesController@getBranchCashierReport')->name('getBranchCashierReport');
 Route::get('/branch_cashier_report_detail', 'SalesController@getBranchCashierReportDetail')->name('getBranchCashierReportDetail');
 Route::post('/exportBranchCashierReport', 'SalesController@exportBranchCashierReport')->name('exportBranchCashierReport');
-
 Route::get('/stock_balance','SalesController@getStockBalance')->name('getStockBalance');
 Route::post('/stock_balance_report','SalesController@postStockBalanceReport')->name('postStockBalanceReport');
 Route::post('/export_stock_balance', 'SalesController@exportStockBalance')->name('exportStockBalance');
-
 Route::get('/stock_reorder','SalesController@getStockReorder')->name('getStockReorder');
 Route::post('/stock_report_report','SalesController@getStockReorderReport')->name('getStockReorderReport');
-
 Route::get('/ProductSalesReport','SalesController@getProductSalesReport')->name('getProductSalesReport');
 Route::post('/ProductSalesReport','SalesController@postProductSalesReport')->name('postProductSalesReport');
 Route::post('/ExportProductSalesReport','SalesController@exportProductSalesReport')->name('exportProductSalesReport');
-
 Route::get('/DailySalesTransactionReport','SalesController@getDailySalesTransactionReport')->name('getDailySalesTransactionReport');
 Route::post('/DailySalesTransactionReport','SalesController@postDailySalesTransactionReport')->name('postDailySalesTransactionReport');
-
 Route::get('/ExportSalesTransactionReport','SalesController@ajaxExportSalesTransactionReport')->name('ajaxExportSalesTransactionReport');
+Route::get('/RefundReport','SalesController@getRefundReport')->name('getRefundReport');
+Route::post('/RefundReport','SalesController@postRefundReport')->name('postRefundReport');
+Route::get('/ExportRefundReport','SalesController@ajaxRefundReport')->name('ajaxRefundReport');
 
 
 // User access control
