@@ -112,7 +112,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         @foreach($refund as $index => $a)
           <tr>
             <td>{{$index +1 }}</td>
-            <td>{{$a->branch_refund_id}}</td>
+            <td>{{$a->transaction_no}}</td>
             <td align="center">{{$a->cashier_name}}</td>
             <td align="center">{{$a->created_by}}</td>
             <td colspan="2" align="center">{{date("Y-m-d h:i:s A",strtotime($a->refund_created_at))}}</td>

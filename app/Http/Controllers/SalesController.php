@@ -1884,7 +1884,7 @@ class SalesController extends Controller
       $sheet->getStyle('E'.$start)->getAlignment()->setHorizontal('center');
       $start++;
       $sheet->setCellValue('A'.$start,$index+1);
-      $sheet->setCellValueExplicit('B'.$start,$a->branch_refund_id,DataType::TYPE_STRING2);
+      $sheet->setCellValueExplicit('B'.$start,$a->transaction_no,DataType::TYPE_STRING2);
       $sheet->setCellValue('C'.$start,$a->cashier_name);
       $sheet->setCellValue('D'.$start,$a->created_by);
       $sheet->setCellValue('E'.$start,date("d-M (h:i:s A)",strtotime($a->refund_created_at)));
