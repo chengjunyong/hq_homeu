@@ -123,12 +123,14 @@ $(document).ready(function(){
       showCancelButton: true,
     }).then((result)=>{
       if(result.isConfirmed){
+        $("input[type=submit]").prop('disabled',true);
         $.post('{{route('postManualOrderList')}}',$("form").serialize(),
         function(data){
           if(data == true){
             Swal.fire('Success','DO generate completed','success').then(()=>{window.location.assign('{{route('getDoHistory')}}')});
           }else{
             Swal.fire('Fail','Item remove fail, please contact IT support','error');
+            $("input[type=submit]").prop('disabled',false);
           }
         },"json");
       }
