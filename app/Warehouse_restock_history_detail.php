@@ -13,6 +13,7 @@ class Warehouse_restock_history_detail extends Model
       'product_id',
       'barcode',
       'product_name',
+      'measurement',
       'cost',
       'quantity',
       'remark',

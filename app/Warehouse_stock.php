@@ -16,6 +16,7 @@ class Warehouse_stock extends Model
       'barcode',
       'product_name',
       'uom',
+      'measurement',
       'cost',
       'price',
       'quantity',

@@ -56,6 +56,7 @@
                 <td>No</td>
                 <td style="width:5%">Barcode</td>
                 <td>Product Name</td>
+                <td align="center">Measurement</td>
                 <td align="center">Order Quantity</td>
                 <td align="center" style="width:10%">Quantity Received</td>
                 <td align="center" style="width:10%">Cost</td>
@@ -67,9 +68,10 @@
                     <td>{{$key+1}}</td>
                     <td>{{$result->barcode}}</td>
                     <td>{{$result->product_name}}</td>
+                    <td align="center">{{ucfirst($result->measurement)}}</td>
                     <td align="center">{{$result->quantity}}</td>
-                    <td align="center"><input type="number" value="{{$result->quantity}}" style="width:50%" disabled></td>
-                    <td align="center"><input type="number" value="{{$result->cost}}"  style="width:50%" disabled></td>
+                    <td align="center"><input type="number" value="{{$result->quantity}}" style="width:100%" disabled></td>
+                    <td align="center"><input type="number" value="{{$result->cost}}"  style="width:70%" disabled></td>
                     <td><input type="text" style="width:100%" value="{{$result->remark}}" disabled></td>
                   </tr>
                 @endforeach

@@ -30,7 +30,7 @@
 					</div>
           <div class="col-md-12">
             <label>Measurement Type</label>
-            <input type="text" name="uom" class="form-control" value="{{$product->uom}}" disabled>
+            <input type="text" name="uom" class="form-control" value="{{ucfirst($product->measurement)}}" disabled>
           </div>
 					<div class="col-md-6">
 						<label>Cost</label>
@@ -50,7 +50,7 @@
 					</div>
 					<div class="col-md-6">
 						<label>Stock Quantity</label>
-						<input type="number" min="0" step="1" name="stock_quantity" class="form-control" value="{{$product->quantity}}" >
+						<input type="number" min="0" step="0.001" name="stock_quantity" class="form-control" value="{{$product->quantity}}" >
 					</div>
 					<div class="col-md-12" style="text-align: center;margin-top: 20px">
 						<input type="submit" name="submit" hidden>
@@ -102,15 +102,16 @@ $(document).ready(function(){
 	});
 
 	$("#yes").click(function(){
-		$.post('{{route('postModifyBranchStock')}}',$("form").serialize(),
-			function(data){
-				if(data == 'success'){
-					$("#msg").text('Update Successful');
-				}else{
-					$("#msg").text('Update Fail, please contact IT support');
-				}
-				$("#result").modal('toggle');
-			},'html');
+    // Validation decimal number
+  		$.post('{{route('postModifyBranchStock')}}',$("form").serialize(),
+  			function(data){
+  				if(data == 'success'){
+  					$("#msg").text('Update Successful');
+  				}else{
+  					$("#msg").text('Update Fail, please contact IT support');
+  				}
+  				$("#result").modal('toggle');
+  			},'html');
 	});
 
 

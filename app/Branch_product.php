@@ -17,6 +17,7 @@ class Branch_product extends Model
       'barcode',
       'product_name',
       'uom',
+      'measurement',
       'cost',
       'price',
       'quantity',

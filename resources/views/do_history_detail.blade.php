@@ -7,7 +7,7 @@
 	}
 
 	td{
-		padding:5px;
+		padding:9px;
 	}
 </style>
 <div class="container" style="padding-bottom: 5vh;">
@@ -58,10 +58,10 @@
 							<td>No</td>
 							<td style="width:20%">Barcode</td>
 							<td>Product Name</td>
-							<td align="right">Price Per Unit</td>
-							<td align="center">Total Quantity Transfer</td>
-							<td align="center">Total Quantity Delivered</td>
-							<td align="center">Total Quantity Lost</td>
+							<td align="right">Price</td>
+							<td align="center">Qty Transfer</td>
+							<td align="center">Qty Delivered</td>
+							<td align="center">Qty Lost</td>
 							<td>Stock Lost Reason</td>
 							<td>Remark</td>
 						</tr>

@@ -16,6 +16,7 @@ class Product_list extends Model
       'barcode',
       'product_name',
       'uom',
+      'measurement',
       'cost',
       'price',
       'quantity',

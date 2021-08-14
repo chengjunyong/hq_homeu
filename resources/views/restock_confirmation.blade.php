@@ -54,8 +54,8 @@
 								<td style="width:5%">Barcode</td>
 								<td>Product Name</td>
 								<td>Quantity</td>
-								<td style="width:10%">Restock Quantity</td>
-								<td style="width:10%">Stock Lost Quantity</td>
+								<td align="center" style="width:10%">Restock Quantity</td>
+								<td align="center" style="width:10%">Stock Lost Quantity</td>
 								<td style="width:10%">Stock Lost Reason</td>
 								<td>Remark</td>
 							</tr>
@@ -68,8 +68,8 @@
 										<td>{{$result->barcode}}</td>
 										<td>{{$result->product_name}}</td>
 										<td class="quantity">{{$result->quantity}}</td>
-										<td><input type="number" name="restock_quantity[]" value="{{$result->quantity}}" class="restock_quantity" style="width:50%" required min=0></td>
-										<td><input type="number" name="stock_lost_quantity[]" value="0" class="stock_lost_quantity" style="width:50%" required min=0></td>
+										<td align="center"><input type="number" name="restock_quantity[]" value="{{$result->quantity}}" class="restock_quantity" style="width:100%" required min=0 {{($result->measurement == 'unit') ? 'step=1' : 'step=0.001'}}></td>
+										<td align="center"><input type="number" name="stock_lost_quantity[]" value="0" class="stock_lost_quantity" style="width:50%" required min=0 {{($result->measurement == 'unit') ? 'step=1' : 'step=0.001'}}></td>
 										<td>
 											<select name="stock_lost_reason[]">
 												<option value="damaged">Damaged</option>

@@ -50,24 +50,42 @@
 						<label>Barcode</label>
 						<input type="text" name="barcode" class="form-control" readonly value="{{$product->barcode}}">
 					</div>
-					<div class="col-md-12">
+					<div class="col-md-6">
 						<label>Product Name</label>
 						<input type="text" name="product_name" class="form-control" required value="{{$product->product_name}}">
 					</div>
-          <div class="col-md-12">
+          <div class="col-md-6">
             <label>Measurement Type</label>
-            <select name="uom" id="uom" class="form-control" required>
-              <option value="Pcs" {{ ($product->uom == "Pcs") ? 'selected' : ''}}>Pcs</option>
-              <option value="Kg" {{ ($product->uom == "Kg") ? 'selected' : ''}}>Kilogram</option>
-              <option value="Meter" {{ ($product->uom == "Meter") ? 'selected' : ''}}>Meter</option>
+            <select class="form-control" name="measurement">
+              <option value="unit" {{($product->measurement == 'unit') ? 'selected' : ''}}>Unit</option>
+              <option value="kilogram" {{($product->measurement == 'kilogram') ? 'selected' : ''}}>Kilogram</option>
+              <option value="meter" {{($product->measurement == 'meter') ? 'selected' : ''}}>Meter</option>
             </select>
           </div>
+<!--           <div class="col-md-12">
+            <label>Measurement Type</label>
+            <select name="uom" id="uom" class="form-control" required>
+              <option value="unit" {{ ($product->uom == "Pcs") ? 'selected' : ''}}>Pcs</option>
+              <option value="kilogram" {{ ($product->uom == "Kg") ? 'selected' : ''}}>Kilogram</option>
+              <option value="Meter" {{ ($product->uom == "Meter") ? 'selected' : ''}}>Meter</option>
+            </select>
+          </div> -->
 					<div class="col-md-6">
-						<label>Cost</label>
+						<label>Cost <a href="{{route('getProductConfig')}}">(Auto Increase {{$default_price->default_price_margin}}%)</a></label>
 						<input type="number" min="0" step="0.001" name="cost" id="cost" class="form-control" required value="{{number_format($product->cost,3)}}">
 					</div>
 					<div class="col-md-6">
-						<label>Price <a href="{{route('getProductConfig')}}">(Auto Increase {{$default_price->default_price_margin}}%)</a></label>
+						<label>Price 
+              <span id="display_price" style="color:red;font-weight:bold">
+                @if($product->measurement == 'unit')
+                  (1 Unit)
+                @elseif($product->measurement == 'kilogram')
+                  (1 Kilogram)
+                @else
+                  (1 Meter)
+                @endif
+              </span>
+            </label>
 						<input type="number" min="0" step="0.01" name="price" id="price" class="form-control" required value="{{$product->price}}">
 					</div>
 					<div class="col-md-6">
@@ -277,6 +295,16 @@
 <script>
 $(document).ready(function(){
 	let price_ptg = parseFloat({{$default_price->default_price_margin}});
+
+  $("select[name=measurement]").change(function(){
+    if($(this).val() == 'unit'){
+      $("#display_price").text('(1 Unit)');
+    }else if($(this).val() == 'kilogram'){
+      $("#display_price").text('(1 Kilogram)');
+    }else{
+      $("#display_price").text('(1 Meter)');
+    }
+  });
 
 	$("#department").change(function(){
 		$.get('{{route('ajaxGetCategory')}}',{'department_id' : $("#department").val()},
@@ -546,9 +574,75 @@ $(document).ready(function(){
       $("#wholesales_quantity7").prop("required",false);  
     }
   });
+
+  $("select[name=measurement]").change(function(){
+    changeStep();
+  });
+
+  changeStep();
 	
 });
-
+function changeStep(){
+  if($("select[name=measurement]").val() == 'unit'){
+    $("#normal_wholesales_quantity").attr('step',1);
+    $("#normal_wholesales_quantity2").attr('step',1);
+    $("#normal_wholesales_quantity3").attr('step',1);
+    $("#normal_wholesales_quantity4").attr('step',1);
+    $("#normal_wholesales_quantity5").attr('step',1);
+    $("#normal_wholesales_quantity6").attr('step',1);
+    $("#normal_wholesales_quantity7").attr('step',1);
+    $("#normal_wholesales_quantity").attr('min',2);
+    $("#normal_wholesales_quantity2").attr('min',2);
+    $("#normal_wholesales_quantity3").attr('min',2);
+    $("#normal_wholesales_quantity4").attr('min',2);
+    $("#normal_wholesales_quantity5").attr('min',2);
+    $("#normal_wholesales_quantity6").attr('min',2);
+    $("#normal_wholesales_quantity7").attr('min',2);
+    $("#wholesales_quantity").attr('step',1);
+    $("#wholesales_quantity2").attr('step',1);
+    $("#wholesales_quantity3").attr('step',1);
+    $("#wholesales_quantity4").attr('step',1);
+    $("#wholesales_quantity5").attr('step',1);
+    $("#wholesales_quantity6").attr('step',1);
+    $("#wholesales_quantity7").attr('step',1);
+    $("#wholesales_quantity").attr('min',2);
+    $("#wholesales_quantity2").attr('min',2);
+    $("#wholesales_quantity3").attr('min',2);
+    $("#wholesales_quantity4").attr('min',2);
+    $("#wholesales_quantity5").attr('min',2);
+    $("#wholesales_quantity6").attr('min',2);
+    $("#wholesales_quantity7").attr('min',2);
+  }else{
+    $("#normal_wholesales_quantity").attr('step',0.001);
+    $("#normal_wholesales_quantity2").attr('step',0.001);
+    $("#normal_wholesales_quantity3").attr('step',0.001);
+    $("#normal_wholesales_quantity4").attr('step',0.001);
+    $("#normal_wholesales_quantity5").attr('step',0.001);
+    $("#normal_wholesales_quantity6").attr('step',0.001);
+    $("#normal_wholesales_quantity7").attr('step',0.001);
+    $("#wholesales_quantity").attr('step',0.001);
+    $("#wholesales_quantity2").attr('step',0.001);
+    $("#wholesales_quantity3").attr('step',0.001);
+    $("#wholesales_quantity4").attr('step',0.001);
+    $("#wholesales_quantity5").attr('step',0.001);
+    $("#wholesales_quantity6").attr('step',0.001);
+    $("#wholesales_quantity7").attr('step',0.001);
+    $("#normal_wholesales_quantity").attr('min',1);
+    $("#normal_wholesales_quantity2").attr('min',1);
+    $("#normal_wholesales_quantity3").attr('min',1);
+    $("#normal_wholesales_quantity4").attr('min',1);
+    $("#normal_wholesales_quantity5").attr('min',1);
+    $("#normal_wholesales_quantity6").attr('min',1);
+    $("#normal_wholesales_quantity7").attr('min',1);
+    $("#wholesales_quantity").attr('min',1);
+    $("#wholesales_quantity2").attr('min',1);
+    $("#wholesales_quantity3").attr('min',1);
+    $("#wholesales_quantity4").attr('min',1);
+    $("#wholesales_quantity5").attr('min',1);
+    $("#wholesales_quantity6").attr('min',1);
+    $("#wholesales_quantity7").attr('min',1);
+  }
+}
 </script>
 @if(session()->has('result'))
 <script>

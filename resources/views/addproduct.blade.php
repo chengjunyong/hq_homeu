@@ -36,10 +36,18 @@
 						<label>Barcode</label>
 						<input type="text" name="barcode" class="form-control" required>
 					</div>
-					<div class="col-md-12">
+					<div class="col-md-6">
 						<label>Product Name</label>
 						<input type="text" name="product_name" class="form-control" required>
 					</div>
+          <div class="col-md-6">
+            <label>Measurement Type</label>
+            <select class="form-control" name="measurement">
+              <option value="unit" selected>Unit</option>
+              <option value="kilogram">Kilogram</option>
+              <option value="meter">Meter</option>
+            </select>
+          </div>
 <!--           <div class="col-md-12">
             <label>UOM</label>
             <select name="uom" id="uom" class="form-control" required>
@@ -52,11 +60,11 @@
             </select>
           </div> -->
 					<div class="col-md-6">
-						<label>Cost</label>
+						<label>Cost <a href="{{route('getProductConfig')}}">(Price Auto Increase {{$default_price->default_price_margin}}%)</a></label>
 						<input type="number" min="0" step="0.01" name="cost" id="cost" class="form-control" required>
 					</div>
 					<div class="col-md-6">
-						<label>Price <a href="{{route('getProductConfig')}}">(Auto Increase {{$default_price->default_price_margin}}%)</a></label>
+						<label>Price <span id="display_price" style="color:red;font-weight:bold">(1 Unit)</span></label>
 						<input type="number" min="0" step="0.01" name="price" id="price" class="form-control" required>
 					</div>
 					<div class="col-md-6">
@@ -131,6 +139,16 @@ $(document).ready(function(){
           }
         },"html");
     },500);
+  });
+
+  $("select[name=measurement]").change(function(){
+    if($(this).val() == 'unit'){
+      $("#display_price").text('(1 Unit)');
+    }else if($(this).val() == 'kilogram'){
+      $("#display_price").text('(1 Kilogram)');
+    }else{
+      $("#display_price").text('(1 Meter)');
+    }
   });
 	
 });

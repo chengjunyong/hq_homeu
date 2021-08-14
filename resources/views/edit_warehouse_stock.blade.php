@@ -42,7 +42,7 @@
 					</div>
           <div class="col-md-12">
             <label>Measurement Type</label>
-            <input type="text" name="uom" class="form-control" readonly value="{{$warehouse_stock->uom}}">
+            <input type="text" name="measurement" class="form-control" readonly value="{{ucfirst($warehouse_stock->measurement)}}">
           </div>
 					<div class="col-md-6">
 						<label>Cost</label>
@@ -50,15 +50,15 @@
 					</div>
           <div class="col-md-6">
             <label>Stock Quantity</label>
-            <input type="number" name="quantity" step="0.01" id="quantity" class="form-control" required value="{{$warehouse_stock->quantity}}">
+            <input type="number" name="quantity" {{($warehouse_stock->measurement == 'unit') ? 'step=1' : 'step=0.001'}}  id="quantity" class="form-control" required value="{{$warehouse_stock->quantity}}">
           </div>
 					<div class="col-md-6">
 						<label>Reorder Level</label>
-						<input type="number" min="0" step="1" name="reorder_level" class="form-control" required value="{{$warehouse_stock->reorder_level}}">
+						<input type="number" min="0" {{($warehouse_stock->measurement == 'unit') ? 'step=1' : 'step=0.001'}} name="reorder_level" class="form-control" required value="{{$warehouse_stock->reorder_level}}">
 					</div>
 					<div class="col-md-6">
 						<label>Reorder Recommend Quantity</label>
-						<input type="number" min="0" step="1" name="recommend_quantity" class="form-control" required value="{{$warehouse_stock->reorder_quantity}}">
+						<input type="number" min="0" {{($warehouse_stock->measurement == 'unit') ? 'step=1' : 'step=0.001'}} name="recommend_quantity" class="form-control" required value="{{$warehouse_stock->reorder_quantity}}">
 					</div>
 					<div class="col-md-12" style="text-align: center;margin-top: 20px">
 						<input type="submit" class="btn btn-primary" value="Update">

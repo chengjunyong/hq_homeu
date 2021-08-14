@@ -14,6 +14,7 @@ class Do_detail extends Model
       'barcode',
       'product_name',
       'price',
+      'measurement',
       'cost',
       'quantity',
       'stock_lost_quantity',

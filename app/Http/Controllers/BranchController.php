@@ -159,7 +159,7 @@ class BranchController extends Controller
                     ->update([
                       'reorder_level' => $request->reorder_level,
                       'recommend_quantity' => $request->recommend_quantity,
-                      'quantity' => $request->stock_quantity,
+                      'quantity' => round($request->stock_quantity,3),
                     ]);
 
     return "success";
@@ -768,6 +768,7 @@ class BranchController extends Controller
                                 'category_id' => $product_detail->category_id,
                                 'barcode' => $product_detail->barcode,
                                 'product_name' => $product_detail->product_name,
+                                'measurement' => $product_detail->measurement,
                                 'cost' => $product_detail->cost,
                                 'price' => $product_detail->price,
                                 'order_quantity' => $request->order_quantity,
@@ -853,6 +854,7 @@ class BranchController extends Controller
         'product_id' => $request->product_id[$a],
         'barcode' => $request->barcode[$a],
         'product_name' => $request->product_name[$a],
+        'measurement' => $request->measurement[$a],
         'price' => $request->price[$a],
         'cost' => $request->cost[$a],
         'quantity' => $request->order_quantity[$a],

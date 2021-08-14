@@ -14,6 +14,7 @@ class Purchase_order_detail extends Model
 			'product_id',
 			'barcode',
 			'product_name',
+      'measurement',
 			'cost',
 			'quantity',
 			'received',

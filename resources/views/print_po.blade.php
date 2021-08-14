@@ -110,7 +110,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <th style="width:5%" align="left">Bil</th>
 				<th style="width:15%" align="left">BARCODE</th>
 				<th>ITEMS</th>
-				<th style="width:5%;text-align: center">QTY</th>
+				<th text-align: center">QTY</th>
 				<th style="width:13%;text-align: center">UNIT PRICE</th>
 			</thead>
 			<tbody class="border">
@@ -119,7 +119,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <td>{{$key +1}}</td>
 						<td>{{$result->barcode}}</td>
 						<td>{{$result->product_name}}</td>
-						<td style="text-align: center">{{$result->quantity}}</td>
+						<td style="text-align: center">
+              @if($result->measurement == 'kilogram')
+                {{$result->quantity}} (Kg)
+              @elseif($result->measurement == 'meter')
+                {{number_format($result->quantity,3)}} (M)
+              @else
+                {{number_format($result->quantity,0)}}
+              @endif
+            </td>
 						<td style="text-align: right">{{ number_format($result->cost,2) }}</td>
 					</tr>
 				@endforeach

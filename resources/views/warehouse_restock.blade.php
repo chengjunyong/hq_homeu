@@ -61,6 +61,7 @@
                 <td>No</td>
                 <td style="width:5%">Barcode</td>
                 <td>Product Name</td>
+                <td align="center">Measurement</td>
                 <td align="center">Order Quantity</td>
                 <td align="center" style="width:10%">Quantity Received</td>
                 <td align="center" style="width:10%">Cost</td>
@@ -72,10 +73,11 @@
                   <tr>
                     <td>{{$key+1}}</td>
                     <td>{{$result->barcode}}</td>
-                    <td>{{$result->product_name}}</td>
+                    <td>{{$result->product_name}}</td>.
+                    <td align="center">{{ucfirst($result->measurement)}}</td>
                     <td align="center">{{$result->quantity}}</td>
-                    <td align="center"><input type="number" name="received_quantity[]" value="{{$result->quantity}}" style="width:50%" required min=0></td>
-                    <td align="center"><input type="number" name="cost[]" value="{{$result->cost}}" step="0.01" style="width:50%" required min=0></td>
+                    <td align="center"><input type="number" name="received_quantity[]" value="{{$result->quantity}}" style="width:100%" required min=0 {{($result->measurement == 'unit') ? 'step=1' : 'step=0.001'}}></td>
+                    <td align="center"><input type="number" name="cost[]" value="{{$result->cost}}" step="0.001" style="width:50%" required min=0 {{($result->measurement == 'unit') ? 'step=1' : 'step=0.001'}}></td>
                     <input type="text" hidden value="{{$result->barcode}}" name="barcode[]"/>
                     <input type="text" hidden value="{{$result->product_name}}" name="product_name[]"/>
                     <td><input type="text" name="remark[]" style="width:100%"></td>

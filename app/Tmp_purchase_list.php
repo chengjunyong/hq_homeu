@@ -16,6 +16,7 @@ class Tmp_purchase_list extends Model
       'category_id',
       'barcode',
       'product_name',
+      'measurement',
       'cost',
       'price',
       'order_quantity',

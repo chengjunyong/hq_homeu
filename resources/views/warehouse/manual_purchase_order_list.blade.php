@@ -45,8 +45,9 @@
                 <td>No</td>
                 <td style="width:20%">Barcode</td>
                 <td>Product Name</td>
+                <td align="center">Measurement</td>
                 <td align="right">Cost</td>
-                <td align="right">Price Per Unit</td>
+                <td align="right">Price</td>
                 <td align="center">Total Quantity Order</td>
                 <td></td>
               </tr>
@@ -57,6 +58,7 @@
                   <td>{{$key+1}}<input type="text" name="product_id[]" value="{{$result->warehouse_stock_id}}" hidden /></td>
                   <td>{{$result->barcode}}<input type="text" name="barcode[]" value="{{$result->barcode}}" hidden /></td>
                   <td>{{$result->product_name}}<input type="text" name="product_name[]" value="{{$result->product_name}}" hidden /></td>
+                  <td align="center">{{ucfirst($result->measurement)}}<input type="text" name="measurement[]" value="{{$result->measurement}}" hidden /></td>
                   <td align="right">{{number_format($result->cost,2)}}<input type="text" name="cost[]" value="{{$result->cost}}" hidden /></td>
                   <td align="right">{{number_format($result->price,2)}}<input type="text" name="price[]" value="{{$result->price}}" hidden /></td>
                   <td align="center">{{$result->order_quantity}}<input type="text" name="order_quantity[]" value="{{$result->order_quantity}}" hidden /></td>

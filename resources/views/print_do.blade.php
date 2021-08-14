@@ -112,8 +112,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <td>{{$index+1}}</td>
 						<td>{{ $result->barcode }}</td>
 						<td>{{ $result->product_name }}</td>
-						<td align="center">{{ number_format($result->quantity,0) }}</td>
-						<td align="right">{{ number_format($result->price,2) }}</td>
+						<td align="center">
+              @if($result->measurement == 'kilogram')
+                {{$result->quantity}} (Kg)
+              @elseif($result->measurement == 'meter')
+                {{number_format($result->quantity,3)}} (M)
+              @else
+                {{number_format($result->quantity,0)}}
+              @endif
+            </td>
+						<td align="right">{{ number_format($result->quantity * $result->price,2) }}</td>
 					</tr>
 				@endforeach
 			</tbody>

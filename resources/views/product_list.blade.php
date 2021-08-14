@@ -1,23 +1,10 @@
 @extends('layouts.app')
 <title>Product Check List</title>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 @section('content')
-<style>
-	table{
-		width:100%;
-	}
-
-	td{
-		border:1px solid black;
-	}
-
-	thead{
-		font-size:18px;
-		font-weight: 700;
-	}
+<style> 
+  .table tbody td{
+    padding: 0.35rem;
+  }
 
 	#search{
 		width: 80%;
@@ -49,7 +36,7 @@
 							<i class="fa fa-search"></i><input type="text" id="search" name="search" class="form-control" placeholder="Search" value="{{$search}}">
 						</form>
 					</div>
-					<table id="product_list">
+					<table id="product_list" class="table">
 						<thead style="background:#a1e619">
 							<tr>
 								<td>No</td>
@@ -57,25 +44,23 @@
 								<td>Department</td>
 								<td>Category</td>
 								<td>Product Name</td>
+                <td align="center">Measurement</td>
 								<td>Cost</td>
 								<td>Price</td>
-								<td>Reorder Level</td>
-								<td>Reorder Recommend Quantity</td>
 								<td>Last Updated</td>
 							</tr>
 						</thead>
 						<tbody>
 							@foreach($product_list as $key => $result)
-								<tr style="{{($key % 2 == 0) ? 'background:#ccc5c5' : ''}};">
+								<tr style="{{($key % 2 == 0) ? 'background:#ccc5c585' : ''}};">
 									<td>{{$key+1}}</td>
 									<td>{{$result->barcode}}</td>
 									<td>{{$result->department_name}}</td>
 									<td>{{$result->category_name}}</td>
 									<td><a href="{{route('getModifyProduct',$result->id)}}">{{$result->product_name}}</a></td>
+                  <td align="center">{{ucfirst($result->measurement)}}</td>
 									<td style="width:5%">{{number_format($result->cost,2)}}</td>
 									<td style="width:5%">{{number_format($result->price,2)}}</td>
-									<td align="center" style="width:2%">{{$result->reorder_level}}</td>
-									<td align="center" style="width:2%">{{$result->recommend_quantity}}</td>
 									<td align="center" style="width:9%">{{ date('d-M-Y', strtotime($result->updated_at))}} <br/> {{ date('h:i A', strtotime($result->updated_at))}}</td>
 								</tr>
 							@endforeach

@@ -57,10 +57,10 @@
           <tr style="font-weight: bold;">
             <td>Barcode</td>
             <td>Product Name</td>
+            <td align="center">Measurement</td>
             <td align="right">Cost</td>
             <td align="right">Price</td>
             <td align="center">Stock Qty</td>
-            <td align="center" style="width:7%;">Recommend Qty</td>
             <td align="center">Add To List</td>
           </tr>
         </thead>
@@ -69,10 +69,10 @@
             <tr>
               <td>{{$target->barcode}}</td>
               <td>{{$target->product_name}}</a></td>
+              <td align="center">{{ucfirst($target->measurement)}}</td>
               <td align="right">{{number_format($target->cost,2)}}</td>
               <td align="right">{{number_format($target->price,2)}}</td>
               <td align="center">{{$target->quantity}}</td>
-              <td align="center" style="width:7%;">{{$target->reorder_quantity}}</td>
               <td align="center"><button class="btn btn-primary add-list" value="{{$target->id}}">Add</button></td>
             </tr>
           @endif
@@ -80,10 +80,10 @@
             <tr>
               <td>{{$result->barcode}}</td>
               <td>{{$result->product_name}}</a></td>
+              <td align="center">{{ucfirst($result->measurement)}}</td>
               <td align="right">{{number_format($result->cost,2)}}</td>
               <td align="right">{{number_format($result->price,2)}}</td>
               <td align="center">{{$result->quantity}}</td>
-              <td align="center" style="width:7%;">{{$result->reorder_quantity}}</td>
               <td align="center"><button class="btn btn-primary add-list" value="{{$result->id}}">Add</button></td>
             </tr>
           @endforeach
@@ -107,7 +107,7 @@
 
 $(document).ready(function(){
   $(".add-list").click(function(){
-    quantityHandle($(this).val());
+    quantityHandle($(this).val(),$(this).parent().siblings().eq(2).text());
   });
 
   $("input[name=search]").keydown(function(e){
@@ -118,13 +118,13 @@ $(document).ready(function(){
 
   $("thead,#warehouse_stock_list_paginate").click(function(){
     $(".add-list").click(function(){
-      quantityHandle($(this).val());
+      quantityHandle($(this).val(),$(this).parent().siblings().eq(2).text());
     });
   });
 
   $("input[type=search]").keyup(()=>{
     $(".add-list").click(function(){
-      quantityHandle($(this).val());
+      quantityHandle($(this).val(),$(this).parent().siblings().eq(2).text());
     });
   });
 
@@ -134,53 +134,89 @@ $(document).ready(function(){
 
 });
 
-function quantityHandle(target){
+function quantityHandle(target,measurement){
+  if(measurement == 'Unit'){
     Swal.fire({
-    title : 'Quantity Order',
-    input : 'number',
-    inputAttributes : {
-      step: 1,
-      min: 1,
-    },
-    confirmButtonText : 'Add',
-    showLoaderOnConfirm : true,
-    preConfirm: (result) => {
-      if(result != 0 && result != '' && result != null){
-        $.get('{{route('ajaxAddManualStock')}}',
-        {
-          'supplier_id' : $("#supplier_id").val(),
-          'warehouse_stock_id' : target,
-          'order_quantity' : result,
-        },function(data){
-          if(data == true || data == 'true'){
-            Swal.fire({
-              title : 'Add To List Successful',
-              icon : 'success',
-            });
-          }else{
-            Swal.fire({
-              title : 'Something Wrong, Please Contact IT Support',
-              icon : 'error',
-            });
-          }
-
-        },'json');
-      }
-    },
-    inputValidator: (result) => {
-      if(result == ''){
-        return null;
-      }else{
-        if(!Number.isInteger(+result) || result <= 0){
-          return 'Must be a real number & Quantity cannot smaller than 0';
-        }else{
-          return null;
+      title : 'Quantity Order',
+      input : 'number',
+      inputAttributes : {
+        step: 1,
+        min: 1,
+      },
+      confirmButtonText : 'Add',
+      showLoaderOnConfirm : true,
+      preConfirm: (result) => {
+        if(result != 0 && result != '' && result != null){
+          $.get('{{route('ajaxAddManualStock')}}',
+          {
+            'supplier_id' : $("#supplier_id").val(),
+            'warehouse_stock_id' : target,
+            'order_quantity' : result,
+          },function(data){
+            if(data == true || data == 'true'){
+              Swal.fire({
+                title : 'Add To List Successful',
+                icon : 'success',
+              });
+            }else{
+              Swal.fire({
+                title : 'Something Wrong, Please Contact IT Support',
+                icon : 'error',
+              });
+            }
+          },'json');
         }
-      }
-
-    },
-
-  });
+      },
+      inputValidator: (result) => {
+        if(result == '' || result <= 0){
+          return 'Quantity cannot be empty or less than 0';
+        }else if(result % 1 != 0){
+          return 'Unit measurement type cannot be decimal number';
+        }
+      },
+    });
+  }else{
+    Swal.fire({
+      title : 'Quantity Order',
+      input : 'number',
+      inputAttributes : {
+        step: 0.001,
+        min: 0.001,
+      },
+      confirmButtonText : 'Add',
+      showLoaderOnConfirm : true,
+      preConfirm: (result) => {
+        if(result != 0 && result != '' && result != null){
+          $.get('{{route('ajaxAddManualStock')}}',
+          {
+            'supplier_id' : $("#supplier_id").val(),
+            'warehouse_stock_id' : target,
+            'order_quantity' : result,
+          },function(data){
+            if(data == true || data == 'true'){
+              Swal.fire({
+                title : 'Add To List Successful',
+                icon : 'success',
+              });
+            }else{
+              Swal.fire({
+                title : 'Something Wrong, Please Contact IT Support',
+                icon : 'error',
+              });
+            }
+          },'json');
+        }
+      },
+      inputValidator: (result) => {
+        let decimals = (result!=Math.floor(result))?(result.toString()).split('.')[1].length:0;
+        if(result == '' || result <= 0){
+          return 'Quantity cannot be empty or less than 0';
+        }else if(decimals > 3){
+          return 'Quantity decimal places cannot more than 3';
+        }
+      },
+    });
+  }
 }
 
 </script>

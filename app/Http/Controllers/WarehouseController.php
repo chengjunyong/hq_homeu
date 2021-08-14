@@ -175,7 +175,7 @@ class WarehouseController extends Controller
     $po_detail = Purchase_order_detail::where('po_id',$request->id)->get();
     $total = 0;
     foreach($po_detail as $result){
-      $total += floatval($result->cost) * intval($result->quantity);
+      $total += floatval($result->cost) * floatval($result->quantity);
     }
 
     return view('print_po',compact('po','po_detail','total','supplier'));
@@ -400,6 +400,7 @@ class WarehouseController extends Controller
                                 'category_id' => $warehouse_stock->category_id,
                                 'barcode' => $warehouse_stock->barcode,
                                 'product_name' => $warehouse_stock->product_name,
+                                'measurement' => $warehouse_stock->measurement,
                                 'cost' => $warehouse_stock->cost,
                                 'price' => $warehouse_stock->price,
                                 'order_quantity' => $request->order_quantity,
@@ -434,7 +435,7 @@ class WarehouseController extends Controller
     $total_cost = 0;
     foreach($tmp as $result){
       $total_item += $result->order_quantity; 
-      $total_cost += intval($result->order_quantity) * doubleval($result->cost);
+      $total_cost += doubleval($result->order_quantity) * doubleval($result->cost);
     }
 
     return view('warehouse.manual_purchase_order_list',compact('url','tmp','supplier','total_item','total_cost'));
@@ -476,6 +477,7 @@ class WarehouseController extends Controller
         'product_id' => $result->id,
         'barcode' => $result->barcode,
         'product_name' => $result->product_name,
+        'measurement' => $result->measurement,
         'cost' => $result->cost,
         'quantity' => $request->order_quantity[$key],
         'received' => 0,
