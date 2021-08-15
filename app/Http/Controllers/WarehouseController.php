@@ -469,15 +469,15 @@ class WarehouseController extends Controller
                         'user_id' => $user,
                       ]);
 
-    foreach($warehouse_stock as $key => $result){
+    foreach($request->product_id as $index => $result){
       Purchase_order_detail::create([
         'po_id' => $purchase_order->id,
         'po_number' => $po_number,
-        'product_id' => $result->id,
-        'barcode' => $result->barcode,
-        'product_name' => $result->product_name,
-        'cost' => $result->cost,
-        'quantity' => $request->order_quantity[$key],
+        'product_id' => $result,
+        'barcode' => $request->barcode[$index],
+        'product_name' => $request->product_name[$index],
+        'cost' => $request->cost[$index],
+        'quantity' => $request->order_quantity[$index],
         'received' => 0,
       ]);
     }
