@@ -12,6 +12,7 @@ class Good_return_detail extends Model
       'good_return_id',
       'barcode',
       'product_name',
+      'measurement',
       'cost',
       'quantity',
       'total_cost',

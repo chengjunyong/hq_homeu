@@ -11,6 +11,7 @@ class Tmp_good_return extends Model
     [
       'barcode',
       'product_name',
+      'measurement',
       'cost',
       'quantity',
       'total',

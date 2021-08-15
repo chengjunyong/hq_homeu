@@ -543,6 +543,7 @@ class WarehouseController extends Controller
                                 ['barcode'=>$request->barcode,'user_id'=>$user],
                                 [
                                 'product_name'=>$request->product_name,
+                                'measurement'=>$request->measurement,
                                 'cost'=>$request->cost,
                                 'quantity'=>$request->quantity,
                                 'total'=>$request->total,
@@ -624,6 +625,7 @@ class WarehouseController extends Controller
                                 'invoice_purchase_id'=>$invoice_purchase->id,
                                 'barcode'=>$result->barcode,
                                 'product_name'=>$result->product_name,
+                                'measurement'=>$result->measurement,
                                 'cost'=>$result->cost,
                                 'quantity'=>$result->quantity,
                                 'total_cost'=>$item_cost,
@@ -690,7 +692,7 @@ class WarehouseController extends Controller
 
       //Calculate Stock Different & Update In Warehouse Stock Table
       $qty1 = Invoice_purchase_detail::where('id',$result)->select("quantity")->first();
-      $diff_qty = intval($request->quantity[$key]) - intval($qty1->quantity);
+      $diff_qty = floatval($request->quantity[$key]) - floatval($qty1->quantity);
 
       if($request->cost[$key] != 0){
         Warehouse_stock::where('barcode',$request->barcode[$key])
@@ -708,7 +710,7 @@ class WarehouseController extends Controller
       //Update Invoice Purchase Information
       $total_cost = floatval($request->total[$key]);
       $total += floatval($request->total[$key]);  
-      $total_quantity += intval($request->quantity[$key]);
+      $total_quantity += floatval($request->quantity[$key]);
       Invoice_purchase_detail::where('id',$result)
                               ->update([
                                 'cost'=>$request->cost[$key],
@@ -716,9 +718,6 @@ class WarehouseController extends Controller
                                 'total_cost'=>$total_cost,
                                 'quantity'=>$request->quantity[$key],
                               ]);
-
-
-
     }
     Invoice_purchase::where('reference_no',$request->ref_no)
                       ->update([
@@ -767,12 +766,12 @@ class WarehouseController extends Controller
     $result = Tmp_good_return::updateOrCreate(
                             ['user_id'=>$user->id,'barcode'=>$request->barcode],
                             [
-                              'product_name' => $request->product_name,
+                              'product_name'=>$request->product_name,
+                              'measurement'=>$request->measurement,
                               'cost' =>$request->cost,
                               'quantity' => $request->quantity,
                               'total' => $request->total,
                             ]);
-
     return $result;
   }
 
@@ -845,6 +844,7 @@ class WarehouseController extends Controller
                                 'good_return_id'=>$good_return->id,
                                 'barcode'=>$result->barcode,
                                 'product_name'=>$result->product_name,
+                                'measurement'=>$result->measurement,
                                 'cost'=>$result->cost,
                                 'quantity'=>$result->quantity,
                                 'total_cost'=>$item_cost,
@@ -908,7 +908,7 @@ class WarehouseController extends Controller
 
       //Calculate Stock Different & Update In Warehouse Stock Table
       $qty1 = Good_return_detail::where('id',$result)->select("quantity")->first();
-      $diff_qty = intval($request->quantity[$key]) - intval($qty1->quantity);
+      $diff_qty = floatval($request->quantity[$key]) - floatval($qty1->quantity);
 
       Warehouse_stock::where('barcode',$request->barcode[$key])
                       ->update([
@@ -918,7 +918,7 @@ class WarehouseController extends Controller
       //Update Invoice Purchase Information
       $total_cost = floatval($request->total[$key]);
       $total += floatval($request->total[$key]);  
-      $total_quantity += intval($request->quantity[$key]);
+      $total_quantity += floatval($request->quantity[$key]);
       Good_return_detail::where('id',$result)
                               ->update([
                                 'update_by'=>$user->name,

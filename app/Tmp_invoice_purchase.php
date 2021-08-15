@@ -11,6 +11,7 @@ class Tmp_invoice_purchase extends Model
     [
       'barcode',
       'product_name',
+      'measurement',
       'cost',
       'quantity',
       'total',

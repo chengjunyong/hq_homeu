@@ -65,6 +65,7 @@
                 <td>No</td>
                 <td>Barcode</td>
                 <td>Product Name</td>
+                <td align="center">Measurement</td>
                 <td align="center">Cost</td>
                 <td align="center">Quantity</td>
                 <td align="right">Total Value</td>
@@ -77,8 +78,9 @@
                     <td>{{$key +1}}</td>
                     <td>{{$result->barcode}}</td>
                     <td>{{$result->product_name}}</td>
+                    <td align="center">{{ucfirst($result->measurement)}}</td>
                     <td align="center">Rm <input type="number" class="cost" name="cost[]" min="0.00" step="0.001" value="{{$result->cost}}" style="text-align: right;width:7vw"/></td>
-                    <td align="center"><input type="number" class="quantity" name="quantity[]" min="1" step="1" value="{{$result->quantity}}" style="text-align: right;width:5vw"/></td>
+                    <td align="center"><input type="number" class="quantity" name="quantity[]" {{($result->measurement == 'unit') ? 'min=1' : 'min=0.001'}} {{($result->measurement == 'unit') ? 'step=1' : 'step=0.001'}} value="{{$result->quantity}}" style="text-align: right;width:5vw"/></td>
                     <td align="right">Rm <input type="number" class="total" name="total[]" min="0.00" step="0.001" value="{{number_format($result->total_cost,3,'.','')}}" style="text-align: right;width:10vw"/></td>
                   </tr>
                 @endforeach
@@ -99,28 +101,27 @@
 <script>
 $(document).ready(function(){
   $(".total").on("keyup change",function(){
-    let quantity = parseInt($(this).parent().siblings().eq(4).children().val());
+    let quantity = parseFloat($(this).parent().siblings().eq(5).children().val());
     let total = parseFloat($(this).val());
     let result = total / quantity;
-    $(this).parent().siblings().eq(3).children().val(result.toFixed(3));
-  });
-
-  $(".cost").on("keyup change",function(){
-    let quantity = parseInt($(this).parent().siblings().eq(3).children().val());
-    let cost = parseFloat($(this).val());
-    let result = cost * quantity;
     $(this).parent().siblings().eq(4).children().val(result.toFixed(3));
   });
 
+  $(".cost").on("keyup change",function(){
+    let quantity = parseFloat($(this).parent().siblings().eq(4).children().val());
+    let cost = parseFloat($(this).val());
+    let result = cost * quantity;
+    $(this).parent().siblings().eq(5).children().val(result.toFixed(3));
+  });
+
   $(".quantity").on("keyup change",function(){
-    let total = parseFloat($(this).parent().siblings().eq(4).children().val());
-    let cost = parseInt($(this).parent().siblings().eq(3).children().val())
+    let total = parseFloat($(this).parent().siblings().eq(5).children().val());
+    let cost = parseFloat($(this).parent().siblings().eq(4).children().val())
     let quantity = $(this).val();
     if(total){
       let result = total / quantity;
-      $(this).parent().siblings().eq(3).children().val(result.toFixed(3));
+      $(this).parent().siblings().eq(4).children().val(result.toFixed(3));
     }
-    
   });
 
 });

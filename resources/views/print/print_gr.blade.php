@@ -129,7 +129,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <td>{{$key +1}}</td>
             <td>{{$result->barcode}}</td>
             <td>{{$result->product_name}}</td>
-            <td style="text-align: center">{{$result->quantity}}</td>
+            <td style="text-align: center">
+              @if($result->measurement == 'unit')
+                {{number_format($result->quantity,0)}}
+              @elseif($result->measurement == 'kilogram')
+                {{number_format($result->quantity,3)}} (kg)
+              @elseif($result->measurement == 'meter')
+                {{number_format($result->quantity,3)}} (m)
+              @endif
+            </td>
             <td style="text-align: right">{{ number_format($result->cost,3) }}</td>
             <td style="text-align: right">{{ number_format($result->total_cost,2) }}</td>
           </tr>

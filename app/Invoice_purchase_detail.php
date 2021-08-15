@@ -12,6 +12,7 @@ class Invoice_purchase_detail extends Model
       'invoice_purchase_id',
       'barcode',
       'product_name',
+      'measurement',
       'cost',
       'quantity',
       'total_cost',

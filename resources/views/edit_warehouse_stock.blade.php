@@ -50,7 +50,7 @@
 					</div>
           <div class="col-md-6">
             <label>Stock Quantity</label>
-            <input type="number" name="quantity" {{($warehouse_stock->measurement == 'unit') ? 'step=1' : 'step=0.001'}}  id="quantity" class="form-control" required value="{{$warehouse_stock->quantity}}">
+            <input type="number" name="quantity" min="0" {{($warehouse_stock->measurement == 'unit') ? 'step=1' : 'step=0.001'}}  id="quantity" class="form-control" required value="{{$warehouse_stock->quantity}}">
           </div>
 					<div class="col-md-6">
 						<label>Reorder Level</label>
