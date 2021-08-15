@@ -98,8 +98,8 @@ $(document).ready(function(){
 		let total = 0;
 		let length = $(".restock_quantity").length;
 		for(let a=0;a<length;a++){
-			total = parseInt($(".restock_quantity")[a].value) + parseInt($(".stock_lost_quantity")[a].value);
-			if(total == parseInt($(".quantity")[a].innerHTML)){
+			total = parseFloat($(".restock_quantity")[a].value) + parseFloat($(".stock_lost_quantity")[a].value);
+			if(total == parseFloat($(".quantity")[a].innerHTML)){
 				$(".restock_quantity")[a].setCustomValidity("");
 			}else{
 				$(".restock_quantity")[a].setCustomValidity("Quantity is not talley with the delivery quantity, Please make sure the restock quantity and stock lost quantity is correct");
