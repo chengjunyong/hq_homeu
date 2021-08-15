@@ -477,7 +477,7 @@ class WarehouseController extends Controller
         'product_id' => $result,
         'barcode' => $request->barcode[$index],
         'product_name' => $request->product_name[$index],
-        'measurement' => $request->measurement,
+        'measurement' => $request->measurement[$index],
         'cost' => $request->cost[$index],
         'quantity' => $request->order_quantity[$index],
         'received' => 0,
