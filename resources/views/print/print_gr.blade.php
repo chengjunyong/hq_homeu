@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Purchase Order</title>
+<title>Goods Return</title>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -55,6 +55,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     display: table-footer-group;
   }
 
+  .footer{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+  }
+
 </style>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -65,6 +73,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <div class="header">
     <h2>HOME U(M) SDN BHD</h2>
+    <h4>S/36 LOT 1745, CABANG TIGA</h4>
+    <h4>PENGKALAN CHEPA, 16100</h4>
+    <h4>KOTA BHARU, KELANTAN (AB15809)</h4>
     <h4>(125272-P)</h4>
     <h2 style="margin:20px 30%;border:1px solid black">GOODS RETURN</h2>
   </div>
@@ -132,7 +143,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </table>
   </div>
 
-</div>  
+  <div class="footer">
+    <table style="text-align: center;width:100%;font-weight: bold;">
+      <tr>
+        <td>
+          <label>Issuer Signature</label><br/><br/><br/>
+          <label>_____________________</label><br/>
+          <label>(&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;)</label>
 
+        </td>
+        <td>
+          <label>Authorizer Signature</label><br/><br/><br/>
+          <label>______________________</label><br/>
+          <label>(&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;)</label>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+</div>  
+<script>
+  window.print();
+</script>
 </body>
 </html>

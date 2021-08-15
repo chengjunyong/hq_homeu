@@ -39,9 +39,13 @@
 		min-height: 98vh;
 	}
 
-	.footer{
-
-	}
+  .footer{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+  }
 
 </style>
 <body>
@@ -133,15 +137,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 			<tr>
 				<td>
 					<label>Issuer Signature</label><br/><br/><br/>
-					<label>_____________________</label>
+					<label>_____________________</label><br/>
+          <label>(&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;)</label>
 				</td>
 				<td>
 					<label>Driver Signature</label><br/><br/><br/>
-					<label>______________________</label>
+					<label>______________________</label><br/>
+          <label>(&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;)</label>
 				</td>
 				<td>
 					<label>Branch Signature</label><br/><br/><br/>
-					<label>______________________</label>
+					<label>______________________</label><br/>
+          <label>(&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;)</label>
 				</td>
 			</tr>
 		</table>
