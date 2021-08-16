@@ -404,6 +404,12 @@ class UserController extends Controller
           'name' => 'Branch Sales Report',
           'route' => 'getBranchCashierReport'
         ],
+        [
+          'group' => 'Report',
+          'value' => 34,
+          'name' => 'Department & Category Sales Report',
+          'route' => 'getDepartmentAndCategoryReport'
+        ]
       ];
 
       return $access_control;

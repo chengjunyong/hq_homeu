@@ -516,6 +516,21 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
+              <h4 class="card-title">Department & Category Sales Report</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getDepartmentAndCategoryReport')}}"><i class="fas fa-chart-pie first sales-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
               <h4 class="card-title">Stock Balance Report</h4>
             </div>
             <div class="col">

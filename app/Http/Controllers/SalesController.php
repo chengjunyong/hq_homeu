@@ -15,6 +15,8 @@ use App\Branch_shift;
 use App\Cash_float;
 use App\Refund;
 use App\Refund_detail;
+use App\Department;
+use App\Category;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -1934,6 +1936,154 @@ class SalesController extends Controller
     $writer->save($path);
 
     return response()->json($path);
+  }
+
+  public function getDepartmentAndCategoryReport()
+  {
+    $url = route('home')."?p=sales_menu";
+
+    $selected_date_from = date('Y-m-d', strtotime(now()));
+    $selected_date_to = date('Y-m-d', strtotime(now()));
+
+    $department_list = Department::get();
+    $category_list = Category::get();
+
+    return view('report.department_and_category_report',compact('selected_date_from', 'selected_date_to', 'url', 'department_list', 'category_list'));
+  }
+
+  public function exportDepartmentAndCategoryReport(Request $request)
+  {
+    $department_detail = Department::where('id', $request->export_department_id)->first();
+    $category_list = Category::whereIn('id', $request->export_category_id)->get();
+
+    $date_from = $request->export_report_date_from;
+    $date_to = $request->export_report_date_to;
+    $report_date_from = $date_from." 00:00:00";
+    $report_date_to = $date_to." 23:59:59";
+
+    $transaction_query = Transaction_detail::leftJoin('transaction', 'transaction.branch_transaction_id', '=', 'transaction_detail.branch_transaction_id')->whereIn('transaction_detail.category_id', $request->export_category_id)->whereBetween('transaction.transaction_date', [$report_date_from, $report_date_to]);
+
+    $barcode_array = $transaction_query->pluck('barcode')->toArray();
+
+    $product_list = Product_list::whereIn('barcode', $barcode_array)->leftJoin('category', 'category.id', '=', 'product_list.category_id')->leftJoin('department', 'department.id', '=', 'product_list.department_id')->select('product_list.*', 'category.category_name', 'department.department_name')->get();
+
+    $transaction_detail = $transaction_query->get();
+
+    $branch_list = Branch::get();
+    foreach($product_list as $product)
+    {
+      $product->total_quantity = 0;
+      $product->total_sales = 0;
+
+      $product_branch_list = array();
+      foreach($branch_list as $branch)
+      {
+        $branch_detail = new \stdClass();
+        $branch_detail->id = $branch->id;
+        $branch_detail->token = $branch->token;
+        $branch_detail->total = 0;
+        $branch_detail->quantity = 0;
+
+        array_push($product_branch_list, $branch_detail);
+      }
+        
+      $product->branch_list = $product_branch_list;
+    }
+
+    foreach($transaction_detail as $value)
+    {
+      foreach($product_list as $product)
+      {
+        if($product->barcode == $value->barcode)
+        {
+          $product->total_sales += $value->total;
+          $product->total_quantity += ( $value->quantity * $value->measurement);
+          foreach($product->branch_list as $branch)
+          {
+            if($branch->token == $value->branch_id)
+            {
+              $branch->total += $value->total;
+              $branch->quantity += ( $value->quantity * $value->measurement);
+              break;
+            }
+          }
+          break;
+        }
+      }
+    }
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
+    $sheet->setCellValue('A2', 'Department & Category Sales Report');
+
+    $sheet->mergeCells('A1:G1');
+    $sheet->mergeCells('A2:G2');
+
+    $sheet->setCellValue('A3', 'Date:');
+    $sheet->setCellValue('B3', "Date from : ".date('d-m-Y', strtotime($date_from))."\nDate to : ".date('d-m-Y', strtotime($date_to)));
+
+    $sheet->mergeCells('B3:C3');
+    $sheet->setCellValue('I3', 'Branch Sales Quantity');
+    $sheet->mergeCells('I3:N3');
+
+    $sheet->setCellValue('E3', 'Generate Date:');
+    $sheet->setCellValue('F3', date('d-m-Y', strtotime(now())));
+    $sheet->mergeCells('F3:G3');
+
+    $sheet->getStyle("A1:G2")->getAlignment()->setWrapText(true);
+
+    $sheet->setCellValue('A4', 'Bil');
+    $sheet->setCellValue('B4', 'Department');
+    $sheet->setCellValue('C4', 'Category');
+    $sheet->setCellValue('D4', 'Barcode');
+    $sheet->setCellValue('E4', 'Product Name');
+    $sheet->setCellValue('F4', 'Total Quantity');
+    $sheet->setCellValue('G4', 'Total Sales');
+
+    $alphabet = range('A', 'Z');
+
+    $started_alp = 8;
+    foreach($branch_list as $branch)
+    {
+      $col = $alphabet[$started_alp];
+
+      $sheet->setCellValue($col.'4', $branch->branch_name);
+      $started_alp++;
+    }
+
+    $started_row = 5;
+    foreach($product_list as $key => $product)
+    {
+      $sheet->setCellValue('A'.$started_row, ($key + 1));
+      $sheet->setCellValue('B'.$started_row, $product->department_name);
+      $sheet->setCellValue('C'.$started_row, $product->category_name);
+      $sheet->setCellValue('D'.$started_row, $product->barcode);
+      $sheet->setCellValue('E'.$started_row, $product->product_name);
+      $sheet->setCellValue('F'.$started_row, $product->total_quantity);
+      $sheet->setCellValue('G'.$started_row, $product->total_sales);
+
+      $started_alp = 8;
+      foreach($product->branch_list as $branch)
+      {
+        $col = $alphabet[$started_alp];
+
+        if($branch->quantity > 0)
+        {
+          $sheet->setCellValue($col.$started_row, $branch->quantity);
+        }
+        $started_alp++;
+      }
+
+      $started_row++;
+    }
+
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/report/Department and Branch Sales Report.xlsx';
+    $writer->save($path);
+
+    return response()->download($path);
   }
 
 }

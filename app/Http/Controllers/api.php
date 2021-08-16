@@ -104,6 +104,8 @@ class api extends Controller
           'barcode' => $data['barcode'],
           'product_name' => $data['product_name'],
           'quantity' => $data['quantity'],
+          'measurement_type' => $data['measurement_type'],
+          'measurement' => $data['measurement'],
           'price' => $data['price'],
           'wholesale_price' => $data['wholesale_price'],
           'discount' => $data['discount'],
@@ -122,7 +124,7 @@ class api extends Controller
           $transaction_product[$product_name]->quantity = 0;
         }
 
-        $transaction_product[$product_name]->quantity -= $data['quantity'];
+        $transaction_product[$product_name]->quantity -= ($data['quantity'] * $data['measurement']);
 
         array_push($transaction_detail_query, $query);
       }
@@ -135,7 +137,7 @@ class api extends Controller
         {
           if($product_id == $previous_transaction->product_id)
           {
-            $transaction_product[$key]->quantity = $transaction_product_detail->quantity + $previous_transaction->quantity;
+            $transaction_product[$key]->quantity = $transaction_product_detail->quantity + ($previous_transaction->quantity * $previous_transaction->measurement);
             break;
           }
         }
@@ -310,7 +312,7 @@ class api extends Controller
       }
 
       // more than 10000, php will return error
-      $product_list = Branch_product::withTrashed()->select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'normal_wholesale_price', 'normal_wholesale_price2', 'normal_wholesale_quantity', 'normal_wholesale_quantity2', 'wholesale_price', 'wholesale_price2', 'wholesale_quantity', 'wholesale_quantity2', 'wholesale_start_date', 'wholesale_end_date', 'promotion_start', 'promotion_end', 'promotion_price', 'uom', 'deleted_at')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
+      $product_list = Branch_product::withTrashed()->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
 
       $response = new \stdClass();
       $response->error = 0;
@@ -352,7 +354,7 @@ class api extends Controller
         return response()->json($response);
       }
       
-      $product_list = Branch_product::withTrashed()->select('department_id', 'category_id', 'barcode', 'product_name', 'price', 'normal_wholesale_price', 'normal_wholesale_price2', 'normal_wholesale_quantity', 'normal_wholesale_quantity2', 'wholesale_price', 'wholesale_price2', 'wholesale_quantity', 'wholesale_quantity2', 'wholesale_start_date', 'wholesale_end_date', 'promotion_start', 'promotion_end', 'promotion_price', 'uom', 'deleted_at')->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
+      $product_list = Branch_product::withTrashed()->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
 
       $voucher_list = Voucher::get();
 

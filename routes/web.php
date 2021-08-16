@@ -107,6 +107,10 @@ Route::get('/ExportSalesTransactionReport','SalesController@ajaxExportSalesTrans
 Route::get('/RefundReport','SalesController@getRefundReport')->name('getRefundReport');
 Route::post('/RefundReport','SalesController@postRefundReport')->name('postRefundReport');
 Route::get('/ExportRefundReport','SalesController@ajaxRefundReport')->name('ajaxRefundReport');
+Route::get('/getDepartmentAndCategoryReport', 'SalesController@getDepartmentAndCategoryReport')->name('getDepartmentAndCategoryReport');
+Route::post('/getDepartmentAndCategoryReportDetail', 'SalesController@getDepartmentAndCategoryReportDetail')->name('getDepartmentAndCategoryReportDetail');
+Route::post('/ExportDepartmentAndCategoryReport', 'SalesController@exportDepartmentAndCategoryReport')->name('exportDepartmentAndCategoryReport');
+
 
 
 // User access control

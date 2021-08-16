@@ -19,6 +19,8 @@ class transaction_detail extends Model
       'barcode',
       'product_name',
       'quantity',
+      'measurement_type',
+      'measurement',
       'price',
       'wholesale_price',
       'wholesale_quantity',
