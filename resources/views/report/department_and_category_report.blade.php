@@ -22,8 +22,8 @@
     padding: 5px 0px 5px 0px;
   }
 
-  .form-control.select2 ~ span.select2 { height: 38px; }
-  .form-control.select2 ~ span.select2 > .selection > .select2-selection { height: 38px; overflow: auto; }
+  .form-control.select2 ~ span.select2 { height: 100px; }
+  .form-control.select2 ~ span.select2 > .selection > .select2-selection { height: 100px; overflow: auto; }
 
 </style>
 
