@@ -50,7 +50,7 @@
 					</div>
 					<div class="col-md-6">
 						<label>Stock Quantity</label>
-						<input type="number" min="0" step="0.001" name="stock_quantity" class="form-control" value="{{$product->quantity}}" >
+						<input type="number" min="0" step="1" name="stock_quantity" class="form-control" value="{{round($product->quantity,3)}}" >
 					</div>
 					<div class="col-md-12" style="text-align: center;margin-top: 20px">
 						<input type="submit" name="submit" hidden>
@@ -102,19 +102,26 @@ $(document).ready(function(){
 	});
 
 	$("#yes").click(function(){
-    // Validation decimal number
-  		$.post('{{route('postModifyBranchStock')}}',$("form").serialize(),
-  			function(data){
-  				if(data == 'success'){
-  					$("#msg").text('Update Successful');
-  				}else{
-  					$("#msg").text('Update Fail, please contact IT support');
-  				}
-  				$("#result").modal('toggle');
-  			},'html');
+    let measurement = '{{$product->measurement}}';
+    let qty = $("input[name=stock_quantity]").val();
+    let decimals = (qty!=Math.floor(qty))?(qty.toString()).split('.')[1].length:0;
+    if(measurement != 'unit' && decimals > 3){
+      swal.fire('Error','Stock Quantity Cannot More Than 3 Decimal Place','error');
+    }else if(measurement == 'unit' && decimals != 0){
+      swal.fire('Error','Stock Quantity Cannot Be Decimal Number','error');
+    }else{
+  		$.post('{{route('postModifyBranchStock')}}',
+      $("form").serialize(),
+			function(data){
+				if(data == 'success'){
+					$("#msg").text('Update Successful');
+				}else{
+					$("#msg").text('Update Fail, please contact IT support');
+				}
+				$("#result").modal('toggle');
+			},'html');
+    }
 	});
-
-
 
 });
 </script>

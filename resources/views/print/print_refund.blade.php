@@ -58,8 +58,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <div style="margin: 0 30px;">
   <div class="header">
-    <h4>HOME U(M) SDN BHD</h2>
-    <h5>(125272-P)</h4>
+    <h2>HOME U(M) SDN BHD</h2>
+    <h4>S/36 LOT 1745, CABANG TIGA</h4>
+    <h4>PENGKALAN CHEPA, 16100</h4>
+    <h4>KOTA BHARU, KELANTAN (AB15809)</h4>
+    <h4>(125272-P)</h4>
     <h4 style="margin:20px 30%;border:1px solid black">Refund Report ({{ date('d-M-Y',strtotime($target_date)) }})</h3>
   </div>
 

@@ -58,6 +58,7 @@
 							<td>No</td>
 							<td style="width:20%">Barcode</td>
 							<td>Product Name</td>
+              <td align="center">Measurement</td>
 							<td align="right">Price</td>
 							<td align="center">Qty Transfer</td>
 							<td align="center">Qty Delivered</td>
@@ -72,6 +73,7 @@
 								<td>{{$key+1}}</td>
 								<td>{{$result->barcode}}</td>
 								<td>{{$result->product_name}}</td>
+                <td align="center">{{ucfirst($result->measurement)}}</td>
 								<td align="right">{{number_format($result->price,2)}}</td>
 								<td align="center">{{$result->quantity}}</td>
 								<td align="center">{{$result->quantity - $result->stock_lost_quantity}}</td>
