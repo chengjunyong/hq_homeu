@@ -106,5 +106,12 @@ class OtherController extends Controller
 			return $e;
 		}
 	}
+
+  public function deleteSupplier(Request $request)
+  {
+    Supplier::where('id',$request->id)->delete();
+
+    return json_encode(true);
+  }
 	
 }
