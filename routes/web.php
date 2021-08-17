@@ -77,6 +77,7 @@ Route::get('/EditSupplier/{id}','OtherController@getEditSupplier')->name('getEdi
 Route::post('/postEditSupplier','OtherController@postEditSupplier')->name('postEditSupplier');
 Route::get('/createSupplier','OtherController@getCreateSupplier')->name('getCreateSupplier');
 Route::post('/postcreateSupplier','OtherController@postCreateSupplier')->name('postCreateSupplier');
+Route::get('/deleteSupplier','OtherController@deleteSupplier')->name('deleteSupplier');
 
 // Report
 Route::get('/sales_report', 'SalesController@getSalesReport')->name('getSalesReport');
