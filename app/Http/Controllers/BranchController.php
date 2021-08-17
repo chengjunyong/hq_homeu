@@ -391,7 +391,7 @@ class BranchController extends Controller
                 ]);
       }else{  
         $branch_product = Branch_product::where('id',$request->product_id[$x])->first();
-        if($branch_product) != null){
+        if($branch_product != null){
           $total_restock_quantity = $restock_quantity + intval($branch_product->quantity);
           Branch_product::where('id',$request->product_id[$x])
                   ->update([
