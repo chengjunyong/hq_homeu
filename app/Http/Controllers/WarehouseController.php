@@ -269,7 +269,6 @@ class WarehouseController extends Controller
         'product_name' => $request->product_name[$key],
         'cost' => $request->cost[$key],
         'quantity' => $request->received_quantity[$key],
-        'remark' => $request->remark[$key],
       ]);
 
       $warehouse = Warehouse_stock::where('id',$request->product_id[$key])->first();

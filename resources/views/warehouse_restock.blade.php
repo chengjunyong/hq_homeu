@@ -52,7 +52,7 @@
         <input type="text" name="supplier_code" value="{{$po->supplier_code}}" hidden>
 
         <label>Invoice Number</label>
-        <input type="text" name="invoice_number" required class="form-control" style="width:35%"/>
+        <input type="text" name="invoice_number" class="form-control" style="width:35%"/>
 
         <div style="overflow-y: auto;height:425px;margin-top:25px">
           <table style="width:100%;">
@@ -64,8 +64,8 @@
                 <td align="center">Measurement</td>
                 <td align="center">Order Quantity</td>
                 <td align="center" style="width:10%">Quantity Received</td>
-                <td align="center" style="width:10%">Cost</td>
-                <td>Remark</td>
+                <td align="center" style="width:%">Cost</td>
+<!--                 <td>Remark</td> -->
               </tr>
               <tbody>
                 @foreach($po_detail as $key => $result)
@@ -73,14 +73,14 @@
                   <tr>
                     <td>{{$key+1}}</td>
                     <td>{{$result->barcode}}</td>
-                    <td>{{$result->product_name}}</td>.
+                    <td>{{$result->product_name}}</td>
                     <td align="center">{{ucfirst($result->measurement)}}</td>
                     <td align="center">{{$result->quantity}}</td>
                     <td align="center"><input type="number" name="received_quantity[]" value="{{$result->quantity}}" style="width:100%" required min=0 {{($result->measurement == 'unit') ? 'step=1' : 'step=0.001'}}></td>
                     <td align="center"><input type="number" name="cost[]" value="{{$result->cost}}" step="0.001" style="width:50%" required min=0 {{($result->measurement == 'unit') ? 'step=1' : 'step=0.001'}}></td>
                     <input type="text" hidden value="{{$result->barcode}}" name="barcode[]"/>
                     <input type="text" hidden value="{{$result->product_name}}" name="product_name[]"/>
-                    <td><input type="text" name="remark[]" style="width:100%"></td>
+<!--                     <td><input type="text" name="remark[]" style="width:100%"></td> -->
                   </tr>
                 @endforeach
               </tbody>
