@@ -116,8 +116,8 @@
                 <tr class="data" id="{{$result->barcode}}">
                   <td>{{$result->barcode}}</td>
                   <td>{{$result->product_name}}</td>
-                  <td>{{$result->quantity}}</td>
-                  <td>{{number_format($result->cost,3)}}</td>
+                  <td>{{round($result->quantity,3)}}</td>
+                  <td>{{round($result->cost,4)}}</td>
                   <td val="{{$result->total}}">{{number_format($result->total,2)}}</td>
                   <td align="center" style="width:25%">
                     <button type="button" class="btn btn-secondary edit" val="{{$result->barcode}}" style="margin-right: 20px;">Edit</button>
@@ -267,8 +267,8 @@ $(document).ready(function(){
         if(data != false){
           $("#no_data").remove();
           $("#"+data['barcode']).remove();
-          let display_cost = parseFloat(data['cost']).toFixed(3);
-          let display_total = data['total'];
+          let display_cost = parseFloat(data['cost']).toFixed(4);
+          let display_total = parseFloat(data['total']).toFixed(2);
           let html = `<tr class="data" id=${data['barcode']}>`;
           html += `<td>${data['barcode']}</td>`;
           html += `<td>${data['product_name']}</td>`;

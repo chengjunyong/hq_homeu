@@ -117,7 +117,7 @@
                   <td>{{$result->barcode}}</td>
                   <td>{{$result->product_name}}</td>
                   <td>{{$result->cost,2}}</td>
-                  <td>{{$result->quantity}}</td>
+                  <td>{{round($result->quantity,3)}}</td>
                   <td val="{{$result->total}}">{{number_format($result->total,2)}}</td>
                   <td align="center" style="width:25%">
                     <button type="button" class="btn btn-secondary edit" val="{{$result->barcode}}" style="margin-right: 20px;">Edit</button>
@@ -293,8 +293,8 @@ $(document).ready(function(){
         if(data != false){
           $("#no_data").remove();
           $("#"+data['barcode']).remove();
-          let display_cost = parseFloat(data['cost']).toFixed(3);
-          let display_total = data['total'];
+          let display_cost = parseFloat(data['cost']).toFixed(4);
+          let display_total = parseFloat(data['total']).toFixed(2);
           let html = `<tr class="data" id=${data['barcode']}>`;
           html += `<td>${data['barcode']}</td>`;
           html += `<td>${data['product_name']}</td>`;
@@ -382,7 +382,7 @@ function calTotal(){
   let total_amount = 0;
   $(".data").each(function(i){
     cost = parseFloat($(this).children().eq(2).text());
-    quantity = parseInt($(this).children().eq(3).text());
+    quantity = parseFloat($(this).children().eq(3).text());
     total = parseFloat($(this).children().eq(4).attr('val'));
 
     total_quantity += quantity;
@@ -391,8 +391,8 @@ function calTotal(){
   });
 
   $("#total_product").text(total_product);
-  $("#total_quantity").text(total_quantity.toFixed(2));
-  $("#total_amount").text(convertNumber(total_amount.toFixed(3)));
+  $("#total_quantity").text(total_quantity.toFixed(3));
+  $("#total_amount").text(convertNumber(total_amount.toFixed(2)));
 }
 
 </script>
