@@ -538,6 +538,9 @@ class WarehouseController extends Controller
   public function ajaxAddPurchaseListItem(Request $request)
   {
     $user = Auth::user()->id;
+
+    $total = round(floatval($request->cost) * floatval($request->quantity),2);
+
     $result = Tmp_invoice_purchase::updateOrCreate(
                                 ['barcode'=>$request->barcode,'user_id'=>$user],
                                 [
@@ -545,7 +548,7 @@ class WarehouseController extends Controller
                                 'measurement'=>$request->measurement,
                                 'cost'=>$request->cost,
                                 'quantity'=>$request->quantity,
-                                'total'=>$request->total,
+                                'total'=>$total,
                                 ]);
     if($result){
       return $result;
@@ -762,6 +765,8 @@ class WarehouseController extends Controller
   public function ajaxAddGoodReturnItem(Request $request)
   {
     $user = Auth::user();
+
+    $total = round(floatval($request->quantity) * floatval($request->cost),2);
     $result = Tmp_good_return::updateOrCreate(
                             ['user_id'=>$user->id,'barcode'=>$request->barcode],
                             [
@@ -769,7 +774,7 @@ class WarehouseController extends Controller
                               'measurement'=>$request->measurement,
                               'cost' =>$request->cost,
                               'quantity' => $request->quantity,
-                              'total' => $request->total,
+                              'total' => $total,
                             ]);
     return $result;
   }

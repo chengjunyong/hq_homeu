@@ -74,7 +74,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <td align="right"> {{ $branch->branch_name }}</td>
       </tr>
       <tr>
-        <td><b>Total Refund Qty</b></td>
+        <td><b>Total Transaction Refund</b></td>
         <td>:</td>
         <td align="right">{{ count($refund) }}</td>
       </tr>
