@@ -15,7 +15,7 @@ class AddMeasurementToRefundDetailTable extends Migration
     {
         Schema::table('refund_detail', function (Blueprint $table) {
             $table->string('measurement_type')->after('quantity')->nullable();
-            $table->decimal('measurement', 8, 4)->after('measurement_type')->nullable();
+            $table->decimal('measurement', 12, 4)->after('measurement_type')->nullable();
         });
     }
 
