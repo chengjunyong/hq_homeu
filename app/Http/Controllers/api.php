@@ -258,6 +258,8 @@ class api extends Controller
           'barcode' => $refund_detail_info['barcode'],
           'product_name' => $refund_detail_info['product_name'],
           'quantity' => $refund_detail_info['quantity'],
+          'measurement_type' => $refund_detail_info['measurement_type'],
+          'measurement' => $refund_detail_info['measurement'],
           'price' => $refund_detail_info['price'],
           'subtotal' => $refund_detail_info['subtotal'],
           'total' => $refund_detail_info['total'],
@@ -274,7 +276,7 @@ class api extends Controller
           $transaction_product[$product_name]->quantity = 0;
         }
         
-        $transaction_product[$product_name]->quantity += $refund_detail_info['quantity'];
+        $transaction_product[$product_name]->quantity += ($refund_detail_info['quantity'] * $refund_detail_info['measurement']);
 
         array_push($branch_refund_detail_id_array, $refund_detail_info['id']);
         array_push($branch_refund_detail_query, $query);
@@ -285,7 +287,11 @@ class api extends Controller
       foreach($prev_refund_detail as $prev_refund)
       {
         $product_name = "product_".$prev_refund->product_id;
-        $transaction_product[$product_name]->quantity -= $prev_refund->quantity;
+        if(!$prev_refund->measurement)
+        {
+          $prev_refund->measurement = 0;
+        }
+        $transaction_product[$product_name]->quantity -= ($prev_refund->quantity * $prev_refund->measurement);
       }
 
       // prevent duplicate
