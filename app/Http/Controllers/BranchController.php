@@ -722,7 +722,6 @@ class BranchController extends Controller
                                           ->where('barcode','LIKE','%'.$_GET['search'].'%')
                                            ->orWhere(function($query){
                                               $query->where('product_name','LIKE','%'.$_GET['search'].'%')
-                                                    ->where('branch_id',$_GET['branch_id'])
                                                     ->where('barcode','!=',$_GET['search']);
                                           })
                                           ->paginate(15);
