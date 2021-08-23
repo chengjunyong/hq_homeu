@@ -539,7 +539,7 @@ class WarehouseController extends Controller
   {
     $user = Auth::user()->id;
 
-    $total = round(floatval($request->cost) * floatval($request->quantity),2);
+    $total = round($request->total,2);
 
     $result = Tmp_invoice_purchase::updateOrCreate(
                                 ['barcode'=>$request->barcode,'user_id'=>$user],
