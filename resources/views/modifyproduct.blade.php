@@ -130,7 +130,7 @@
             <div class="row" style="margin: 0px;">
               <div class="col-md-6">
                 <label>Wholesales Price (Each Product) - Level 1</label>
-                <input type="number" min="0" step="0.001" id="normal_wholesales_price" name="normal_wholesales_price" class="form-control" value="{{($product->normal_wholesale_price != '') ? number_format($product->normal_wholesale_price,3) : ''}}">
+                <input type="number" min="0" step="0.0001" id="normal_wholesales_price" name="normal_wholesales_price" class="form-control" value="{{($product->normal_wholesale_price != '') ? $product->normal_wholesale_price : ''}}">
               </div>
               <div class="col-md-6">
                 <label>Wholesales Minimum Quantity - Level 1</label>
@@ -138,7 +138,7 @@
               </div>
               <div class="col-md-6">
                 <label>Wholesales Price (Each Product) - Level 2</label>
-                <input type="number" min="0" step="0.001" id="normal_wholesales_price2" name="normal_wholesales_price2" class="form-control" value="{{($product->normal_wholesale_price2 != '') ? number_format($product->normal_wholesale_price2,3) : ''}}">
+                <input type="number" min="0" step="0.0001" id="normal_wholesales_price2" name="normal_wholesales_price2" class="form-control" value="{{($product->normal_wholesale_price2 != '') ? $product->normal_wholesale_price2 : ''}}">
               </div>
               <div class="col-md-6">
                 <label>Wholesales Minimum Quantity - Level 2</label>
@@ -146,7 +146,7 @@
               </div>
               <div class="col-md-6">
                 <label>Wholesales Price (Each Product) - Level 3</label>
-                <input type="number" min="0" step="0.001" id="normal_wholesales_price3" name="normal_wholesales_price3" class="form-control" value="{{($product->normal_wholesale_price3 != '') ? number_format($product->normal_wholesale_price3,3) : ''}}">
+                <input type="number" min="0" step="0.0001" id="normal_wholesales_price3" name="normal_wholesales_price3" class="form-control" value="{{($product->normal_wholesale_price3 != '') ? $product->normal_wholesale_price3 : ''}}">
               </div>
               <div class="col-md-6">
                 <label>Wholesales Minimum Quantity - Level 3</label>
@@ -154,7 +154,7 @@
               </div>
               <div class="col-md-6">
                 <label>Wholesales Price (Each Product) - Level 4</label>
-                <input type="number" min="0" step="0.001" id="normal_wholesales_price4" name="normal_wholesales_price4" class="form-control" value="{{($product->normal_wholesale_price4 != '') ? number_format($product->normal_wholesale_price4,3) : ''}}">
+                <input type="number" min="0" step="0.0001" id="normal_wholesales_price4" name="normal_wholesales_price4" class="form-control" value="{{($product->normal_wholesale_price4 != '') ? $product->normal_wholesale_price4 : ''}}">
               </div>
               <div class="col-md-6">
                 <label>Wholesales Minimum Quantity - Level 4</label>
@@ -162,7 +162,7 @@
               </div>
               <div class="col-md-6">
                 <label>Wholesales Price (Each Product) - Level 5</label>
-                <input type="number" min="0" step="0.001" id="normal_wholesales_price5" name="normal_wholesales_price5" class="form-control" value="{{($product->normal_wholesale_price5 != '') ? number_format($product->normal_wholesale_price5,3) : ''}}">
+                <input type="number" min="0" step="0.0001" id="normal_wholesales_price5" name="normal_wholesales_price5" class="form-control" value="{{($product->normal_wholesale_price5 != '') ? $product->normal_wholesale_price5 : ''}}">
               </div>
               <div class="col-md-6">
                 <label>Wholesales Minimum Quantity - Level 5</label>
@@ -170,7 +170,7 @@
               </div>
               <div class="col-md-6">
                 <label>Wholesales Price (Each Product) - Level 6</label>
-                <input type="number" min="0" step="0.001" id="normal_wholesales_price6" name="normal_wholesales_price6" class="form-control" value="{{($product->normal_wholesale_price6 != '') ? number_format($product->normal_wholesale_price6,3) : ''}}">
+                <input type="number" min="0" step="0.0001" id="normal_wholesales_price6" name="normal_wholesales_price6" class="form-control" value="{{($product->normal_wholesale_price6 != '') ? $product->normal_wholesale_price6 : ''}}">
               </div>
               <div class="col-md-6">
                 <label>Wholesales Minimum Quantity - Level 6</label>
@@ -178,7 +178,7 @@
               </div>
               <div class="col-md-6">
                 <label>Wholesales Price (Each Product) - Level 7</label>
-                <input type="number" min="0" step="0.001" id="normal_wholesales_price7" name="normal_wholesales_price7" class="form-control" value="{{($product->normal_wholesale_price7 != '') ? number_format($product->normal_wholesale_price7,3) : ''}}">
+                <input type="number" min="0" step="0.0001" id="normal_wholesales_price7" name="normal_wholesales_price7" class="form-control" value="{{($product->normal_wholesale_price7 != '') ? $product->normal_wholesale_price7 : ''}}">
               </div>
               <div class="col-md-6">
                 <label>Wholesales Minimum Quantity - Level 7</label>
@@ -208,7 +208,7 @@
               </div>
               <div class="col-md-6">
                 <label>Wholesales Promotion Price (Each Product) - Level 1</label>
-                <input type="number" min="0" step="0.001" id="wholesales_price" name="wholesales_price" class="form-control" value="{{($product->wholesale_price != '') ? number_format($product->wholesale_price,3) : ''}}">
+                <input type="number" min="0" step="0.0001" id="wholesales_price" name="wholesales_price" class="form-control" value="{{($product->wholesale_price != '') ? $product->wholesale_price : ''}}">
               </div>
               <div class="col-md-6">
                 <label>Wholesales Promotion Minimum Quantity - Level 1</label>
@@ -216,7 +216,7 @@
               </div>
               <div class="col-md-6">
                 <label>Wholesales Promotion Price (Each Product) - Level 2</label>
-                <input type="number" min="0" step="0.001" id="wholesales_price2" name="wholesales_price2" class="form-control" value="{{($product->wholesale_price2 != '') ? number_format($product->wholesale_price2,3) : ''}}">
+                <input type="number" min="0" step="0.0001" id="wholesales_price2" name="wholesales_price2" class="form-control" value="{{($product->wholesale_price2 != '') ? $product->wholesale_price2 : ''}}">
               </div>
               <div class="col-md-6">
                 <label>Wholesales Promotion Minimum Quantity - Level 2</label>
@@ -224,7 +224,7 @@
               </div>
               <div class="col-md-6">
                 <label>Wholesales Promotion Price (Each Product) - Level 3</label>
-                <input type="number" min="0" step="0.001" id="wholesales_price3" name="wholesales_price3" class="form-control" value="{{($product->wholesale_price3 != '') ? number_format($product->wholesale_price3,3) : ''}}">
+                <input type="number" min="0" step="0.0001" id="wholesales_price3" name="wholesales_price3" class="form-control" value="{{($product->wholesale_price3 != '') ? $product->wholesale_price3 : ''}}">
               </div>
               <div class="col-md-6">
                 <label>Wholesales Promotion Minimum Quantity - Level 3</label>
@@ -232,7 +232,7 @@
               </div>
               <div class="col-md-6">
                 <label>Wholesales Promotion Price (Each Product) - Level 4</label>
-                <input type="number" min="0" step="0.001" id="wholesales_price4" name="wholesales_price4" class="form-control" value="{{($product->wholesale_price4 != '') ? number_format($product->wholesale_price4,3) : ''}}">
+                <input type="number" min="0" step="0.0001" id="wholesales_price4" name="wholesales_price4" class="form-control" value="{{($product->wholesale_price4 != '') ? $product->wholesale_price4 : ''}}">
               </div>
               <div class="col-md-6">
                 <label>Wholesales Promotion Minimum Quantity - Level 4</label>
@@ -240,7 +240,7 @@
               </div>
               <div class="col-md-6">
                 <label>Wholesales Promotion Price (Each Product) - Level 5</label>
-                <input type="number" min="0" step="0.001" id="wholesales_price5" name="wholesales_price5" class="form-control" value="{{($product->wholesale_price5 != '') ? number_format($product->wholesale_price5,3) : ''}}">
+                <input type="number" min="0" step="0.0001" id="wholesales_price5" name="wholesales_price5" class="form-control" value="{{($product->wholesale_price5 != '') ? $product->wholesale_price5 : ''}}">
               </div>
               <div class="col-md-6">
                 <label>Wholesales Promotion Minimum Quantity - Level 5</label>
@@ -248,7 +248,7 @@
               </div>
               <div class="col-md-6">
                 <label>Wholesales Promotion Price (Each Product) - Level 6</label>
-                <input type="number" min="0" step="0.001" id="wholesales_price6" name="wholesales_price6" class="form-control" value="{{($product->wholesale_price6 != '') ? number_format($product->wholesale_price6,3) : ''}}">
+                <input type="number" min="0" step="0.0001" id="wholesales_price6" name="wholesales_price6" class="form-control" value="{{($product->wholesale_price6 != '') ? $product->wholesale_price6 : ''}}">
               </div>
               <div class="col-md-6">
                 <label>Wholesales Promotion Minimum Quantity - Level 6</label>
@@ -256,7 +256,7 @@
               </div>
               <div class="col-md-6">
                 <label>Wholesales Promotion Price (Each Product) - Level 7</label>
-                <input type="number" min="0" step="0.001" id="wholesales_price7" name="wholesales_price7" class="form-control" value="{{($product->wholesale_price7 != '') ? number_format($product->wholesale_price7,3) : ''}}">
+                <input type="number" min="0" step="0.0001" id="wholesales_price7" name="wholesales_price7" class="form-control" value="{{($product->wholesale_price7 != '') ? $product->wholesale_price7 : ''}}">
               </div>
               <div class="col-md-6">
                 <label>Wholesales Promotion Minimum Quantity - Level 7</label>
@@ -627,20 +627,20 @@ function changeStep(){
     $("#wholesales_quantity5").attr('step',0.001);
     $("#wholesales_quantity6").attr('step',0.001);
     $("#wholesales_quantity7").attr('step',0.001);
-    $("#normal_wholesales_quantity").attr('min',1);
-    $("#normal_wholesales_quantity2").attr('min',1);
-    $("#normal_wholesales_quantity3").attr('min',1);
-    $("#normal_wholesales_quantity4").attr('min',1);
-    $("#normal_wholesales_quantity5").attr('min',1);
-    $("#normal_wholesales_quantity6").attr('min',1);
-    $("#normal_wholesales_quantity7").attr('min',1);
-    $("#wholesales_quantity").attr('min',1);
-    $("#wholesales_quantity2").attr('min',1);
-    $("#wholesales_quantity3").attr('min',1);
-    $("#wholesales_quantity4").attr('min',1);
-    $("#wholesales_quantity5").attr('min',1);
-    $("#wholesales_quantity6").attr('min',1);
-    $("#wholesales_quantity7").attr('min',1);
+    $("#normal_wholesales_quantity").attr('min',0.001);
+    $("#normal_wholesales_quantity2").attr('min',0.001);
+    $("#normal_wholesales_quantity3").attr('min',0.001);
+    $("#normal_wholesales_quantity4").attr('min',0.001);
+    $("#normal_wholesales_quantity5").attr('min',0.001);
+    $("#normal_wholesales_quantity6").attr('min',0.001);
+    $("#normal_wholesales_quantity7").attr('min',0.001);
+    $("#wholesales_quantity").attr('min',0.001);
+    $("#wholesales_quantity2").attr('min',0.001);
+    $("#wholesales_quantity3").attr('min',0.001);
+    $("#wholesales_quantity4").attr('min',0.001);
+    $("#wholesales_quantity5").attr('min',0.001);
+    $("#wholesales_quantity6").attr('min',0.001);
+    $("#wholesales_quantity7").attr('min',0.001);
   }
 }
 </script>

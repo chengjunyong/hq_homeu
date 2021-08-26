@@ -39,6 +39,7 @@
                 @foreach($branch as $result)
                 <option value="{{$result->id}}">{{$result->branch_name}}</option>
                 @endforeach
+                <option value="hq">HQ Warehouse</option>
               </select>
             </div>
             <div class="col-md-12" style="text-align: center;margin:10px 0px 10px 0px">

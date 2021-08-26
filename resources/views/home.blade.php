@@ -576,7 +576,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Refund Report</h4>
+              <h4 class="card-title">Refund Detail Report</h4>
             </div>
             <div class="col">
               <a href="{{route('getRefundReport')}}"><i class="fas fa-hand-holding-usd first sales-color"></i></a>
@@ -586,6 +586,21 @@
       </div>
     </div>
     
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Monthly Refund Report</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getMonthlyRefundReport')}}"><i class="fas fa-calendar-times first sales-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
