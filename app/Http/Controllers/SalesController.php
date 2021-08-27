@@ -17,6 +17,7 @@ use App\Refund;
 use App\Refund_detail;
 use App\Department;
 use App\Category;
+use App\Warehouse_stock;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -1277,6 +1278,8 @@ class SalesController extends Controller
                                     ->selectRaw('SUM(cost * quantity) as total')
                                     ->get();
 
+
+
     return view('report.stock_balance_report',compact('stock','branch','date','balance_stock'));
   }
 
@@ -1306,32 +1309,92 @@ class SalesController extends Controller
       }
     }
 
-    $stock = Branch_product::join('department','department.id','=','branch_product.department_id')
-                          ->join('category','category.id','=','branch_product.category_id')
-                          ->whereIn('branch_product.branch_id',$branch_id)
-                          ->select('department.department_name','category.category_name','branch_product.*',DB::raw('SUM(quantity) as total_quantity'))
-                          ->groupBy('branch_product.barcode')
-                          ->orderBy('barcode','asc')
-                          ->get();
+    if(end($branch_id) == 'hq' && $count == 0){
+      $branch_list .= 'HQ Warehouse';
+    }else if(end($branch_id) == 'hq' && $count != 0){
+      $branch_list .= ',HQ Warehouse';
+    }
 
-    $stock_array = array();
-    foreach($stock as $key => $result){
-      array_push($stock_array,[$key+1,$result->department_name,$result->category_name,$result->barcode,$result->product_name,$result->cost,$result->total_quantity,$result->price,$result->cost * $result->total_quantity]);
+    if(count($branch_id) == 1 && $branch_id[0] == 'hq'){
+      $stock = Warehouse_stock::join('department','department.id','=','warehouse_stock.department_id')
+                              ->join('category','category.id','=','warehouse_stock.category_id')
+                              ->select('department.department_name','category.category_name','warehouse_stock.*',DB::raw('SUM(quantity) as total_quantity'))
+                              ->groupBy('warehouse_stock.barcode')
+                              ->orderBy('barcode','asc')
+                              ->get();
+
+      $stock_array = array();
+      foreach($stock as $key => $result){
+        array_push($stock_array,[$key+1,$result->department_name,$result->category_name,$result->barcode,$result->product_name,$result->cost,$result->total_quantity,$result->price,$result->cost * $result->total_quantity]);
+      }
+    }else{
+      $stock = Branch_product::join('department','department.id','=','branch_product.department_id')
+                      ->join('category','category.id','=','branch_product.category_id')
+                      ->whereIn('branch_product.branch_id',$branch_id)
+                      ->select('department.department_name','category.category_name','branch_product.*',DB::raw('SUM(quantity) as total_quantity'))
+                      ->groupBy('branch_product.barcode')
+                      ->orderBy('barcode','asc')
+                      ->get();
+
+      if(end($branch_id) == 'hq'){
+        $stock2 = Warehouse_stock::join('department','department.id','=','warehouse_stock.department_id')
+                                  ->join('category','category.id','=','warehouse_stock.category_id')
+                                  ->select('department.department_name','category.category_name','warehouse_stock.*',DB::raw('SUM(quantity) as total_quantity'))
+                                  ->groupBy('warehouse_stock.barcode')
+                                  ->orderBy('barcode','asc')
+                                  ->get();
+        $stock_array = array();
+        foreach($stock as $key => $result){
+          array_push($stock_array,[
+            $key+1,
+            $result->department_name,
+            $result->category_name,
+            $result->barcode,
+            $result->product_name,
+            $result->cost,
+            $result->total_quantity + $stock2[$key]->total_quantity,
+            $result->price,
+            $result->cost * ($result->total_quantity + $stock2[$key]->total_quantity)
+          ]);
+        }
+      }else{
+        $stock_array = array();
+        foreach($stock as $key => $result){
+          array_push($stock_array,[$key+1,$result->department_name,$result->category_name,$result->barcode,$result->product_name,$result->cost,$result->total_quantity,$result->price,$result->cost * $result->total_quantity]);
+        }        
+      }
+
     }
 
     $balance_stock = Branch_product::whereIn('branch_id',$branch_id)
                                     ->selectRaw('SUM(cost * quantity) as total')
                                     ->orderBy('barcode','asc')
-                                    ->get();
+                                    ->first();
+
+    if(end($branch_id) == 'hq'){
+      $warehouse_balance = Warehouse_stock::selectRaw('SUM(cost * quantity) as total')
+                                            ->orderBy('barcode','asc')
+                                            ->first();
+
+      $total_balance_stock = $balance_stock->total + $warehouse_balance->total;
+    }else{
+      $total_balance_stock = $balance_stock->total;
+    }
 
     $branch_stock_quantity = array();
     foreach($branch as $result){
-
       $a[] = Branch_product::where('branch_id',$result->id)
                             ->select('quantity')
                             ->orderBy('barcode','asc')
                             ->get()
                             ->toArray();
+    }
+
+    if(end($branch_id) == 'hq'){
+      $a[] = Warehouse_stock::select('quantity')
+                              ->orderBy('barcode','asc')
+                              ->get()
+                              ->toArray();
     }
 
     $row = 5;
@@ -1354,9 +1417,14 @@ class SalesController extends Controller
     $sheet->setCellValue('A4', 'Branch');
     $sheet->setCellValue('B4', $branch_list);
     $sheet->setCellValue('G4', 'Balance Stock');
-    $sheet->setCellValue('I4', number_format($balance_stock[0]->total,2));
+    $sheet->setCellValue('I4', number_format($total_balance_stock,2));
     foreach($branch as $result){
       $sheet->getCellByColumnAndRow($set_col, $row)->setValue($result->branch_name);
+      $set_col++;
+    }
+
+    if(end($branch_id)=='hq'){
+      $sheet->getCellByColumnAndRow($set_col, $row)->setValue('HQ Warehouse');
       $set_col++;
     }
 
@@ -2099,6 +2167,26 @@ class SalesController extends Controller
     return $path;
 
     // return response()->download($path);
+  }
+
+  public function getMonthlyRefundReport()
+  {
+    $url = route('home')."?p=sales_menu";
+
+    $branch = Branch::all();
+
+    return view('report.monthly_refund_report',compact('url','branch'));
+  }
+
+  public function postMonthlyRefundReport(Request $request)
+  {
+    $branch = Branch::where('id',$request->branch_id)->first();
+    $refund = Refund::where('branch_id',$branch->token)
+                      ->whereRaw('MONTH(refund_created_at) ='.date('m',strtotime($request->report_date)))
+                      ->get();
+    $target_date = $request->report_date;
+    $user = Auth::user();
+    return view('print.print_monthly_refund',compact('refund','branch','target_date','user'));
   }
 
 }
