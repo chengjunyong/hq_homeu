@@ -173,7 +173,8 @@ class BarcodeController extends Controller
         Branch_product::where('id', $request->product_id)->update([
           'quantity' => $request->stock_count,
           'department_id' => $request->department_id,
-          'category_id' => $request->category_id
+          'category_id' => $request->category_id,
+          'last_stock_updated_at' => date('Y-m-d H:i:s')
         ]);
       }
       elseif($stock_type == "warehouse")

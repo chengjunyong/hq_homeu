@@ -14,7 +14,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-      $this->middleware(['auth', 'user_access']);
+      $this->middleware(['auth', 'user_access'])->except('testingPage');
     }
 
     public function getUserAccessControl()
@@ -559,6 +559,7 @@ class UserController extends Controller
 
     public function testingPage()
     {
+      dd(Hash::make("12345678"));
       return view('testing');
     }
 

@@ -112,6 +112,7 @@ class api extends Controller
           'subtotal' => $data['subtotal'],
           'total' => $data['total'],
           'void' => $data['void'],
+          'transaction_detail_date' => date('Y-m-d H:i:s', strtotime($data['created_at'])),
           'created_at' => $now,
           'updated_at' => $now
         ];
@@ -122,9 +123,22 @@ class api extends Controller
           $transaction_product[$product_name] = new \stdClass();
           $transaction_product[$product_name]->barcode = $data['barcode'];
           $transaction_product[$product_name]->quantity = 0;
+          $transaction_product[$product_name]->last_stock_updated_at = null;
+
+          $product_detail = Branch_product::where('barcode', $data['barcode'])->first();
+          if($product_detail)
+          {
+            if($product_detail->last_stock_updated_at)
+            {
+              $transaction_product[$product_name]->last_stock_updated_at = $product_detail->last_stock_updated_at;
+            }
+          }
         }
 
-        $transaction_product[$product_name]->quantity -= ($data['quantity'] * $data['measurement']);
+        if(!$transaction_product[$product_name]->last_stock_updated_at || ($transaction_product[$product_name]->last_stock_updated_at <= date('Y-m-d H:i:s', strtotime($data['created_at'])) ))
+        {
+          $transaction_product[$product_name]->quantity -= ($data['quantity'] * $data['measurement']);
+        }
 
         array_push($transaction_detail_query, $query);
       }
@@ -137,7 +151,10 @@ class api extends Controller
         {
           if($product_id == $previous_transaction->product_id)
           {
-            $transaction_product[$key]->quantity = $transaction_product_detail->quantity + ($previous_transaction->quantity * $previous_transaction->measurement);
+            if(!$transaction_product[$product_name]->last_stock_updated_at || ($transaction_product[$product_name]->last_stock_updated_at <= date('Y-m-d H:i:s', strtotime($previous_transaction->transaction_detail_date)) ))
+            {
+              $transaction_product[$key]->quantity = $transaction_product_detail->quantity + ($previous_transaction->quantity * $previous_transaction->measurement);
+            }
             break;
           }
         }
@@ -274,9 +291,22 @@ class api extends Controller
           $transaction_product[$product_name] = new \stdClass();
           $transaction_product[$product_name]->barcode = $refund_detail_info['barcode'];
           $transaction_product[$product_name]->quantity = 0;
+
+          $product_detail = Branch_product::where('barcode', $refund_detail_info['barcode'])->first();
+          if($product_detail)
+          {
+            if($product_detail->last_stock_updated_at)
+            {
+              $transaction_product[$product_name]->last_stock_updated_at = $product_detail->last_stock_updated_at;
+            }
+          }
+
         }
         
-        $transaction_product[$product_name]->quantity += ($refund_detail_info['quantity'] * $refund_detail_info['measurement']);
+        if(!$transaction_product[$product_name]->last_stock_updated_at || ($transaction_product[$product_name]->last_stock_updated_at <= date('Y-m-d H:i:s', strtotime($refund_detail_info['created_at'])) ))
+        {
+          $transaction_product[$product_name]->quantity += ($refund_detail_info['quantity'] * $refund_detail_info['measurement']);
+        }
 
         array_push($branch_refund_detail_id_array, $refund_detail_info['id']);
         array_push($branch_refund_detail_query, $query);
@@ -291,7 +321,11 @@ class api extends Controller
         {
           $prev_refund->measurement = 0;
         }
-        $transaction_product[$product_name]->quantity -= ($prev_refund->quantity * $prev_refund->measurement);
+
+        if(!$transaction_product[$product_name]->last_stock_updated_at || ($transaction_product[$product_name]->last_stock_updated_at <= date('Y-m-d H:i:s', strtotime($prev_refund->refund_detail_created_at)) ))
+        {
+          $transaction_product[$product_name]->quantity -= ($prev_refund->quantity * $prev_refund->measurement);
+        }
       }
 
       // prevent duplicate

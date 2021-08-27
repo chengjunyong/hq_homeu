@@ -1961,13 +1961,17 @@ class SalesController extends Controller
     $report_date_from = $date_from." 00:00:00";
     $report_date_to = $date_to." 23:59:59";
 
-    $transaction_query = Transaction_detail::leftJoin('transaction', 'transaction.branch_transaction_id', '=', 'transaction_detail.branch_transaction_id')->whereIn('transaction_detail.category_id', $request->export_category_id)->whereBetween('transaction.transaction_date', [$report_date_from, $report_date_to]);
+    $transaction_query = Transaction_detail::whereIn('transaction_detail.category_id', $request->export_category_id)->leftJoin('transaction', function($join)
+    {
+      $join->on('transaction.branch_transaction_id', '=', 'transaction_detail.branch_transaction_id');
+      $join->on('transaction.branch_id', '=', 'transaction_detail.branch_id');
+    })->whereBetween('transaction.transaction_date', [$report_date_from, $report_date_to]);
 
     $barcode_array = $transaction_query->pluck('barcode')->toArray();
 
-    $product_list = Product_list::whereIn('barcode', $barcode_array)->leftJoin('category', 'category.id', '=', 'product_list.category_id')->leftJoin('department', 'department.id', '=', 'product_list.department_id')->select('product_list.*', 'category.category_name', 'department.department_name')->get();
+    $product_list = Product_list::withTrashed()->whereIn('barcode', $barcode_array)->leftJoin('category', 'category.id', '=', 'product_list.category_id')->leftJoin('department', 'department.id', '=', 'product_list.department_id')->select('product_list.*', 'category.category_name', 'department.department_name')->orderBy('barcode')->get();
 
-    $transaction_detail = $transaction_query->get();
+    $transaction_detail = $transaction_query->select('transaction_detail.*')->orderBy('transaction_detail.barcode')->get();
 
     $branch_list = Branch::get();
     foreach($product_list as $product)
@@ -1990,24 +1994,33 @@ class SalesController extends Controller
       $product->branch_list = $product_branch_list;
     }
 
-    foreach($transaction_detail as $value)
+    $using_barcode = null;
+
+    foreach($product_list as $product)
     {
-      foreach($product_list as $product)
+      $using_barcode = $product->barcode;
+      foreach($transaction_detail as $t_key => $value)
       {
-        if($product->barcode == $value->barcode)
+        if($using_barcode === $value->barcode)
         {
+          if(!$value->measurement)
+          {
+            $value->measurement = 1;
+          }
+
           $product->total_sales += $value->total;
-          $product->total_quantity += ( $value->quantity * $value->measurement);
+          $product->total_quantity += ($value->quantity * $value->measurement);
           foreach($product->branch_list as $branch)
           {
             if($branch->token == $value->branch_id)
             {
-              $branch->total += $value->total;
-              $branch->quantity += ( $value->quantity * $value->measurement);
+              $branch->total = $branch->total + $value->total;
+              $branch->quantity = $branch->quantity + ($value->quantity * $value->measurement);
               break;
             }
           }
-          break;
+          
+          unset($transaction_detail[$t_key]);
         }
       }
     }
@@ -2083,7 +2096,9 @@ class SalesController extends Controller
     $path = 'storage/report/Department and Branch Sales Report.xlsx';
     $writer->save($path);
 
-    return response()->download($path);
+    return $path;
+
+    // return response()->download($path);
   }
 
 }

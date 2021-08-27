@@ -28,6 +28,7 @@ class transaction_detail extends Model
       'subtotal',
       'total',
       'void',
+      'transaction_detail_date',
       'created_at', 
       'updated_at'
     ];

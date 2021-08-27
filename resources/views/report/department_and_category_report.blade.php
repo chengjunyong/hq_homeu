@@ -121,7 +121,21 @@
         $("#category_id_box").append("<input type='hidden' name='export_category_id[]' value='"+category_id[a]+"' />")
       }
 
-      $("#exportDepartmentAndCategoryReportForm").submit();
+      Swal.fire({
+        icon: '',
+        title: 'Generating report, please wait...',
+        html: "<i class='fa fa-spinner fa-spin' style='font-size:60px;'></i>",
+        showCancelButton: false,
+        showConfirmButton: false,
+        allowOutsideClick: false
+      }); 
+
+      $.post("{{ route('exportDepartmentAndCategoryReport') }}", $("#exportDepartmentAndCategoryReportForm").serialize(), function(result){
+
+        Swal.close();
+        window.open(result);
+      });
+
     });
 
   });

@@ -171,6 +171,12 @@
         <div class="row" id="product_info">
 
           <div class="col-12">
+            <label>Barcode</label>
+            <input type="text" class="form-control" id="manual_barcode" />
+            <button type="button" id="manual_barcode_btn" class="btn btn-primary" style="margin-top: 10px;">Search</button>
+            <hr>
+          </div>
+          <div class="col-12">
             <label>Product name : </label>
             <label id="product_name"></label>
           </div>
@@ -335,7 +341,11 @@
       var selected_branch = $("select[name='branch']").val();
       if(selected_branch == 0)
       {
-        alert("Please select branch before you proceed.");
+        Swal.fire(
+          'Failed!',
+          "Please select branch before you proceed.",
+          'error'
+        );
         return;
       }
 
@@ -361,7 +371,11 @@
         var selected_branch = $("select[name='branch']").val();
         if(selected_branch == 0)
         {
-          alert("Please select branch before you proceed.");
+          Swal.fire(
+            'Failed!',
+            "Please select branch before you proceed.",
+            'error'
+          );
           return;
         }
       }
@@ -455,6 +469,17 @@
       $(".black_panel").fadeOut();
     });
 
+    $("#manual_barcode").on('keyup', function(e){
+      if(e.which == 13)
+      {
+        checkProductBarcode($(this).val());
+      }
+    });
+
+    $("#manual_barcode_btn").click(function(){
+      checkProductBarcode($("#manual_barcode").val());
+    });
+
   });
 
   function initQuagga()
@@ -498,7 +523,6 @@
       },
     };
 
-    console.log(quaggaOption);
     Quagga.init(quaggaOption, function(err) {
         if (err) {
           console.log(err);
@@ -558,7 +582,11 @@
       selected_branch = $("select[name='branch']").val();
       if(selected_branch == 0)
       {
-        alert("Please select branch before you proceed.");
+        Swal.fire(
+          'Failed!',
+          "Please select branch before you proceed.",
+          'error'
+        );
         return;
       }
     }
@@ -578,6 +606,7 @@
         $("select[name='category']").val(product_detail.category_id);
 
         $("#submit_stock").attr("disabled", false);
+        $("#manual_barcode").val("");
 
         cameraFeed.getElementsByTagName("video")[0].load();
         freeze = 1;
@@ -613,7 +642,12 @@
 
     if(stock_count == "")
     {
-      alert("Stock count cannot be empty");
+      Swal.fire(
+        'Failed!',
+        "Stock count cannot be empty.",
+        'error'
+      );
+
       $("#submit_stock").attr("disabled", false);
       return;
     }
@@ -658,7 +692,11 @@
       }
       else
       {
-        alert(result.message);
+        Swal.fire(
+          'Failed!',
+          result.message,
+          'error'
+        );
       }
     }).fail(function(){
       $("#submit_stock").attr("disabled", false);
