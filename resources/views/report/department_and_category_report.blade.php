@@ -132,8 +132,26 @@
 
       $.post("{{ route('exportDepartmentAndCategoryReport') }}", $("#exportDepartmentAndCategoryReportForm").serialize(), function(result){
 
-        Swal.close();
-        window.open(result);
+        if(result.error == 0)
+        {
+          Swal.close();
+          window.open(result.path);
+        }
+        else
+        {
+          Swal.fire({
+            icon: 'error',
+            title: 'Something wrong, please try again',
+            confirmButtonText: 'OK',
+          });
+        }
+        
+      }).fail(function(){
+        Swal.fire({
+          icon: 'error',
+          title: 'Something wrong, please try again',
+          confirmButtonText: 'OK',
+        }); 
       });
 
     });

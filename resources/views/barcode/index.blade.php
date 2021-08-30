@@ -286,6 +286,7 @@
   var barcode_type = ["code_128_reader", "ean_reader", "i2of5_reader"];
   var patchSize = "medium";
   var time;
+  var product_detail = null;
 
   $(document).ready(function(){
 
@@ -480,6 +481,26 @@
       checkProductBarcode($("#manual_barcode").val());
     });
 
+    $("input[name='stock_count']").on('keyup', function(){
+      if(product_detail)
+      {
+        if(product_detail.measurement == "kilogram" || product_detail.measurement == "meter")
+        {
+          limitDecimal($(this), 3);
+        }
+        else
+        {
+          var new_val = parseInt($(this).val());
+          $(this).val(new_val); 
+        }
+      }
+      else
+      {
+        var new_val = parseInt($(this).val());
+        $(this).val(new_val); 
+      }
+    });
+
   });
 
   function initQuagga()
@@ -596,7 +617,7 @@
       if(result.error == 0)
       {
         $("#quagga-box").hide();
-        var product_detail = result.product_detail;
+        product_detail = result.product_detail;
         $("#product_name").html(product_detail.product_name);
         $("#product_barcode").html(product_detail.barcode);
         $("#product_id").val(product_detail.id);
@@ -607,6 +628,7 @@
 
         $("#submit_stock").attr("disabled", false);
         $("#manual_barcode").val("");
+        $("input[name='stock_count']").val("");
 
         cameraFeed.getElementsByTagName("video")[0].load();
         freeze = 1;
@@ -666,7 +688,7 @@
         $("input[name='stock_count']").val("");
         scan_value = null;
 
-        var product_detail = result.product_detail;
+        product_detail = result.product_detail;
         var history = result.history;
 
         var html = "";
@@ -689,6 +711,8 @@
             $("#scan_again").click();
           }
         });
+
+        product_detail = null;
       }
       else
       {
@@ -734,6 +758,26 @@
   function hasGetUserMedia() {
     return !!(navigator.getUserMedia || navigator.webkitGetUserMedia ||
       navigator.mozGetUserMedia || navigator.msGetUserMedia);
+  }
+
+  function limitDecimal(_this, total_decimal)
+  {
+    var number = _this.val();
+    if(number.includes("."))
+    {
+      let split_number = number.split(".");
+      let decimal = split_number[1];
+      if(decimal.length > total_decimal)
+      {
+        let new_decimal = decimal.substring(0, (total_decimal + 1));
+        new_decimal = "0."+new_decimal;
+        new_decimal = parseFloat(new_decimal).toFixed(total_decimal);
+        new_decimal_array = new_decimal.split(".");
+        let new_number = split_number[0]+"."+new_decimal_array[1];
+
+        _this.val(new_number);
+      }
+    }
   }
 
 </script>

@@ -2037,7 +2037,17 @@ class SalesController extends Controller
 
     $barcode_array = $transaction_query->pluck('barcode')->toArray();
 
-    $product_list = Product_list::withTrashed()->whereIn('barcode', $barcode_array)->leftJoin('category', 'category.id', '=', 'product_list.category_id')->leftJoin('department', 'department.id', '=', 'product_list.department_id')->select('product_list.*', 'category.category_name', 'department.department_name')->orderBy('barcode')->get();
+    $barcode_array = array_unique($barcode_array);
+
+    $product_query = Product_list::withTrashed();
+
+    $product_query->where(function($query) use ($barcode_array){
+      foreach (array_chunk($barcode_array, 1000) as $barcode) {
+        $query->orWhereIn('barcode', $barcode);
+      }
+    });
+  
+    $product_list = $product_query->leftJoin('category', 'category.id', '=', 'product_list.category_id')->leftJoin('department', 'department.id', '=', 'product_list.department_id')->select('product_list.*', 'category.category_name', 'department.department_name')->orderBy('barcode')->get();  
 
     $transaction_detail = $transaction_query->select('transaction_detail.*')->orderBy('transaction_detail.barcode')->get();
 
@@ -2089,6 +2099,10 @@ class SalesController extends Controller
           }
           
           unset($transaction_detail[$t_key]);
+        }
+        elseif(in_array($value->barcode, $barcode_array))
+        {
+          break;
         }
       }
     }
@@ -2164,9 +2178,12 @@ class SalesController extends Controller
     $path = 'storage/report/Department and Branch Sales Report.xlsx';
     $writer->save($path);
 
-    return $path;
+    $response = new \stdClass();
+    $response->error = 0;
+    $response->message = "Success.";
+    $response->path = $path;
 
-    // return response()->download($path);
+    return response()->json($response);
   }
 
   public function getMonthlyRefundReport()

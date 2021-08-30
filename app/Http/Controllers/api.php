@@ -15,6 +15,8 @@ use App\Branch_shift;
 use App\Cash_float;
 use App\Refund;
 use App\Refund_detail;
+use App\Delivery;
+use App\Delivery_detail;
 
 class api extends Controller
 {
@@ -32,6 +34,8 @@ class api extends Controller
       $cash_float = $request->cash_float;
       $refund = $request->refund;
       $refund_detail = $request->refund_detail;
+      $delivery = $request->delivery;
+      $delivery_detail = $request->delivery_detail;
 
       $branch_id = $request->branch_id;
       $session_list = $request->session_list;
@@ -125,7 +129,7 @@ class api extends Controller
           $transaction_product[$product_name]->quantity = 0;
           $transaction_product[$product_name]->last_stock_updated_at = null;
 
-          $product_detail = Branch_product::where('barcode', $data['barcode'])->first();
+          $product_detail = Branch_product::where('branch_id', $branch_detail->id)->where('barcode', $data['barcode'])->first();
           if($product_detail)
           {
             if($product_detail->last_stock_updated_at)
@@ -291,8 +295,9 @@ class api extends Controller
           $transaction_product[$product_name] = new \stdClass();
           $transaction_product[$product_name]->barcode = $refund_detail_info['barcode'];
           $transaction_product[$product_name]->quantity = 0;
+          $transaction_product[$product_name]->last_stock_updated_at = null;
 
-          $product_detail = Branch_product::where('barcode', $refund_detail_info['barcode'])->first();
+          $product_detail = Branch_product::where('branch_id', $branch_detail->id)->where('barcode', $refund_detail_info['barcode'])->first();
           if($product_detail)
           {
             if($product_detail->last_stock_updated_at)
@@ -319,7 +324,7 @@ class api extends Controller
         $product_name = "product_".$prev_refund->product_id;
         if(!$prev_refund->measurement)
         {
-          $prev_refund->measurement = 0;
+          $prev_refund->measurement = 1;
         }
 
         if(!$transaction_product[$product_name]->last_stock_updated_at || ($transaction_product[$product_name]->last_stock_updated_at <= date('Y-m-d H:i:s', strtotime($prev_refund->refund_detail_created_at)) ))
@@ -331,6 +336,119 @@ class api extends Controller
       // prevent duplicate
       Refund_detail::where('branch_id', $branch_id)->whereIn('branch_refund_detail_id', $branch_refund_detail_id_array)->delete();
       Refund_detail::insert($branch_refund_detail_query);
+      // end
+
+      // delivery
+      $branch_delivery_query = [];
+      $branch_delivery_id_array = [];
+      foreach($delivery as $delivery_info)
+      {
+        $query = [
+          'branch_delivery_id' => $delivery_info['id'],
+          'branch_id' => $branch_id,
+          'session_id' => $delivery_info['session_id'],
+          'opening_id' => $delivery_info['opening_id'],
+          'ip' => $delivery_info['ip'],
+          'cashier_name' => $delivery_info['cashier_name'],
+          'transaction_no' => $delivery_info['transaction_no'],
+          'reference_no' => $delivery_info['reference_no'],
+          'user_id' => $delivery_info['user_id'],
+          'user_name' => $delivery_info['user_name'],
+          'subtotal' => $delivery_info['subtotal'],
+          'total_discount' => $delivery_info['total_discount'],
+          'voucher_code' => $delivery_info['voucher_code'],
+          'delivery_type' => $delivery_info['delivery_type'],
+          'total' => $delivery_info['total'],
+          'round_off' => $delivery_info['round_off'],
+          'completed' => $delivery_info['completed'],
+          'completed_by' => $delivery_info['completed_by'],
+          'delivery_created_at' => date('Y-m-d H:i:s', strtotime($delivery_info['created_at'])),
+          'created_at' => $now,
+          'updated_at' => $now
+        ];
+
+        array_push($branch_delivery_id_array, $delivery_info['id']);
+        array_push($branch_delivery_query, $query);
+      }
+
+      // prevent duplicate
+      Delivery::where('branch_id', $branch_id)->whereIn('branch_delivery_id', $branch_delivery_id_array)->delete();
+      Delivery::insert($branch_delivery_query);
+      // end
+
+      // delivery detail
+      $branch_delivery_detail_query = [];
+      $branch_delivery_detail_id_array = [];
+      foreach($delivery_detail as $delivery_detail_info)
+      {
+        $query = [
+          'branch_id' => $branch_id,
+          'branch_delivery_detail_id' => $delivery_detail_info['id'],
+          'branch_delivery_id' => $delivery_detail_info['delivery_id'],
+          'department_id' => $delivery_detail_info['department_id'],
+          'category_id' => $delivery_detail_info['category_id'],
+          'product_id' => $delivery_detail_info['product_id'],
+          'barcode' => $delivery_detail_info['barcode'],
+          'product_name' => $delivery_detail_info['product_name'],
+          'quantity' => $delivery_detail_info['quantity'],
+          'measurement_type' => $delivery_detail_info['measurement_type'],
+          'measurement' => $delivery_detail_info['measurement'],
+          'price' => $delivery_detail_info['price'],
+          'wholesale_price' => $delivery_detail_info['wholesale_price'],
+          'discount' => $delivery_detail_info['discount'],
+          'subtotal' => $delivery_detail_info['subtotal'],
+          'total' => $delivery_detail_info['total'],
+          'delivery_detail_created_at' => date('Y-m-d H:i:s', strtotime($delivery_detail_info['created_at'])),
+          'created_at' => $now,
+          'updated_at' => $now
+        ];
+
+        $product_name = "product_".$delivery_detail_info['product_id'];
+        if(!isset($transaction_product[$product_name]))
+        {
+          $transaction_product[$product_name] = new \stdClass();
+          $transaction_product[$product_name]->barcode = $delivery_detail_info['barcode'];
+          $transaction_product[$product_name]->quantity = 0;
+          $transaction_product[$product_name]->last_stock_updated_at = null;
+
+          $product_detail = Branch_product::where('branch_id', $branch_detail->id)->where('barcode', $delivery_detail_info['barcode'])->first();
+          if($product_detail)
+          {
+            if($product_detail->last_stock_updated_at)
+            {
+              $transaction_product[$product_name]->last_stock_updated_at = $product_detail->last_stock_updated_at;
+            }
+          }
+        }
+        
+        if(!$transaction_product[$product_name]->last_stock_updated_at || ($transaction_product[$product_name]->last_stock_updated_at <= date('Y-m-d H:i:s', strtotime($delivery_detail_info['created_at'])) ))
+        {
+          $transaction_product[$product_name]->quantity -= ($delivery_detail_info['quantity'] * $delivery_detail_info['measurement']);
+        }
+
+        array_push($branch_delivery_detail_id_array, $delivery_detail_info['id']);
+        array_push($branch_delivery_detail_query, $query);
+      }
+
+      $prev_delivery_detail = Delivery_detail::where('branch_id', $branch_id)->whereIn('branch_delivery_detail_id', $branch_delivery_detail_id_array)->get();
+
+      foreach($prev_delivery_detail as $prev_delivery)
+      {
+        $product_name = "product_".$prev_delivery->product_id;
+        if(!$prev_delivery->measurement)
+        {
+          $prev_delivery->measurement = 1;
+        }
+
+        if(!$transaction_product[$product_name]->last_stock_updated_at || ($transaction_product[$product_name]->last_stock_updated_at <= date('Y-m-d H:i:s', strtotime($prev_delivery->delivery_detail_created_at)) ))
+        {
+          $transaction_product[$product_name]->quantity += ($prev_delivery->quantity * $prev_delivery->measurement);
+        }
+      }
+
+      // prevent duplicate
+      Delivery_detail::where('branch_id', $branch_id)->whereIn('branch_delivery_detail_id', $branch_delivery_detail_id_array)->delete();
+      Delivery_detail::insert($branch_delivery_detail_query);
       // end
 
       foreach($transaction_product as $transaction_product_detail)
