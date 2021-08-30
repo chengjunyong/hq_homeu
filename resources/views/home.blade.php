@@ -840,6 +840,36 @@
       </div>
     </div>
 
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Stock Write Off</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getStockWriteOff')}}"><i class="fas fa-window-close first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Stock Write Off History</h4>
+            </div>
+            <div class="col">
+              <a href="#"><i class="fas fa-clipboard-list first stock-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     
 
   </div>

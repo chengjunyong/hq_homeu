@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Warehouse_stock;
 use App\Department;
 use App\Category;
@@ -21,6 +22,8 @@ use App\Invoice_purchase_detail;
 use App\Good_return;
 use App\Good_return_detail;
 use App\Tmp_good_return;
+use App\Write_off;
+use App\Write_off_detail;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Auth;
@@ -948,6 +951,95 @@ class WarehouseController extends Controller
     $gr_detail = Good_return_detail::where('good_return_id',$gr->id)->get();
 
     return view('print.print_gr',compact('supplier','gr','gr_detail'));
+  }
+
+  public function getStockWriteOff()
+  { 
+    $url = route('home')."?p=stock_menu";
+    $target = new \stdClass();
+
+    if(isset($_GET['search']) && $_GET['search'] != ""){
+      $target = Warehouse_stock::where('barcode',$_GET['search'])->first();
+      $warehouse_stock = Warehouse_stock::where('barcode','LIKE','%'.$_GET['search'].'%')
+                                          ->where('barcode','!=',$_GET['search'])
+                                          ->orWhere(function($query){
+                                            $query->where('barcode','!=',$_GET['search'])
+                                                  ->where('product_name','LIKE','%'.$_GET['search'].'%');
+                                          })
+                                          ->orderBy('updated_at','desc')
+                                          ->paginate(20);
+    }else{
+      $warehouse_stock = Warehouse_stock::orderBy('updated_at','desc')
+                                        ->paginate(20);
+    }
+    $page = isset($_GET['page']) ? $_GET['page'] : null;
+
+    return view('warehouse.write_off',compact('url','warehouse_stock','target','page'));
+  }
+
+  public function ajaxAddWriteOffItem(Request $request)
+  {
+    $item = Warehouse_stock::where('id',$request->warehouse_stock_id)->first();
+    $user = Auth::user();
+
+    $total = $request->order_quantity * $item->cost;
+
+    Write_off_detail::updateOrCreate(
+                    ['barcode' => $item->barcode,'completed'=>0],
+                    [
+                      'product_name'=>$item->product_name,
+                      'quantity'=>$request->order_quantity,
+                      'cost'=>$item->cost,
+                      'total'=>$total,
+                      'created_by'=>$user->name,
+                    ]);
+
+    return json_encode(true);
+  }
+
+  public function getStockWriteOffList()
+  {
+    $url = route('getStockWriteOff');
+
+    $wf_list = Write_off_detail::where('completed',0)->get();
+
+    return view('warehouse.write_off_list',compact('url','wf_list'));
+  }
+
+  public function ajaxRemoveWriteOffItem(Request $request)
+  {
+    Write_off_detail::where('id',$request->id)->delete();
+
+    return json_encode(true);
+  }
+
+  public function postWriteOffList(Request $request)
+  {
+    $user = Auth::user();
+    $seq = Str::random(4);
+    $seq = date('Ymd',strtotime(now())).'-'.$seq;
+    if(Write_off::where('seq_no',$seq)->count() == 0){
+      $wf = Write_off::create([
+              'seq_no'=>$seq,
+              'total_item'=>$request->total_item,
+              'total_amount'=>$request->total_cost,
+              'created_by'=>$user->name,
+              'write_off_date'=>now(),
+              'completed'=>1,
+            ]);
+
+      Write_off_detail::where('completed',0)
+                        ->where('seq_no',null)
+                        ->where('write_off_id',null)
+                        ->update([
+                          'write_off_id'=>$wf->id,
+                          'seq_no'=>$seq,
+                          'completed'=>1,
+                        ]);
+      return json_encode(true);
+    }else{
+      return json_encode(false);
+    }
   }
 
 }
