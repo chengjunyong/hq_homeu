@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\User;
 use App\User_access_control;
+use App\Transaction_detail;
 use Illuminate\Support\Facades\Route;
 
 use Illuminate\Support\Facades\Hash;
@@ -559,7 +560,9 @@ class UserController extends Controller
 
     public function testingPage()
     {
-      dd(Hash::make("12345678"));
+      $test = Transaction_detail::where('transaction_detail.barcode', "9555400909091")->where('transaction_detail.branch_id', "3dacc8d2bc7dc1c0ed5238b0e6d9d129")->leftJoin('transaction', 'transaction.branch_transaction_id', '=', 'transaction_detail.branch_transaction_id')->where('transaction.branch_id', "3dacc8d2bc7dc1c0ed5238b0e6d9d129")->whereBetween('transaction.transaction_date', ['2021-07-01 00:00:00', '2021-07-31 23:59:59'])->select('transaction_detail.*', 'transaction.branch_transaction_id as u_id')->selectRaw('sum(transaction_detail.quantity) as new_q')->get();
+
+      dd($test);
       return view('testing');
     }
 

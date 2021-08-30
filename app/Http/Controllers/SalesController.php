@@ -2025,13 +2025,14 @@ class SalesController extends Controller
   {
     $department_detail = Department::where('id', $request->export_department_id)->first();
     $category_list = Category::whereIn('id', $request->export_category_id)->get();
+    $category_id_array = $request->export_category_id;
 
     $date_from = $request->export_report_date_from;
     $date_to = $request->export_report_date_to;
     $report_date_from = $date_from." 00:00:00";
     $report_date_to = $date_to." 23:59:59";
 
-    $transaction_query = Transaction_detail::whereIn('transaction_detail.category_id', $request->export_category_id)->leftJoin('transaction', function($join)
+    $transaction_query = Transaction_detail::leftJoin('transaction', function($join)
     {
       $join->on('transaction.branch_transaction_id', '=', 'transaction_detail.branch_transaction_id');
       $join->on('transaction.branch_id', '=', 'transaction_detail.branch_id');
@@ -2049,7 +2050,7 @@ class SalesController extends Controller
       }
     });
   
-    $product_list = $product_query->leftJoin('category', 'category.id', '=', 'product_list.category_id')->leftJoin('department', 'department.id', '=', 'product_list.department_id')->select('product_list.*', 'category.category_name', 'department.department_name')->orderBy('barcode')->get();  
+    $product_list = $product_query->leftJoin('category', 'category.id', '=', 'product_list.category_id')->leftJoin('department', 'department.id', '=', 'product_list.department_id')->select('product_list.*', 'category.category_name', 'department.department_name')->orderBy('barcode')->get();
 
     $transaction_detail = $transaction_query->select('transaction_detail.*')->orderBy('transaction_detail.barcode')->get();
 
@@ -2130,6 +2131,9 @@ class SalesController extends Controller
     $sheet->mergeCells('F3:G3');
 
     $sheet->getStyle("A1:G2")->getAlignment()->setWrapText(true);
+    $sheet->getStyle('D')->getNumberFormat()->setFormatCode('################################');
+
+    $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal('center');
 
     $sheet->setCellValue('A4', 'Bil');
     $sheet->setCellValue('B4', 'Department');
@@ -2153,27 +2157,30 @@ class SalesController extends Controller
     $started_row = 5;
     foreach($product_list as $key => $product)
     {
-      $sheet->setCellValue('A'.$started_row, ($key + 1));
-      $sheet->setCellValue('B'.$started_row, $product->department_name);
-      $sheet->setCellValue('C'.$started_row, $product->category_name);
-      $sheet->setCellValue('D'.$started_row, $product->barcode);
-      $sheet->setCellValue('E'.$started_row, $product->product_name);
-      $sheet->setCellValue('F'.$started_row, $product->total_quantity);
-      $sheet->setCellValue('G'.$started_row, $product->total_sales);
-
-      $started_alp = 8;
-      foreach($product->branch_list as $branch)
+      if(in_array($product->category_id, $category_id_array))
       {
-        $col = $alphabet[$started_alp];
+        $sheet->setCellValue('A'.$started_row, ($key + 1));
+        $sheet->setCellValue('B'.$started_row, $product->department_name);
+        $sheet->setCellValue('C'.$started_row, $product->category_name);
+        $sheet->setCellValue('D'.$started_row, $product->barcode);
+        $sheet->setCellValue('E'.$started_row, $product->product_name);
+        $sheet->setCellValue('F'.$started_row, $product->total_quantity);
+        $sheet->setCellValue('G'.$started_row, $product->total_sales);
 
-        if($branch->quantity > 0)
+        $started_alp = 8;
+        foreach($product->branch_list as $branch)
         {
-          $sheet->setCellValue($col.$started_row, $branch->quantity);
-        }
-        $started_alp++;
-      }
+          $col = $alphabet[$started_alp];
 
-      $started_row++;
+          if($branch->quantity > 0)
+          {
+            $sheet->setCellValue($col.$started_row, $branch->quantity);
+          }
+          $started_alp++;
+        }
+
+        $started_row++;
+      }
     }
 
     $writer = new Xlsx($spreadsheet);

@@ -78,7 +78,6 @@
 
   <input type="hidden" id="department_id" name="export_department_id" value="" />
   <div id="category_id_box"></div>
-  <input type="hidden" id="category_id" name="export_category_id[]" value="" />
 </form>
 
 <script>

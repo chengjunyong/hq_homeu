@@ -79,7 +79,7 @@ class api extends Controller
           'round_off' => $data['round_off'],
           'void' => $data['void'],
           'completed' => $data['completed'],
-          'transaction_date' => $data['transaction_date'],
+          'transaction_date' => date('Y-m-d H:i:s', strtotime($data['transaction_date'])),
           'created_at' => $now,
           'updated_at' => $now
         ];

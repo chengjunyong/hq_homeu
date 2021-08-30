@@ -187,6 +187,11 @@
           </div>
 
           <div class="col-12">
+            <label>Product measurement :</label>
+            <label style="text-transform: capitalize;" id="product_measurement"></label>
+          </div>
+
+          <div class="col-12">
             <label>Department : </label>
             <select class="form-control" name="department">
               @foreach($department_list as $department)
@@ -621,6 +626,13 @@
         $("#product_name").html(product_detail.product_name);
         $("#product_barcode").html(product_detail.barcode);
         $("#product_id").val(product_detail.id);
+
+        $("#product_measurement").html("");
+        if(product_detail.measurement)
+        {
+          $("#product_measurement").html(product_detail.measurement);
+        }
+
         $("#stock_type").val(result.stock_type);
 
         $("select[name='department']").val(product_detail.department_id);
