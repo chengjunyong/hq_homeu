@@ -1,5 +1,5 @@
 @extends('layouts.app')
-<title>Refund Report</title>
+<title>Monthly Refund Report</title>
 @section('content')
 <script src="{{ asset('datatable/datatables.min.js') }}"></script>
 <link rel="stylesheet" href="{{ asset('datatable/datatables.min.css')}}"/>
@@ -26,7 +26,7 @@
 
 <form method="post" action="{{route('postMonthlyRefundReport')}}" target="_blank">
   @csrf
-  <h2 align="center">Refund Report</h2>
+  <h2 align="center">Monthly Refund Report</h2>
   <div class="container">
     <div class="card">
       <div class="card-body">
@@ -58,21 +58,19 @@
 </form>
 <script>
   $(document).ready(function(){
-    // $("#export_report").click(function(){
-    //   let branch_id = $("select[name=branch_id]").val();
-    //   let target_date = $("input[name=report_date]").val();
+    $("#export_report").click(function(){
+      let branch_id = $("select[name=branch_id]").val();
+      let target_date = $("input[name=report_date]").val();
 
-    //   $.get("{{route('ajaxRefundReport')}}",
-    //   {
-    //     'branch_id' : branch_id,
-    //     'target_date' : target_date,
-    //   },function(data){
-
-    //     window.open(data);
-        
-    //   },'json');
-    // });
-
+      $.get("{{route('ajaxMonthlyRefundReport')}}",
+      {
+        'branch_id' : branch_id,
+        'target_date' : target_date,
+      },function(data){
+        window.open(data);
+        console.log(data);
+      },'json');
+    });
   });
 </script>
 

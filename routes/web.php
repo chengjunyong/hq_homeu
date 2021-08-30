@@ -113,6 +113,7 @@ Route::post('/getDepartmentAndCategoryReportDetail', 'SalesController@getDepartm
 Route::post('/ExportDepartmentAndCategoryReport', 'SalesController@exportDepartmentAndCategoryReport')->name('exportDepartmentAndCategoryReport');
 Route::get('/MonthlyReport','SalesController@getMonthlyRefundReport')->name('getMonthlyRefundReport');
 Route::post('/MonthlyReport','SalesController@postMonthlyRefundReport')->name('postMonthlyRefundReport');
+Route::get('/ajaxMonthlyRefundReport','SalesController@ajaxMonthlyRefundReport')->name('ajaxMonthlyRefundReport');
 
 
 // User access control
@@ -175,6 +176,11 @@ Route::get('/GoodReturnHistoryDetail/{id}','WarehouseController@getGoodReturnHis
 Route::post('/DeleteGr','WarehouseController@ajaxDeleteGr')->name('ajaxDeleteGr');
 Route::post('/GoodReturnHistoryDetail','WarehouseController@postGoodReturnHistoryDetail')->name('postGoodReturnHistoryDetail');
 Route::get('/GenerateGr/{id}','WarehouseController@getPrintGr')->name('getPrintGr');
+Route::get('/StockWriteOff','WarehouseController@getStockWriteOff')->name('getStockWriteOff');
+Route::get('/StockWriteOffList','WarehouseController@getStockWriteOffList')->name('getStockWriteOffList');
+Route::get('/AddWriteOffItem','WarehouseController@ajaxAddWriteOffItem')->name('ajaxAddWriteOffItem');
+Route::get('/RemoveWriteOffItem','WarehouseController@ajaxRemoveWriteOffItem')->name('ajaxRemoveWriteOffItem');
+Route::post('/GenerateWriteOff','WarehouseController@postWriteOffList')->name('postWriteOffList');
 
 //Transaction Number Correction Function
 Route::get('/TransactionCorrection/{target_date}/{branch_code}/{token}','SalesController@transactionCorrection');

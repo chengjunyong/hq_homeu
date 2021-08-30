@@ -1970,12 +1970,14 @@ class SalesController extends Controller
       $sheet->setCellValue('G'.$start,'Sub Total');
       $start++;
       foreach($refund_detail as $index => $b){
-        $sheet->setCellValueExplicit('C'.$start, $b->barcode,DataType::TYPE_STRING2);
-        $sheet->setCellValue('D'.$start, $b->product_name);
-        $sheet->setCellValue('E'.$start, number_format($b->price,2));
-        $sheet->setCellValue('F'.$start, $b->quantity);
-        $sheet->setCellValue('G'.$start, number_format($b->total,2));
-        $start++;
+        if($a->branch_refund_id == $b->branch_refund_id){
+          $sheet->setCellValueExplicit('C'.$start, $b->barcode,DataType::TYPE_STRING2);
+          $sheet->setCellValue('D'.$start, $b->product_name);
+          $sheet->setCellValue('E'.$start, number_format($b->price,2));
+          $sheet->setCellValue('F'.$start, $b->quantity);
+          $sheet->setCellValue('G'.$start, number_format($b->total,2));
+          $start++;
+        }
       }
       $sheet->mergeCells('C'.$start.':F'.$start);
       $sheet->getStyle('C'.$start)->getAlignment()->setHorizontal('center');
@@ -2203,7 +2205,84 @@ class SalesController extends Controller
                       ->get();
     $target_date = $request->report_date;
     $user = Auth::user();
+
     return view('print.print_monthly_refund',compact('refund','branch','target_date','user'));
+  }
+
+  public function ajaxMonthlyRefundReport(Request $request)
+  {
+    $branch = Branch::where('id',$request->branch_id)->first();
+    $refund = Refund::where('branch_id',$branch->token)
+                      ->whereRaw('MONTH(refund_created_at) ='.date('m',strtotime($request->target_date)))
+                      ->get();
+    $target_date = $request->target_date;
+    $user = Auth::user();
+
+    $files = Storage::allFiles('public/report');
+    Storage::delete($files);                  
+    if(!Storage::exists('public/report'))
+    {
+      Storage::makeDirectory('public/report', 0775, true); //creates directory
+    }
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->mergeCells('A1:F1');
+    $sheet->mergeCells('A2:F2');
+    $sheet->mergeCells('A3:F3');
+    $sheet->getStyle('F5')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A3')->getFont()->setBold(true);
+    $sheet->getStyle('E')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('F')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A')->getAlignment()->setHorizontal('left');
+    $sheet->getStyle('A1:F1')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A2:F2')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A3:F3')->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(25);
+
+    $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
+    $sheet->setCellValue('A2', 'Monthly Refund Report');
+    $sheet->setCellValue('A3','('.date('F',strtotime($request->target_date)).')');
+
+    $sheet->getStyle(5)->getFont()->setBold(true);
+    $sheet->setCellValue('A5','No');
+    $sheet->setCellValue('B5','Refund No');
+    $sheet->setCellValue('C5','Counter Name');
+    $sheet->setCellValue('D5','Cashier Name');
+    $sheet->setCellValue('E5','Refund Amount');
+    $sheet->setCellValue('F5','Refund Date');
+    $sheet->getStyle('E5')->getAlignment()->setHorizontal('center');
+    $start = 6;
+    foreach($refund as $index => $a){
+      $sheet->setCellValue('A'.$start,$index+1);
+      $sheet->setCellValue('B'.$start,$a->transaction_no);
+      $sheet->setCellValue('C'.$start,$a->cashier_name);
+      $sheet->setCellValue('D'.$start,$a->created_by);
+      $sheet->setCellValue('E'.$start,number_format($a->total,2));
+      $sheet->setCellValue('F'.$start,date('d-M-Y H:i:s A',strtotime($a->refund_created_at)));
+      $start++;
+    }
+
+    $start++;
+    $sheet->getStyle($start)->getFont()->setBold(true);
+    $sheet->setCellValue('E'.$start, 'Total Quantity Transaction');
+    $sheet->setCellValue('F'.$start, count($refund));
+    $start++;
+    $sheet->getStyle($start)->getFont()->setBold(true);
+    $sheet->setCellValue('E'.$start, 'Total Refund Amount');
+    $sheet->setCellValue('F'.$start, number_format($refund->sum('total'),2));
+
+    $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(24);
+
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/report/Monthly Refund Report.xlsx';
+    $writer->save($path);
+
+    return response()->json($path);
   }
 
 }
