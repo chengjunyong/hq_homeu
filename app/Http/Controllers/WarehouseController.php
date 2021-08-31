@@ -24,8 +24,8 @@ use App\Good_return_detail;
 use App\Tmp_good_return;
 use App\Write_off;
 use App\Write_off_detail;
+use Barryvdh\DomPDF\Facade;
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Support\Facades\Auth;
 
 class WarehouseController extends Controller
@@ -1019,6 +1019,19 @@ class WarehouseController extends Controller
     $seq = Str::random(4);
     $seq = date('Ymd',strtotime(now())).'-'.$seq;
     if(Write_off::where('seq_no',$seq)->count() == 0){
+
+      $wfd = Write_off_detail::where('completed',0)
+                              ->where('seq_no',null)
+                              ->where('write_off_id',null)
+                              ->get();
+
+      foreach($wfd as $key => $result){
+        Warehouse_stock::where('barcode',$result->barcode)
+                        ->update([
+                          'quantity' => DB::raw('IF (quantity IS null,0,quantity) -'.$result->quantity),
+                        ]);
+      }
+
       $wf = Write_off::create([
               'seq_no'=>$seq,
               'total_item'=>$request->total_item,
@@ -1040,6 +1053,37 @@ class WarehouseController extends Controller
     }else{
       return json_encode(false);
     }
+  }
+
+  public function getWriteOffHistory()
+  {
+    $url = route('home')."?p=stock_menu";
+    $wf = Write_off::orderBy('created_at','desc')->paginate(15);
+
+    return view('warehouse.write_off_history',compact('url','wf'));
+  }
+
+  public function ajaxDeleteWriteOffRecord(Request $request)
+  {
+    $wfd = Write_off_detail::where('write_off_id',$request->id)->get();
+
+    foreach($wfd as $key => $result){
+      Warehouse_stock::where('barcode',$result->barcode)
+                        ->update([
+                          'quantity' => DB::raw('IF (quantity IS null,0,quantity) +'.$result->quantity),
+                        ]);
+    }
+
+    Write_off::where('id',$request->id)->delete();
+
+    return json_encode(true);
+  }
+
+  public function getWriteOffPrint(Request $request)
+  { 
+    $pdf = Facade::loadView('print.print_write_off');
+
+    return $pdf->download('test.pdf');
   }
 
 }

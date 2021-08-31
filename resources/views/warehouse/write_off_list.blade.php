@@ -26,7 +26,7 @@
           </div>
           <div class="col-md-6">
             <label>Total Amount:</label>
-            <input readonly class="form-control" type="text" name="total_cost" value="{{number_format($wf_list->sum('total'),2)}}">
+            <input readonly class="form-control" type="text" name="total_cost" value="{{$wf_list->sum('total')}}">
           </div>
         </div>
 

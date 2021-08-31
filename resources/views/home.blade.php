@@ -863,7 +863,7 @@
               <h4 class="card-title">Stock Write Off History</h4>
             </div>
             <div class="col">
-              <a href="#"><i class="fas fa-clipboard-list first stock-color"></i></a>
+              <a href="{{route('getWriteOffHistory')}}"><i class="fas fa-clipboard-list first stock-color"></i></a>
             </div>
           </div>
         </div>

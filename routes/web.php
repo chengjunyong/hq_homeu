@@ -181,6 +181,9 @@ Route::get('/StockWriteOffList','WarehouseController@getStockWriteOffList')->nam
 Route::get('/AddWriteOffItem','WarehouseController@ajaxAddWriteOffItem')->name('ajaxAddWriteOffItem');
 Route::get('/RemoveWriteOffItem','WarehouseController@ajaxRemoveWriteOffItem')->name('ajaxRemoveWriteOffItem');
 Route::post('/GenerateWriteOff','WarehouseController@postWriteOffList')->name('postWriteOffList');
+Route::get('/WriteOffHistory','WarehouseController@getWriteOffHistory')->name('getWriteOffHistory');
+Route::get('/PrintWriteOffRecord/{id}','WarehouseController@getWriteOffPrint')->name('getWriteOffPrint');
+Route::get('/DeleteWriteOffRecord','WarehouseController@ajaxDeleteWriteOffRecord')->name('ajaxDeleteWriteOffRecord');
 
 //Transaction Number Correction Function
 Route::get('/TransactionCorrection/{target_date}/{branch_code}/{token}','SalesController@transactionCorrection');
