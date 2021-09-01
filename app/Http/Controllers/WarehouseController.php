@@ -1081,9 +1081,14 @@ class WarehouseController extends Controller
 
   public function getWriteOffPrint(Request $request)
   { 
-    $pdf = Facade::loadView('print.print_write_off');
+    // PDF Example
+    // $pdf = Facade::loadView('print.print_write_off');
+    // return $pdf->download('test.pdf');
 
-    return $pdf->download('test.pdf');
+    $wf = Write_off::where('id',$request->id)->first();
+    $wf_list = Write_off_detail::where('write_off_id',$request->id)->get();
+
+    return view('print.print_write_off',compact('wf','wf_list'));
   }
 
 }

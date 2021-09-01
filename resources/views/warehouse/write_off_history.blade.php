@@ -40,7 +40,7 @@
                 <td>{{$result->created_by}}</td>
                 <td>{{date('Y-m-d h:i:s A',strtotime($result->write_off_date))}}</td>
                 <td>
-                  <button class="btn btn-primary" onclick="window.location.assign('{{route('getWriteOffPrint',$result->id)}}')">Print</button>
+                  <button class="btn btn-primary" onclick="window.open('{{route('getWriteOffPrint',$result->id)}}')">Print</button>
                   <button val="{{$result->id}}" class="btn btn-danger delete">Delete</button>
                 </td>
               </tr>
