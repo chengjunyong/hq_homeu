@@ -116,6 +116,7 @@ class api extends Controller
           'subtotal' => $data['subtotal'],
           'total' => $data['total'],
           'void' => $data['void'],
+          'transaction_date' => date('Y-m-d H:i:s', strtotime($data['transaction_date'])),
           'transaction_detail_date' => date('Y-m-d H:i:s', strtotime($data['created_at'])),
           'created_at' => $now,
           'updated_at' => $now

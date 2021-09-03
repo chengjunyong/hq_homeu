@@ -560,9 +560,20 @@ class UserController extends Controller
 
     public function testingPage()
     {
-      $test = Transaction_detail::where('transaction_detail.barcode', "9555400909091")->where('transaction_detail.branch_id', "3dacc8d2bc7dc1c0ed5238b0e6d9d129")->leftJoin('transaction', 'transaction.branch_transaction_id', '=', 'transaction_detail.branch_transaction_id')->where('transaction.branch_id', "3dacc8d2bc7dc1c0ed5238b0e6d9d129")->whereBetween('transaction.transaction_date', ['2021-07-01 00:00:00', '2021-07-31 23:59:59'])->select('transaction_detail.*', 'transaction.branch_transaction_id as u_id')->selectRaw('sum(transaction_detail.quantity) as new_q')->get();
+      $transaction_detail = Transaction_detail::leftJoin('transaction', function($join)
+      {
+        $join->on('transaction.branch_transaction_id', '=', 'transaction_detail.branch_transaction_id');
+        $join->on('transaction.branch_id', '=', 'transaction_detail.branch_id');
+      })->whereNull('Transaction_detail.transaction_date')->whereNotNull('Transaction.transaction_date')->select('Transaction_detail.*', 'Transaction.transaction_date as updated_transaction_date')->get();
 
-      dd($test);
+      foreach($transaction_detail as $val)
+      {
+        Transaction_detail::where('id', $val->id)->update([
+          'transaction_date' =>$val->updated_transaction_date
+        ]);
+      }
+
+      dd("completed");
       return view('testing');
     }
 
