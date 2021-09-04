@@ -59,7 +59,7 @@
 					{{ $do_detail->links() }}
 				</div>
 				<div style="margin-top: 3.5rem;text-align: center">
-					<button id="gr" class="btn btn-primary">Generate Good Return Form</button>
+					<button id="gr" class="btn btn-primary">Generate Good Return</button>
 				</div>
 			</div>
 		</div>

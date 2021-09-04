@@ -70,7 +70,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <h4>KOTA BHARU, KELANTAN (AB15809)</h4>
     <h4>(125272-P)</h4>
 		<h4>purchase@homeumsd.com</h4>
-		<h2 style="margin:20px 30%;">Purchase Order</h2>
+		<h2 style="margin:20px 30%;border: 2px solid black;">Purchase Order</h2>
 	</div>
 
 	<div class="main" style="padding-bottom: 2.5rem;margin-top: 15px;">
@@ -90,7 +90,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </tr>
 			</table>
 
-			<table style="float:right;font-size:19px">
+			<table style="float:right;font-size:16px">
 				<tr>
 					<td>PO Number</td>
 					<td>:</td>
@@ -134,20 +134,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 					</tr>
 				@endforeach
 				<tr>
-					<td rowspan="5" colspan="3" style="vertical-align: top">Comment</td>
-					<td>Sub Total</td>
+					<td rowspan="5" colspan="3" style="vertical-align: top"><b>Notes</b></td>
+					<td><b>Sub Total</b></td>
 					<td style="text-align: right">{{number_format($total,2)}}</td>
 				</tr>
 				<tr>
-					<td>Tax</td>
-					<td style="text-align: right">0</td>
+					<td><b>Tax</b></td>
+					<td style="text-align: right">-</td>
 				</tr>
 				<tr>
-					<td>Shpping</td>
-					<td style="text-align: right">0</td>
+					<td><b>Shpping</b></td>
+					<td style="text-align: right">-</td>
 				</tr>
 				<tr>
-					<td>Total</td>
+					<td><b>Total</b></td>
 					<td style="text-align: right">{{number_format($total,2)}}</td>
 				</tr>
 			</tbody>
