@@ -26,7 +26,6 @@
 							<td>From</td>
 							<td>To</td>
 							<td>Quantity Item</td>
-							<td>Completed</td>
 							<td>Date Issue</td>
 							<td></td>
 						</tr>
