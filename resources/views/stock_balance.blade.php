@@ -42,9 +42,9 @@
                 <option value="hq">HQ Warehouse</option>
               </select>
             </div>
-            <div class="col-md-12" style="text-align: center;margin:10px 0px 10px 0px">
+<!--             <div class="col-md-12" style="text-align: center;margin:10px 0px 10px 0px">
               <input type="submit" class="btn btn-primary" value="Generate"/>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
