@@ -94,6 +94,17 @@ class api extends Controller
 
       $transaction_product = array();
 
+      $product_barcode = array();
+      foreach($transaction_detail as $data)
+      {
+        if(!in_array($data['barcode'], $product_barcode))
+        {
+          array_push($product_barcode, $data['barcode']);
+        }
+      }
+
+      $transaction_product_list = Branch_product::withTrashed()->where('branch_id', $branch_detail->id)->whereIn('barcode', $product_barcode)->get();
+
       $transaction_detail_query = [];
       foreach($transaction_detail as $data)
       {
@@ -130,7 +141,16 @@ class api extends Controller
           $transaction_product[$product_name]->quantity = 0;
           $transaction_product[$product_name]->last_stock_updated_at = null;
 
-          $product_detail = Branch_product::where('branch_id', $branch_detail->id)->where('barcode', $data['barcode'])->first();
+          $product_detail = null;
+          foreach($transaction_product_list as $transaction_product_detail)
+          {
+            if($transaction_product_detail->barcode == $data['barcode'])
+            {
+              $product_detail = $transaction_product_detail;
+              break;
+            }
+          }
+
           if($product_detail)
           {
             if($product_detail->last_stock_updated_at)
@@ -168,7 +188,7 @@ class api extends Controller
       $transaction_detail_query = array_chunk($transaction_detail_query,500);
       foreach($transaction_detail_query as $query){
         Transaction_detail::insert($query);
-      } 
+      }
 
       // update branch cashier ( shift )
       $branch_shift_query = [];
@@ -264,6 +284,17 @@ class api extends Controller
       Refund::insert($branch_refund_query);
       // end
 
+      $refund_barcode_array = array();
+      foreach($refund_detail as $refund_detail_info)
+      {
+        if(!in_array($refund_detail_info['barcode'], $refund_barcode_array))
+        {
+          array_push($refund_barcode_array, $refund_detail_info['barcode']);
+        }
+      }
+
+      $refund_product_list = Branch_product::withTrashed()->where('branch_id', $branch_detail->id)->whereIn('barcode', $refund_barcode_array)->get();
+
       // refund detail
       $branch_refund_detail_query = [];
       $branch_refund_detail_id_array = [];
@@ -298,7 +329,16 @@ class api extends Controller
           $transaction_product[$product_name]->quantity = 0;
           $transaction_product[$product_name]->last_stock_updated_at = null;
 
-          $product_detail = Branch_product::where('branch_id', $branch_detail->id)->where('barcode', $refund_detail_info['barcode'])->first();
+          $product_detail = null;
+          foreach($refund_product_list as $refund_product_detail)
+          {
+            if($refund_product_detail->barcode == $refund_detail_info['barcode'])
+            {
+              $product_detail = $refund_product_detail;
+              break; 
+            }
+          }
+
           if($product_detail)
           {
             if($product_detail->last_stock_updated_at)
@@ -380,6 +420,17 @@ class api extends Controller
       // delivery detail
       $branch_delivery_detail_query = [];
       $branch_delivery_detail_id_array = [];
+
+      $delivery_barcode_array = array();
+      foreach($delivery_detail as $delivery_detail_info)
+      {
+        if(!in_array($delivery_detail_info['barcode'], $delivery_barcode_array))
+        {
+          array_push($delivery_barcode_array, $delivery_detail_info['barcode']);
+        }
+      }
+      $delivery_product_list = Branch_product::withTrashed()->where('branch_id', $branch_detail->id)->whereIn('barcode', $delivery_barcode_array)->get();
+
       foreach($delivery_detail as $delivery_detail_info)
       {
         $query = [
@@ -412,7 +463,16 @@ class api extends Controller
           $transaction_product[$product_name]->quantity = 0;
           $transaction_product[$product_name]->last_stock_updated_at = null;
 
-          $product_detail = Branch_product::where('branch_id', $branch_detail->id)->where('barcode', $delivery_detail_info['barcode'])->first();
+          $product_detail = null;
+          foreach($delivery_product_list as $delivery_product_detail)
+          {
+            if($delivery_product_detail->barcode == $delivery_detail_info['barcode'])
+            {
+              $product_detail = $delivery_product_detail;
+              break; 
+            }
+          }
+
           if($product_detail)
           {
             if($product_detail->last_stock_updated_at)
@@ -452,9 +512,28 @@ class api extends Controller
       Delivery_detail::insert($branch_delivery_detail_query);
       // end
 
+      $branch_product_barcode_array = array();
       foreach($transaction_product as $transaction_product_detail)
       {
-        $branch_product = Branch_product::where('branch_id', $branch_detail->id)->where('barcode', $transaction_product_detail->barcode)->first();
+        if(!in_array($transaction_product_detail->barcode, $branch_product_barcode_array))
+        {
+          array_push($branch_product_barcode_array, $transaction_product_detail->barcode);
+        }
+      }
+
+      $branch_product_list = Branch_product::withTrashed()->where('branch_id', $branch_detail->id)->whereIn('barcode', $branch_product_barcode_array)->get();
+
+      foreach($transaction_product as $transaction_product_detail)
+      {  
+        $branch_product = null;
+        foreach($branch_product_list as $branch_product_detail)
+        {
+          if($branch_product_detail->barcode == $transaction_product_detail->barcode)
+          {
+            $branch_product = $branch_product_detail;
+            break; 
+          }
+        }
 
         if($branch_product)
         {
@@ -464,6 +543,7 @@ class api extends Controller
           }
           
           $stock = $branch_product->quantity + $transaction_product_detail->quantity;
+
           Branch_product::where('id', $branch_product->id)->update([
             'quantity' => $stock
           ]);
