@@ -59,7 +59,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 	<div class="header">
 		<h2>HOME U(M) SDN BHD</h2>
 		<h4>(125272-P)</h4>
-		<h4>Tel: 09-7744243 <br/> Email: assist@homeumsd.com</h4>
+		<h4>Tel: 09-7744243 <br/> Email: support@homeumsd.com</h4>
 		<h3 style="margin:20px 30%;border:1px solid black">Goods Return</h3>
 	</div>
 
