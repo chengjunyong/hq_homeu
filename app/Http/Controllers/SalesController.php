@@ -1940,7 +1940,7 @@ class SalesController extends Controller
     $sheet->getStyle('A')->getAlignment()->setHorizontal('left');
     $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal('center');
     $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
-    $sheet->setCellValue('A2', 'Refund Report');
+    $sheet->setCellValue('A2', 'Refund Report -'.$branch->branch_name);
 
     $start = 4;
     foreach($refund as $index => $a){
@@ -2248,7 +2248,7 @@ class SalesController extends Controller
     $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(25);
 
     $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
-    $sheet->setCellValue('A2', 'Monthly Refund Report');
+    $sheet->setCellValue('A2', 'Monthly Refund Report -'.$branch->branch_name);
     $sheet->setCellValue('A3','('.date('F',strtotime($request->target_date)).')');
 
     $sheet->getStyle(5)->getFont()->setBold(true);
