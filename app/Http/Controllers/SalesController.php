@@ -1843,7 +1843,7 @@ class SalesController extends Controller
     $sheet->getStyle('D')->getAlignment()->setHorizontal('right');
 
     $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
-    $sheet->setCellValue('A2', 'Warehouse Stock Report');
+    $sheet->setCellValue('A2', 'Sales Report - '.$branch->branch_name);
     $sheet->setCellValue('A4','No');
     $sheet->setCellValue('B4','Invoice No');
     $sheet->setCellValue('C4','Payment Type');
