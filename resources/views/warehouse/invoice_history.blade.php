@@ -43,7 +43,7 @@
                 <td>{{$result->created_at}}</td>
                 <td>
                   <button class="btn btn-primary" onclick="window.location.assign('{{route('getInvoicePurchaseHistoryDetail',$result->id)}}')">Details</button>
-                  <button val="{{$result->reference_no}}" class="btn btn-danger delete">Delete</button>
+                  <button val="{{$result->id}}" class="btn btn-danger delete">Delete</button>
                 </td>
               </tr>
             @endforeach
@@ -70,7 +70,7 @@ $(document).ready(function(){
         $.post("{{route('ajaxDeleteInvoice')}}",
         {
           '_token': '{{csrf_token()}}',
-          'ref_id':a,
+          'id':a,
         },function(data){
           if(data){
             swal.fire({

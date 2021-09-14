@@ -590,6 +590,20 @@ class WarehouseController extends Controller
     }
     $reference_no = "P".$last_id;
 
+    $invoice_purchase = Invoice_purchase::create([
+                                            'reference_no'=>$reference_no,
+                                            'invoice_date'=>$request->invoice_date,
+                                            'invoice_no'=>$request->invoice_no,
+                                            'total_item'=>$total_item,
+                                            'total_cost'=>0,
+                                            'total_different_item'=>count($purchase_items),
+                                            'supplier_id'=>$supplier->id,
+                                            'supplier_name'=>$supplier->supplier_name,
+                                            'creator_id'=>$user->id,
+                                            'creator_name'=>$user->name,
+                                            'completed'=>1,
+                                          ]); 
+
     foreach($purchase_items as $result){
       if($result->cost != 0){
         Warehouse_stock::where('barcode',$result->barcode)
@@ -610,19 +624,8 @@ class WarehouseController extends Controller
       }
     }
 
-    $invoice_purchase = Invoice_purchase::create([
-                                            'reference_no'=>$reference_no,
-                                            'invoice_date'=>$request->invoice_date,
-                                            'invoice_no'=>$request->invoice_no,
-                                            'total_item'=>$total_item,
-                                            'total_cost'=>$total_cost,
-                                            'total_different_item'=>count($purchase_items),
-                                            'supplier_id'=>$supplier->id,
-                                            'supplier_name'=>$supplier->supplier_name,
-                                            'creator_id'=>$user->id,
-                                            'creator_name'=>$user->name,
-                                            'completed'=>1,
-                                          ]);     
+    Invoice_purchase::where('id',$invoice_purchase->id)->update(['total_cost' => $total_cost]);
+
     foreach($purchase_items as $result){
       $item_cost = 0;
       $item_cost = $result->total;
@@ -673,7 +676,7 @@ class WarehouseController extends Controller
 
   public function ajaxDeleteInvoice(Request $request)
   {
-    $invoice = Invoice_purchase::where('reference_no',$request->ref_id)->first();
+    $invoice = Invoice_purchase::where('id',$request->id)->first();
     $invoice_detail = Invoice_purchase_detail::where('invoice_purchase_id',$invoice->id)->get();
 
     foreach($invoice_detail as $result){
@@ -683,7 +686,7 @@ class WarehouseController extends Controller
                       ]);
     }
 
-    Invoice_purchase::where('reference_no',$request->ref_id)->delete();
+    Invoice_purchase::where('id',$request->id)->delete();
 
     return json_encode(true);
   }
