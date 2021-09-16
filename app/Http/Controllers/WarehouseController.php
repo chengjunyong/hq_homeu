@@ -613,7 +613,7 @@ class WarehouseController extends Controller
                         ]);
 
         Product_list::where('barcode',$result->barcode)->update(['cost'=>$result->cost]);
-        Branch_product::where('barcode',$result->barcode)->update(['cost'=>$result->cost]);
+        Branch_product::where('barcode',$result->barcode)->update(['cost'=>$result->cost,'product_sync'=>0]);
 
         $total_cost += $result->total;
       }else{
@@ -708,6 +708,12 @@ class WarehouseController extends Controller
                             'cost'=>$request->cost[$key],
                             'quantity' => DB::raw('IF (quantity IS null,0,quantity) +'.$diff_qty),
                           ]);
+
+        Branch_product::where('barcode',$request->barcode[$key])
+                        ->update([
+                          'cost'=>$request->cost[$key],
+                          'product_sync'=>0
+                        ]);
       }else{
         Warehouse_stock::where('barcode',$request->barcode[$key])
                   ->update([
