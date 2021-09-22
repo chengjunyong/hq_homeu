@@ -455,7 +455,7 @@ class SalesController extends Controller
 
       $transaction = Transaction::whereBetween('transaction_date', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
 
-      $payment_type = ['cash', 'card', 'tng', 'maybank_qr', 'grab_pay', 'boost', 'other'];
+      $payment_type = ['cash', 'card', 'tng', 'maybank_qr', 'grab_pay', 'boost', 'pandamart', 'grabmart'];
       
       $cashier_list = array();
       $cashier_ip_array = array();
