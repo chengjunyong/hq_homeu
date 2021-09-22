@@ -89,7 +89,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <th style="text-align: right">Maybank QRPay</th>
         <th style="text-align: right">Grab Pay</th>
         <th style="text-align: right">Boost</th>
-        <th style="text-align: right">OTHER</th>
+        <!-- <th style="text-align: right">OTHER</th> -->
+        <th style="text-align: right">PANDAMART</th>
+        <th style="text-align: right">GRABMART</th>
         <th style="text-align: right">TOTAL</th>
       </thead>
       <tbody class="border" style="border-bottom-color:black !important">
