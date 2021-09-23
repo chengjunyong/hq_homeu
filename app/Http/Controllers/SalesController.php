@@ -2307,10 +2307,10 @@ class SalesController extends Controller
     $from_date = $request->report_date_from;
     $to_date = $request->report_date_to;
     $branch = Branch::find($request->branch_id);
+    $date = Carbon::parse($request->report_date_to);
 
     $transaction = Transaction::where('branch_id',$branch->token)
-                                ->where('transaction_date','>',$request->report_date_from)
-                                ->where('transaction_date','<=',$request->report_date_to)
+                                ->whereBetween('transaction_date',[$from_date,$date->addDays(1)])
                                 ->get();
 
     return view('print.print_date_range_sales_report',compact('user','from_date','to_date','transaction'));
@@ -2402,8 +2402,7 @@ class SalesController extends Controller
     $branch = Branch::find($request->branch_id);
 
     $transaction = Transaction::where('branch_id',$branch->token)
-                                ->where('transaction_date','>',$request->report_date_from)
-                                ->where('transaction_date','<=',$request->report_date_to)
+                                ->whereBetween('transaction_date',[$from_date,date('Y-m-d',strtotime($to_date.'+1 days'))])
                                 ->where(function($query){
                                   $query->where('payment_type','pandamart');
                                   $query->orWhere('payment_type','grabmart');

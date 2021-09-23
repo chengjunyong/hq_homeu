@@ -118,7 +118,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <td>{{$a->transaction_no}}</td>
             <td align="center">{{$a->cashier_name}}</td>
             <td align="center">{{$a->created_by}}</td>
-            <td colspan="2" align="center">{{date("Y-m-d h:i:s A",strtotime($a->refund_created_at))}}</td>
+            <td colspan="2" align="center">{{date("Y-m-d h:i:s A",strtotime($a->transaction_date))}}</td>
             <td></td>
           </tr>
           <tr>
