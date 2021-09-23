@@ -17,6 +17,7 @@ class transaction extends Model
       'transaction_no',
       'invoice_no',
       'user_id',
+      'user_name',
       'subtotal',
       'total_discount',
       'voucher_code',

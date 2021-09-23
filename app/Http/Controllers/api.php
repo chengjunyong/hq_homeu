@@ -68,6 +68,7 @@ class api extends Controller
           'transaction_no' => $data['transaction_no'],
           'reference_no' => $data['reference_no'],
           'user_id' => $data['user_id'],
+          'user_name' => $data['user_name'],
           'subtotal' => $data['subtotal'],
           'total_discount' => $data['total_discount'],
           'voucher_code' => $data['voucher_code'],
