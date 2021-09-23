@@ -660,7 +660,7 @@ class SalesController extends Controller
     {
       $branch_list = Branch::get();
 
-      $payment_type = ['cash', 'card', 'tng', 'maybank_qr', 'grab_pay', 'boost', 'other'];
+      $payment_type = ['cash', 'card', 'tng', 'maybank_qr', 'grab_pay', 'boost', 'pandamart', 'grabmart'];
 
       $total = 0;
 
