@@ -82,7 +82,6 @@ $(document).ready(function(){
     }else{
       swal.fire('Error','Please Select Branch Before Exporting Report','error');
     }
-
   });
 
   $("#select_branch").select2({});

@@ -114,6 +114,12 @@ Route::post('/ExportDepartmentAndCategoryReport', 'SalesController@exportDepartm
 Route::get('/MonthlyReport','SalesController@getMonthlyRefundReport')->name('getMonthlyRefundReport');
 Route::post('/MonthlyReport','SalesController@postMonthlyRefundReport')->name('postMonthlyRefundReport');
 Route::get('/ajaxMonthlyRefundReport','SalesController@ajaxMonthlyRefundReport')->name('ajaxMonthlyRefundReport');
+Route::get('/DateRangeSalesReport','SalesController@getDateRangeSalesReport')->name('getDateRangeSalesReport');
+Route::post('/DateRangeSalesReport','SalesController@postDateRangeSalesReport')->name('postDateRangeSalesReport');
+Route::get('/ExportDateRangeSalesReport','SalesController@ajaxDateRangeSalesReport')->name('ajaxDateRangeSalesReport');
+Route::get('/DeliveryReport','SalesController@getDeliveryReport')->name('getDeliveryReport');
+Route::post('/DeliveryReport','SalesController@postDeliveryReport')->name('postDeliveryReport');
+Route::get('/ExportDeliveryReport','SalesController@ajaxDeliveryReport')->name('ajaxDeliveryReport');
 
 
 // User access control

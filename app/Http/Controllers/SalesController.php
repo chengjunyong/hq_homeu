@@ -2292,4 +2292,246 @@ class SalesController extends Controller
     return response()->json($path);
   }
 
+  public function getDateRangeSalesReport()
+  {
+    $url = route('home')."?p=sales_menu";
+
+    $branch = Branch::all();
+
+    return view("report.date_range_sales_report",compact('url','branch'));
+  }
+
+  public function postDateRangeSalesReport(Request $request)
+  {
+    $user = Auth::user();
+    $from_date = $request->report_date_from;
+    $to_date = $request->report_date_to;
+    $branch = Branch::find($request->branch_id);
+
+    $transaction = Transaction::where('branch_id',$branch->token)
+                                ->where('transaction_date','>',$request->report_date_from)
+                                ->where('transaction_date','<=',$request->report_date_to)
+                                ->get();
+
+    return view('print.print_date_range_sales_report',compact('user','from_date','to_date','transaction'));
+  }
+
+  public function ajaxDateRangeSalesReport(Request $request)
+  {
+    $branch = Branch::where('id',$request->branch_id)->first();
+    $from_date = $request->start;
+    $to_date = $request->end;
+    $date = Carbon::parse($request->end);
+
+    $transaction = Transaction::where('branch_id',$branch->token)
+                                ->whereBetween('transaction_date',[$from_date,$date->addDays(1)])
+                                ->orderBy('transaction_no','asc')
+                                ->get();
+
+    $files = Storage::allFiles('public/report');
+    Storage::delete($files);                  
+    if(!Storage::exists('public/report'))
+    {
+      Storage::makeDirectory('public/report', 0775, true); //creates directory
+    }
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->mergeCells('A1:G1');
+    $sheet->mergeCells('A2:G2');
+    $sheet->mergeCells('A3:G3');
+    $sheet->getStyle('A1:G1')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A2:G2')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A3:G3')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('E')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('D')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('F')->getAlignment()->setHorizontal('right');
+
+    $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
+    $sheet->setCellValue('A2', 'Date Range Sales Report - '.$branch->branch_name);
+    $sheet->setCellValue('A3',$from_date.' to '.$to_date);
+    $sheet->setCellValue('A5','No');
+    $sheet->setCellValue('B5','Invoice No');
+    $sheet->setCellValue('C5','Payment Type');
+    $sheet->setCellValue('D5','Round Off');
+    $sheet->setCellValue('E5','Total');
+    $sheet->setCellValue('F5','Reference No');
+    $sheet->setCellValue('G5','Date');
+
+    $start = 6;
+    foreach($transaction as $index => $result){
+      $sheet->setCellValue('A'.$start, $index+1);
+      $sheet->setCellValue('B'.$start, $result->transaction_no);
+      $sheet->setCellValue('C'.$start, $result->payment_type_text);
+      $sheet->setCellValue('D'.$start, $result->round_off);
+      $sheet->setCellValue('E'.$start, $result->total);
+      $sheet->setCellValueExplicit('F'.$start, $result->reference_no,DataType::TYPE_STRING2);
+      $sheet->setCellValue('G'.$start, date("d-M-Y h:i:s A",strtotime($result->transaction_date)));
+      $start++;
+    }
+
+    $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+    $spreadsheet->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/report/Date Range Sales Report.xlsx';
+    $writer->save($path);
+
+    return response()->json($path);
+  }
+
+  public function getDeliveryReport()
+  {
+    $url = route('home')."?p=sales_menu";
+
+    $branch = Branch::all();
+
+    return view("report.delivery_report",compact('url','branch'));
+  }
+
+  public function postDeliveryReport(Request $request)
+  {
+    $user = Auth::user();
+    $from_date = $request->report_date_from;
+    $to_date = $request->report_date_to;
+    $branch = Branch::find($request->branch_id);
+
+    $transaction = Transaction::where('branch_id',$branch->token)
+                                ->where('transaction_date','>',$request->report_date_from)
+                                ->where('transaction_date','<=',$request->report_date_to)
+                                ->where(function($query){
+                                  $query->where('payment_type','pandamart');
+                                  $query->orWhere('payment_type','grabmart');
+                                })
+                                ->orderBy('branch_transaction_id','asc')
+                                ->get();
+
+    $transaction_id = array_column($transaction->toArray(),'branch_transaction_id');
+                            
+    $transaction_detail = Transaction_detail::where('branch_id',$branch->token)
+                                              ->whereIn('branch_transaction_id',$transaction_id)
+                                              ->orderBy('branch_transaction_id','asc')
+                                              ->get();    
+
+    return view('print.print_delivery_report',compact('user','branch','transaction','transaction_detail','from_date','to_date'));
+  }
+
+  public function ajaxDeliveryReport(Request $request)
+  {
+    $branch = Branch::where('id',$request->branch_id)->first();
+    $from_date = $request->start;
+    $to_date = $request->end;
+
+    $transaction = Transaction::whereBetween('transaction_date',[$from_date,date('Y-m-d',strtotime($to_date.'+1 days'))])
+                              ->where('branch_id',$branch->token)
+                              ->where(function($query){
+                                $query->where('payment_type','pandamart');
+                                $query->orWhere('payment_type','grabmart');
+                              })
+                              ->orderBy('branch_transaction_id','asc')
+                              ->get();
+
+    $branch_transaction_id = array_column($transaction->toArray(),'branch_transaction_id');
+
+    $transaction_detail = Transaction_detail::where('branch_id',$branch->token)
+                                    ->whereIn('branch_transaction_id',$branch_transaction_id)
+                                    ->orderBy('branch_transaction_id','asc')
+                                    ->get();
+
+    $files = Storage::allFiles('public/report');
+    Storage::delete($files);                  
+    if(!Storage::exists('public/report'))
+    {
+      Storage::makeDirectory('public/report', 0775, true); //creates directory
+    }
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->mergeCells('A1:G1');
+    $sheet->mergeCells('A2:G2');
+    $sheet->mergeCells('A3:G3');
+    $sheet->getStyle('A1:E1')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A2:E2')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A3:E3')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('E')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('G')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('F')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('D')->getAlignment()->setHorizontal('left');
+    $sheet->getStyle('A')->getAlignment()->setHorizontal('left');
+    $sheet->getStyle('A1:A3')->getAlignment()->setHorizontal('center');
+    $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
+    $sheet->setCellValue('A2', 'PandaMart & GrabMart Sales Report -'.$branch->branch_name);
+    $sheet->setCellValue('A3', date('d-M-Y',strtotime($from_date)).' to '.date('d-M-Y',strtotime($to_date)));
+
+    $start = 5;
+    foreach($transaction as $index => $a){
+      $sheet->getStyle($start)->getFont()->setBold(true);
+      $sheet->setCellValue('A'.$start,'No');
+      $sheet->setCellValue('B'.$start,'Transaction No');
+      $sheet->setCellValue('C'.$start,'Counter Name');
+      $sheet->setCellValue('D'.$start,'Cashier Name');
+      $sheet->setCellValue('E'.$start,'Refund Date');
+      $sheet->mergeCells('E'.$start.':F'.$start);
+      $sheet->getStyle('E'.$start)->getAlignment()->setHorizontal('center');
+      $start++;
+      $sheet->setCellValue('A'.$start,$index+1);
+      $sheet->setCellValueExplicit('B'.$start,$a->transaction_no,DataType::TYPE_STRING2);
+      $sheet->setCellValue('C'.$start,$a->cashier_name);
+      $sheet->setCellValue('D'.$start,$a->created_by);
+      $sheet->setCellValue('E'.$start,date("d-M (h:i:s A)",strtotime($a->transaction_date)));
+      $sheet->mergeCells('E'.$start.':F'.$start);
+      $sheet->getStyle('E'.$start)->getAlignment()->setHorizontal('center');
+      $start++;
+      $sheet->getStyle($start)->getFont()->setBold(true);
+      $sheet->setCellValue('C'.$start,'Barcode');
+      $sheet->setCellValue('D'.$start,'Product');
+      $sheet->setCellValue('E'.$start,'Unit Price');
+      $sheet->setCellValue('F'.$start,'Quantity');
+      $sheet->getStyle('F'.$start)->getAlignment()->setHorizontal('center');
+      $sheet->setCellValue('G'.$start,'Sub Total');
+      $start++;
+      foreach($transaction_detail as $index => $b){
+        if($a->branch_transaction_id == $b->branch_transaction_id){
+          $sheet->setCellValueExplicit('C'.$start, $b->barcode,DataType::TYPE_STRING2);
+          $sheet->setCellValue('D'.$start, $b->product_name);
+          $sheet->setCellValue('E'.$start, number_format($b->price,2));
+          $sheet->setCellValue('F'.$start, $b->quantity);
+          $sheet->setCellValue('G'.$start, number_format($b->total,2));
+          $start++;
+        }
+      }
+      $sheet->mergeCells('C'.$start.':F'.$start);
+      $sheet->getStyle('C'.$start)->getAlignment()->setHorizontal('center');
+      $sheet->getStyle($start)->getFont()->setBold(true);
+      $sheet->setCellValue('C'.$start, 'Total');
+      $sheet->setCellValue('G'.$start, number_format($a->total,2));
+      $start++;$start++;
+    }
+
+    $sheet->getStyle($start)->getFont()->setBold(true);
+    $sheet->setCellValue('F'.$start, 'Total Quantity Transaction');
+    $sheet->setCellValue('G'.$start, count($transaction));
+    $start++;
+    $sheet->getStyle($start)->getFont()->setBold(true);
+    $sheet->setCellValue('F'.$start, 'Total Sales');
+    $sheet->setCellValue('G'.$start, number_format($transaction->sum('total'),2));
+
+    $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/report/PandaMart & GrabMart Sales Report.xlsx';
+    $writer->save($path);
+
+    return response()->json($path);
+  }
+
 }
