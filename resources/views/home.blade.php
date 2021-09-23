@@ -601,6 +601,36 @@
       </div>
     </div>
 
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Date Range Sales Report</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getDateRangeSalesReport')}}"><i class="fas fa-money-bill-wave first sales-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">PandaMart & GrabMart Report</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getDeliveryReport')}}"><i class="fas fa-biking first sales-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 

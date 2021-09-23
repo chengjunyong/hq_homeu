@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Refund Report</title>
+<title>PandaMart & GrabMart Sales Report</title>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -59,11 +59,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div style="margin: 0 30px;">
   <div class="header">
     <h2>HOME U(M) SDN BHD</h2>
-    <h4>S/36 LOT 1745, CABANG TIGA</h4>
-    <h4>PENGKALAN CHEPA, 16100</h4>
-    <h4>KOTA BHARU, KELANTAN (AB15809)</h4>
-    <h4>(125272-P)</h4>
-    <h4 style="margin:20px 30%;border:1px solid black">Refund Report ({{ date('d-M-Y',strtotime($target_date)) }})</h3>
+    <h5>S/36 LOT 1745, CABANG TIGA</h5>
+    <h5>PENGKALAN CHEPA, 16100</h5>
+    <h5>KOTA BHARU, KELANTAN (AB15809)</h5>
+    <h5>(125272-P)</h5>
+    <h4 style="margin:20px 30%;border:1px solid black">PandaMart & GrabMart Sales Report <br/><span style="margin-top: 10px;">{{date('d-M-Y',strtotime($from_date))}} to {{date('d-M-Y',strtotime($to_date))}}</span></h4>
   </div>
 
   <div class="first">
@@ -74,14 +74,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <td align="right"> {{ $branch->branch_name }}</td>
       </tr>
       <tr>
-        <td><b>Total Transaction Refund</b></td>
+        <td><b>Total Transaction</b></td>
         <td>:</td>
-        <td align="right">{{ count($refund) }}</td>
+        <td align="right">{{ count($transaction) }}</td>
       </tr>
       <tr>
-        <td><b>Total Refund Amount</b></td>
+        <td><b>Total Sales</b></td>
         <td>:</td>
-        <td align="right">Rm {{ number_format($refund->sum('total'),2) }}</td>
+        <td align="right">Rm {{ number_format($transaction->sum('total'),2) }}</td>
       </tr>
     </table>
   </div>
@@ -105,14 +105,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;margin-bottom:20px;">
       <thead>
         <td align="center" style="width: 1%;">No</td>
-        <td align="center" style="width: 3%;">Refund No</td>
+        <td align="center" style="width: 3%;">Transaction No</td>
         <td align="center" style="width: 10%;">Counter Name</td>
         <td align="center" style="width: 10%;">Cashier Name</td>
-        <td align="center" colspan="2" style="width: 10%;">Refund Date</td>
+        <td align="center" colspan="2" style="width: 10%;">Date</td>
         <td align="center" style="width: 5%;"></td>
       </thead>
       <tbody>
-        @foreach($refund as $index => $a)
+        @foreach($transaction as $index => $a)
           <tr>
             <td>{{$index +1 }}</td>
             <td>{{$a->transaction_no}}</td>
@@ -129,8 +129,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <td align="right"><strong>Quantity</strong></td>
             <td align="right"><strong>Sub Total</strong></td>
           </tr>
-          @foreach($refund_detail as $index => $b)
-            @if($a->branch_refund_id == $b->branch_refund_id)
+          @foreach($transaction_detail as $index => $b)
+            @if($a->branch_transaction_id == $b->branch_transaction_id)
               <tr>
                 <td colspan="2" style="border:none"></td>
                 <td>{{$b->barcode}}</td>
