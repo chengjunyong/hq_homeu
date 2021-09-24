@@ -63,6 +63,7 @@ Route::get('/getcategory','ProductController@ajaxGetCategory')->name('ajaxGetCat
 Route::post('/createproduct','ProductController@postAddProduct')->name('postAddProduct');
 Route::get('/getbarcode','ProductController@ajaxGetBarcode')->name('ajaxGetBarcode');
 Route::get('/modifyproduct/{id}','ProductController@getModifyProduct')->name('getModifyProduct');
+Route::get('/TriggerProductSync','ProductController@ajaxTriggerProductSync')->name('ajaxTriggerProductSync');
 Route::post('/modifyproduct','ProductController@postModifyProduct')->name('postModifyProduct');
 Route::get('/voucher','ProductController@getVoucher')->name('getVoucher');
 Route::post('/voucher','ProductController@postVoucher')->name('postVoucher');
@@ -193,3 +194,4 @@ Route::get('/DeleteWriteOffRecord','WarehouseController@ajaxDeleteWriteOffRecord
 
 //Transaction Number Correction Function
 Route::get('/TransactionCorrection/{target_date}/{branch_code}/{token}','SalesController@transactionCorrection');
+Route::get('/TransactionCorrection2/{from_date}/{to_date}/{branch_code}/{token}','SalesController@transactionCorrection2');

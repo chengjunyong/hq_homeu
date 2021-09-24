@@ -217,6 +217,14 @@ class ProductController extends Controller
     return view('modifyproduct',compact('product','department','category','default_price','url'));
   }
 
+  public function ajaxTriggerProductSync(Request $request)
+  {
+    Branch_product::where('barcode',$request->barcode)
+                  ->update(['product_sync'=>0]);
+
+    return json_encode(true);
+  }
+
   public function postModifyProduct(Request $request)
   {
     Branch_product::where('barcode',$request->barcode)

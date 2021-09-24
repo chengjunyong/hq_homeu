@@ -1814,6 +1814,37 @@ class SalesController extends Controller
     }
   }
 
+  public function transactionCorrection2(Request $request)
+  {
+    if($request->from_date == "" || $request->branch_code == "" || $request->to_date == ""){
+      return json_encode('Done');
+    }else{
+      $from_date = date("Ymd",strtotime($request->from_date));
+      $to_date = date("Ymd",strtotime($request->to_date));
+      $count = $to_date - $from_date + 1;
+      $target_date = date("Ymd",strtotime($request->from_date));
+
+      for($t=0;$t < $count;$t++){
+        $prefix = $request->branch_code.$target_date;
+        $transaction = Transaction::whereBetween('transaction_date',[$target_date,date("Y-m-d",strtotime($target_date.'+1 day'))])
+                                    ->where('branch_id',$request->token)
+                                    ->get();
+        $i=5;
+        foreach($transaction as $a => $result){
+          $number = $a+1;
+           while($i>strlen($number)){
+              $number = "0".$number;
+            }
+          $invoice = $prefix.$number;
+          Transaction::where('id',$result->id)->update(['transaction_no'=>$invoice]);
+        }
+        $target_date = date("Ymd",strtotime($target_date.'+1 day'));
+      }
+
+      return "Completed Correction";
+    }
+  }
+
   public function ajaxExportSalesTransactionReport(Request $request)
   {
     $branch = Branch::where('id',$request->branch_id)->first();

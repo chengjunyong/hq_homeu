@@ -23,6 +23,8 @@
         </div>
         <div class="col">
           <button type="button" id="delete_product" class="btn btn-danger" style="float:right;">Delete Product</button>
+          <br/><br/>
+          <button type="button" id="product_sync" class="btn btn-primary" style="float:right">Trigger Product Sync</button>
         </div>
       </div>
 		</div>
@@ -393,6 +395,40 @@ $(document).ready(function(){
               allowEscapeKey: false,
             }).then(()=>{
               window.location.replace('{{route('getProductList')}}');
+            });
+          }else{
+            swal.fire('Delete Fail','Delete Unsuccessful, Please Contact IT Support','error');
+          }
+        },'json');
+      }
+    })
+  });
+
+  $("#product_sync").click(function(){
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "All Branches Will Sync This Product Again.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        let barcode = $("input[name=barcode]").val();
+        $.get('{{route('ajaxTriggerProductSync')}}',
+        {
+          'barcode':barcode,
+        },function(data){ 
+          console.log(data);
+          if(data){
+            swal.fire({
+              title:'Update Successful',
+              text:'Items Sync Status Has Been Reset',
+              icon:'success',
+              confirmButtonText: 'OK',
+              allowOutsideClick: false,
+              allowEscapeKey: false,
             });
           }else{
             swal.fire('Delete Fail','Delete Unsuccessful, Please Contact IT Support','error');
