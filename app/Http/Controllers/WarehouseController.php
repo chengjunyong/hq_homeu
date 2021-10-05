@@ -883,14 +883,14 @@ class WarehouseController extends Controller
       $query = Good_return::orderBy('created_at','desc');
 
       if($request->gr_no != ''){
-        $query->where('gr_no',$request->gr_no);
+        $query->where('gr_no','LIKE','%'.$request->gr_no.'%');
         $path .= "&gr_no=".$request->gr_no;
       }else{
         $path .= "&gr_no=";
       }
 
       if($request->ref_no != ''){
-        $query->where('ref_no',$request->ref_no);
+        $query->where('ref_no','LIKE','%'.$request->ref_no.'%');
         $path .= "&ref_no=".$request->ref_no;
       }else{
         $path .= "&ref_no=";
