@@ -70,6 +70,8 @@ Route::post('/voucher','ProductController@postVoucher')->name('postVoucher');
 Route::post('/DeleteProduct','ProductController@postDeleteProduct')->name('postDeleteProduct');
 Route::get('/Import','ProductController@getImport')->name('getImport');
 Route::post('/ImportProcess','ProductController@postImport')->name('postImport');
+Route::get('/AddSupplier','ProductController@ajaxAddSupplier')->name('ajaxAddSupplier');
+Route::get('/DeleteSupplier','ProductController@ajaxDeleteSupplier')->name('ajaxDeleteSupplier');
 
 
 //Other

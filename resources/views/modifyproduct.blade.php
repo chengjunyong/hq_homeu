@@ -11,6 +11,10 @@
   font-size: 27px;
   margin-left:8px;
 }
+
+.supplier_table thead th{
+  border: none;
+}
 </style>
 
 <div class="container">
@@ -25,6 +29,8 @@
           <button type="button" id="delete_product" class="btn btn-danger" style="float:right;">Delete Product</button>
           <br/><br/>
           <button type="button" id="product_sync" class="btn btn-primary" style="float:right">Trigger Product Sync</button>
+          <br/><br/>
+          <button type="button" id="supplier_list" class="btn btn-secondary" style="float:right">Supplier</button>
         </div>
       </div>
 		</div>
@@ -288,6 +294,63 @@
         <h4 id="msg"></h4>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="supplier_table" role="dialog">
+  <div class="modal-dialog" role="document" style="max-width: 80%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="title">Supplier List</h5>
+      </div>
+      <div class="modal-body" style="text-align: center">
+        <table class="table supplier_table" style="width:100%;">
+          <thead style="border:none">
+            <th>No</th>
+            <th>Supplier Code</th>
+            <th>Supplier Name</th>
+            <th>Contact</th>
+            <th></th>
+          </thead>
+          <tbody id="supplier_details">
+            @foreach($supplier_list as $index => $result)
+              <tr>
+                <td>{{$index+1}}</td>
+                <td>{{$result->supplier_code}}</td>
+                <td>{{$result->supplier_name}}</td>
+                <td>{{$result->contact_number}}</td>
+                <td><button class="btn btn-danger delete_supplier" val="{{$result->id}}">Delete</button></td>
+              </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="add_new_supplier">Add new supplier</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="supplier_selector" role="dialog" style="background-color:#000000d4">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="title">Add Supplier</h5>
+      </div>
+      <div class="modal-body" style="text-align: center">
+        <select id="supplier_id" class="form-control">
+          @foreach($supplier as $result)
+            <option value="{{$result->id}}">{{$result->supplier_name}}</option>
+          @endforeach
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="submit_supplier">Save</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
@@ -616,6 +679,52 @@ $(document).ready(function(){
   });
 
   changeStep();
+
+  $("#supplier_list").click(function(){
+    $("#supplier_table").modal('show');
+  });
+
+  $("#add_new_supplier").click(function(){
+    $("#supplier_selector").modal('show');
+  });
+
+  $("#submit_supplier").click(function(){
+    let supplier_id = $("#supplier_id").val();
+    let product_id = {{$product->id}};
+    $.get('{{route('ajaxAddSupplier')}}',
+      {
+        'supplier_id':supplier_id,
+        'product_id':product_id,
+      },function(data){
+        let count = parseInt($("#supplier_details tr").length);
+        let html = "";
+        html += "<tr>";
+        html += `<td>${++count}</td>`;
+        html += `<td>${data.supplier_code}</td>`;
+        html += `<td>${data.supplier_name}</td>`;
+        html += `<td>${data.contact_number}</td>`;
+        html += `<td><button class="btn btn-alert" onclick='window.location.reload()'>Refresh</button></td>`;
+        html += "</tr>";
+        $("#supplier_details").append(html);
+        $("#supplier_selector").modal('hide');
+      },'json');  
+  });
+
+  $(".delete_supplier").click(function(){
+    let e = $(this).parents().eq(1);
+    let id = $(this).attr('val');
+    $.get('{{route('ajaxDeleteSupplier')}}',
+    {
+      'id':id,
+    },function(data){
+      if(data){
+        swal.fire('Successful','Delete Successful','success');
+        e.remove();
+      }else{
+        swal.fire('Unsuccessful','Delete Unuccessful Please Try Again','error');
+      }
+    },'json');
+  });
 	
 });
 function changeStep(){
