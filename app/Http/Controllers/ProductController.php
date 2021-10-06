@@ -14,6 +14,7 @@ use App\Warehouse_stock;
 use App\Voucher;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -344,6 +345,11 @@ class ProductController extends Controller
                       'reorder_quantity'=>0,
                       'product_sync'=>null,
                     ]);                
+
+    $user = Auth::user();
+    $log = "User -> $user->name, ID -> $user->id\n";
+    $log .= json_encode($request->toArray());
+    Log::channel('productModify')->info($log);
 
     return back()->with('result','true');
   }
