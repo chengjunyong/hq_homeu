@@ -874,18 +874,64 @@ class WarehouseController extends Controller
 
   }
 
-  public function getGoodReturnHistory()
+  public function getGoodReturnHistory(Request $request)
   {
     $url = route('home')."?p=stock_menu";
 
-    $gr_list = Good_return::orderby('id','desc')->paginate(15);
+    if(isset($request->filter) && $request->filter == true){
+      $path = "?filter=true";
+      $query = Good_return::orderBy('created_at','desc');
 
-    return view('warehouse.good_return_history',compact('gr_list','url'));
+      if($request->gr_no != ''){
+        $query->where('gr_no','LIKE','%'.$request->gr_no.'%');
+        $path .= "&gr_no=".$request->gr_no;
+      }else{
+        $path .= "&gr_no=";
+      }
+
+      if($request->ref_no != ''){
+        $query->where('ref_no','LIKE','%'.$request->ref_no.'%');
+        $path .= "&ref_no=".$request->ref_no;
+      }else{
+        $path .= "&ref_no=";
+      }
+
+      if($request->supplier != 'null'){
+        $query->where('supplier_id',$request->supplier);
+        $path .= "&supplier=".$request->supplier;
+      }else{
+        $path .= "&supplier=null";
+      }
+
+      if($request->date_start != ''){
+        $query->where('created_at','>',$request->date_start);
+        $path .= "&date_start=".$request->date_start;
+      }else{
+        $path .= "&date_start=";
+      }
+
+      if($request->date_end != ''){
+        $query->where('created_at','<=',date("Y-m-d",strtotime($request->date_end."+1 day")));
+        $path .= "&date_end=".$request->date_end;
+      }else{
+        $path .= "&start_end=";
+      }
+
+      $gr_list = $query->paginate(15);
+      $gr_list->withPath($path);
+
+    }else{
+      $gr_list = Good_return::orderby('id','desc')->paginate(15);
+    }
+
+    $supplier = Supplier::all();
+
+    return view('warehouse.good_return_history',compact('gr_list','url','supplier'));
   }
 
   public function getGoodReturnHistoryDetail(Request $request)
   {
-    $url = route('getGoodReturnHistory');
+    $url = url()->previous();
 
     $gr = Good_return::where('id',$request->id)->first();
 

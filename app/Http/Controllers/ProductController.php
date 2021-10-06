@@ -12,6 +12,8 @@ use App\Product_configure;
 use App\Branch;
 use App\Warehouse_stock;
 use App\Voucher;
+use App\Supplier;
+use App\Product_supplier;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Log;
@@ -215,13 +217,82 @@ class ProductController extends Controller
 
     $default_price = Product_configure::first();
 
-    return view('modifyproduct',compact('product','department','category','default_price','url'));
+    $supplier_list = Product_supplier::join('supplier','product_supplier.supplier_id','=','supplier.id')
+                                      ->where('product_supplier.product_id',$product->id)
+                                      ->select('supplier.supplier_name','supplier.supplier_code','supplier.contact_number','product_supplier.*','supplier.id as s_id')
+                                      ->get();
+
+    $existing_supplier = $supplier_list->toArray();
+
+    $supplier = Supplier::whereNotIn('id',array_column($existing_supplier,'s_id'))
+                          ->get();
+
+    return view('modifyproduct',compact('product','department','category','default_price','url','supplier','supplier_list'));
+  }
+
+  public function ajaxAddSupplier(Request $request)
+  {
+    Product_supplier::updateOrCreate([
+        'product_id' => $request->product_id,
+        'supplier_id' => $request->supplier_id,
+    ]);
+
+    $result = Supplier::where('id',$request->supplier_id)->first();
+
+    return $result;
+  }
+
+  public function ajaxDeleteSupplier(Request $request)
+  {
+    Product_supplier::where('id',$request->id)->delete();
+
+    return json_encode(true);
   }
 
   public function ajaxTriggerProductSync(Request $request)
   {
+    $product = Product_list::where('barcode',$request->barcode)->first();
+
     Branch_product::where('barcode',$request->barcode)
-                  ->update(['product_sync'=>0]);
+                  ->update([
+                    'product_sync'=>0,
+                    'measurement'=>$product->measurement,
+                    'cost'=>$product->cost,
+                    'price'=>$product->price,
+                    'normal_wholesale_price'=>$product->normal_wholesale_price,
+                    'normal_wholesale_price2'=>$product->normal_wholesale_price2,
+                    'normal_wholesale_price3'=>$product->normal_wholesale_price3,
+                    'normal_wholesale_price4'=>$product->normal_wholesale_price4,
+                    'normal_wholesale_price5'=>$product->normal_wholesale_price5,
+                    'normal_wholesale_price6'=>$product->normal_wholesale_price6,
+                    'normal_wholesale_price7'=>$product->normal_wholesale_price7,
+                    'normal_wholesale_quantity'=>$product->normal_wholesale_quantity,
+                    'normal_wholesale_quantity2'=>$product->normal_wholesale_quantity2,
+                    'normal_wholesale_quantity3'=>$product->normal_wholesale_quantity3,
+                    'normal_wholesale_quantity4'=>$product->normal_wholesale_quantity4,
+                    'normal_wholesale_quantity5'=>$product->normal_wholesale_quantity5,
+                    'normal_wholesale_quantity6'=>$product->normal_wholesale_quantity6,
+                    'normal_wholesale_quantity7'=>$product->normal_wholesale_quantity7,
+                    'wholesale_price'=>$product->wholesale_price,
+                    'wholesale_price2'=>$product->wholesale_price2,
+                    'wholesale_price3'=>$product->wholesale_price3,
+                    'wholesale_price4'=>$product->wholesale_price4,
+                    'wholesale_price5'=>$product->wholesale_price5,
+                    'wholesale_price6'=>$product->wholesale_price6,
+                    'wholesale_price7'=>$product->wholesale_price7,
+                    'wholesale_quantity'=>$product->wholesale_quantity,
+                    'wholesale_quantity2'=>$product->wholesale_quantity2,
+                    'wholesale_quantity3'=>$product->wholesale_quantity3,
+                    'wholesale_quantity4'=>$product->wholesale_quantity4,
+                    'wholesale_quantity5'=>$product->wholesale_quantity5,
+                    'wholesale_quantity6'=>$product->wholesale_quantity6,
+                    'wholesale_quantity7'=>$product->wholesale_quantity7,
+                    'wholesale_start_date'=>$product->wholesale_start_date,
+                    'wholesale_end_date'=>$product->wholesale_end_date,
+                    'promotion_price'=>$product->promotion_price,
+                    'promotion_start'=>$product->promotion_start,
+                    'promotion_end'=>$product->promotion_end,
+                  ]);
 
     return json_encode(true);
   }

@@ -50,6 +50,6 @@ class Branch_product extends Model
       'wholesale_end_date',
       'wholesale_price2',
       'wholesale_quantity2',
-      'last_stock_updated_at'
+      'last_stock_updated_at',
     ];
 }
