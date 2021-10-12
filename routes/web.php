@@ -105,6 +105,7 @@ Route::post('/stock_report_report','SalesController@getStockReorderReport')->nam
 Route::get('/ProductSalesReport','SalesController@getProductSalesReport')->name('getProductSalesReport');
 Route::post('/ProductSalesReport','SalesController@postProductSalesReport')->name('postProductSalesReport');
 Route::post('/ExportProductSalesReport','SalesController@exportProductSalesReport')->name('exportProductSalesReport');
+Route::get('/getProduct','SalesController@ajaxGetProduct')->name('ajaxGetProduct');
 Route::get('/DailySalesTransactionReport','SalesController@getDailySalesTransactionReport')->name('getDailySalesTransactionReport');
 Route::post('/DailySalesTransactionReport','SalesController@postDailySalesTransactionReport')->name('postDailySalesTransactionReport');
 Route::get('/ExportSalesTransactionReport','SalesController@ajaxExportSalesTransactionReport')->name('ajaxExportSalesTransactionReport');
