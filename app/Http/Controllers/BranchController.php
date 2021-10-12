@@ -270,9 +270,20 @@ class BranchController extends Controller
     $url = route('home')."?p=branch_menu";
 
     if(isset($_GET['search']) && $_GET['search'] != null){
-      $do_list = Do_list::where('do_number',$_GET['search'])->where('completed',0)->orderBy('created_at','desc')->paginate(15);
+      $do_list = Do_list::join('do_detail as dd','dd.do_number','=','do_list.do_number')
+                          ->where('do_list.do_number','%'.$_GET['search'].'%')
+                          ->where('do_list.completed',0)
+                          ->selectRaw("do_list.*,SUM(do_detail.price * do_detail.quantity) as total_value")
+                          ->orderBy('do_list.created_at','desc')
+                          ->groupBy('do_list.do_number')
+                          ->paginate(15);
     }else{
-      $do_list = Do_list::orderBy('created_at','desc')->where('completed',0)->paginate(15);
+      $do_list = Do_list::join('do_detail as dd','dd.do_number','=','do_list.do_number')
+                          ->selectRaw("do_list.*,SUM(dd.price * dd.quantity) as total_value")
+                          ->where('do_list.completed',0)
+                          ->orderBy('do_list.created_at','desc')
+                          ->groupBy('do_list.do_number')
+                          ->paginate(15);
     }
 
     return view('do_history',compact('do_list','url'));

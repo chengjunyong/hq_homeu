@@ -26,6 +26,7 @@
 							<td>From</td>
 							<td>To</td>
 							<td>Quantity Item</td>
+              <td>Value</td>
 							<td>Completed</td>
 							<td>Date Issue</td>
 							<td></td>
@@ -39,6 +40,7 @@
 								<td>{{$result->from}}</td>
 								<td>{{$result->to}}</td>
 								<td>{{$result->total_item}}</td>
+                <td>Rm {{number_format($result->total_value,2)}}</td>
 								<td>{{($result->completed == 0)? 'No' : 'Yes'}}</td>
 								<td>{{$result->created_at}}</td>
 								<td>
