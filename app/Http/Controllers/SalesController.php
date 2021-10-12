@@ -452,7 +452,7 @@ class SalesController extends Controller
 
     $selected_date_from = $selected_date." 00:00:00";
     if($request->report_type == "single")
-      $selected_date_to = $selected_date2." 23:59:59";
+      $selected_date_to = $selected_date." 23:59:59";
     else
       $selected_date_to = $selected_date." 00:00:00";
 
