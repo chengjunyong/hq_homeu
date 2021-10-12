@@ -74,7 +74,7 @@
 
 <form method="POST" action="{{ route('exportProductSalesReport') }}" id="exportProductSalesReportForm">
   @csrf
-  <input type="hidden" id="barcode" name="barcode" />
+  <input type="hidden" id="product_export" name="product_export" />
   <input type="hidden" id="report_date_from" name="report_date_from" value="{{ $selected_date_from }}" />
   <input type="hidden" id="report_date_to" name="report_date_to" value="{{ $selected_date_to }}" />
 </form>
@@ -84,9 +84,9 @@ $(document).ready(function(){
   $("#export_report").click(function(){
     var report_date_from = $("input[name='report_date_from']").val();
     var report_date_to = $("input[name='report_date_to']").val();
-    var barcode = $("select[name='barcode[]']").val();
+    var product = $("input[name=product]").val();
 
-    $("#barcode").val(barcode);
+    $("#product_export").val(product);
     $("#report_date_from").val(report_date_from);
     $("#report_date_to").val(report_date_to);
 

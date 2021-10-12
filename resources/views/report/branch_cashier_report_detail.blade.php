@@ -60,7 +60,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <h4>(125272-P)</h4>
     <h4 style="margin:20px 30%;border:1px solid black;margin-top: 10px">Branch Cashier Report</h4>
     <h5 style="margin: 0 !important;">Report Date</h5>
-    <h5>({{ date("d-M-Y", strtotime($selected_date)) }} )</h5>
+    <h5>({{ date("d-M-Y", strtotime($selected_date)) }} to {{ date("d-M-Y", strtotime($selected_date2)) }})</h5>
   </div>
 
   <div class="second">
