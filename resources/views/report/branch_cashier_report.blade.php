@@ -57,6 +57,11 @@
             <label>Report date from</label>
             <input type="date" name="report_date" class="form-control" value="{{ $selected_date }}" required>
           </div>
+
+          <div class="col-md-12" style="margin-top: 10px;" id="date2">
+            <label>Report date to</label>
+            <input type="date" name="report_date2" class="form-control" value="{{ date('Y-m-d',strtotime($selected_date.'+1 day')) }}" required>
+          </div>
         </div>
 
         <div class="row">
@@ -92,10 +97,14 @@
       if($(this).val() == "all")
       {
         $("#branch_list").hide();
+        $("#date2").hide()
+        $("input[name=report_date2]").prop('disabled',true);
       }
       else
       {
         $("#branch_list").show();
+        $("#date2").show();
+        $("input[name=report_date2]").prop('disabled',false);
       }
     });
 
@@ -107,6 +116,16 @@
       $("#report_date").val(report_date_from);
 
       $("#exportBranchCashierReportForm").submit();
+    });
+
+    $("input[name=report_type]").click(function(){
+      if($("input[name=report_type]:checked").val() == "single"){
+        $("#date2").prop('hidden',false);
+        $("input[name=report_date2]").prop('disabled',false);
+      }else{
+        $("#date2").prop('hidden',true);
+        $("input[name=report_date2]").prop('disabled',true);
+      }
     });
 
   });

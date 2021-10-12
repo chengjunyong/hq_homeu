@@ -442,12 +442,19 @@ class SalesController extends Controller
     $selected_date = date('Y-m-d', strtotime(now()));
 
     if($request->report_date)
-    {
       $selected_date = $request->report_date;
-    }
+    
+
+    if($request->report_date2)
+      $selected_date2 = $request->report_date2;
+    else
+      $selected_date2 = null;
 
     $selected_date_from = $selected_date." 00:00:00";
-    $selected_date_to = $selected_date." 23:59:59";
+    if($request->report_type == "single")
+      $selected_date_to = $selected_date2." 23:59:59";
+    else
+      $selected_date_to = $selected_date." 00:00:00";
 
     if($request->report_type == "single")
     {
@@ -654,7 +661,7 @@ class SalesController extends Controller
         $cashier_total->remain += $cashier->remain;
       }
 
-      return view('report.branch_cashier_report_detail',compact('cashier_list', 'payment_type', 'total_payment_type', 'total', 'cashier_total', 'branch', 'selected_date', 'url', 'date', 'user'));
+      return view('report.branch_cashier_report_detail',compact('cashier_list', 'payment_type', 'total_payment_type', 'total', 'cashier_total', 'branch', 'selected_date','selected_date2', 'url', 'date', 'user'));
     }
     elseif($request->report_type == "all")
     {
@@ -1513,15 +1520,14 @@ class SalesController extends Controller
     $diff_date = $diff / 60 / 60 / 24;
 
     $branch = Branch::orderBy('token')->get();
-    $product_detail = Product_list::where('barcode',$request->barcode)->first();
-
+    $product_detail = Product_list::where('product_name','LIKE',$request->product)->first();
 
     foreach($branch as $index => $result){
       $data[$index] = array();
       for($a=0;$a<$diff_date;$a++){
         $tmp_d = date('Y-m-d',strtotime($request->report_date_from."+".$a." day"));
         $tmp = Transaction_detail::selectRaw("SUM(quantity) as quantity,SUM(total) as total,created_at,branch_id")
-                                    ->where('barcode',$request->barcode)
+                                    ->where('product_name','LIKE',$request->product)
                                     ->where('branch_id',$result->token)
                                     ->whereRaw("DATE(created_at) = '$tmp_d'")
                                     ->first();
@@ -1581,15 +1587,14 @@ class SalesController extends Controller
     $diff_date = $diff / 60 / 60 / 24;
 
     $branch = Branch::orderBy('token')->get();
-    $product_detail = Product_list::where('barcode',$request->barcode)->first();
-
+    $product_detail = Product_list::where('product_name','LIKE',$request->product_export)->first();
 
     foreach($branch as $index => $result){
       $data[$index] = array();
       for($a=0;$a<$diff_date;$a++){
         $tmp_d = date('Y-m-d',strtotime($request->report_date_from."+".$a." day"));
         $tmp = Transaction_detail::selectRaw("SUM(quantity) as quantity,SUM(total) as total,created_at,branch_id")
-                                    ->where('barcode',$request->barcode)
+                                    ->where('product_name','LIKE',$request->product_export)
                                     ->where('branch_id',$result->token)
                                     ->whereRaw("DATE(created_at) = '$tmp_d'")
                                     ->first();
