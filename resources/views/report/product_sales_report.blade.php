@@ -4,7 +4,6 @@
 <script src="{{ asset('datatable/datatables.min.js') }}"></script>
 <link rel="stylesheet" href="{{ asset('datatable/datatables.min.css')}}"/>
 <script src="{{ asset('js/md5.min.js') }}"></script>
-<script src="{{ asset('js/debounce.js') }}"></script>
 <style>
   body{
     background: #f9fafb;
@@ -46,9 +45,11 @@
           </div>
           <div class="col-md-12">
             <label>Product</label>
-            <input list="product_list" id="product" name="product" class="form-control">
-            <datalist id="product_list">
-            </datalist>
+            <select name="barcode[]" id="product" class="form-control" required>
+              @foreach($product_list as $result)
+                <option value="{{$result->barcode}}">{{$result->product_name}}</option>
+              @endforeach
+            </select>
           </div>
 
           <div class="col-md-6">
@@ -93,23 +94,9 @@ $(document).ready(function(){
     $("#exportProductSalesReportForm").submit();
   });
 
-  $("#product").keyup($.debounce(500,function(e){
-    if($(this).val().length >= 3){
-      $.get("{{route('ajaxGetProduct')}}",
-      {
-        'target':$(this).val(),
-      },function(data){
-        $("#product_list").html("");
-        data.forEach(function(result,index){
-          $("#product_list").append(`<option value='${result.product_name}'>`);
-        });
-      },'json');
-    }
-  }));
+  $("#product").select2();
 
 });
-
-
 </script>
 
 @endsection

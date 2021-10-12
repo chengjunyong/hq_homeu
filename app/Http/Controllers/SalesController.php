@@ -1478,6 +1478,11 @@ class SalesController extends Controller
 
   }
 
+  public function getStockReorderReport(Request $request)
+  {
+
+  }
+
   public function getProductSalesReport()
   {
     $url = route('home')."?p=sales_menu";
@@ -1485,14 +1490,9 @@ class SalesController extends Controller
     $selected_date_from = date('Y-m-d', strtotime(now()));
     $selected_date_to = date('Y-m-d', strtotime(now()));
 
-    return view('report.product_sales_report',compact('url','selected_date_from','selected_date_to'));
-  }
+    $product_list = Product_list::get();
 
-  public function ajaxGetProduct(Request $request)
-  {
-    $product = Product_list::where('product_name','LIKE','%'.$request->target.'%')->get();
-
-    return $product;
+    return view('report.product_sales_report',compact('url','selected_date_from','selected_date_to','product_list'));
   }
 
   public function postProductSalesReport(Request $request)
@@ -1513,7 +1513,7 @@ class SalesController extends Controller
     $diff_date = $diff / 60 / 60 / 24;
 
     $branch = Branch::orderBy('token')->get();
-    $product_detail = Product_list::where('product_name',$request->product)->first();
+    $product_detail = Product_list::where('barcode',$request->barcode)->first();
 
 
     foreach($branch as $index => $result){
