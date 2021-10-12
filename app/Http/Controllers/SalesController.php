@@ -441,23 +441,16 @@ class SalesController extends Controller
 
     $selected_date = date('Y-m-d', strtotime(now()));
 
-    if($request->report_date)
-      $selected_date = $request->report_date;
-    
-
-    if($request->report_date2)
-      $selected_date2 = $request->report_date2;
-    else
-      $selected_date2 = null;
-
-    $selected_date_from = $selected_date." 00:00:00";
-    if($request->report_type == "single")
-      $selected_date_to = $selected_date." 23:59:59";
-    else
-      $selected_date_to = $selected_date." 00:00:00";
-
     if($request->report_type == "single")
     {
+      if($request->report_date){
+        $selected_date = $request->report_date;
+        $selected_date2 = $request->report_date2;
+      }
+
+      $selected_date_from = $selected_date." 00:00:00";
+      $selected_date_to = $selected_date2." 23:59:59";
+
       $branch = Branch::where('token', $request->branch)->first();
 
       $transaction = Transaction::whereBetween('transaction_date', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
@@ -665,6 +658,14 @@ class SalesController extends Controller
     }
     elseif($request->report_type == "all")
     {
+      if($request->report_date){
+        $selected_date = $request->report_date;
+        $selected_date2 = null;
+      }
+
+      $selected_date_from = $selected_date." 00:00:00";
+      $selected_date_to = $selected_date." 23:59:59";
+
       $branch_list = Branch::get();
 
       $payment_type = ['cash', 'card', 'tng', 'maybank_qr', 'grab_pay', 'boost', 'pandamart', 'grabmart'];
@@ -781,7 +782,7 @@ class SalesController extends Controller
         $branch_total->remain += $branch->remain;
       }
 
-      return view('report.branch_full_report_detail',compact('branch_list', 'payment_type', 'total', 'total_payment_type', 'branch_total', 'selected_date', 'url', 'date', 'user'));
+      return view('report.branch_full_report_detail',compact('branch_list', 'payment_type', 'total', 'total_payment_type', 'branch_total', 'selected_date','selected_date2', 'url', 'date', 'user'));
     }
     
   }
