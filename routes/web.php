@@ -68,10 +68,12 @@ Route::post('/modifyproduct','ProductController@postModifyProduct')->name('postM
 Route::get('/voucher','ProductController@getVoucher')->name('getVoucher');
 Route::post('/voucher','ProductController@postVoucher')->name('postVoucher');
 Route::post('/DeleteProduct','ProductController@postDeleteProduct')->name('postDeleteProduct');
-Route::get('/Import','ProductController@getImport')->name('getImport');
+// Route::get('/Import','ProductController@getImport')->name('getImport');
 Route::post('/ImportProcess','ProductController@postImport')->name('postImport');
 Route::get('/AddSupplier','ProductController@ajaxAddSupplier')->name('ajaxAddSupplier');
 Route::get('/DeleteSupplier','ProductController@ajaxDeleteSupplier')->name('ajaxDeleteSupplier');
+Route::get('/SupplierProduct','ProductController@getSupplierProduct')->name('getSupplierProduct');
+Route::post('/SupplierProduct','ProductController@postSupplierProduct')->name('postSupplierProduct');
 
 
 //Other

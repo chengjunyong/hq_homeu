@@ -37,8 +37,8 @@
 						<input type="number" min="0" step="0.01" name="cost" id="cost" class="form-control" value="{{$product->cost}}" disabled>
 					</div>
 					<div class="col-md-6">
-						<label>Price (Auto Increase {{$default_price->default_price_margin}}%)</label>
-						<input type="number" min="0" step="0.01" name="price" id="price" class="form-control" value="{{$product->price}}" disabled>
+						<label>Price</label>
+						<input type="number" min="0" step="0.0001" name="price" id="price" class="form-control" value="{{$product->price}}">
 					</div>
 					<div class="col-md-6">
 						<label>Reorder Level</label>

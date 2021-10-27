@@ -60,7 +60,7 @@
             </select>
           </div> -->
 					<div class="col-md-6">
-						<label>Cost <a href="{{route('getProductConfig')}}">(Price Auto Increase {{$default_price->default_price_margin}}%)</a></label>
+						<label>Cost<!--  <a href="{{route('getProductConfig')}}">(Price Auto Increase {{$default_price->default_price_margin}}%)</a> --></label>
 						<input type="number" min="0" step="0.01" name="cost" id="cost" class="form-control" required>
 					</div>
 					<div class="col-md-6">
@@ -119,11 +119,11 @@ $(document).ready(function(){
 			},"json");
 	});
 
-	$("#cost").on("input",function(){
-		let cost = parseFloat($(this).val());
-		let price = (cost * price_ptg / 100) + cost;
-		$("#price").val(price.toFixed(2));
-	});
+	// $("#cost").on("input",function(){
+	// 	let cost = parseFloat($(this).val());
+	// 	let price = (cost * price_ptg / 100) + cost;
+	// 	$("#price").val(price.toFixed(2));
+	// });
 
 	$("input[name=barcode]").on("keyup",function(){
     clearTimeout(starget);

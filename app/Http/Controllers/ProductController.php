@@ -585,4 +585,17 @@ class ProductController extends Controller
     return json_encode(true);
   }
 
+  public function getSupplierProduct()
+  {
+    $url = route('home')."?p=product_menu";
+
+    return view('product.supplier_product',compact('url'));
+  }
+
+  public function postSupplierProduct(Request $request)
+  {
+
+    dd($request);
+  }
+
 }
