@@ -3,7 +3,7 @@
 @section('content')
 
 
-<form method="post" action="{{route('postSupplierProduct')}}" target="_blank">
+<form method="post" action="{{route('postSupplierProduct')}}">
   @csrf
   <h2 align="center">Refund Report</h2>
   <div class="container">
@@ -16,9 +16,8 @@
           <div class="col-md-12" style="margin-bottom: 10px;">
             <label>Branch</label>
             <select class="form-control" name="branch_id">
-              @foreach($branch as $result)
-                <option value="{{$result->id}}">{{$result->branch_name}}</option>
-              @endforeach
+  
+  
             </select>
           </div>
           <div class="col-md-12">
