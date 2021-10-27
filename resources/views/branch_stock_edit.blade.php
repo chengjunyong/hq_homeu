@@ -34,7 +34,7 @@
           </div>
 					<div class="col-md-6">
 						<label>Cost</label>
-						<input type="number" min="0" step="0.01" name="cost" id="cost" class="form-control" value="{{$product->cost}}" disabled>
+						<input type="number" min="0" step="0.0001" name="cost" id="cost" class="form-control" value="{{$product->cost}}">
 					</div>
 					<div class="col-md-6">
 						<label>Price</label>

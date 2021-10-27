@@ -161,6 +161,7 @@ class BranchController extends Controller
                       'recommend_quantity' => $request->recommend_quantity,
                       'quantity' => round($request->stock_quantity,3),
                       'price' => $request->price,
+                      'cost' => $request->cost,
                       'product_sync' => 0,
                     ]);
 
