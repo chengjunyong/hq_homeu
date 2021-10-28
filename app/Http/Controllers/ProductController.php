@@ -144,9 +144,11 @@ class ProductController extends Controller
 
     foreach($branch as $result){
       Branch_product::updateOrCreate(
-        ['barcode'=>$request->barcode],
         [
-        'branch_id'=>$result->id,
+          'barcode'=>$request->barcode,
+          'branch_id'=>$result->id,
+        ],
+        [
         'department_id'=>$request->department,
         'category_id'=>$request->category,
         'product_name'=>$request->product_name,
