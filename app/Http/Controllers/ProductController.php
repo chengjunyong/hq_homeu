@@ -62,18 +62,19 @@ class ProductController extends Controller
   	return view('product_list',compact('product_list','search','url'));
   }
 
-  public function ajaxAddProduct(Request $request)
-  {
-    Product::create([
-			'branch_id'=>'1',
-			'barcode'=>$request->barcode,
-			'product_name'=>$request->product_name,
-			'price'=>$request->price,
-			'quantity'=>$request->quantity,
-    ]);
+  // public function ajaxAddProduct(Request $request)
+  // {
+  //   Product::updateOrCreate(
+  //     [
+		// 	'branch_id'=>'1',
+		// 	'barcode'=>$request->barcode,
+		// 	'product_name'=>$request->product_name,
+		// 	'price'=>$request->price,
+		// 	'quantity'=>$request->quantity,
+  //   ]);
 
-    return 'true';
-  }
+  //   return 'true';
+  // }
 
   public function getProductConfig()
   {
@@ -142,11 +143,12 @@ class ProductController extends Controller
     $branch = Branch::select('id')->get();
 
     foreach($branch as $result){
-      Branch_product::create([
+      Branch_product::updateOrCreate(
+        ['barcode'=>$request->barcode],
+        [
         'branch_id'=>$result->id,
         'department_id'=>$request->department,
         'category_id'=>$request->category,
-        'barcode'=>$request->barcode,
         'product_name'=>$request->product_name,
         'uom'=>$request->uom,
         'measurement'=>$request->measurement,
@@ -160,10 +162,11 @@ class ProductController extends Controller
       ]);
     }
 
-    Product_list::create([
+    Product_list::updateOrCreate(
+      ['barcode'=>$request->barcode],
+      [
       'department_id'=>$request->department,
       'category_id'=>$request->category,
-      'barcode'=>$request->barcode,
       'product_name'=>$request->product_name,
       'uom'=>$request->uom,
       'measurement'=>$request->measurement,
@@ -175,10 +178,11 @@ class ProductController extends Controller
       'unit_type'=>null,
     ]);
 
-    Warehouse_stock::create([
+    Warehouse_stock::updateOrCreate(
+      ['barcode'=>$request->barcode],
+      [
       'department_id'=>$request->department,
       'category_id'=>$request->category,
-      'barcode'=>$request->barcode,
       'product_name'=>$request->product_name,
       'uom'=>$request->uom,
       'measurement'=>$request->measurement,
@@ -493,97 +497,97 @@ class ProductController extends Controller
     return view('product_import');
   }
 
-  public function postImport(Request $request)
-  {
-    $branch = Branch::get();
-    $file = $request->file('product_list');
-    $path = "storage/import";
-    $target = $path."/".$file->getClientOriginalName();
-    $file->move($path,$file->getClientOriginalName());
+  // public function postImport(Request $request)
+  // {
+  //   $branch = Branch::get();
+  //   $file = $request->file('product_list');
+  //   $path = "storage/import";
+  //   $target = $path."/".$file->getClientOriginalName();
+  //   $file->move($path,$file->getClientOriginalName());
 
-    $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($target);
-    $reader->setReadDataOnly(true);
-    $spreadsheet = $reader->load($target);
-    $spreadsheet = $spreadsheet->getActiveSheet();
-    $data = $spreadsheet->toArray();
+  //   $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($target);
+  //   $reader->setReadDataOnly(true);
+  //   $spreadsheet = $reader->load($target);
+  //   $spreadsheet = $spreadsheet->getActiveSheet();
+  //   $data = $spreadsheet->toArray();
 
-    foreach($data as $index => $result){
-      $counter = Product_list::where('barcode',$result[0])->count();
+  //   foreach($data as $index => $result){
+  //     $counter = Product_list::where('barcode',$result[0])->count();
 
-      //if barcode doesn't exist
-      if($counter == 0){
-        Product_list::create([
-                      'department'=>1,
-                      'category_id'=>1,
-                      'barcode'=>$result[0],
-                      'product_name'=>$result[1],
-                      'uom'=>null,
-                      'cost'=>$result[2],
-                      'price'=>$result[3],
-                      'quantity'=>0,
-                      'reorder_level'=>null,
-                      'recommend_quantity'=>null,
-                      'product_sync'=>0,
-                    ]);
+  //     //if barcode doesn't exist
+  //     if($counter == 0){
+  //       Product_list::create([
+  //                     'department'=>1,
+  //                     'category_id'=>1,
+  //                     'barcode'=>$result[0],
+  //                     'product_name'=>$result[1],
+  //                     'uom'=>null,
+  //                     'cost'=>$result[2],
+  //                     'price'=>$result[3],
+  //                     'quantity'=>0,
+  //                     'reorder_level'=>null,
+  //                     'recommend_quantity'=>null,
+  //                     'product_sync'=>0,
+  //                   ]);
 
-        Warehouse_stock::create([
-                      'department'=>1,
-                      'category_id'=>1,
-                      'barcode'=>$result[0],
-                      'product_name'=>$result[1],
-                      'uom'=>null,
-                      'cost'=>$result[2],
-                      'price'=>$result[3],
-                      'quantity'=>0,
-                      'reorder_level'=>null,
-                      'recommend_quantity'=>null,
-                      'product_sync'=>null,
-                    ]);
+  //       Warehouse_stock::create([
+  //                     'department'=>1,
+  //                     'category_id'=>1,
+  //                     'barcode'=>$result[0],
+  //                     'product_name'=>$result[1],
+  //                     'uom'=>null,
+  //                     'cost'=>$result[2],
+  //                     'price'=>$result[3],
+  //                     'quantity'=>0,
+  //                     'reorder_level'=>null,
+  //                     'recommend_quantity'=>null,
+  //                     'product_sync'=>null,
+  //                   ]);
 
-        foreach($branch as $a){
-          Branch_product::create([
-                      'branch_id' => $a->id,
-                      'department'=>1,
-                      'category_id'=>1,
-                      'barcode'=>$result[0],
-                      'product_name'=>$result[1],
-                      'uom'=>null,
-                      'cost'=>$result[2],
-                      'price'=>$result[3],
-                      'quantity'=>null,
-                      'reorder_level'=>null,
-                      'recommend_quantity'=>null,
-                      'product_sync'=>0,
-                    ]);
-        }
+  //       foreach($branch as $a){
+  //         Branch_product::create([
+  //                     'branch_id' => $a->id,
+  //                     'department'=>1,
+  //                     'category_id'=>1,
+  //                     'barcode'=>$result[0],
+  //                     'product_name'=>$result[1],
+  //                     'uom'=>null,
+  //                     'cost'=>$result[2],
+  //                     'price'=>$result[3],
+  //                     'quantity'=>null,
+  //                     'reorder_level'=>null,
+  //                     'recommend_quantity'=>null,
+  //                     'product_sync'=>0,
+  //                   ]);
+  //       }
 
-      }else{
-        Product_list::where('barcode',$result[0])
-                      ->update([
-                        'cost'=>$result[2],
-                        'price'=>$result[3],
-                        'product_sync'=>0,
-                      ]);
+  //     }else{
+  //       Product_list::where('barcode',$result[0])
+  //                     ->update([
+  //                       'cost'=>$result[2],
+  //                       'price'=>$result[3],
+  //                       'product_sync'=>0,
+  //                     ]);
 
-        Warehouse_stock::where('barcode',$result[0])
-                      ->update([
-                      'cost'=>$result[2],
-                      'price'=>$result[3],
-                      'product_sync'=>null,
-                    ]);
+  //       Warehouse_stock::where('barcode',$result[0])
+  //                     ->update([
+  //                     'cost'=>$result[2],
+  //                     'price'=>$result[3],
+  //                     'product_sync'=>null,
+  //                   ]);
 
-        Branch_product::where('barcode',$result[0])
-                    ->update([
-                      'barcode'=>$result[0],
-                      'cost'=>$result[2],
-                      'price'=>$result[3],
-                      'product_sync'=>0,
-                    ]);
-      }
-    }
+  //       Branch_product::where('barcode',$result[0])
+  //                   ->update([
+  //                     'barcode'=>$result[0],
+  //                     'cost'=>$result[2],
+  //                     'price'=>$result[3],
+  //                     'product_sync'=>0,
+  //                   ]);
+  //     }
+  //   }
 
-    return json_encode(true);
-  }
+  //   return json_encode(true);
+  // }
 
   public function getSupplierProduct()
   {
