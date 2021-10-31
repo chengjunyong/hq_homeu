@@ -17,6 +17,7 @@ use App\Product_supplier;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -595,13 +596,98 @@ class ProductController extends Controller
   {
     $url = route('home')."?p=product_menu";
 
-    return view('product.supplier_product',compact('url'));
+    $supplier_list = Supplier::orderBy('supplier_name')->get();
+
+    return view('product.supplier_product',compact('url', 'supplier_list'));
   }
 
-  public function postSupplierProduct(Request $request)
+  public function getSupplierProductReport()
   {
+    $date = date('Y-m-d H:i:s');
+    $user = Auth::user();
 
-    dd($request);
+    $supplier_id = $_GET['supplier_id'];
+
+    $product_supplier = Product_supplier::where('product_supplier.supplier_id', $supplier_id)->leftJoin('product_list', 'product_list.id', '=', 'product_supplier.product_id')->leftJoin('department', 'department.id', '=', 'product_list.department_id')->leftJoin('category', 'category.id', '=', 'product_list.category_id')->select('department.department_name', 'category.category_name', 'product_list.barcode', 'product_list.product_name', 'product_list.measurement', 'product_list.cost', 'product_list.price', 'product_list.quantity', 'product_list.created_at', 'product_list.updated_at')->get();
+
+    return view('report.supplier_product_report',compact('date', 'user', 'product_supplier'));
+  }
+
+  public function exportSupplierProductReport(Request $request)
+  {
+    if(!Storage::exists('public/report'))
+    {
+      Storage::makeDirectory('public/report', 0775, true); //creates directory
+    }
+
+    $supplier_id = $request->supplier_id;
+
+    $supplier = Supplier::where('id', $supplier_id)->first();
+    $product_supplier = Product_supplier::where('product_supplier.supplier_id', $supplier_id)->leftJoin('product_list', 'product_list.id', '=', 'product_supplier.product_id')->leftJoin('department', 'department.id', '=', 'product_list.department_id')->leftJoin('category', 'category.id', '=', 'product_list.category_id')->select('department.department_name', 'category.category_name', 'product_list.barcode', 'product_list.product_name', 'product_list.measurement', 'product_list.cost', 'product_list.price', 'product_list.quantity', 'product_list.created_at', 'product_list.updated_at')->get();
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
+    $sheet->setCellValue('A2', 'Supplier Product List');
+
+    $sheet->mergeCells('A1:J1');
+    $sheet->mergeCells('A2:J2');
+
+    $sheet->setCellValue('A3', 'Supplier:');
+    $sheet->setCellValue('B3', $supplier->supplier_name);
+
+    $sheet->setCellValue('I3', 'Generate Date:');
+    $sheet->setCellValue('J3', date('d-m-Y', strtotime(now())));
+
+    $sheet->getStyle("A1:J3")->getAlignment()->setWrapText(true);
+
+    $sheet->setCellValue('A5', 'No');
+    $sheet->setCellValue('B5', 'Department');
+    $sheet->setCellValue('C5', 'Category');
+    $sheet->setCellValue('D5', 'Barcode');
+    $sheet->setCellValue('E5', 'Product name');
+    $sheet->setCellValue('F5', 'Measurement');
+    $sheet->setCellValue('G5', 'Cost');
+    $sheet->setCellValue('H5', 'Price');
+    $sheet->setCellValue('I5', 'Stock');
+    $sheet->setCellValue('J5', 'Last updated');
+
+    $started_row = 6;
+    foreach($product_supplier as $key => $product)
+    {
+      $sheet->setCellValue('A'.$started_row, $key);
+      $sheet->setCellValue('B'.$started_row, $product->department_name);
+      $sheet->setCellValue('C'.$started_row, $product->category_name);
+      $sheet->setCellValue('D'.$started_row, $product->barcode);
+      $sheet->setCellValue('E'.$started_row, $product->product_name);
+      $sheet->setCellValue('F'.$started_row, $product->measurement);
+      $sheet->setCellValue('G'.$started_row, number_format($product->cost, 2));
+      $sheet->setCellValue('H'.$started_row, number_format($product->price, 2));
+      $sheet->setCellValue('I'.$started_row, $product->quantity);
+      $sheet->setCellValue('J'.$started_row, $product->updated_at);
+
+      $started_row++;
+    }
+
+    $sheet->getColumnDimension('A')->setWidth(10);
+    $sheet->getColumnDimension('B')->setWidth(20);
+    $sheet->getColumnDimension('C')->setWidth(20);
+    $sheet->getColumnDimension('D')->setWidth(20);
+    $sheet->getColumnDimension('E')->setWidth(25);
+    $sheet->getColumnDimension('F')->setWidth(15);
+    $sheet->getColumnDimension('G')->setWidth(15);
+    $sheet->getColumnDimension('H')->setWidth(15);
+    $sheet->getColumnDimension('I')->setWidth(15);
+    $sheet->getColumnDimension('J')->setWidth(20);
+
+    $sheet->getStyle('A5:J'.($started_row - 1))->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/report/Supplier Product Report.xlsx';
+    $writer->save($path);
+
+    return response()->download($path);
   }
 
 }
