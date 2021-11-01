@@ -73,7 +73,8 @@ Route::post('/ImportProcess','ProductController@postImport')->name('postImport')
 Route::get('/AddSupplier','ProductController@ajaxAddSupplier')->name('ajaxAddSupplier');
 Route::get('/DeleteSupplier','ProductController@ajaxDeleteSupplier')->name('ajaxDeleteSupplier');
 Route::get('/SupplierProduct','ProductController@getSupplierProduct')->name('getSupplierProduct');
-Route::post('/SupplierProduct','ProductController@postSupplierProduct')->name('postSupplierProduct');
+Route::get('/SupplierProductReport','ProductController@getSupplierProductReport')->name('getSupplierProductReport');
+Route::post('/exportSupplierReport', 'ProductController@exportSupplierProductReport')->name('exportSupplierProductReport');
 
 
 //Other

@@ -3,9 +3,8 @@
 @section('content')
 
 
-<form method="post" action="{{route('postSupplierProduct')}}">
-  @csrf
-  <h2 align="center">Refund Report</h2>
+<form method="GET" action="{{route('getSupplierProductReport')}}">
+  <h2 align="center">Supplier Product List</h2>
   <div class="container">
     <div class="card">
       <div class="card-body">
@@ -14,15 +13,12 @@
             <button type="button" class="btn btn-primary" id="export_report" style="float: right; margin-bottom: 10px;">Export Report</button>
           </div>
           <div class="col-md-12" style="margin-bottom: 10px;">
-            <label>Branch</label>
-            <select class="form-control" name="branch_id">
-  
-  
+            <label>Supplier</label>
+            <select class="form-control" name="supplier_id" id="form_supplier_id">
+              @foreach($supplier_list as $supplier)
+                <option value="{{ $supplier->id }}">{{ $supplier->supplier_name }}</option>
+              @endforeach
             </select>
-          </div>
-          <div class="col-md-12">
-            <label>Report Date</label>
-            <input type="date" name="report_date" class="form-control" value="{{date('Y-m-d',strtotime(now().'-1 days'))}}" required>
           </div>
         </div>
         <div class="row">
@@ -35,5 +31,16 @@
   </div>
 </form>
 
+<form method="POST" action="{{ route('exportSupplierProductReport') }}" id="exportSupplierProductReportForm">
+  @csrf
+  <input type="hidden" id="report_supplier_id" name="supplier_id" />
+</form>
 
+<script>
+  $("#export_report").click(function(){
+    $("#report_supplier_id").val($("#form_supplier_id").val());
+    $("#exportSupplierProductReportForm").submit();
+  });
+
+</script>
 @endsection
