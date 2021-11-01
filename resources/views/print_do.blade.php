@@ -102,6 +102,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <th align="left" style="width:5%">NO</th>
 				<th style="width:15%" align="left">BARCODE</th>
 				<th>ITEMS</th>
+        <th>UNIT<br/>PRICE</th>
 				<th>QTY</th>
 				<th>PRICE</th>
 			</thead>
@@ -111,6 +112,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <td>{{$index+1}}</td>
 						<td>{{ $result->barcode }}</td>
 						<td>{{ $result->product_name }}</td>
+            <td align="right">{{ number_format($result->price,2) }}</td>
 						<td align="center">
               @if($result->measurement == 'kilogram')
                 {{$result->quantity}} (Kg)
