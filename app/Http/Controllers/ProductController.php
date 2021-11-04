@@ -14,6 +14,7 @@ use App\Warehouse_stock;
 use App\Voucher;
 use App\Supplier;
 use App\Product_supplier;
+use App\Hamper;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Log;
@@ -688,6 +689,30 @@ class ProductController extends Controller
     $writer->save($path);
 
     return response()->download($path);
+  }
+
+  public function getHamperList()
+  {
+    $url = route('home')."?p=product_menu";
+
+    $hamper = Hamper::join('users','users.id','=','hamper.created_by')
+                      ->select('hamper.*','users.name as creator_name')
+                      ->paginate('15');
+
+    return view('product.hamper',compact('url','hamper'));
+  }
+
+  public function ajaxAddHamperProduct(Request $request)
+  {
+
+    $product = Product_list::where('barcode',$request->barcode)->select('product_name','barcode')->first();
+    if($product == null){
+      $result = 'null';
+    }else{
+      $result = $product;
+    }
+
+    return json_encode($result);
   }
 
 }

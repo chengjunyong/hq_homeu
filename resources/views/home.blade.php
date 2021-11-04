@@ -308,6 +308,20 @@
         </div>
       </div>
     </div>
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Hamper Management</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getHamperList')}}"><i class="fa fa-gift first product-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     
   </div>
 </div>
