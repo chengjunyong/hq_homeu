@@ -180,28 +180,85 @@
     $("#add_product_list").click(function(){
       let barcode = $("#product_barcode").val();
       let quantity = $("#product_quantity").val();
-
-      if(barcode != "" && quantity != ""){
+      let exist = true;
+      if(localStorage.getItem('product_list') != ''){
+        let array = JSON.parse(localStorage.getItem('product_list'));
+        array.forEach((result,index)=>{
+          if(result.barcode == barcode){
+            exist = false;
+          }
+        });
+      }
+      if(barcode.trim() == "" || quantity.trim() == ""){
+        swal.fire('Error','Barcode & Quantity Cannot Be Empty','error');
+      }else if(exist == false){
+        swal.fire('Error','Repeat Barcode, Please Delete Previous Barcode','error');
+      }else{
         $.get("{{route('ajaxAddHamperProduct')}}",
+          {
+            'barcode':barcode,
+            'quantity':quantity,
+          },function(data){
+            if(data == 'null'){
+              swal.fire('Error','Barcode Not Found','error');
+              $("#product_barcode").val("");
+              $("#product_quantity").val("");
+              $("#product_barcode").focus();
+            }else{
+              let product_list = processProductList(data,quantity);
+              $("#hamper_product_list").empty();
+              product_list.forEach((result,index) => {
+                $("#hamper_product_list").append(`<li>${result.product_name} (qty:${result.quantity})<i class="fa fa-times removeItem" onclick="removeItem(${index})" target='${index}' style="cursor: pointer;margin-left: 5px; color:red"></i></li>`)
+              });
+            }
+          },'json');
+
+          $("#product_barcode").val("");
+          $("#product_quantity").val("");
+          $("#product_barcode").focus();
+        }
+    });
+
+    $("#create").click(function(){
+      let barcode = $("input[name=barcode]").val();
+      let name = $("input[name=name]").val();
+      let price = $("input[name=price]").val();
+      let list = localStorage.getItem('product_list');
+
+      if(barcode.trim() == ""){
+        swal.fire("Error","Hamper Barcode Cannot Be Empty","error");
+      }else if(name.trim() == ""){
+        swal.fire("Error","Hamper Name Cannot Be Empty","error");
+      }else if(parseFloat(price) <= 0){
+        swal.fire("Error","Hamper Price Cannot Lower Then 0","error");
+      }else if(list.trim() == ""){
+        swal.fire("Error","Hamper Product List Cannot Be Empty","error");
+      }else{
+        $.get('{{route('getCreateHamper')}}',
         {
           'barcode':barcode,
-          'quantity':quantity,
+          'name':name,
+          'price':price,
+          'product_list':list,
         },function(data){
-          if(data == 'null'){
-            swal.fire('Error','Barcode Not Found','error');
-            $("#product_barcode").val("");
-            $("#product_barcode").focus();
+          if(data.result == false){
+            swal.fire('Error',`${data.msg}`,'error');
           }else{
-            let product_list = processProductList(data,quantity);
-            $("#hamper_product_list").empty();
-            product_list.forEach((result,index) => {
-              $("#hamper_product_list").append(`<li>${result.product_name} (qty:${result.quantity})<i class="fa fa-times removeItem" onclick="removeItem(${index})" target='${index}' style="cursor: pointer;margin-left: 5px; color:red"></i></li>`)
+            swal.fire({
+              'icon':'success',
+              'title':'Success',
+              'text':`${data.msg}`,
+            }).then(()=>{
+              window.location.reload();
             });
           }
         },'json');
-      }else{
-        swal.fire('Error','Barcode & Quantity Cannot Be Empty','error');
       }
+    });
+
+    $(".delete").click(function(){
+      let id = $(this).attr('ref-id');
+      $.get('{{route('ajaxDeleteHamper')}}',{'id':id},function(data){if(data == true) window.location.reload(); else swal.fire('Error','Delete Unsuccessful','error')},'json');
     });
 
   });

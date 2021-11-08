@@ -715,4 +715,36 @@ class ProductController extends Controller
     return json_encode($result);
   }
 
+  public function getCreateHamper(Request $request)
+  {
+    $err = new \stdClass();
+    $user = Auth::user();
+    $count = Hamper::where('barcode',$request->barcode)->count();
+    if($count != 0){
+      $err->result = false;
+      $err->msg = "Barcode Exist"; 
+      return json_encode($err);
+    }else{
+      Hamper::create([
+            'name' => $request->name,
+            'price' => $request->price,
+            'barcode' => $request->barcode,
+            'product_list' => $request->product_list,
+            'created_by' => $user->id,
+      ]);
+
+      $err->result = true;
+      $err->msg = "Create Successful";
+    }
+
+    return json_encode($err);
+  }
+
+  public function ajaxDeleteHamper(Request $request)
+  {
+    Hamper::where('id',$request->id)->delete();
+
+    return json_encode(true);
+  }
+
 }

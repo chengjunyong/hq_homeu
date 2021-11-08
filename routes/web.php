@@ -77,6 +77,8 @@ Route::get('/SupplierProductReport','ProductController@getSupplierProductReport'
 Route::post('/exportSupplierReport', 'ProductController@exportSupplierProductReport')->name('exportSupplierProductReport');
 Route::get('/hamper','ProductController@getHamperList')->name('getHamperList');
 Route::get('/addHamper','ProductController@ajaxAddHamperProduct')->name('ajaxAddHamperProduct');
+Route::get('/createHamper','ProductController@getCreateHamper')->name('getCreateHamper');
+Route::get('/deleteHamper','ProductController@ajaxDeleteHamper')->name('ajaxDeleteHamper');
 
 //Other
 Route::get('/Supplier','OtherController@getSupplier')->name('getSupplier');
