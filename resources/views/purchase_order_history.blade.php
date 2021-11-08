@@ -18,6 +18,48 @@
 <!--         <input type="text" id="search" placeholder="Search DO Number" class="form-control" style="margin-bottom: 15px"/> -->
       </div>
       <div class="table">
+        <div class="filter">
+          <h5 onclick="$('#filter-section').collapse('toggle')" style="background:#afe64c;cursor:pointer;padding: 10px;border-radius: 20px;">Filter Section<span style="float:right;font-size:25px;"><i class="fa fa-arrow-circle-down"></i></span></h5>
+          <div class="collapse" id="filter-section">
+            <form method="get" action="{{route('getPurchaseOrderHistory')}}">
+              <input type="text" name="filter" value=true hidden />
+              <div class="row" style="margin:10px">
+                <div class="col-md-4">
+                  <div>
+                    <label>Purchse Order No</label>
+                  </div>
+                  <input type="text" name="po_no" class="form-control" value="{{(isset($_GET['po_no'])) ? $_GET['po_no'] : '' }}" />
+                </div>
+                <div class="col-md-4">
+                  <div>
+                    <label>Supplier</label>
+                  </div>
+                  <select class="form-control" name="supplier">
+                    <option value="null">No Selected</option>
+                    @foreach($supplier as $result)
+                      <option value="{{$result->id}}" {{isset($_GET['supplier']) && $_GET['supplier'] == $result->id ? 'selected' : ''}}>{{$result->supplier_name}}</option>
+                    @endforeach 
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <div>
+                    <label>Date Start</label>
+                  </div>
+                  <input type="date" name="date_start" class="form-control" value="{{(isset($_GET['date_start']) ? $_GET['date_start'] : '')}}"/>
+                  <br/>
+                  <div>
+                    <label>Date End</label>
+                  </div>
+                  <input type="date" name="date_end" class="form-control" value="{{(isset($_GET['date_end']) ? $_GET['date_end'] : '')}}"/>
+                </div>
+              </div>
+              <div class="col-md-12" style='text-align: center;'>
+                <input type="submit" class='btn btn-primary' value="Filter" style="font-size: 18px;padding: 8px 5vw"/>
+                <button type="button" class="btn btn-success" onclick="window.location.href='{{route('getPurchaseOrderHistory')}}'" style="font-size: 18px;padding: 8px 5vw">Reset</button>
+              </div>
+            </form>
+          </div>
+        </div>
         <table id="history" style="width:100%">
           <thead style="background: #b8b8efd1">
             <tr>

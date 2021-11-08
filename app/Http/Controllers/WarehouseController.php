@@ -184,16 +184,53 @@ class WarehouseController extends Controller
     return view('print_po',compact('po','po_detail','total','supplier'));
   }
 
-  public function getPurchaseOrderHistory()
+  public function getPurchaseOrderHistory(Request $request)
   {
     $url = route('home')."?p=stock_menu";
 
-    $po = Purchase_order::join('supplier','supplier.id','=','purchase_order.supplier_id')
-                          ->select('purchase_order.*','supplier.supplier_name')
-                          ->orderBy('created_at','desc')
-                          ->paginate(10);
+    if(isset($request->filter) && $request->filter == true){
+      $path = "?filter=true";
+      $query = Purchase_order::orderBy('created_at','desc');
 
-    return view('purchase_order_history',compact('url','po'));
+      if($request->po_no != ''){
+        $query->where('po_number','LIKE','%'.$request->po_no.'%');
+        $path .= "&ref_no=".$request->ref_no;
+      }else{
+        $path .= "&ref_no=";
+      }
+
+      if($request->supplier != 'null'){
+        $query->where('supplier_id',$request->supplier);
+        $path .= "&supplier=".$request->supplier;
+      }else{
+        $path .= "&supplier=null";
+      }
+
+      if($request->date_start != ''){
+        $query->where('created_at','>',$request->date_start);
+        $path .= "&date_start=".$request->date_start;
+      }else{
+        $path .= "&date_start=";
+      }
+
+      if($request->date_end != ''){
+        $query->where('created_at','<=',date("Y-m-d",strtotime($request->date_end."+1 day")));
+        $path .= "&date_end=".$request->date_end;
+      }else{
+        $path .= "&start_end=";
+      }
+
+      $po = $query->paginate(15);
+      $po->withPath($path);
+
+    }else{
+
+      $po = Purchase_order::paginate(15);
+    }
+
+    $supplier = Supplier::get();
+
+    return view('purchase_order_history',compact('url','po','supplier'));
   }
 
   public function getDeletePurchaseOrder(Request $request)
@@ -646,13 +683,60 @@ class WarehouseController extends Controller
     return back()->with('success','success');
   }
 
-  public function getInvoicePurchaseHistory()
+  public function getInvoicePurchaseHistory(Request $request)
   {
     $url = route('home')."?p=stock_menu";
 
-    $history = Invoice_purchase::orderby('created_at','desc')->paginate(15);
+    if(isset($request->filter) && $request->filter == true){
+      $path = "?filter=true";
+      $query = Invoice_purchase::orderBy('created_at','desc');
 
-    return view('warehouse.invoice_history',compact('url','history'));
+      if($request->ref_no != ''){
+        $query->where('reference_no','LIKE','%'.$request->ref_no.'%');
+        $path .= "&ref_no=".$request->ref_no;
+      }else{
+        $path .= "&ref_no=";
+      }
+
+      if($request->inv_no != ''){
+        $query->where('invoice_no','LIKE','%'.$request->inv_no.'%');
+        $path .= "&inv_no=".$request->inv_no;
+      }else{
+        $path .= "&inv_no=";
+      }
+
+      if($request->supplier != 'null'){
+        $query->where('supplier_id',$request->supplier);
+        $path .= "&supplier=".$request->supplier;
+      }else{
+        $path .= "&supplier=null";
+      }
+
+      if($request->date_start != ''){
+        $query->where('created_at','>',$request->date_start);
+        $path .= "&date_start=".$request->date_start;
+      }else{
+        $path .= "&date_start=";
+      }
+
+      if($request->date_end != ''){
+        $query->where('created_at','<=',date("Y-m-d",strtotime($request->date_end."+1 day")));
+        $path .= "&date_end=".$request->date_end;
+      }else{
+        $path .= "&start_end=";
+      }
+
+      $history = $query->paginate(15);
+      $history->withPath($path);
+
+    }else{
+
+      $history = Invoice_purchase::orderby('id','desc')->paginate(15);
+    }
+
+    $supplier = Supplier::get();
+
+    return view('warehouse.invoice_history',compact('url','history','supplier'));
   }
 
   public function getInvoicePurchaseHistoryDetail(Request $request)
