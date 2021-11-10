@@ -79,40 +79,51 @@
 </div>
 
 <div class="modal fade" id="edit_hamper" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 100%;width:60%;">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="">Modify Hamper</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Edit Hamper</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body modal_edit_hamper">
         <div class="row">
           <div class="col-md-12">
-            <label>Voucher Code</label><br/>
-            <input class="form-control" name="edit_code" type="text" readonly="true" />
-          </div>
+            <label>Hamper Barcode</label><br/>
+            <input class="form-control" name="e_barcode" readonly type="text"/>
+          </div><br/>
+
           <div class="col-md-12">
-            <label>Voucher Name</label><br/>
-            <input class="form-control" name="edit_name" type="text"/>
-          </div>
+            <label>Hamper Name</label><br/>
+            <input class="form-control" name="e_name" type="text"/>
+          </div><br/>
+
           <div class="col-md-12">
-            <label>Discount Type</label><br/>
-            <select id="edit_dis" name="dis_type" class="form-control">
-              <option value="fixed">Fixed Amount</option>
-              <option value="percentage">Percentage</option>
-            </select>
-          </div>
+            <label>Price</label><br/>
+            <input class="form-control" name="e_price" type="number" step="0.01" min="0.01"/>
+          </div><br/>
+
           <div class="col-md-12">
-            <label>Amount</label><br/>
-            <input class="form-control" name="edit_amount" type="number" step="0.01" min="0.01"/>
-          </div>
+            <label>Product List</label>
+            <div style="float:right">
+              <input type="text" id="e_product_barcode" placeholder="Barcode" />
+              <input type="number" id="e_product_quantity" placeholder="Quantity"/>
+              <button class="btn btn-outline edit_product_list">Add Product</button>
+            </div>
+
+            <ul class="hamper_product_list">
+              
+            </ul>
+
+          </div><br/>
+
         </div>
       </div>
       <div class="modal-footer">
+        <input type="text" name="hamper_id" hidden />
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="edit">Save changes</button>
+        <button type="button" class="btn btn-primary" id="update">Update</button>
       </div>
     </div>
   </div>
@@ -149,10 +160,10 @@
             <div style="float:right">
               <input type="text" id="product_barcode" placeholder="Barcode" />
               <input type="number" id="product_quantity" placeholder="Quantity"/>
-              <button class="btn btn-outline" id="add_product_list">Add Product</button>
+              <button class="btn btn-outline add_product_list">Add Product</button>
             </div>
 
-            <ul id="hamper_product_list">
+            <ul class="hamper_product_list">
               
             </ul>
 
@@ -177,7 +188,28 @@
       $("#create_hamper").modal('show');
     });
 
-    $("#add_product_list").click(function(){
+    $(".modify").click(function(){
+      let id = $(this).attr("ref-id");
+      $.get("{{route('getHamper')}}",
+      {
+        'id':id,
+      },function(data){
+        $("input[name=e_barcode]").val(data.barcode);
+        $("input[name=e_name]").val(data.name);
+        $("input[name=e_price]").val(data.price);
+        $("input[name=hamper_id]").val(data.id);
+        localStorage.setItem('product_list',data.product_list);
+        let product_list = JSON.parse(data.product_list);
+        product_list.forEach((result,index) => {
+          $(".hamper_product_list").append(`<li>(${result.barcode}) ${result.product_name} - qty:${result.quantity}<i class="fa fa-times removeItem" onclick="removeItem(${index})" target='${index}' style="cursor: pointer;margin-left: 5px; color:red"></i></li>`)
+        });
+      },'json');
+
+      $("#edit_hamper").modal('show');
+    })
+
+    $(".add_product_list").click(function(){
+      $(".add_product_list").prop('disabled',true);
       let barcode = $("#product_barcode").val();
       let quantity = $("#product_quantity").val();
       let exist = true;
@@ -189,7 +221,7 @@
           }
         });
       }
-      if(barcode.trim() == "" || quantity.trim() == ""){
+      if(barcode.trim() == "" || quantity.trim() == "" || quantity == '0'){
         swal.fire('Error','Barcode & Quantity Cannot Be Empty','error');
       }else if(exist == false){
         swal.fire('Error','Repeat Barcode, Please Delete Previous Barcode','error');
@@ -206,9 +238,9 @@
               $("#product_barcode").focus();
             }else{
               let product_list = processProductList(data,quantity);
-              $("#hamper_product_list").empty();
+              $(".hamper_product_list").empty();
               product_list.forEach((result,index) => {
-                $("#hamper_product_list").append(`<li>${result.product_name} (qty:${result.quantity})<i class="fa fa-times removeItem" onclick="removeItem(${index})" target='${index}' style="cursor: pointer;margin-left: 5px; color:red"></i></li>`)
+                $(".hamper_product_list").append(`<li>(${result.barcode}) ${result.product_name} - qty:${result.quantity}<i class="fa fa-times removeItem" onclick="removeItem(${index})" target='${index}' style="cursor: pointer;margin-left: 5px; color:red"></i></li>`)
               });
             }
           },'json');
@@ -217,6 +249,53 @@
           $("#product_quantity").val("");
           $("#product_barcode").focus();
         }
+
+      $(".add_product_list").prop('disabled',false);
+    });
+
+    $(".edit_product_list").click(function(){
+      $(".add_product_list").prop('disabled',true);
+      let barcode = $("#e_product_barcode").val();
+      let quantity = $("#e_product_quantity").val();
+      let exist = true;
+      if(localStorage.getItem('product_list') != ''){
+        let array = JSON.parse(localStorage.getItem('product_list'));
+        array.forEach((result,index)=>{
+          if(result.barcode == barcode){
+            exist = false;
+          }
+        });
+      }
+      if(barcode.trim() == "" || quantity.trim() == "" || quantity == '0'){
+        swal.fire('Error','Barcode & Quantity Cannot Be Empty','error');
+      }else if(exist == false){
+        swal.fire('Error','Repeat Barcode, Please Delete Previous Barcode','error');
+      }else{
+        $.get("{{route('ajaxAddHamperProduct')}}",
+          {
+            'barcode':barcode,
+            'quantity':quantity,
+          },function(data){
+            if(data == 'null'){
+              swal.fire('Error','Barcode Not Found','error');
+              $("#e_product_barcode").val("");
+              $("#e_product_quantity").val("");
+              $("#e_product_barcode").focus();
+            }else{
+              let product_list = processProductList(data,quantity);
+              $(".hamper_product_list").empty();
+              product_list.forEach((result,index) => {
+                $(".hamper_product_list").append(`<li>(${result.barcode}) ${result.product_name} - qty:${result.quantity}<i class="fa fa-times removeItem" onclick="removeItem(${index})" target='${index}' style="cursor: pointer;margin-left: 5px; color:red"></i></li>`)
+              });
+            }
+          },'json');
+
+          $("#e_product_barcode").val("");
+          $("#e_product_quantity").val("");
+          $("#e_product_barcode").focus();
+        }
+
+      $(".add_product_list").prop('disabled',false);
     });
 
     $("#create").click(function(){
@@ -258,7 +337,57 @@
 
     $(".delete").click(function(){
       let id = $(this).attr('ref-id');
-      $.get('{{route('ajaxDeleteHamper')}}',{'id':id},function(data){if(data == true) window.location.reload(); else swal.fire('Error','Delete Unsuccessful','error')},'json');
+      swal.fire({
+        'icon':'warning',
+        'title':'Delete Hamper',
+        'text':'Confirm Delete Hamper, This Action Is Irreversible',
+        'confirmButtonText': 'Yes',
+        'showCancelButton': true,
+      }).then((result)=>{
+        if(result.isConfirmed){
+          $.get('{{route('ajaxDeleteHamper')}}',{'id':id},function(data){if(data == true) window.location.reload(); else swal.fire('Error','Delete Unsuccessful','error')},'json');
+        }
+      });
+    });
+
+    $("#create_hamper, #edit_hamper").on('hidden.bs.modal',function(){
+        localStorage.setItem('product_list','');
+        $(".hamper_product_list").empty()
+    });
+
+    $("#update").click(function(){
+      let name = $("input[name=e_name]").val();
+      let price = $("input[name=e_price]").val();
+      let id = $("input[name=hamper_id]").val();
+      let list = localStorage.getItem('product_list');
+
+      if(name.trim() == ""){
+        swal.fire("Error","Hamper Name Cannot Be Empty","error");
+      }else if(parseFloat(price) <= 0){
+        swal.fire("Error","Hamper Price Cannot Lower Then 0","error");
+      }else if(list.trim() == ""){
+        swal.fire("Error","Hamper Product List Cannot Be Empty","error");
+      }else{
+        $.get('{{route('getEditHamper')}}',
+        {
+          'id': id,
+          'name':name,
+          'price':price,
+          'product_list':list,
+        },function(data){
+          if(data.result == false){
+            swal.fire('Error',`${data.msg}`,'error');
+          }else{
+            swal.fire({
+              'icon':'success',
+              'title':'Success',
+              'text':`${data.msg}`,
+            }).then(()=>{
+              window.location.reload();
+            });
+          }
+        },'json');
+      }
     });
 
   });
@@ -295,9 +424,9 @@
     console.log(index);
     let product_list = removeProductList(index);
     console.log(product_list);
-    $("#hamper_product_list").empty();
+    $(".hamper_product_list").empty();
     product_list.forEach((result,index) => {
-      $("#hamper_product_list").append(`<li>${result.product_name} (qty:${result.quantity})<i class="fa fa-times removeItem" onclick="removeItem(${index})" target='${index}' style="cursor: pointer;margin-left: 5px; color:red"></i></li>`)
+      $(".hamper_product_list").append(`<li>${result.product_name} (qty:${result.quantity})<i class="fa fa-times removeItem" onclick="removeItem(${index})" target='${index}' style="cursor: pointer;margin-left: 5px; color:red"></i></li>`)
     });
   }
 

@@ -697,6 +697,7 @@ class ProductController extends Controller
 
     $hamper = Hamper::join('users','users.id','=','hamper.created_by')
                       ->select('hamper.*','users.name as creator_name')
+                      ->orderBy('updated_at','desc')
                       ->paginate('15');
 
     return view('product.hamper',compact('url','hamper'));
@@ -745,6 +746,31 @@ class ProductController extends Controller
     Hamper::where('id',$request->id)->delete();
 
     return json_encode(true);
+  }
+
+  public function getHamper(Request $request)
+  {
+
+    $hamper = Hamper::where('id',$request->id)->first();
+
+    return json_encode($hamper);
+  }
+
+  public function getEditHamper(Request $request)
+  {
+    $err = new \stdClass();
+    $user = Auth::user();
+    Hamper::where('id',$request->id)
+            ->update([
+                  'name' => $request->name,
+                  'price' => $request->price,
+                  'product_list' => $request->product_list,
+                  'created_by' => $user->id,
+            ]);
+      $err->result = true;
+      $err->msg = "Update Successful";
+    
+    return json_encode($err);
   }
 
 }
