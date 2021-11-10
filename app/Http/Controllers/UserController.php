@@ -560,6 +560,7 @@ class UserController extends Controller
 
     public function testingPage()
     {
+      dd(Hash::make('123456'));
       $transaction_detail = Transaction_detail::leftJoin('transaction', function($join)
       {
         $join->on('transaction.branch_transaction_id', '=', 'transaction_detail.branch_transaction_id');
