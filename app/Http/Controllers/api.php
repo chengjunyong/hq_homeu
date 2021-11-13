@@ -23,7 +23,7 @@ class api extends Controller
 {
     public function testresult()
     {
-      return "Good";
+    	return "Good";
     }
 
     public function branchSync(Request $request)
