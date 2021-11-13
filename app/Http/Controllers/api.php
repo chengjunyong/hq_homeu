@@ -111,6 +111,16 @@ class api extends Controller
       $transaction_detail_query = [];
       foreach($transaction_detail as $data)
       {
+        if($data['department_id'] == null)
+        {
+          $data['department_id'] = 0;
+        }
+
+        if($data['category_id'] == null)
+        {
+          $data['category_id'] = 0;
+        }
+
         $query = [
           'branch_id' => $branch_id,
           'session_id' => $data['session_id'],
