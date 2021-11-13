@@ -17,7 +17,6 @@ use App\Refund;
 use App\Refund_detail;
 use App\Delivery;
 use App\Delivery_detail;
-use App\Hamper;
 
 class api extends Controller
 {
@@ -135,78 +134,36 @@ class api extends Controller
           'updated_at' => $now
         ];
 
-        if(!$data['product_type'])
+        $product_name = "product_".$data['product_id'];
+        if(!isset($transaction_product[$product_name]))
         {
-          $product_name = "product_".str_replace(" ", "", $data['barcode']);
-          if(!isset($transaction_product[$product_name]))
+          $transaction_product[$product_name] = new \stdClass();
+          $transaction_product[$product_name]->barcode = $data['barcode'];
+          $transaction_product[$product_name]->quantity = 0;
+          $transaction_product[$product_name]->last_stock_updated_at = null;
+
+          $product_detail = null;
+          foreach($transaction_product_list as $transaction_product_detail)
           {
-            $transaction_product[$product_name] = new \stdClass();
-            $transaction_product[$product_name]->barcode = $data['barcode'];
-            $transaction_product[$product_name]->quantity = 0;
-            $transaction_product[$product_name]->last_stock_updated_at = null;
-
-            $product_detail = null;
-            foreach($transaction_product_list as $transaction_product_detail)
+            if($transaction_product_detail->barcode == $data['barcode'])
             {
-              if($transaction_product_detail->barcode == $data['barcode'])
-              {
-                $product_detail = $transaction_product_detail;
-                break;
-              }
-            }
-
-            if($product_detail)
-            {
-              if($product_detail->last_stock_updated_at)
-              {
-                $transaction_product[$product_name]->last_stock_updated_at = $product_detail->last_stock_updated_at;
-              }
+              $product_detail = $transaction_product_detail;
+              break;
             }
           }
 
-          if(!$transaction_product[$product_name]->last_stock_updated_at || ($transaction_product[$product_name]->last_stock_updated_at <= date('Y-m-d H:i:s', strtotime($data['created_at'])) ))
+          if($product_detail)
           {
-            $transaction_product[$product_name]->quantity -= ($data['quantity'] * $data['measurement']);
+            if($product_detail->last_stock_updated_at)
+            {
+              $transaction_product[$product_name]->last_stock_updated_at = $product_detail->last_stock_updated_at;
+            }
           }
         }
-        elseif($data['product_type'] == "hamper")
+
+        if(!$transaction_product[$product_name]->last_stock_updated_at || ($transaction_product[$product_name]->last_stock_updated_at <= date('Y-m-d H:i:s', strtotime($data['created_at'])) ))
         {
-          $hamper_product_list = json_decode($data['product_info']);
-
-          foreach($hamper_product_list as $hamper_product)
-          {
-            $product_name = "product_".str_replace(" ", "", $hamper_product->barcode);
-            if(!isset($transaction_product[$product_name]))
-            {
-              $transaction_product[$product_name] = new \stdClass();
-              $transaction_product[$product_name]->barcode = $hamper_product->barcode;
-              $transaction_product[$product_name]->quantity = 0;
-              $transaction_product[$product_name]->last_stock_updated_at = null;
-
-              $product_detail = null;
-              foreach($transaction_product_list as $transaction_product_detail)
-              {
-                if($transaction_product_detail->barcode == $hamper_product->barcode)
-                {
-                  $product_detail = $transaction_product_detail;
-                  break;
-                }
-              }
-
-              if($product_detail)
-              {
-                if($product_detail->last_stock_updated_at)
-                {
-                  $transaction_product[$product_name]->last_stock_updated_at = $product_detail->last_stock_updated_at;
-                }
-              }
-            }
-
-            if(!$transaction_product[$product_name]->last_stock_updated_at || ($transaction_product[$product_name]->last_stock_updated_at <= date('Y-m-d H:i:s', strtotime($data['created_at'])) ))
-            {
-              $transaction_product[$product_name]->quantity -= ($hamper_product->quantity);
-            }
-          }
+          $transaction_product[$product_name]->quantity -= ($data['quantity'] * $data['measurement']);
         }
 
         array_push($transaction_detail_query, $query);
@@ -365,7 +322,7 @@ class api extends Controller
           'updated_at' => $now
         ];
 
-        $product_name = "product_".str_replace(" ", "", $refund_detail_info['barcode']);
+        $product_name = "product_".$refund_detail_info['product_id'];
         if(!isset($transaction_product[$product_name]))
         {
           $transaction_product[$product_name] = new \stdClass();
@@ -406,7 +363,7 @@ class api extends Controller
 
       foreach($prev_refund_detail as $prev_refund)
       {
-        $product_name = "product_".str_replace(" ", "", $prev_refund->barcode);
+        $product_name = "product_".$prev_refund->product_id;
         if(!$prev_refund->measurement)
         {
           $prev_refund->measurement = 1;
@@ -499,7 +456,7 @@ class api extends Controller
           'updated_at' => $now
         ];
 
-        $product_name = "product_".str_replace(" ", "", $delivery_detail_info['barcode']);
+        $product_name = "product_".$delivery_detail_info['product_id'];
         if(!isset($transaction_product[$product_name]))
         {
           $transaction_product[$product_name] = new \stdClass();
@@ -539,7 +496,7 @@ class api extends Controller
 
       foreach($prev_delivery_detail as $prev_delivery)
       {
-        $product_name = "product_".str_replace(" ", "", $prev_delivery->barcode);
+        $product_name = "product_".$prev_delivery->product_id;
         if(!$prev_delivery->measurement)
         {
           $prev_delivery->measurement = 1;
@@ -596,13 +553,11 @@ class api extends Controller
 
       // more than 10000, php will return error
       $product_list = Branch_product::withTrashed()->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
-      $hamper_list = Hamper::get();
 
       $response = new \stdClass();
       $response->error = 0;
       $response->message = "Transaction sync completed";
       $response->product_list = $product_list;
-      $response->hamper_list = $hamper_list;
 
       return response()->json($response);
     }
@@ -640,7 +595,7 @@ class api extends Controller
       }
       
       $product_list = Branch_product::withTrashed()->where('branch_id', $branch_detail->id)->where('product_sync', 0)->get();
-      $hamper_list = Hamper::get();
+
       $voucher_list = Voucher::get();
 
       $response = new \stdClass();
@@ -648,7 +603,6 @@ class api extends Controller
       $response->message = "Syncing branch product list.";
       $response->product_list = $product_list;
       $response->voucher_list = $voucher_list;
-      $response->hamper_list = $hamper_list;
 
       return response()->json($response);
     }
