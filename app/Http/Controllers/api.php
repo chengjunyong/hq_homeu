@@ -24,6 +24,7 @@ class api extends Controller
     public function testresult()
     {
     	return "Good";
+      // testing message
     }
 
     public function branchSync(Request $request)
