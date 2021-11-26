@@ -61,7 +61,7 @@
             <td align="right">Cost</td>
             <td align="right">Price</td>
             <td align="center">Stock Qty</td>
-            <td align="center">Add To List</td>
+            <td align="center">Action</td>
           </tr>
         </thead>
         <tbody>
@@ -73,7 +73,10 @@
               <td align="right">{{number_format($target->cost,2)}}</td>
               <td align="right">{{number_format($target->price,2)}}</td>
               <td align="center">{{$target->quantity}}</td>
-              <td align="center"><button class="btn btn-primary add-list" value="{{$target->id}}">Add</button></td>
+              <td align="center">
+                <button class="btn btn-primary add-list" value="{{$target->id}}">Add</button>
+                <button class="btn btn-success add-foc-list" value="{{$target->id}}">FOC</button>
+              </td>
             </tr>
           @endif
           @foreach($warehouse_stock as $key => $result)
@@ -84,7 +87,10 @@
               <td align="right">{{number_format($result->cost,2)}}</td>
               <td align="right">{{number_format($result->price,2)}}</td>
               <td align="center">{{$result->quantity}}</td>
-              <td align="center"><button class="btn btn-primary add-list" value="{{$result->id}}">Add</button></td>
+              <td align="center">
+                <button class="btn btn-primary add-list" value="{{$result->id}}">Add</button>
+                <button class="btn btn-success add-foc-list" value="{{$result->id}}">FOC</button>
+              </td>
             </tr>
           @endforeach
         </tbody>
@@ -110,6 +116,11 @@ $(document).ready(function(){
     quantityHandle($(this).val(),$(this).parent().siblings().eq(2).text());
   });
 
+  $(".add-foc-list").click(function(){
+    foc($(this).val(),$(this).parent().siblings().eq(2).text());
+  });
+
+
   $("input[name=search]").keydown(function(e){
     if(e.keyCode == 13){
       $("#search_form").submit();
@@ -120,11 +131,17 @@ $(document).ready(function(){
     $(".add-list").click(function(){
       quantityHandle($(this).val(),$(this).parent().siblings().eq(2).text());
     });
+    $(".add-foc-list").click(function(){
+      foc($(this).val(),$(this).parent().siblings().eq(2).text());
+    });
   });
 
   $("input[type=search]").keyup(()=>{
     $(".add-list").click(function(){
       quantityHandle($(this).val(),$(this).parent().siblings().eq(2).text());
+    });
+    $(".add-foc-list").click(function(){
+      foc($(this).val(),$(this).parent().siblings().eq(2).text());
     });
   });
 
@@ -152,6 +169,93 @@ function quantityHandle(target,measurement){
             'supplier_id' : $("#supplier_id").val(),
             'warehouse_stock_id' : target,
             'order_quantity' : result,
+            'foc' : false,
+          },function(data){
+            if(data == true || data == 'true'){
+              Swal.fire({
+                title : 'Add To List Successful',
+                icon : 'success',
+              });
+            }else{
+              Swal.fire({
+                title : 'Something Wrong, Please Contact IT Support',
+                icon : 'error',
+              });
+            }
+          },'json');
+        }
+      },
+      inputValidator: (result) => {
+        if(result == '' || result <= 0){
+          return 'Quantity cannot be empty or less than 0';
+        }else if(result % 1 != 0){
+          return 'Unit measurement type cannot be decimal number';
+        }
+      },
+    });
+  }else{
+    Swal.fire({
+      title : 'Quantity Order',
+      input : 'number',
+      inputAttributes : {
+        step: 0.001,
+        min: 0.001,
+      },
+      confirmButtonText : 'Add',
+      showLoaderOnConfirm : true,
+      preConfirm: (result) => {
+        if(result != 0 && result != '' && result != null){
+          $.get('{{route('ajaxAddManualStock')}}',
+          {
+            'supplier_id' : $("#supplier_id").val(),
+            'warehouse_stock_id' : target,
+            'order_quantity' : result,
+          },function(data){
+            if(data == true || data == 'true'){
+              Swal.fire({
+                title : 'Add To List Successful',
+                icon : 'success',
+              });
+            }else{
+              Swal.fire({
+                title : 'Something Wrong, Please Contact IT Support',
+                icon : 'error',
+              });
+            }
+          },'json');
+        }
+      },
+      inputValidator: (result) => {
+        let decimals = (result!=Math.floor(result))?(result.toString()).split('.')[1].length:0;
+        if(result == '' || result <= 0){
+          return 'Quantity cannot be empty or less than 0';
+        }else if(decimals > 3){
+          return 'Quantity decimal places cannot more than 3';
+        }
+      },
+    });
+  }
+}
+
+function foc(target,measurement){
+  if(measurement == 'Unit'){
+    Swal.fire({
+      title : 'Quantity Order',
+      input : 'number',
+      inputAttributes : {
+        step: 1,
+        min: 1,
+      },
+      confirmButtonText : 'Add',
+      showLoaderOnConfirm : true,
+      preConfirm: (result) => {
+        if(result != 0 && result != '' && result != null){
+          $.get('{{route('ajaxAddManualStock')}}',
+          {
+            'supplier_id' : $("#supplier_id").val(),
+            'warehouse_stock_id' : target,
+            'order_quantity' : result,
+            'foc' : true,
           },function(data){
             if(data == true || data == 'true'){
               Swal.fire({

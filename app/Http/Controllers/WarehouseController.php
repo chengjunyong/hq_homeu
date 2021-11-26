@@ -225,7 +225,7 @@ class WarehouseController extends Controller
 
     }else{
 
-      $po = Purchase_order::paginate(15);
+      $po = Purchase_order::orderBy('created_at','desc')->paginate(15);
     }
 
     $supplier = Supplier::get();
@@ -431,19 +431,38 @@ class WarehouseController extends Controller
     $user = Auth::user()->id;
 
     try{
-      $result = Tmp_purchase_list::updateOrCreate(
-                              ['supplier_id'=>$request->supplier_id,'warehouse_stock_id' => $warehouse_stock->id,'user_id'=>$user]
-                              ,[
-                                'supplier_name' => $supplier->supplier_name,
-                                'department_id' => $warehouse_stock->department_id,
-                                'category_id' => $warehouse_stock->category_id,
-                                'barcode' => $warehouse_stock->barcode,
-                                'product_name' => $warehouse_stock->product_name,
-                                'measurement' => $warehouse_stock->measurement,
-                                'cost' => $warehouse_stock->cost,
-                                'price' => $warehouse_stock->price,
-                                'order_quantity' => $request->order_quantity,
-                              ]);
+      if($request->foc == 'false'){
+        $result = Tmp_purchase_list::create([
+                                  'supplier_id'=>$request->supplier_id,
+                                  'supplier_name' => $supplier->supplier_name,
+                                  'warehouse_stock_id' => $warehouse_stock->id,
+                                  'department_id' => $warehouse_stock->department_id,
+                                  'category_id' => $warehouse_stock->category_id,
+                                  'barcode' => $warehouse_stock->barcode,
+                                  'product_name' => $warehouse_stock->product_name,
+                                  'measurement' => $warehouse_stock->measurement,
+                                  'cost' => $warehouse_stock->cost,
+                                  'price' => $warehouse_stock->price,
+                                  'order_quantity' => $request->order_quantity,
+                                  'user_id'=>$user,
+                                ]);
+      }else{
+        $result = Tmp_purchase_list::create([
+                          'supplier_id'=>$request->supplier_id,
+                          'supplier_name' => $supplier->supplier_name,
+                          'warehouse_stock_id' => $warehouse_stock->id,
+                          'department_id' => $warehouse_stock->department_id,
+                          'category_id' => $warehouse_stock->category_id,
+                          'barcode' => $warehouse_stock->barcode,
+                          'product_name' => $warehouse_stock->product_name,
+                          'measurement' => $warehouse_stock->measurement,
+                          'cost' => 0,
+                          'price' => 0,
+                          'order_quantity' => $request->order_quantity,
+                          'user_id'=>$user,
+                        ]);
+      }
+
       return "true";
 
     }catch(Throwable $e){
