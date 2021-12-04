@@ -1906,8 +1906,9 @@ class SalesController extends Controller
     $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
     $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(15);
 
+    $date = strtotime("now");
     $writer = new Xlsx($spreadsheet);
-    $path = 'storage/report/Daily Sales Transaction Report.xlsx';
+    $path = 'storage/report/Daily Sales Transaction Report '.$date.'.xlsx';
     $writer->save($path);
 
     return response()->json($path);
@@ -2421,8 +2422,9 @@ class SalesController extends Controller
     $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(15);
     $spreadsheet->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
 
+    $date = strtotime("now");
     $writer = new Xlsx($spreadsheet);
-    $path = 'storage/report/Date Range Sales Report.xlsx';
+    $path = 'storage/report/Date Range Sales Report '.$date.'.xlsx';
     $writer->save($path);
 
     return response()->json($path);
