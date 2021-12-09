@@ -509,6 +509,17 @@ class WarehouseController extends Controller
     }
   }
 
+  public function ajaxUpdatePurchaseOrderListItem(Request $request)
+  {
+    try{
+      Tmp_purchase_list::where('id',$request->id)->update(['cost'=>$request->cost]);
+      return "true";
+    }catch(Throwable $e){
+      return "false";
+    }
+
+  }
+
   public function postManualPurchaseOrderList(Request $request)
   {
     $warehouse_stock = Warehouse_stock::whereIn('id',$request->product_id)->get();

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 <title>Manual Order List Detail</title>
 @section('content')
+<script src="https://benalman.com/code/projects/jquery-throttle-debounce/jquery.ba-throttle-debounce.js"></script>
 <style>
   .container{
     min-width: 95%;
@@ -46,7 +47,7 @@
                 <td style="width:20%">Barcode</td>
                 <td>Product Name</td>
                 <td align="center">Measurement</td>
-                <td align="right">Cost</td>
+                <td align="center">Cost</td>
                 <td align="right">Price</td>
                 <td align="center">Total Quantity Order</td>
                 <td></td>
@@ -59,7 +60,10 @@
                   <td>{{$result->barcode}}<input type="text" name="barcode[]" value="{{$result->barcode}}" hidden /></td>
                   <td>{{$result->product_name}}<input type="text" name="product_name[]" value="{{$result->product_name}}" hidden /></td>
                   <td align="center">{{ucfirst($result->measurement)}}<input type="text" name="measurement[]" value="{{$result->measurement}}" hidden /></td>
-                  <td align="right">{{number_format($result->cost,2)}}<input type="text" name="cost[]" value="{{$result->cost}}" hidden /></td>
+                  <td align="center">
+                    <input type="number" class="cost" name="cost[]" value="{{$result->cost}}" step="0.01" style="width: 6vw"/>
+                    <input type="text" value="{{$result->id}}" hidden />
+                  </td>
                   <td align="right">{{number_format($result->price,2)}}<input type="text" name="price[]" value="{{$result->price}}" hidden /></td>
                   <td align="center">{{$result->order_quantity}}<input type="text" name="order_quantity[]" value="{{$result->order_quantity}}" hidden /></td>
                   <td><button type="button" class="btn btn-primary delete" value="{{$result->id}}">Delete</button></td>
@@ -134,8 +138,25 @@ $(document).ready(function(){
         },"json");
       }
     });
-      
   });
+
+  $(".cost").change($.debounce(500, function(e) {
+    let id = $(this).siblings().eq(0).val();
+    let cost = parseFloat($(this).val()).toFixed(3);
+    
+    $.get("{{route('ajaxUpdatePurchaseOrderListItem')}}",
+    {
+      'id':id,
+      'cost':cost,
+    },function(data){
+      if(data == "true"){
+        console.log("Update Successful");
+      }else{
+        console.log("Something Wrong");
+      }
+    },'json');
+
+  }));
 
 });
 </script>
