@@ -1917,28 +1917,30 @@ class SalesController extends Controller
 
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
-    $sheet->mergeCells('A1:E1');
-    $sheet->mergeCells('A2:E2');
-    $sheet->getStyle('A1:E1')->getAlignment()->setHorizontal('center');
-    $sheet->getStyle('A2:E2')->getAlignment()->setHorizontal('center');
+    $sheet->mergeCells('A1:F1');
+    $sheet->mergeCells('A2:F2');
+    $sheet->getStyle('A1:F1')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A2:F2')->getAlignment()->setHorizontal('center');
     $sheet->getStyle('E')->getAlignment()->setHorizontal('right');
-    $sheet->getStyle('D')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('F')->getAlignment()->setHorizontal('right');
 
     $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
     $sheet->setCellValue('A2', 'Sales Report - '.$branch->branch_name);
     $sheet->setCellValue('A4','No');
     $sheet->setCellValue('B4','Invoice No');
-    $sheet->setCellValue('C4','Payment Type');
-    $sheet->setCellValue('D4','Total');
-    $sheet->setCellValue('E4','Reference No');
+    $sheet->setCellValue('C4','Cashier');
+    $sheet->setCellValue('D4','Payment Type');
+    $sheet->setCellValue('E4','Total');
+    $sheet->setCellValue('F4','Reference No');
 
     $start = 5;
     foreach($transaction as $index => $result){
       $sheet->setCellValue('A'.$start, $index+1);
       $sheet->setCellValue('B'.$start, $result->transaction_no);
-      $sheet->setCellValue('C'.$start, $result->payment_type_text);
-      $sheet->setCellValue('D'.$start, $result->total);
-      $sheet->setCellValueExplicit('E'.$start, $result->reference_no,DataType::TYPE_STRING2);
+      $sheet->setCellValue('C'.$start, $result->cashier_name);
+      $sheet->setCellValue('D'.$start, $result->payment_type_text);
+      $sheet->setCellValue('E'.$start, $result->total);
+      $sheet->setCellValueExplicit('F'.$start, $result->reference_no,DataType::TYPE_STRING2);
       $start++;
     }
 
@@ -1946,10 +1948,12 @@ class SalesController extends Controller
     $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
     $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
     $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
-    $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+    $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(15);
 
+    $date = strtotime("now");
     $writer = new Xlsx($spreadsheet);
-    $path = 'storage/report/Daily Sales Transaction Report.xlsx';
+    $path = 'storage/report/Daily Sales Transaction Report '.$date.'.xlsx';
     $writer->save($path);
 
     return response()->json($path);
@@ -2419,36 +2423,38 @@ class SalesController extends Controller
 
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
-    $sheet->mergeCells('A1:G1');
-    $sheet->mergeCells('A2:G2');
-    $sheet->mergeCells('A3:G3');
-    $sheet->getStyle('A1:G1')->getAlignment()->setHorizontal('center');
-    $sheet->getStyle('A2:G2')->getAlignment()->setHorizontal('center');
-    $sheet->getStyle('A3:G3')->getAlignment()->setHorizontal('center');
-    $sheet->getStyle('E')->getAlignment()->setHorizontal('right');
-    $sheet->getStyle('D')->getAlignment()->setHorizontal('right');
+    $sheet->mergeCells('A1:H1');
+    $sheet->mergeCells('A2:H2');
+    $sheet->mergeCells('A3:H3');
+    $sheet->getStyle('A1:H1')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A2:H2')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A3:H3')->getAlignment()->setHorizontal('center');
     $sheet->getStyle('F')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('E')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('G')->getAlignment()->setHorizontal('right');
 
     $sheet->setCellValue('A1', 'Home U (M) Sdn Bhd');
     $sheet->setCellValue('A2', 'Date Range Sales Report - '.$branch->branch_name);
     $sheet->setCellValue('A3',$from_date.' to '.$to_date);
     $sheet->setCellValue('A5','No');
     $sheet->setCellValue('B5','Invoice No');
-    $sheet->setCellValue('C5','Payment Type');
-    $sheet->setCellValue('D5','Round Off');
-    $sheet->setCellValue('E5','Total');
-    $sheet->setCellValue('F5','Reference No');
-    $sheet->setCellValue('G5','Date');
+    $sheet->setCellValue('C5','Cashier');
+    $sheet->setCellValue('D5','Payment Type');
+    $sheet->setCellValue('E5','Round Off');
+    $sheet->setCellValue('F5','Total');
+    $sheet->setCellValue('G5','Reference No');
+    $sheet->setCellValue('H5','Date');
 
     $start = 6;
     foreach($transaction as $index => $result){
       $sheet->setCellValue('A'.$start, $index+1);
       $sheet->setCellValue('B'.$start, $result->transaction_no);
-      $sheet->setCellValue('C'.$start, $result->payment_type_text);
-      $sheet->setCellValue('D'.$start, $result->round_off);
-      $sheet->setCellValue('E'.$start, $result->total);
-      $sheet->setCellValueExplicit('F'.$start, $result->reference_no,DataType::TYPE_STRING2);
-      $sheet->setCellValue('G'.$start, date("d-M-Y h:i:s A",strtotime($result->transaction_date)));
+      $sheet->setCellValue('C'.$start, $result->cashier_name);
+      $sheet->setCellValue('D'.$start, $result->payment_type_text);
+      $sheet->setCellValue('E'.$start, $result->round_off);
+      $sheet->setCellValue('F'.$start, $result->total);
+      $sheet->setCellValueExplicit('G'.$start, $result->reference_no,DataType::TYPE_STRING2);
+      $sheet->setCellValue('H'.$start, date("d-M-Y h:i:s A",strtotime($result->transaction_date)));
       $start++;
     }
 
@@ -2457,11 +2463,13 @@ class SalesController extends Controller
     $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
     $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
     $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
-    $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(15);
-    $spreadsheet->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+    $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(15);
+    $spreadsheet->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
 
+    $date = strtotime("now");
     $writer = new Xlsx($spreadsheet);
-    $path = 'storage/report/Date Range Sales Report.xlsx';
+    $path = 'storage/report/Date Range Sales Report '.$date.'.xlsx';
     $writer->save($path);
 
     return response()->json($path);

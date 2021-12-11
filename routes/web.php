@@ -175,6 +175,7 @@ Route::get('/ManualIssuePurchaseOrder','WarehouseController@getManualIssuePurcha
 Route::get('/AddManualPurchaseOrder','WarehouseController@ajaxAddManualStock')->name('ajaxAddManualStock');
 Route::get('/PurchaseOrderList','WarehouseController@getPurchaseOrderList')->name('getPurchaseOrderList');
 Route::get('/RemovePurchaseOrderListItem','WarehouseController@ajaxRemovePurchaseOrderListItem')->name('ajaxRemovePurchaseOrderListItem');
+Route::get('/UpdatePurchaseOrderListItem','WarehouseController@ajaxUpdatePurchaseOrderListItem')->name('ajaxUpdatePurchaseOrderListItem');
 Route::post('/GeneratePO','WarehouseController@postManualPurchaseOrderList')->name('postManualPurchaseOrderList');
 Route::get('/StockPurchase','WarehouseController@getStockPurchase')->name('getStockPurchase');
 Route::get('/SearchBarcode','WarehouseController@ajaxSearchBar')->name('ajaxSearchBar');
