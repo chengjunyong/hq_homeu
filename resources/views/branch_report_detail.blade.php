@@ -93,6 +93,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <th style="text-align: right">T & GO</th>
         <th style="text-align: right">Maybank QRPay</th>
         <th style="text-align: right">Grab Pay</th>
+        <th style="text-align: right">Cheque</th>
         <th style="text-align: right">Boost</th>
         <th style="text-align: right">OTHER</th>
         <th style="text-align: right">TOTAL</th>
@@ -106,6 +107,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <td style="text-align: right;">{{ number_format($cashier->tng, 2) }}</td>
             <td style="text-align: right;">{{ number_format($cashier->maybank_qr, 2) }}</td>
             <td style="text-align: right;">{{ number_format($cashier->grab_pay, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($cashier->cheque, 2) }}</td>
             <td style="text-align: right;">{{ number_format($cashier->boost, 2) }}</td>
             <td style="text-align: right;">{{ number_format($cashier->other, 2) }}</td>
             <td style="text-align: right;">{{ number_format($cashier->total, 2) }}</td>
@@ -120,6 +122,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->tng, 2) }}</td>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->maybank_qr, 2) }}</td>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->grab_pay, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->cheque, 2) }}</td>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->boost, 2) }}</td>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->other, 2) }}</td>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->total, 2) }}</td>
