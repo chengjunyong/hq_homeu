@@ -26,6 +26,25 @@
     border: 1px solid #ced4da;
   }
 
+  .add-btn{
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 110px;
+    right: 8px;
+    background-color: #7b3cd1;
+    color: #FFF;
+    border-radius: 50px;
+    text-align: center;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 99;
+    font-size: 30px;
+  }
+
+  .add-section div{
+    margin-top: 10px;
+  }
+
 </style>
 <div class="container">
   <div class="card" style="margin-top: 10px">
@@ -86,6 +105,7 @@
                 <td align="center">Quantity</td>
                 <td align="center">Cost</td>
                 <td align="right">Total Value</td>
+                <td></td>
               </tr>
               <tbody>
                 @foreach($gr_detail as $key => $result)
@@ -99,6 +119,7 @@
                     <td align="center"><input type="number" class="quantity" name="quantity[]" {{($result->measurement == 'unit') ? 'min=1' : 'min=0.001'}} {{($result->measurement == 'unit') ? 'step=1' : 'step=0.001'}} value="{{$result->quantity}}" style="text-align: right;width:8vw" required /></td>
                     <td align="center">Rm <input type="number" class="cost" name="cost[]" min="0.00" step="0.001" value="{{number_format($result->cost,3,'.','')}}" style="text-align: right;width:7vw"/></td>                    
                     <td align="right">Rm <input type="number" class="total" name="total[]" min="0.00" step="0.001" value="{{number_format($result->total_cost,2,'.','')}}" style="text-align: right;width:10vw" required /></td>
+                    <td align="right"><button style="padding:3px 10px;" class="btn btn-danger delete-item" type="button" val="{{$result->id}}">Remove</button></td>
                   </tr>
                 @endforeach
               </tbody>
@@ -147,6 +168,62 @@
   </div>
 </div>
 
+<div class="modal fade" id="add-item-modal" aria-hidden="true" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document" style="max-width: 50%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Items</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-3">
+            <label>Barcode :</label>
+          </div>
+          <div class="col-md-9">
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="Barcode" id="add-barcode">
+              <div class="input-group-append">
+                <button class="btn btn-primary" id="searchBarcode">Check</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row add-section">
+          <div class="col-md-3">
+            <label>Product Name</label>
+          </div>
+          <div class="col-md-9">
+            <input type="text" class="form-control" id="add-product-name" readonly>
+          </div>
+
+          <div class="col-md-3">
+            <label>Cost</label>
+          </div>
+          <div class="col-md-9">
+            <input type="number" step="0.0001" min="0" id="add-cost" class="form-control">
+          </div>
+
+          <div class="col-md-3">
+            <label>Quantity</label>
+          </div>
+          <div class="col-md-9">
+            <input type="number" min="0" id="add-quantity" class="form-control">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="add-item" class="btn btn-primary">Add</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button type="button" id="add-btn" class="btn btn-primary add-btn"><i class="fa fa-plus"></i></button>
+
 <script>
 $(document).ready(function(){
   $('#supplier_id').select2();
@@ -192,6 +269,51 @@ $(document).ready(function(){
       }
     },'json');
   })
+
+  $(".delete-item").click(function(){
+    let id = $(this).attr('val');
+    swal.fire({
+      title:'Delete Item',
+      html:'Are you sure to delete this item. This action is irreversible',
+      icon:'warning',
+      showCancelButton:'Cancel',
+      confirmButtonText:'Delete !',
+    }).then((result)=>{
+      if(result.isConfirmed){
+        $.get("{{route('ajaxDeleteGrItem')}}",
+        {
+          'id': id
+        },function(data){
+          console.log(data);
+          if(data){
+            window.location.reload();
+          }else{
+            swal.fire('Error','Delete Unsuccessful Please Try Again Later','error');
+          }
+        },'json');
+      }
+    });
+
+  });
+
+  $("#add-btn").click(function(){
+    $("#add-item-modal").modal('show');
+  });
+
+  $("#searchBarcode").click(function(){
+    $.get("{{route('ajaxSearchBar')}}",
+    {
+      'barcode': $("#add-barcode").val()
+    },function(data){ 
+      if(data != false){
+        $("#add-product-name").val(data.product_name);
+        $("#add-cost").val(data.cost);
+        $("#add-quantity").val(0);
+      }else{
+        swal.fire('Error','Barcode Not Found','error');
+      }
+    },'json');
+  });
 
 });
 </script>

@@ -913,6 +913,25 @@ class WarehouseController extends Controller
     return json_encode($target);
   }
 
+  public function ajaxDeleteGrItem(Request $request)
+  {
+    $result = Good_return_detail::where('id',$request->id)->delete();
+    $deleted = Good_return_detail::where('id',$request->id)->withTrashed()->first();
+
+    Warehouse_stock::where('barcode',$deleted->barcode)
+                    ->update([
+                      'quantity' => DB::raw('IF (quantity IS null,0,quantity) +'.floatval($deleted->quantity)),
+                    ]);
+
+    return $result;
+  }
+
+  public function ajaxAddGrItem(Request $request)
+  {
+
+
+  }
+
   public function postGoodReturn(Request $request)
   {
     $user = Auth::user();

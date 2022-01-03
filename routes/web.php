@@ -195,6 +195,7 @@ Route::get('/GoodReturnHistoryDetail/{id}','WarehouseController@getGoodReturnHis
 Route::post('/DeleteGr','WarehouseController@ajaxDeleteGr')->name('ajaxDeleteGr');
 Route::post('/GoodReturnHistoryDetail','WarehouseController@postGoodReturnHistoryDetail')->name('postGoodReturnHistoryDetail');
 Route::get('/ChangeSupplier','WarehouseController@ajaxChangeSupplier')->name('ajaxChangeSupplier');
+Route::get('/RemoveItemGR','WarehouseController@ajaxDeleteGrItem')->name('ajaxDeleteGrItem');
 Route::get('/GenerateGr/{id}','WarehouseController@getPrintGr')->name('getPrintGr');
 Route::get('/StockWriteOff','WarehouseController@getStockWriteOff')->name('getStockWriteOff');
 Route::get('/StockWriteOffList','WarehouseController@getStockWriteOffList')->name('getStockWriteOffList');
