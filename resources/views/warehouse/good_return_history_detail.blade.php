@@ -9,6 +9,23 @@
   td{
     padding:5px;
   }
+
+  #supplier{
+    cursor: pointer;
+  }
+
+  .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 33px;
+  }
+
+  .select2-container .select2-selection--single{
+    height: 36px;
+  }
+
+  .select2-container--default .select2-selection--single{
+    border: 1px solid #ced4da;
+  }
+
 </style>
 <div class="container">
   <div class="card" style="margin-top: 10px">
@@ -19,7 +36,7 @@
       <div class="row">
         <div class="col-md-12">
           <label>GR No:</label>
-          <input readonly class="form-control" type="text" value="{{$gr->gr_no}}">
+          <input readonly class="form-control" name="gr_no" type="text" value="{{$gr->gr_no}}">
         </div>
         <div class="col-md-6">
           <label>GR Date:</label>
@@ -31,7 +48,7 @@
         </div>
         <div class="col-md-6">
           <label>Supplier Name:</label>
-          <input readonly class="form-control" type="text" value="{{$gr->supplier_name}}">
+          <input readonly class="form-control" type="text" id="supplier" value="{{$gr->supplier_name}}">
         </div>
         <div class="col-md-6">
           <label>Total Items:</label>
@@ -98,20 +115,56 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="supplier-modal" aria-hidden="true" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document" style="max-width: 50%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Change Supplier</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-4" style="margin-top: 15px;">
+            <label>Change Supplier :</label>
+          </div>
+          <div class="col-md-8" style="margin-top: 15px;">
+            <select name="supplier_id" id="supplier_id" style="width:100%;">
+              @foreach($supplier as $result)
+                <option value="{{$result->id}}" {{($gr->supplier_id == $result->id) ? 'selected' : ''}}>{{$result->supplier_name}}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="change-supplier" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 $(document).ready(function(){
+  $('#supplier_id').select2();
+
   $(".total").on("keyup change",function(){
     let quantity = parseInt($(this).parent().siblings().eq(4).children().val());
     let total = parseFloat($(this).val());
     let result = total / quantity;
     $(this).parent().siblings().eq(5).children().val(result.toFixed(3));
   });
+
   $(".cost").on("keyup change",function(){
     let quantity = parseInt($(this).parent().siblings().eq(4).children().val());
     let cost = parseFloat($(this).val());
     let result = cost * quantity;
     $(this).parent().siblings().eq(5).children().val(result.toFixed(3));
   });
+
   $(".quantity").on("keyup change",function(){
     let total = parseFloat($(this).parent().siblings().eq(5).children().val());
     let cost = parseInt($(this).parent().siblings().eq(4).children().val())
@@ -121,6 +174,25 @@ $(document).ready(function(){
       $(this).parent().siblings().eq(4).children().val(result.toFixed(3));
     }  
   });
+
+  $("#supplier").click(function(){
+    $("#supplier-modal").modal('show');
+  });
+
+  $("#change-supplier").click(function(){
+    $.get("{{route('ajaxChangeSupplier')}}",
+    {
+      'id': $("#supplier_id").val(),
+      'gr_no': $("input[name=gr_no]").val(),
+    },function(data){
+      if(data){
+        window.location.reload();
+      }else{
+        swal.fire('Error','Change Supplier Unsuccessful, Please Try Again','error');
+      }
+    },'json');
+  })
+
 });
 </script>
 @if(session()->has('success'))

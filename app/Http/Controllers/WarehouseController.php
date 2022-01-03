@@ -1054,8 +1054,21 @@ class WarehouseController extends Controller
     }
 
     $gr_detail = Good_return_detail::where('good_return_id',$gr->id)->get();
+    $supplier = Supplier::all();
 
-    return view('warehouse.good_return_history_detail',compact('url','gr_detail','gr'));
+    return view('warehouse.good_return_history_detail',compact('url','gr_detail','gr','supplier'));
+  }
+
+  public function ajaxChangeSupplier(Request $request)
+  {
+    $supplier = Supplier::where('id',$request->id)->first();
+
+    $status = Good_return::where('gr_no',$request->gr_no)
+                          ->update([
+                            'supplier_id' => $supplier->id,
+                            'supplier_name' => $supplier->supplier_name
+                          ]);
+    return $status;
   }
 
   public function ajaxDeleteGr(Request $request)
