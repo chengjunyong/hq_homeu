@@ -923,12 +923,23 @@ class WarehouseController extends Controller
                       'quantity' => DB::raw('IF (quantity IS null,0,quantity) +'.floatval($deleted->quantity)),
                     ]);
 
+    $cal = Good_return_detail::where('good_return_id',$deleted->good_return_id)
+                              ->selectRaw("SUM(total_cost) as total_cost, SUM(quantity) as qty, COUNT(*) as diff")
+                              ->first();
+
+    Good_return::where('id',$deleted->good_return_id)
+                ->update([
+                  'total_quantity' => $cal->qty,
+                  'total_cost' => $cal->total_cost,
+                  'total_different_item' => $cal->diff,
+                ]);
+
     return $result;
   }
 
   public function ajaxAddGrItem(Request $request)
   {
-
+    dd("test");
 
   }
 

@@ -315,6 +315,27 @@ $(document).ready(function(){
     },'json');
   });
 
+  $("#add-item").click(function(){
+    if($("#add-barcode").val().trim() == '' || $("#add-cost").val().trim() == '' || $("#add-quantity").val().trim() == ''){
+      swal.fire('Error','Please fill up all the fields','error');
+    }else{
+      if($("#add-cost").val() <= 0 || $("#add-quantity").val() <= 0){
+        swal.fire('Error','Cost & Quantity cannot be 0','error');
+      }else{
+        $.get("{{route('ajaxAddGrItem')}}",
+        {
+          'gr_no' : $("input[name=gr_no]").val(),
+          'barcode': $("#add-barcode").val(),
+          'cost': $("#add-cost").val(),
+          'quantity': $("#add-quantity").val(),
+        },function(data){
+          console.log(data);
+
+        },'json');
+      }
+    }
+  });
+
 });
 </script>
 @if(session()->has('success'))
