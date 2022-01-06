@@ -939,8 +939,51 @@ class WarehouseController extends Controller
 
   public function ajaxAddGrItem(Request $request)
   {
-    dd("test");
+    $user = Auth::user();
+    $gr = Good_return::where('gr_no',$request->gr_no)->first();
+    $gr_detail = Good_return_detail::where('good_return_id',$gr->id)
+                                  ->where('barcode',$request->barcode)
+                                  ->first();
 
+    $product = Product_list::where('barcode',$request->barcode)->first();
+
+    if($gr_detail != null){
+      Warehouse_stock::where('barcode',$gr_detail->barcode)
+                      ->update([
+                        'quantity' => DB::raw('IF (quantity IS null,0,quantity) +'.floatval($gr_detail->quantity)),
+                      ]);
+
+      Good_return_detail::where('id',$gr_detail->id)->delete();
+    }
+
+    Good_return_detail::create([
+      'good_return_id' => $gr->id,
+      'barcode' => $product->barcode,
+      'product_name' => $product->product_name,
+      'measurement' => $product->measurement,
+      'cost' => $request->cost,
+      'quantity' => $request->quantity,
+      'total_cost' => $request->cost * $request->quantity,
+      'updated_at' => $user->name,
+    ]);
+
+    Warehouse_stock::where('barcode',$request->barcode)
+                ->update([
+                  'quantity' => DB::raw('IF (quantity IS null,0,quantity) -'.floatval($request->quantity)),
+                ]);
+
+    $cal = Good_return_detail::where('good_return_id',$gr->id)
+                            ->selectRaw("SUM(total_cost) as total_cost, SUM(quantity) as qty, COUNT(*) as diff")
+                            ->first();
+
+    $result =  Good_return::where('id',$gr->id)
+                          ->update([
+                            'total_quantity' => $cal->qty,
+                            'total_cost' => $cal->total_cost,
+                            'total_different_item' => $cal->diff,
+                          ]);
+
+    return $result;
   }
 
   public function postGoodReturn(Request $request)
@@ -1075,7 +1118,7 @@ class WarehouseController extends Controller
 
   public function getGoodReturnHistoryDetail(Request $request)
   {
-    $url = url()->previous();
+    $url = route('getGoodReturnHistory');
 
     $gr = Good_return::where('id',$request->id)->first();
 
