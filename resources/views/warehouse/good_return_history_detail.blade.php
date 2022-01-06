@@ -226,7 +226,6 @@
 
 <script>
 $(document).ready(function(){
-  let checked_barcode = '';
   $('#supplier_id').select2();
 
   $(".total").on("keyup change",function(){
@@ -302,47 +301,35 @@ $(document).ready(function(){
   });
 
   $("#searchBarcode").click(function(){
-    $("#searchBarcode").prop('disabled',true);
     $.get("{{route('ajaxSearchBar')}}",
     {
       'barcode': $("#add-barcode").val()
     },function(data){ 
       if(data != false){
-        checked_barcode = $("#add-barcode").val();
         $("#add-product-name").val(data.product_name);
         $("#add-cost").val(data.cost);
         $("#add-quantity").val(0);
       }else{
         swal.fire('Error','Barcode Not Found','error');
       }
-      $("#searchBarcode").prop('disabled',false);
     },'json');
-
   });
 
   $("#add-item").click(function(){
-    $(this).prop('disabled',true);
     if($("#add-barcode").val().trim() == '' || $("#add-cost").val().trim() == '' || $("#add-quantity").val().trim() == ''){
       swal.fire('Error','Please fill up all the fields','error');
-      $(this).prop('disabled',false);
     }else{
       if($("#add-cost").val() <= 0 || $("#add-quantity").val() <= 0){
         swal.fire('Error','Cost & Quantity cannot be 0','error');
-        $(this).prop('disabled',false);
       }else{
         $.get("{{route('ajaxAddGrItem')}}",
         {
           'gr_no' : $("input[name=gr_no]").val(),
-          'barcode': checked_barcode,
+          'barcode': $("#add-barcode").val(),
           'cost': $("#add-cost").val(),
           'quantity': $("#add-quantity").val(),
         },function(data){
-          if(data){
-            window.location.reload();
-          }else{
-            swal.fire('Error','Add Unsuccessful Please Try Again Later','error');
-            $("#add-item").prop('disabled',false);
-          }
+          console.log(data);
 
         },'json');
       }
