@@ -86,6 +86,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <th style="text-align: right">Grab pay</th>
         <th style="text-align: right">Cheque</th>
         <th style="text-align: right">Boost</th>
+        <th style="text-align: right">E-banking</th>
         <th style="text-align: right">Other</th>
         <th style="text-align: right">Total</th>
         <!-- <th>DETAIL</th> -->
@@ -101,6 +102,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <td style="text-align: right;">{{ number_format($branch->grab_pay, 2) }}</td>
             <td style="text-align: right;">{{ number_format($branch->cheque, 2) }}</td>
             <td style="text-align: right;">{{ number_format($branch->boost, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($branch->ebanking, 2) }}</td>
             <td style="text-align: right;">{{ number_format($branch->other, 2) }}</td>
             <td style="text-align: right;">{{ number_format($branch->total, 2) }}</td>
           </tr>
@@ -116,6 +118,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->grab_pay, 2) }}</td>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->cheque, 2) }}</td>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->boost, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->ebanking, 2) }}</td>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->other, 2) }}</td>
           <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_summary->total, 2) }}</td>
         </tr>
