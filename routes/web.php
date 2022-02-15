@@ -194,6 +194,8 @@ Route::get('/GoodReturnHistory','WarehouseController@getGoodReturnHistory')->nam
 Route::get('/GoodReturnHistoryDetail/{id}','WarehouseController@getGoodReturnHistoryDetail')->name('getGoodReturnHistoryDetail');
 Route::post('/DeleteGr','WarehouseController@ajaxDeleteGr')->name('ajaxDeleteGr');
 Route::post('/GoodReturnHistoryDetail','WarehouseController@postGoodReturnHistoryDetail')->name('postGoodReturnHistoryDetail');
+Route::get('/ChangeSupplier','WarehouseController@ajaxChangeSupplier')->name('ajaxChangeSupplier');
+Route::get('/RemoveItemGR','WarehouseController@ajaxDeleteGrItem')->name('ajaxDeleteGrItem');
 Route::get('/GenerateGr/{id}','WarehouseController@getPrintGr')->name('getPrintGr');
 Route::get('/StockWriteOff','WarehouseController@getStockWriteOff')->name('getStockWriteOff');
 Route::get('/StockWriteOffList','WarehouseController@getStockWriteOffList')->name('getStockWriteOffList');
@@ -203,6 +205,7 @@ Route::post('/GenerateWriteOff','WarehouseController@postWriteOffList')->name('p
 Route::get('/WriteOffHistory','WarehouseController@getWriteOffHistory')->name('getWriteOffHistory');
 Route::get('/PrintWriteOffRecord/{id}','WarehouseController@getWriteOffPrint')->name('getWriteOffPrint');
 Route::get('/DeleteWriteOffRecord','WarehouseController@ajaxDeleteWriteOffRecord')->name('ajaxDeleteWriteOffRecord');
+Route::get('/AddGrItem','WarehouseController@ajaxAddGrItem')->name('ajaxAddGrItem');
 
 //Transaction Number Correction Function
 Route::get('/TransactionCorrection/{target_date}/{branch_code}/{token}','SalesController@transactionCorrection');
