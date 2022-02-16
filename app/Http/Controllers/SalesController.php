@@ -114,6 +114,7 @@ class SalesController extends Controller
     $grab_pay_total = 0;
     $cheque_total = 0;
     $boost_total = 0;
+    $ebanking_total = 0;
     $other_total = 0;
     $total = 0;
 
@@ -126,6 +127,7 @@ class SalesController extends Controller
       $branch->grab_pay = 0;
       $branch->cheque = 0;
       $branch->boost = 0;
+      $branch->ebanking = 0;
       $branch->other = 0;
       $branch->total = 0;
 
@@ -184,6 +186,12 @@ class SalesController extends Controller
 
           $boost_total += $value->payment_type_total;
         }
+        elseif($value->payment_type == "ebanking")
+        {
+          $branch->ebanking = $value->payment_type_total;
+
+          $ebanking_total += $value->payment_type_total;
+        }
         else
         {
           $branch_other_total += $value->payment_type_total;
@@ -207,6 +215,7 @@ class SalesController extends Controller
     $total_summary->grab_pay = $grab_pay_total;
     $total_summary->cheque = $cheque_total;
     $total_summary->boost = $boost_total;
+    $total_summary->ebanking = $ebanking_total;
     $total_summary->other = $other_total;
     $total_summary->total = $total;
 
@@ -364,6 +373,7 @@ class SalesController extends Controller
     $branch_grab_pay = 0;
     $branch_cheque = 0;
     $branch_boost = 0;
+    $branch_ebanking = 0;
     $branch_other = 0;
     $branch_total = 0;
 
@@ -378,6 +388,7 @@ class SalesController extends Controller
       $cashier->grab_pay = 0;
       $cashier->cheque = 0;
       $cashier->boost = 0;
+      $cashier->ebanking = 0;
       $cashier->other = 0;
       $cashier->total = 0;
 
@@ -425,6 +436,11 @@ class SalesController extends Controller
           $cashier->boost = $value->payment_type_total;
           $branch_boost += $value->payment_type_total;
         }
+        elseif($value->payment_type == "ebanking")
+        {
+          $cashier->ebanking = $value->payment_type_total;
+          $branch_ebanking += $value->payment_type_total;
+        }
         else
         {
           $cashier->total += $value->payment_type_total;
@@ -443,6 +459,7 @@ class SalesController extends Controller
     $total_summary->grab_pay = $branch_grab_pay;
     $total_summary->cheque = $branch_cheque;
     $total_summary->boost = $branch_boost;
+    $total_summary->ebanking = $branch_ebanking;
     $total_summary->other = $branch_other;
     $total_summary->total = $branch_total;
 
@@ -472,7 +489,7 @@ class SalesController extends Controller
 
       $transaction = Transaction::whereBetween('transaction_date', [$selected_date_from, $selected_date_to])->where('branch_id', $branch->token)->get();
 
-      $payment_type = ['cash', 'card', 'tng', 'maybank_qr', 'grab_pay', 'cheque', 'boost', 'pandamart', 'grabmart'];
+      $payment_type = ['cash', 'card', 'tng', 'maybank_qr', 'grab_pay', 'cheque', 'boost', 'ebanking', 'pandamart', 'grabmart'];
       
       $cashier_list = array();
       $cashier_ip_array = array();
@@ -685,7 +702,7 @@ class SalesController extends Controller
 
       $branch_list = Branch::get();
 
-      $payment_type = ['cash', 'card', 'tng', 'maybank_qr', 'grab_pay', 'cheque', 'boost', 'pandamart', 'grabmart'];
+      $payment_type = ['cash', 'card', 'tng', 'maybank_qr', 'grab_pay', 'cheque', 'boost', 'ebanking', 'pandamart', 'grabmart'];
 
       $total = 0;
 
@@ -842,7 +859,7 @@ class SalesController extends Controller
     $sheet->setCellValue('H3', 'Generate Date:');
     $sheet->setCellValue('I3', date('d-m-Y', strtotime(now())));
 
-    $sheet->getStyle("A1:J3")->getAlignment()->setWrapText(true);
+    $sheet->getStyle("A1:K3")->getAlignment()->setWrapText(true);
 
     $sheet->setCellValue('B5', 'Cash');
     $sheet->setCellValue('C5', 'Card');
@@ -851,10 +868,11 @@ class SalesController extends Controller
     $sheet->setCellValue('F5', 'Grab Pay');
     $sheet->setCellValue('G5', 'Cheque');
     $sheet->setCellValue('H5', 'Boost');
-    $sheet->setCellValue('I5', 'Other');
-    $sheet->setCellValue('J5', 'Total');
+    $sheet->setCellValue('I5', 'E-banking');
+    $sheet->setCellValue('J5', 'Other');
+    $sheet->setCellValue('K5', 'Total');
 
-    $sheet->getStyle('A1:J2')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A1:K2')->getAlignment()->setHorizontal('center');
 
     $branch_list = Branch::get();
 
@@ -867,6 +885,7 @@ class SalesController extends Controller
     $grab_pay_total = 0;
     $cheque_total = 0;
     $boost_total = 0;
+    $ebanking_total = 0;
     $other_total = 0;
     $total = 0;
 
@@ -879,6 +898,7 @@ class SalesController extends Controller
       $branch->grab_pay = 0;
       $branch->cheque = 0;
       $branch->boost = 0;
+      $branch->ebanking = 0;
       $branch->other = 0;
 
       $branch_total = 0;
@@ -933,6 +953,12 @@ class SalesController extends Controller
 
           $boost_total += $value->payment_type_total;
         }
+        elseif($value->payment_type == "ebanking")
+        {
+          $branch->ebanking = $value->payment_type_total;
+
+          $ebanking_total += $value->payment_type_total;
+        }
         else
         {
           $branch->other += $value->payment_type_total;
@@ -949,8 +975,9 @@ class SalesController extends Controller
       $sheet->setCellValue('F'.$started_row, number_format($branch->grab_pay, 2));
       $sheet->setCellValue('G'.$started_row, number_format($branch->cheque, 2));
       $sheet->setCellValue('H'.$started_row, number_format($branch->boost, 2));
-      $sheet->setCellValue('I'.$started_row, number_format($branch->other, 2));
-      $sheet->setCellValue('J'.$started_row, number_format($branch_total, 2));
+      $sheet->setCellValue('I'.$started_row, number_format($branch->ebanking, 2));
+      $sheet->setCellValue('J'.$started_row, number_format($branch->other, 2));
+      $sheet->setCellValue('K'.$started_row, number_format($branch_total, 2));
 
       $started_row++;
     }
@@ -992,6 +1019,11 @@ class SalesController extends Controller
     else
       $boost_total = number_format($boost_total, 2);
 
+    if($ebanking_total == 0)
+      $ebanking_total = "";
+    else
+      $ebanking_total = number_format($ebanking_total, 2);
+
     if($other_total == 0)
       $other_total = "";
     else
@@ -1010,8 +1042,9 @@ class SalesController extends Controller
     $sheet->setCellValue('F'.$started_row, $grab_pay_total);
     $sheet->setCellValue('G'.$started_row, $cheque_total);
     $sheet->setCellValue('H'.$started_row, $boost_total);
-    $sheet->setCellValue('I'.$started_row, $other_total);
-    $sheet->setCellValue('J'.$started_row, $total);
+    $sheet->setCellValue('I'.$started_row, $ebanking_total);
+    $sheet->setCellValue('J'.$started_row, $other_total);
+    $sheet->setCellValue('K'.$started_row, $total);
 
     $sheet->getColumnDimension('A')->setWidth(20);
     $sheet->getColumnDimension('B')->setWidth(25);
@@ -1023,10 +1056,11 @@ class SalesController extends Controller
     $sheet->getColumnDimension('H')->setWidth(11);
     $sheet->getColumnDimension('I')->setWidth(11);
     $sheet->getColumnDimension('J')->setWidth(11);
+    $sheet->getColumnDimension('K')->setWidth(11);
 
-    $sheet->getStyle('A5:J'.$started_row)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-    $sheet->getStyle('A5:J5')->getAlignment()->setHorizontal('center');
-    $sheet->getStyle('B6:J100')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('A5:K'.$started_row)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+    $sheet->getStyle('A5:K5')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('B6:K100')->getAlignment()->setHorizontal('right');
 
     $writer = new Xlsx($spreadsheet);
     $path = 'storage/report/Sales Report.xlsx';
@@ -1072,7 +1106,7 @@ class SalesController extends Controller
 
     $sheet->setCellValue('A3', 'Date:');
     $sheet->setCellValue('B3', "Date from : ".$selected_date_from."\nDate to : ".$selected_date_to);
-    $sheet->getStyle("A1:J3")->getAlignment()->setWrapText(true);
+    $sheet->getStyle("A1:K3")->getAlignment()->setWrapText(true);
 
     $sheet->setCellValue('H3', 'Generate Date:');
     $sheet->setCellValue('I3', date('d-m-Y', strtotime(now())));
@@ -1084,10 +1118,11 @@ class SalesController extends Controller
     $sheet->setCellValue('F5', 'Grab Pay');
     $sheet->setCellValue('G5', 'Cheque');
     $sheet->setCellValue('H5', 'Boost');
-    $sheet->setCellValue('I5', 'Other');
-    $sheet->setCellValue('J5', 'Total');
+    $sheet->setCellValue('I5', 'E-banking');
+    $sheet->setCellValue('J5', 'Other');
+    $sheet->setCellValue('K5', 'Total');
 
-    $sheet->getStyle('A1:J2')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('A1:K2')->getAlignment()->setHorizontal('center');
 
     $branch = Branch::where('token', $branch_token)->first();
 
@@ -1103,6 +1138,7 @@ class SalesController extends Controller
     $branch_grab_pay = 0;
     $branch_cheque = 0;
     $branch_boost = 0;
+    $branch_ebanking = 0;
     $branch_other = 0;
     $branch_total = 0;
 
@@ -1119,6 +1155,7 @@ class SalesController extends Controller
       $cashier->grab_pay = 0;
       $cashier->cheque = 0;
       $cashier->boost = 0;
+      $cashier->ebanking = 0;
       $cashier->other = 0;
 
       $cashier_total = 0;
@@ -1160,6 +1197,11 @@ class SalesController extends Controller
           $cashier->boost = $value->payment_type_total;
           $branch_boost += $value->payment_type_total;
         }
+        elseif($value->payment_type == "ebanking")
+        {
+          $cashier->ebanking = $value->payment_type_total;
+          $branch_ebanking += $value->payment_type_total;
+        }
         elseif($value->payment_type == "tng")
         {
           $cashier->tng = $value->payment_type_total;
@@ -1180,8 +1222,9 @@ class SalesController extends Controller
       $sheet->setCellValue('F'.$started_row, number_format($cashier->grab_pay, 2));
       $sheet->setCellValue('G'.$started_row, number_format($cashier->cheque, 2));
       $sheet->setCellValue('H'.$started_row, number_format($cashier->boost, 2));
-      $sheet->setCellValue('I'.$started_row, number_format($cashier->other, 2));
-      $sheet->setCellValue('J'.$started_row, number_format($cashier_total, 2));
+      $sheet->setCellValue('I'.$started_row, number_format($cashier->ebanking, 2));
+      $sheet->setCellValue('J'.$started_row, number_format($cashier->other, 2));
+      $sheet->setCellValue('K'.$started_row, number_format($cashier_total, 2));
 
       $started_row++;
     }
@@ -1196,8 +1239,9 @@ class SalesController extends Controller
     $sheet->setCellValue('F'.$started_row, number_format($branch_grab_pay, 2));
     $sheet->setCellValue('G'.$started_row, number_format($branch_cheque, 2));
     $sheet->setCellValue('H'.$started_row, number_format($branch_boost, 2));
-    $sheet->setCellValue('I'.$started_row, number_format($branch_other, 2));
-    $sheet->setCellValue('J'.$started_row, number_format($branch_total, 2));
+    $sheet->setCellValue('I'.$started_row, number_format($branch_ebanking, 2));
+    $sheet->setCellValue('J'.$started_row, number_format($branch_other, 2));
+    $sheet->setCellValue('K'.$started_row, number_format($branch_total, 2));
 
     $sheet->getColumnDimension('A')->setWidth(20);
     $sheet->getColumnDimension('B')->setWidth(25);
@@ -1209,10 +1253,11 @@ class SalesController extends Controller
     $sheet->getColumnDimension('H')->setWidth(11);
     $sheet->getColumnDimension('I')->setWidth(11);
     $sheet->getColumnDimension('J')->setWidth(11);
+    $sheet->getColumnDimension('K')->setWidth(11);
 
-    $sheet->getStyle('A5:J'.$started_row)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-    $sheet->getStyle('A5:J5')->getAlignment()->setHorizontal('center');
-    $sheet->getStyle('B6:J100')->getAlignment()->setHorizontal('right');
+    $sheet->getStyle('A5:K'.$started_row)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+    $sheet->getStyle('A5:K5')->getAlignment()->setHorizontal('center');
+    $sheet->getStyle('B6:K100')->getAlignment()->setHorizontal('right');
 
     $writer = new Xlsx($spreadsheet);
     $path = 'storage/report/Branch Report.xlsx';
