@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddDeleteToGoodReturnDetailTable extends Migration
+class AddRemarkToProductListTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddDeleteToGoodReturnDetailTable extends Migration
      */
     public function up()
     {
-        Schema::table('good_return_detail', function (Blueprint $table) {
-            $table->softDeletes();
+        Schema::table('product_list', function (Blueprint $table) {
+            $table->string('remark',1500)->nullable();
         });
     }
 
@@ -25,8 +25,8 @@ class AddDeleteToGoodReturnDetailTable extends Migration
      */
     public function down()
     {
-        Schema::table('good_return_detail', function (Blueprint $table) {
-            $table->dropColumn('deleted_at');
+        Schema::table('product_list', function (Blueprint $table) {
+            $table->dropColumn('remark');
         });
     }
 }

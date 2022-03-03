@@ -15,6 +15,7 @@ use App\Voucher;
 use App\Supplier;
 use App\Product_supplier;
 use App\Hamper;
+use App\Product_history;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Log;
@@ -232,10 +233,11 @@ class ProductController extends Controller
 
     $existing_supplier = $supplier_list->toArray();
 
-    $supplier = Supplier::whereNotIn('id',array_column($existing_supplier,'s_id'))
-                          ->get();
+    $supplier = Supplier::whereNotIn('id',array_column($existing_supplier,'s_id'))->get();
 
-    return view('modifyproduct',compact('product','department','category','default_price','url','supplier','supplier_list'));
+    $history = Product_history::where('product_id',$product->id)->orderBy('created_at','DESC')->limit(100)->get();
+
+    return view('modifyproduct',compact('product','department','category','default_price','url','supplier','supplier_list','history'));
   }
 
   public function ajaxAddSupplier(Request $request)
@@ -307,6 +309,20 @@ class ProductController extends Controller
 
   public function postModifyProduct(Request $request)
   {
+    $previous = Product_list::where('barcode',$request->barcode)->first();
+    if($request->cost != $previous->cost || $request->price != $previous->price){
+      $cvalue = "Cost : ".number_format($request->cost,2)."<br/>Price : ".number_format($request->price,2);
+      $pvalue = "Cost : ".number_format($previous->cost,2)."<br/>Price : ".number_format($previous->price,2);
+      Product_history::create([
+                        'product_id' => $previous->id,
+                        'barcode' => $previous->barcode,
+                        'previous_value' => $pvalue,
+                        'current_value' => $cvalue,
+                        'created_by' => Auth::user()->id,
+                        'creator_name' => Auth::user()->name,
+                      ]); 
+    }
+
     Branch_product::where('barcode',$request->barcode)
                     ->update([
                       'department_id'=>$request->department,
@@ -409,6 +425,7 @@ class ProductController extends Controller
                       'wholesale_start_date'=>$request->wholesales_start,
                       'wholesale_end_date'=>$request->wholesales_end,
                       'product_sync'=>0,
+                      'remark' => $request->remark,
                     ]);
 
     Warehouse_stock::where('barcode',$request->barcode)

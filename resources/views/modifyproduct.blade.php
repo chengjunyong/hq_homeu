@@ -15,6 +15,14 @@
 .supplier_table thead th{
   border: none;
 }
+
+#history_length{
+  margin-bottom:15px;
+}
+
+td{
+  padding:10px 0px;
+}
 </style>
 
 <div class="container">
@@ -70,14 +78,6 @@
               <option value="meter" {{($product->measurement == 'meter') ? 'selected' : ''}}>Meter</option>
             </select>
           </div>
-<!--           <div class="col-md-12">
-            <label>Measurement Type</label>
-            <select name="uom" id="uom" class="form-control" required>
-              <option value="unit" {{ ($product->uom == "Pcs") ? 'selected' : ''}}>Pcs</option>
-              <option value="kilogram" {{ ($product->uom == "Kg") ? 'selected' : ''}}>Kilogram</option>
-              <option value="Meter" {{ ($product->uom == "Meter") ? 'selected' : ''}}>Meter</option>
-            </select>
-          </div> -->
 					<div class="col-md-6">
 						<label>Cost <!-- <a href="{{route('getProductConfig')}}">(Auto Increase {{$default_price->default_price_margin}}%)</a> --></label>
 						<input type="number" min="0" step="0.001" name="cost" id="cost" class="form-control" required value="{{number_format($product->cost,3)}}">
@@ -111,6 +111,10 @@
           <div class="col-md-6">
             <label>Schedule Price</label>
             <input type="number" min="0" step="0.01" name="schedule_price" class="form-control" value="{{$product->schedule_price}}">
+          </div>
+          <div class="col-md-12">
+            <label>Remark</label>
+            <textarea name="remark" class="form-control" rows="5">{!! $product->remark !!}</textarea>
           </div>
           <div class="col-md-12" style="text-align: center; margin: 5% 0px 0px 0px;"><label style='font-weight: bold;;font-size: 24px;'>Promotion Option</label></div>
           <div class="col-md-4">
@@ -274,6 +278,33 @@
           </div>
           <!-- Promotion Wholesales Option -->
 
+          {{-- History --}}
+          <div class="col-md-12" style="margin:25px 0px;">
+            <div style="text-align: center">
+              <label style='font-weight: bold;font-size: 24px;'>History</label>
+            </div>
+            <table id="history" style="width:100%">
+              <thead>
+                <th>No</th>
+                <th>Previous Data</th>
+                <th>Current Data</th>
+                <th style="text-align: center">Modified By</th>
+                <th style="text-align: center">Modified At</th>
+              </thead>
+              <tbody>
+                @foreach($history as $index => $result)
+                  <tr>
+                    <td>{{$index + 1}}</td>
+                    <td>{!! $result->previous_value !!}</td>
+                    <td>{!! $result->current_value !!}</td>
+                    <td style="text-align: center">{{$result->creator_name}}</td>
+                    <td style="text-align: center">{{date("d-M-Y H:i:s A",strtotime($result->created_at))}}</td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+          {{-- History --}}
 					<div class="col-md-12" style="text-align: center;margin-top: 20px">
 						<input type="submit" class="btn btn-primary" value="Update">
             <input type="reset" class="btn btn-secondary" value="Reset">
@@ -725,8 +756,13 @@ $(document).ready(function(){
       }
     },'json');
   });
+
+  $("#history").DataTable({
+    searching: false,
+  });
 	
 });
+
 function changeStep(){
   if($("select[name=measurement]").val() == 'unit'){
     $("#normal_wholesales_quantity").attr('step',1);

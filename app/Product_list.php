@@ -50,5 +50,6 @@ class Product_list extends Model
       'wholesale_price2',
       'wholesale_quantity2',
       'deleted_by',
+      'remark',
     ];
 }
