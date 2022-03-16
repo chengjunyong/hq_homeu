@@ -26,6 +26,7 @@
 							<td>From</td>
 							<td>To</td>
 							<td>Quantity Item</td>
+              <td>Total Value</td>
 							<td>Date Completed</td>
 							<td>Stock Lost Status</td>
 							<td></td>
@@ -39,6 +40,7 @@
 								<td>{{$result->from}}</td>
 								<td>{{$result->to}}</td>
 								<td>{{$result->total_item}}</td>
+                <td>Rm {{ number_format($result->total_value,2) }}</td>
 								<td>{{$result->created_at}}</td>
 								<td>{{($result->stock_lost == 0) ? 'No' : 'Yes'}}</td>
 								<td><buttton class="btn btn-primary" onclick="window.location.assign('{{route('getRestockHistoryDetail',$result->id)}}')">Details</buttton></td>
