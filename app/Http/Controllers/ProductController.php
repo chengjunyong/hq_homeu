@@ -25,16 +25,12 @@ class ProductController extends Controller
 {
   public function __construct()
   {
-    $this->middleware(['auth', 'user_access']);
+     // dd($this->middleware(['auth', 'user_access']));
   }
     
   public function getProductList()
   { 
     $access = app('App\Http\Controllers\UserController')->checkAccessControl();
-    if(!$access)
-    {
-      return view('not_access');
-    }
 
     $url = route('home')."?p=product_menu";
 
@@ -44,7 +40,7 @@ class ProductController extends Controller
                                 ->select('product_list.*','department.department_name','category.category_name')
                                 ->paginate(14);
 
-  	return view('product_list',compact('product_list','search','url'));
+  	return view('product_list',compact('product_list','search','url','access'));
   }
 
   public function searchProduct(Request $request)
@@ -216,6 +212,13 @@ class ProductController extends Controller
 
   public function getModifyProduct(Request $request)
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+
+    if(!$access)
+    {
+      return view('not_access');
+    }
+
     $url = route('getProductList');
 
     $product = Product_list::where('id',$request->id)->first();

@@ -57,7 +57,13 @@
 									<td>{{$result->barcode}}</td>
 									<td>{{$result->department_name}}</td>
 									<td>{{$result->category_name}}</td>
-									<td><a href="{{route('getModifyProduct',$result->id)}}">{{$result->product_name}}</a></td>
+									<td>
+                    @if($access)
+                      <a href="{{route('getModifyProduct',$result->id)}}">{{$result->product_name}}</a>
+                    @else
+                      {{$result->product_name}}
+                    @endif
+                  </td>
                   <td align="center">{{ucfirst($result->measurement)}}</td>
 									<td style="width:5%">{{number_format($result->cost,2)}}</td>
 									<td style="width:5%">{{number_format($result->price,2)}}</td>
