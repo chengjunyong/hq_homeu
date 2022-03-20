@@ -410,6 +410,12 @@ class UserController extends Controller
           'value' => 34,
           'name' => 'Department & Category Sales Report',
           'route' => 'getDepartmentAndCategoryReport'
+        ],
+        [
+          'group' => 'Product',
+          'value' => 35,
+          'name' => 'Search Product',
+          'route' => 'searchProduct'
         ]
       ];
 

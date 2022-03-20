@@ -46,6 +46,7 @@ class ProductController extends Controller
   public function searchProduct(Request $request)
   {
     $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+
     $url = route('home')."?p=product_menu";
 
     $search = $request->search;
