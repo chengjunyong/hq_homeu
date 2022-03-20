@@ -45,6 +45,7 @@ class ProductController extends Controller
 
   public function searchProduct(Request $request)
   {
+    $access = app('App\Http\Controllers\UserController')->checkAccessControl();
     $url = route('home')."?p=product_menu";
 
     $search = $request->search;
@@ -58,7 +59,7 @@ class ProductController extends Controller
 
   	$product_list->withPath('?search='.$request->search);
 
-  	return view('product_list',compact('product_list','search','url'));
+  	return view('product_list',compact('product_list','search','url','access'));
   }
 
   // public function ajaxAddProduct(Request $request)
