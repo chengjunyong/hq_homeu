@@ -2,26 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Branch;
-use App\Branch_product;
-use App\Product_list;
-use App\Product_configure;
-use App\Do_detail;
-use App\Do_configure;
-use App\Do_list;
-use App\Transaction;
-use App\Transaction_detail;
 use App\User;
+use App\Branch;
+use App\Do_list;
 use App\Supplier;
-use App\Damaged_stock_history;
-use App\Stock_lost_history;
-use App\Branch_stock_history;
-use App\Warehouse_stock;
+use App\Do_detail;
+use App\Transaction;
+use App\Do_configure;
+use App\Product_list;
+use App\Branch_product;
 use App\Tmp_order_list;
+use App\Warehouse_stock;
+use App\Product_configure;
+use App\Stock_lost_history;
+use App\Transaction_detail;
+use Illuminate\Http\Request;
+use App\Branch_stock_history;
+use App\Damaged_stock_history;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class BranchController extends Controller
 {
@@ -927,5 +930,102 @@ class BranchController extends Controller
     }
   }
 
+  public function getStockAdjustment()
+  {
+    $url = route('home')."?p=branch_menu";
+
+    $branches = Branch::all();
+
+    return view('branch.stock_adjustment',compact('url','branches'));
+  }
+
+  public function postExportBranchStock(Request $request)
+  {
+    if(!Storage::exists('public/exportList'))
+    {
+      Storage::makeDirectory('public/exportList', 0775, true); //creates directory
+    }
+
+    $files = Storage::allFiles('public/exportList');
+    Storage::delete($files);
+
+    $branchStock = Branch_product::join('category','category.id','=','branch_product.category_id')
+                                  ->join('department','department.id','=','branch_product.department_id')
+                                  ->where('branch_product.branch_id',$request->branch_id)
+                                  ->orderBy('branch_product.id','ASC')
+                                  ->get();
+
+    $spreadsheet = new Spreadsheet();
+    $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+    $spreadsheet->getDefaultStyle()->getProtection()->setLocked(false);
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->getStyle('A')->getProtection()->setLocked(\PhpOffice\PhpSpreadsheet\Style\Protection::PROTECTION_PROTECTED);
+    $sheet->getStyle('A')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('000');
+    $sheet->getStyle('B')->getProtection()->setLocked(\PhpOffice\PhpSpreadsheet\Style\Protection::PROTECTION_PROTECTED);
+    $sheet->getStyle('B')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('72d4b2');
+    $sheet->getStyle('B')->getAlignment()->setHorizontal('left');
+    $sheet->setCellValue('A1','Branch Id' );
+    $sheet->setCellValue('B1','Barcode' );
+    $sheet->setCellValue('C1','Product Name' );
+    $sheet->setCellValue('D1','Price' );
+    $sheet->setCellValue('E1','Department' );
+    $sheet->setCellValue('F1','Category' );
+    $sheet->setCellValue('G1','Current Stock' );
+    $sheet->setCellValue('H1','Updated Stock' );
+
+    $row = 2;
+    foreach($branchStock as $result){
+      $sheet->getCellByColumnAndRow(1, $row)->setValue($request->branch_id); 
+      $sheet->getCellByColumnAndRow(2, $row)->setValue($result->barcode); 
+      $sheet->getCellByColumnAndRow(3, $row)->setValue($result->product_name); 
+      $sheet->getCellByColumnAndRow(4, $row)->setValue($result->price); 
+      $sheet->getCellByColumnAndRow(5, $row)->setValue($result->department_name); 
+      $sheet->getCellByColumnAndRow(6, $row)->setValue($result->category_name); 
+      $sheet->getCellByColumnAndRow(7, $row)->setValue($result->quantity); 
+      $row++;
+    }
+
+    $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(20);
+    $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(47);
+    $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(10);
+    $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(17);
+    $spreadsheet->getActiveSheet()->getColumnDimension('F')->setAutoSize(17);
+
+    $time = date('d-M-Y h i s A');
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/exportList/Branch Stock List ('.$time.').xlsx';
+    $writer->save($path);
+
+    return response()->json($path);
+  }
+
+  public function postImportBranchStock(Request $request)
+  {
+    if(!Storage::exists('public/importList'))
+    {
+      Storage::makeDirectory('public/importList', 0775, true); //creates directory
+    }
+
+    if($request->hasFile('branch_stock_list')){
+      $path = Storage::url($request->file('branch_stock_list')->store('public/importList'));
+    }
+
+    $reader = \PhpOffice\PhpSpreadsheet\IOFactory::load('./'.$path);
+    $spreadsheet = $reader->getActiveSheet();
+
+    $total_record = $spreadsheet->getHighestRow() - 1;
+
+    for($i=1;$i<=$total_record;$i++){
+      $n = $i+1;
+      $branch_id = $spreadsheet->getCell('A2')->getValue();
+      $barcode = $spreadsheet->getCell('B'.$n)->getValue();
+      $quantity = $spreadsheet->getCell('H'.$n)->getValue();
+      if(!empty($quantity)){
+        Branch_product::where('branch_id',$branch_id)->where('barcode','LIKE',$barcode)->update(['quantity' => $quantity]);
+      }
+    }
+    
+    return back()->with('result','true');
+  }
 
 }
