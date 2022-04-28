@@ -34,6 +34,9 @@ Route::get('/restockconfirmation/{do_number}','BranchController@getRestockConfir
 Route::post('restockconfirmation','BranchController@postRestockConfirmation')->name('postRestockConfirmation');
 Route::get('/branchrestockhistory','BranchController@getRestockHistory')->name('getRestockHistory');
 Route::get('/branchrestockhistorydetail/{id}','BranchController@getRestockHistoryDetail')->name('getRestockHistoryDetail');
+Route::get('/stockadjustment','BranchController@getStockAdjustment')->name('getStockAdjustment');
+Route::post('/exportbranchstock','BranchController@postExportBranchStock')->name('postExportBranchStock');
+Route::post('/importbranchstock','BranchController@postImportBranchStock')->name('postImportBranchStock');
 
 
 Route::get('/damagedstock','BranchController@getDamagedStock')->name('getDamagedStock');

@@ -21,7 +21,6 @@
   td{
     padding: 5px 0px 5px 0px;
   }
-
 </style>
 
 <form method="get" action="{{route('getBranchStockHistoryDetail')}}" target="_blank">

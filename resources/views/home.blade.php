@@ -473,6 +473,22 @@
         </div>
       </div>
     </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Stock Adjustment</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getStockAdjustment')}}"><i class="fas fa-folder-plus first branch-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
