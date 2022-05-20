@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Branch;
 use App\Warehouse_stock;
 use App\Department;
 use App\Category;
@@ -570,6 +571,8 @@ class WarehouseController extends Controller
                           ->select('id')
                           ->orderBy('id','desc')
                           ->first();
+
+    $branch = Branch::get();
     if(!$a){
       $last_id = 1;
     }else{
@@ -590,7 +593,7 @@ class WarehouseController extends Controller
       $total->amount += $result->total;
     }
 
-    return view('warehouse.stock_purchase',compact('url','supplier','tmp','total','reference_no'));
+    return view('warehouse.stock_purchase',compact('url','supplier','tmp','total','reference_no','branch'));
   }
 
   public function ajaxSearchBar(Request $request)
@@ -673,21 +676,41 @@ class WarehouseController extends Controller
 
     foreach($purchase_items as $result){
       if($result->cost != 0){
-        Warehouse_stock::where('barcode',$result->barcode)
-                        ->update([
-                          'cost'=>$result->cost,
-                          'quantity'=>DB::raw('IF (quantity IS null,0,quantity) +'.$result->quantity),
-                        ]);
+
+        if($request->branch_id == 'warehouse'){
+          Warehouse_stock::where('barcode',$result->barcode)
+                ->update([
+                  'cost'=>$result->cost,
+                  'quantity'=>DB::raw('IF (quantity IS null,0,quantity) +'.$result->quantity),
+                ]);
+        }else{
+          branch_product::where('barcode',$result->barcode)
+                          ->where('branch_id',$request->branch_id)
+                          ->update([
+                            'cost'=>$result->cost,
+                            'quantity'=>DB::raw('IF (quantity IS null,0,quantity) +'.$result->quantity),
+                          ]);
+        }
 
         Product_list::where('barcode',$result->barcode)->update(['cost'=>$result->cost]);
         Branch_product::where('barcode',$result->barcode)->update(['cost'=>$result->cost,'product_sync'=>0]);
 
         $total_cost += $result->total;
+
       }else{
-        Warehouse_stock::where('barcode',$result->barcode)
-                        ->update([
-                          'quantity'=>DB::raw('IF (quantity IS null,0,quantity) +'.$result->quantity),
-                        ]);
+
+        if($request->branch_id == 'warehouse'){
+          Warehouse_stock::where('barcode',$result->barcode)
+                          ->update([
+                            'quantity'=>DB::raw('IF (quantity IS null,0,quantity) +'.$result->quantity),
+                          ]);
+        }else{
+          branch_product::where('barcode',$result->barcode)
+                          ->where('branch_id',$request->branch_id)
+                          ->update([
+                            'quantity'=>DB::raw('IF (quantity IS null,0,quantity) +'.$result->quantity),
+                          ]);
+        }
       }
     }
 
