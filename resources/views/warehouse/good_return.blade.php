@@ -89,6 +89,20 @@
         </div>
 
         <div class="row">
+          <div class="col-md-4">
+            <label class="title">Branch :</label>
+          </div>
+          <div class="col-md-8">
+            <select name="branch_id" class="form-control" id="branch_id">
+              <option value="warehouse">HQ Warehouse</option>
+              @foreach($branch as $result)
+                <option value="{{$result->id}}">{{$result->branch_name}}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
           <div class="col-md-12">
             <input type="text" name="searched_value" class="form-control" style="width: 25%;float:right;margin-left:5px;" placeholder="Fill In Barcode" />
             <button id="check_barcode" type="button" class="btn btn-secondary" style="float:right">Check Barcode</button>
