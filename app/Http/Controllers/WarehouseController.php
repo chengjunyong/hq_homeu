@@ -888,6 +888,8 @@ class WarehouseController extends Controller
                           ->select('id')
                           ->orderBy('id','desc')
                           ->first();
+
+    $branch = Branch::get();
     if(!$a){
       $last_id = 1;
     }else{
@@ -908,7 +910,7 @@ class WarehouseController extends Controller
       $total->amount += $result->total;
     }
 
-    return view('warehouse.good_return',compact('url','supplier','tmp','total','gr_no'));
+    return view('warehouse.good_return',compact('url','supplier','tmp','total','gr_no','branch'));
   }
 
   public function ajaxAddGoodReturnItem(Request $request)
@@ -1041,10 +1043,19 @@ class WarehouseController extends Controller
 
     $total_cost = 0;
     foreach($good_list as $result){
-      Warehouse_stock::where('barcode',$result->barcode)
-                      ->update([
-                        'quantity' => DB::raw('IF (quantity IS null,0,quantity) -'.$result->quantity),
-                      ]);
+
+      if($request->branch_id == 'warehouse'){
+        Warehouse_stock::where('barcode',$result->barcode)
+                        ->update([
+                          'quantity' => DB::raw('IF (quantity IS null,0,quantity) -'.$result->quantity),
+                        ]);
+      }else{
+        branch_product::where('barcode',$result->barcode)
+                        ->where('branch_id',$request->branch_id)
+                        ->update([
+                          'quantity' => DB::raw('IF (quantity IS null,0,quantity) -'.$result->quantity),
+                        ]);
+      }
 
     $total_cost += $result->total;
     }
