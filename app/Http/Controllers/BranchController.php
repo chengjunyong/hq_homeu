@@ -401,11 +401,13 @@ class BranchController extends Controller
       //Decide to take branch product or warehouse product                        
       if($do_list->to == "HQ"){
         $warehouse_stock = Warehouse_stock::where('id',$request->product_id[$x])->first();
-        $total_restock_quantity = $restock_quantity + intval($warehouse_stock->quantity);
-        Warehouse_stock::where('id',$request->product_id[$x])
-                ->update([
-                  'quantity' => $total_restock_quantity,
-                ]);
+        if($warehouse_stock != null){
+          $total_restock_quantity = $restock_quantity + intval($warehouse_stock->quantity);
+          Warehouse_stock::where('id',$request->product_id[$x])
+                  ->update([
+                    'quantity' => $total_restock_quantity,
+                  ]);
+        }
       }else{  
         $branch_product = Branch_product::where('id',$request->product_id[$x])->first();
         if($branch_product != null){
