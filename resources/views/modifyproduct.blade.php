@@ -424,42 +424,42 @@ $(document).ready(function(){
     $("#promo_price").prop("required",false);
   });
 
-  $("#promo_start").change(()=>{
-    $("#promo_price").prop("required",true);
-    $("#promo_start")[0].setCustomValidity("");
-    if(!$("#promo_end").val() == ""){
-      let a = new Date($("#promo_start").val());
-      let b = new Date($("#promo_end").val());
-      if(a > b){
-        $("#promo_start")[0].setCustomValidity("Promotion Start Date Cannot Late Than Promotion End Date");
-      }else{
-        $("#promo_start")[0].setCustomValidity("");
-      }
-    }else{
-      $("#promo_end")[0].setCustomValidity("Promotion End Date Cannot Be Empty");
-    }
-  });
+  // $("#promo_start").change(()=>{
+  //   $("#promo_price").prop("required",true);
+  //   $("#promo_start")[0].setCustomValidity("");
+  //   if(!$("#promo_end").val() == ""){
+  //     let a = new Date($("#promo_start").val());
+  //     let b = new Date($("#promo_end").val());
+  //     if(a > b){
+  //       $("#promo_start")[0].setCustomValidity("Promotion Start Date Cannot Late Than Promotion End Date");
+  //     }else{
+  //       $("#promo_start")[0].setCustomValidity("");
+  //     }
+  //   }else{
+  //     $("#promo_end")[0].setCustomValidity("Promotion End Date Cannot Be Empty");
+  //   }
+  // });
 
-  $("#promo_end").change(()=>{
-    $("#promo_price").prop("required",true);
-    $("#promo_end")[0].setCustomValidity("");
-    if(!$("#promo_start").val() == ""){
-      let a = new Date($("#promo_start").val());
-      let b = new Date($("#promo_end").val());
-      if(a > b){
-        $("#promo_end")[0].setCustomValidity("Promotion End Date Cannot Early Than Promotion Start Date");
-      }else{
-        $("#promo_end")[0].setCustomValidity("");
-      }
-    }else{
-      $("#promo_start")[0].setCustomValidity("Promotion Start Date Cannot Be Empty");
-    }
-  });
+  // $("#promo_end").change(()=>{
+  //   $("#promo_price").prop("required",true);
+  //   $("#promo_end")[0].setCustomValidity("");
+  //   if(!$("#promo_start").val() == ""){
+  //     let a = new Date($("#promo_start").val());
+  //     let b = new Date($("#promo_end").val());
+  //     if(a > b){
+  //       $("#promo_end")[0].setCustomValidity("Promotion End Date Cannot Early Than Promotion Start Date");
+  //     }else{
+  //       $("#promo_end")[0].setCustomValidity("");
+  //     }
+  //   }else{
+  //     $("#promo_start")[0].setCustomValidity("Promotion Start Date Cannot Be Empty");
+  //   }
+  // });
 
-  $("input[type=submit]").click(()=>{
-    if(($("#promo_start").val() != "" || $("#promo_end").val() != "") && $("#promo_price").val() == "")
-      $("#promo_price").prop("required",true);
-  });
+  // $("input[type=submit]").click(()=>{
+  //   if(($("#promo_start").val() != "" || $("#promo_end").val() != "") && $("#promo_price").val() == "")
+  //     $("#promo_price").prop("required",true);
+  // });
 
   $("#delete_product").click(function(){
     let product = $("input[name=product_name]").val()
@@ -532,178 +532,178 @@ $(document).ready(function(){
     })
   });
 
-  $("#wholesales_start").change(()=>{
-    $("#wholesales_start")[0].setCustomValidity("");
-    if(!$("#wholesales_end").val() == ""){
-      let a = new Date($("#wholesales_start").val());
-      let b = new Date($("#wholesales_end").val());
-      if(a > b){
-        $("#wholesales_start")[0].setCustomValidity("Wholesales Start Date Cannot Late Than Wholesales End Date");
-      }else{
-        $("#wholesales_start")[0].setCustomValidity("");
-      }
-    }else{
-      $("#wholesales_end")[0].setCustomValidity("Wholesales End Date Cannot Be Empty");
-    }
-  });
+  // $("#wholesales_start").change(()=>{
+  //   $("#wholesales_start")[0].setCustomValidity("");
+  //   if(!$("#wholesales_end").val() == ""){
+  //     let a = new Date($("#wholesales_start").val());
+  //     let b = new Date($("#wholesales_end").val());
+  //     if(a > b){
+  //       $("#wholesales_start")[0].setCustomValidity("Wholesales Start Date Cannot Late Than Wholesales End Date");
+  //     }else{
+  //       $("#wholesales_start")[0].setCustomValidity("");
+  //     }
+  //   }else{
+  //     $("#wholesales_end")[0].setCustomValidity("Wholesales End Date Cannot Be Empty");
+  //   }
+  // });
 
-  $("#wholesales_end").change(()=>{
-    $("#wholesales_end")[0].setCustomValidity("");
-    if(!$("#wholesales_start").val() == ""){
-      let a = new Date($("#wholesales_start").val());
-      let b = new Date($("#wholesales_end").val());
-      if(a > b){
-        $("#wholesales_end")[0].setCustomValidity("Wholesales End Date Cannot Early Than Wholesales Start Date");
-      }else{
-        $("#wholesales_end")[0].setCustomValidity("");
-      }
-    }else{
-      $("#wholesales_start")[0].setCustomValidity("Wholesales Start Date Cannot Be Empty");
-    }
-  });
+  // $("#wholesales_end").change(()=>{
+  //   $("#wholesales_end")[0].setCustomValidity("");
+  //   if(!$("#wholesales_start").val() == ""){
+  //     let a = new Date($("#wholesales_start").val());
+  //     let b = new Date($("#wholesales_end").val());
+  //     if(a > b){
+  //       $("#wholesales_end")[0].setCustomValidity("Wholesales End Date Cannot Early Than Wholesales Start Date");
+  //     }else{
+  //       $("#wholesales_end")[0].setCustomValidity("");
+  //     }
+  //   }else{
+  //     $("#wholesales_start")[0].setCustomValidity("Wholesales Start Date Cannot Be Empty");
+  //   }
+  // });
 
   // Start Normal Wholesales
-  $("#normal_wholesales_price,#normal_wholesales_quantity").change(()=>{
-    if($("#normal_wholesales_price").val() != "" || $("#normal_wholesales_quantity").val() != ""){
-      $("#normal_wholesales_price").prop("required",true);
-      $("#normal_wholesales_quantity").prop("required",true);
-    }else{
-      $("#normal_wholesales_price").prop("required",false);
-      $("#normal_wholesales_quantity").prop("required",false);  
-    }
-  });
+  // $("#normal_wholesales_price,#normal_wholesales_quantity").change(()=>{
+  //   if($("#normal_wholesales_price").val() != "" || $("#normal_wholesales_quantity").val() != ""){
+  //     $("#normal_wholesales_price").prop("required",true);
+  //     $("#normal_wholesales_quantity").prop("required",true);
+  //   }else{
+  //     $("#normal_wholesales_price").prop("required",false);
+  //     $("#normal_wholesales_quantity").prop("required",false);  
+  //   }
+  // });
 
-  $("#normal_wholesales_price2,#normal_wholesales_quantity2").change(()=>{
-    if($("#normal_wholesales_price2").val() != "" || $("#normal_wholesales_quantity2").val() != ""){
-      $("#normal_wholesales_price2").prop("required",true);
-      $("#normal_wholesales_quantity2").prop("required",true);
-    }else{
-      $("#normal_wholesales_price2").prop("required",false);
-      $("#normal_wholesales_quantity2").prop("required",false);  
-    }
-  });
+  // $("#normal_wholesales_price2,#normal_wholesales_quantity2").change(()=>{
+  //   if($("#normal_wholesales_price2").val() != "" || $("#normal_wholesales_quantity2").val() != ""){
+  //     $("#normal_wholesales_price2").prop("required",true);
+  //     $("#normal_wholesales_quantity2").prop("required",true);
+  //   }else{
+  //     $("#normal_wholesales_price2").prop("required",false);
+  //     $("#normal_wholesales_quantity2").prop("required",false);  
+  //   }
+  // });
 
-  $("#normal_wholesales_price3,#normal_wholesales_quantity3").change(()=>{
-    if($("#normal_wholesales_price3").val() != "" || $("#normal_wholesales_quantity3").val() != ""){
-      $("#normal_wholesales_price3").prop("required",true);
-      $("#normal_wholesales_quantity3").prop("required",true);
-    }else{
-      $("#normal_wholesales_price3").prop("required",false);
-      $("#normal_wholesales_quantity3").prop("required",false);  
-    }
-  });
+  // $("#normal_wholesales_price3,#normal_wholesales_quantity3").change(()=>{
+  //   if($("#normal_wholesales_price3").val() != "" || $("#normal_wholesales_quantity3").val() != ""){
+  //     $("#normal_wholesales_price3").prop("required",true);
+  //     $("#normal_wholesales_quantity3").prop("required",true);
+  //   }else{
+  //     $("#normal_wholesales_price3").prop("required",false);
+  //     $("#normal_wholesales_quantity3").prop("required",false);  
+  //   }
+  // });
 
-  $("#normal_wholesales_price4,#normal_wholesales_quantity4").change(()=>{
-    if($("#normal_wholesales_price4").val() != "" || $("#normal_wholesales_quantity4").val() != ""){
-      $("#normal_wholesales_price4").prop("required",true);
-      $("#normal_wholesales_quantity4").prop("required",true);
-    }else{
-      $("#normal_wholesales_price4").prop("required",false);
-      $("#normal_wholesales_quantity4").prop("required",false);  
-    }
-  });
+  // $("#normal_wholesales_price4,#normal_wholesales_quantity4").change(()=>{
+  //   if($("#normal_wholesales_price4").val() != "" || $("#normal_wholesales_quantity4").val() != ""){
+  //     $("#normal_wholesales_price4").prop("required",true);
+  //     $("#normal_wholesales_quantity4").prop("required",true);
+  //   }else{
+  //     $("#normal_wholesales_price4").prop("required",false);
+  //     $("#normal_wholesales_quantity4").prop("required",false);  
+  //   }
+  // });
 
-  $("#normal_wholesales_price5,#normal_wholesales_quantity5").change(()=>{
-    if($("#normal_wholesales_price5").val() != "" || $("#normal_wholesales_quantity5").val() != ""){
-      $("#normal_wholesales_price5").prop("required",true);
-      $("#normal_wholesales_quantity5").prop("required",true);
-    }else{
-      $("#normal_wholesales_price5").prop("required",false);
-      $("#normal_wholesales_quantity5").prop("required",false);  
-    }
-  });
+  // $("#normal_wholesales_price5,#normal_wholesales_quantity5").change(()=>{
+  //   if($("#normal_wholesales_price5").val() != "" || $("#normal_wholesales_quantity5").val() != ""){
+  //     $("#normal_wholesales_price5").prop("required",true);
+  //     $("#normal_wholesales_quantity5").prop("required",true);
+  //   }else{
+  //     $("#normal_wholesales_price5").prop("required",false);
+  //     $("#normal_wholesales_quantity5").prop("required",false);  
+  //   }
+  // });
 
-  $("#normal_wholesales_price6,#normal_wholesales_quantity6").change(()=>{
-    if($("#normal_wholesales_price6").val() != "" || $("#normal_wholesales_quantity6").val() != ""){
-      $("#normal_wholesales_price6").prop("required",true);
-      $("#normal_wholesales_quantity6").prop("required",true);
-    }else{
-      $("#normal_wholesales_price6").prop("required",false);
-      $("#normal_wholesales_quantity6").prop("required",false);  
-    }
-  });
+  // $("#normal_wholesales_price6,#normal_wholesales_quantity6").change(()=>{
+  //   if($("#normal_wholesales_price6").val() != "" || $("#normal_wholesales_quantity6").val() != ""){
+  //     $("#normal_wholesales_price6").prop("required",true);
+  //     $("#normal_wholesales_quantity6").prop("required",true);
+  //   }else{
+  //     $("#normal_wholesales_price6").prop("required",false);
+  //     $("#normal_wholesales_quantity6").prop("required",false);  
+  //   }
+  // });
 
-  $("#normal_wholesales_price7,#normal_wholesales_quantity7").change(()=>{
-    if($("#normal_wholesales_price7").val() != "" || $("#normal_wholesales_quantity7").val() != ""){
-      $("#normal_wholesales_price7").prop("required",true);
-      $("#normal_wholesales_quantity7").prop("required",true);
-    }else{
-      $("#normal_wholesales_price7").prop("required",false);
-      $("#normal_wholesales_quantity7").prop("required",false);  
-    }
-  });
+  // $("#normal_wholesales_price7,#normal_wholesales_quantity7").change(()=>{
+  //   if($("#normal_wholesales_price7").val() != "" || $("#normal_wholesales_quantity7").val() != ""){
+  //     $("#normal_wholesales_price7").prop("required",true);
+  //     $("#normal_wholesales_quantity7").prop("required",true);
+  //   }else{
+  //     $("#normal_wholesales_price7").prop("required",false);
+  //     $("#normal_wholesales_quantity7").prop("required",false);  
+  //   }
+  // });
   //End Normal Wholesale
 
   // Promotion Wholesale Start
-  $("#wholesales_price,#wholesales_quantity").change(()=>{
-    if($("#wholesales_price").val() != "" || $("#wholesales_quantity").val() != ""){
-      $("#wholesales_price").prop("required",true);
-      $("#wholesales_quantity").prop("required",true);
-    }else{
-      $("#wholesales_price").prop("required",false);
-      $("#wholesales_quantity").prop("required",false);  
-    }
-  });
+  // $("#wholesales_price,#wholesales_quantity").change(()=>{
+  //   if($("#wholesales_price").val() != "" || $("#wholesales_quantity").val() != ""){
+  //     $("#wholesales_price").prop("required",true);
+  //     $("#wholesales_quantity").prop("required",true);
+  //   }else{
+  //     $("#wholesales_price").prop("required",false);
+  //     $("#wholesales_quantity").prop("required",false);  
+  //   }
+  // });
 
-  $("#wholesales_price2,#wholesales_quantity2").change(()=>{
-    if($("#wholesales_price2").val() != "" || $("#wholesales_quantity2").val() != ""){
-      $("#wholesales_price2").prop("required",true);
-      $("#wholesales_quantity2").prop("required",true);
-    }else{
-      $("#wholesales_price2").prop("required",false);
-      $("#wholesales_quantity2").prop("required",false);  
-    }
-  });
+  // $("#wholesales_price2,#wholesales_quantity2").change(()=>{
+  //   if($("#wholesales_price2").val() != "" || $("#wholesales_quantity2").val() != ""){
+  //     $("#wholesales_price2").prop("required",true);
+  //     $("#wholesales_quantity2").prop("required",true);
+  //   }else{
+  //     $("#wholesales_price2").prop("required",false);
+  //     $("#wholesales_quantity2").prop("required",false);  
+  //   }
+  // });
 
-  $("#wholesales_price3,#wholesales_quantity3").change(()=>{
-    if($("#wholesales_price3").val() != "" || $("#wholesales_quantity3").val() != ""){
-      $("#wholesales_price3").prop("required",true);
-      $("#wholesales_quantity3").prop("required",true);
-    }else{
-      $("#wholesales_price3").prop("required",false);
-      $("#wholesales_quantity3").prop("required",false);  
-    }
-  });
+  // $("#wholesales_price3,#wholesales_quantity3").change(()=>{
+  //   if($("#wholesales_price3").val() != "" || $("#wholesales_quantity3").val() != ""){
+  //     $("#wholesales_price3").prop("required",true);
+  //     $("#wholesales_quantity3").prop("required",true);
+  //   }else{
+  //     $("#wholesales_price3").prop("required",false);
+  //     $("#wholesales_quantity3").prop("required",false);  
+  //   }
+  // });
 
-  $("#wholesales_price4,#wholesales_quantity4").change(()=>{
-    if($("#wholesales_price4").val() != "" || $("#wholesales_quantity4").val() != ""){
-      $("#wholesales_price4").prop("required",true);
-      $("#wholesales_quantity4").prop("required",true);
-    }else{
-      $("#wholesales_price4").prop("required",false);
-      $("#wholesales_quantity4").prop("required",false);  
-    }
-  });
+  // $("#wholesales_price4,#wholesales_quantity4").change(()=>{
+  //   if($("#wholesales_price4").val() != "" || $("#wholesales_quantity4").val() != ""){
+  //     $("#wholesales_price4").prop("required",true);
+  //     $("#wholesales_quantity4").prop("required",true);
+  //   }else{
+  //     $("#wholesales_price4").prop("required",false);
+  //     $("#wholesales_quantity4").prop("required",false);  
+  //   }
+  // });
 
-  $("#wholesales_price5,#wholesales_quantity5").change(()=>{
-    if($("#wholesales_price5").val() != "" || $("#wholesales_quantity5").val() != ""){
-      $("#wholesales_price5").prop("required",true);
-      $("#wholesales_quantity5").prop("required",true);
-    }else{
-      $("#wholesales_price5").prop("required",false);
-      $("#wholesales_quantity5").prop("required",false);  
-    }
-  });
+  // $("#wholesales_price5,#wholesales_quantity5").change(()=>{
+  //   if($("#wholesales_price5").val() != "" || $("#wholesales_quantity5").val() != ""){
+  //     $("#wholesales_price5").prop("required",true);
+  //     $("#wholesales_quantity5").prop("required",true);
+  //   }else{
+  //     $("#wholesales_price5").prop("required",false);
+  //     $("#wholesales_quantity5").prop("required",false);  
+  //   }
+  // });
 
-  $("#wholesales_price6,#wholesales_quantity6").change(()=>{
-    if($("#wholesales_price6").val() != "" || $("#wholesales_quantity6").val() != ""){
-      $("#wholesales_price6").prop("required",true);
-      $("#wholesales_quantity6").prop("required",true);
-    }else{
-      $("#wholesales_price6").prop("required",false);
-      $("#wholesales_quantity6").prop("required",false);  
-    }
-  });
+  // $("#wholesales_price6,#wholesales_quantity6").change(()=>{
+  //   if($("#wholesales_price6").val() != "" || $("#wholesales_quantity6").val() != ""){
+  //     $("#wholesales_price6").prop("required",true);
+  //     $("#wholesales_quantity6").prop("required",true);
+  //   }else{
+  //     $("#wholesales_price6").prop("required",false);
+  //     $("#wholesales_quantity6").prop("required",false);  
+  //   }
+  // });
 
-  $("#wholesales_price7,#wholesales_quantity7").change(()=>{
-    if($("#wholesales_price7").val() != "" || $("#wholesales_quantity7").val() != ""){
-      $("#wholesales_price7").prop("required",true);
-      $("#wholesales_quantity7").prop("required",true);
-    }else{
-      $("#wholesales_price7").prop("required",false);
-      $("#wholesales_quantity7").prop("required",false);  
-    }
-  });
+  // $("#wholesales_price7,#wholesales_quantity7").change(()=>{
+  //   if($("#wholesales_price7").val() != "" || $("#wholesales_quantity7").val() != ""){
+  //     $("#wholesales_price7").prop("required",true);
+  //     $("#wholesales_quantity7").prop("required",true);
+  //   }else{
+  //     $("#wholesales_price7").prop("required",false);
+  //     $("#wholesales_quantity7").prop("required",false);  
+  //   }
+  // });
 
   $("select[name=measurement]").change(function(){
     changeStep();
