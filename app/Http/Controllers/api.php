@@ -18,6 +18,7 @@ use App\Refund_detail;
 use App\Delivery;
 use App\Delivery_detail;
 use App\Hamper;
+use App\StockBalanceLog;
 
 class api extends Controller
 {
@@ -709,5 +710,26 @@ class api extends Controller
         return "Something Wrong";
 
       }
+    }
+
+    public function dailyRecordStockBalance()
+    {
+      //Stock Kawalan Category id
+      $department_id = 21;
+
+      $branch_list = Branch_product::where('department_id',$department_id)
+                                    ->orderBy('branch_id','ASC')
+                                    ->orderBy('barcode','ASC')
+                                    ->get();
+
+      foreach($branch_list as $result){
+        StockBalanceLog::create([
+          'branch_id' => $result->branch_id,
+          'barcode' => $result->barcode,
+          'balance' => $result->quantity ?? 0,
+        ]);
+      }
+
+      return "Done";
     }
 }

@@ -2668,4 +2668,51 @@ class SalesController extends Controller
     return response()->json($path);
   }
 
+  public function getStockBalanceBranchReport()
+  {
+    $data = collect();
+    $branches = Branch::get();
+    $stocks = Branch_product::where('department_id',21)
+                            ->orderBy('branch_id','ASC')
+                            ->orderBy('barcode','ASC')
+                            ->get();
+
+    $warehouse = Warehouse_stock::where('department_id',21)
+                                ->orderBy('barcode','ASC')
+                                ->get();
+
+    $items = Product_list::join('category as c','c.id','=','product_list.category_id')
+                          ->where('product_list.department_id',21)
+                          ->orderBy('barcode','ASC')
+                          ->get();
+
+    foreach($items as $index => $item){
+      $data->push([
+        'barcode' => $item->barcode,
+        'product_name' => $item->product_name,
+        'category' => $item->category_name,
+        'branch_qty' => [
+          'wb1' => floatval($stocks->where('barcode',$item->barcode)->where('branch_id',1)->first()->quantity ?? 0),
+          'wb2' => floatval($stocks->where('barcode',$item->barcode)->where('branch_id',3)->first()->quantity ?? 0),
+          'bac' => floatval($stocks->where('barcode',$item->barcode)->where('branch_id',4)->first()->quantity ?? 0),
+          'pc' => floatval($stocks->where('barcode',$item->barcode)->where('branch_id',5)->first()->quantity ?? 0),
+          'pm1' => floatval($stocks->where('barcode',$item->barcode)->where('branch_id',6)->first()->quantity ?? 0),
+          'pm2' => floatval($stocks->where('barcode',$item->barcode)->where('branch_id',7)->first()->quantity ?? 0),
+          'hq' => floatval($warehouse->where('barcode',$item->barcode)->first()->quantity ?? 0),
+        ]
+      ]);
+    }
+
+    dd($data);
+    
+
+    return view('report.stock_balance_branch_report',compact('data','branches'));
+  }
+
+  public function postStockBalanceBranchReport()
+  {
+
+
+  }
+
 }
