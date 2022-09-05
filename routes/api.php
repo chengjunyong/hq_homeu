@@ -25,4 +25,5 @@ Route::post('/branchSyncProductListCompleted', 'api@branchSyncProductListComplet
 
 //CronJob
 Route::get('/PriceSync','api@CronPriceSync')->name('CronPriceSync');
+Route::get('/StockLog','api@dailyRecordStockBalance')->name('dailyRecordStockBalance');
 
