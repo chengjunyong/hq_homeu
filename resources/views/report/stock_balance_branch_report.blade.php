@@ -64,35 +64,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <thead>
         <tr>
           <th rowspan="2">Bil</th>
-          <th rowspan="2">Department</th>
-          <th rowspan="2">Ketageri</th>
-          <th rowspan="2">Barcord</th>
+          <th rowspan="2">Category</th>
+          <th rowspan="2">Barcode</th>
           <th rowspan="2">Product Name</th>
           <th colspan="12" style="text-align: center">Stock Balance</th>
         </tr>
         <tr>
-          <td colspan="5"></td>
-          <td style="border-right: 1px black solid;">Warehouse</td>
           @foreach($branches as $result)
-            <td style="border-right: 1px black solid;">{{$result->branch_name}}</td>
+            <td style="border-right: 1px black solid;text-align:center">{{$result->branch_name}}</td>
           @endforeach
+          <td style="border-right: 1px black solid;text-align:center">Warehouse</td>
         </tr>
       </thead>
       <tbody class="border">
         @foreach($data as $key => $result)
           <tr>
             <td>{{$key +1}}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{$result['category']}}</td>
+            <td>{{$result['barcode']}}</td>
+            <td>{{$result['product_name']}}</td>
+            <td style="text-align:right">{{$result['branch_qty']['wb1']}}</td>
+            <td style="text-align:right">{{$result['branch_qty']['wb2']}}</td>
+            <td style="text-align:right">{{$result['branch_qty']['bac']}}</td>
+            <td style="text-align:right">{{$result['branch_qty']['pc']}}</td>
+            <td style="text-align:right">{{$result['branch_qty']['pm1']}}</td>
+            <td style="text-align:right">{{$result['branch_qty']['pm2']}}</td>
+            <td style="text-align:right">{{$result['branch_qty']['hq']}}</td>
           </tr>
         @endforeach
       </tbody>

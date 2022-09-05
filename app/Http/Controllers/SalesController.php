@@ -2671,7 +2671,7 @@ class SalesController extends Controller
   public function getStockBalanceBranchReport()
   {
     $data = collect();
-    $branches = Branch::get();
+    $branches = Branch::orderBy('id','ASC')->get();
     $stocks = Branch_product::where('department_id',21)
                             ->orderBy('branch_id','ASC')
                             ->orderBy('barcode','ASC')
@@ -2702,9 +2702,6 @@ class SalesController extends Controller
         ]
       ]);
     }
-
-    dd($data);
-    
 
     return view('report.stock_balance_branch_report',compact('data','branches'));
   }
