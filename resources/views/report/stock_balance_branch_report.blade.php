@@ -73,7 +73,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           @foreach($branches as $result)
             <td style="border-right: 1px black solid;text-align:center">{{$result->branch_name}}</td>
           @endforeach
-          <td style="border-right: 1px black solid;text-align:center">Warehouse</td>
+          @if($warehouse != null)
+            <td style="border-right: 1px black solid;text-align:center">Warehouse</td>
+          @endif
         </tr>
       </thead>
       <tbody class="border">
@@ -83,13 +85,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <td>{{$result['category']}}</td>
             <td>{{$result['barcode']}}</td>
             <td>{{$result['product_name']}}</td>
-            <td style="text-align:right">{{$result['branch_qty']['wb1']}}</td>
-            <td style="text-align:right">{{$result['branch_qty']['wb2']}}</td>
-            <td style="text-align:right">{{$result['branch_qty']['bac']}}</td>
-            <td style="text-align:right">{{$result['branch_qty']['pc']}}</td>
-            <td style="text-align:right">{{$result['branch_qty']['pm1']}}</td>
-            <td style="text-align:right">{{$result['branch_qty']['pm2']}}</td>
-            <td style="text-align:right">{{$result['branch_qty']['hq']}}</td>
+            @foreach($result['branch_qty'] as $branch_qty)
+              <td style="text-align:right">{{$branch_qty}}</td>
+            @endforeach
           </tr>
         @endforeach
       </tbody>

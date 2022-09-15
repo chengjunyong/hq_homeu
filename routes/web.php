@@ -137,6 +137,7 @@ Route::post('/DeliveryReport','SalesController@postDeliveryReport')->name('postD
 Route::get('/ExportDeliveryReport','SalesController@ajaxDeliveryReport')->name('ajaxDeliveryReport');
 Route::get('/StockBalanceBranchReport','SalesController@getStockBalanceBranchReport')->name('getStockBalanceBranchReport');
 Route::post('/StockBalanceBranchReport','SalesController@postStockBalanceBranchReport')->name('postStockBalanceBranchReport');
+Route::post('/ajaxStockBalanceBranchReport','SalesController@ajaxStockBalanceBranchReport')->name('ajaxStockBalanceBranchReport');
 
 // User access control
 Route::get('/user_access_control', 'UserController@getUserAccessControl')->name('getUserAccessControl'); 
