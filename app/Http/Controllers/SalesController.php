@@ -1384,8 +1384,6 @@ class SalesController extends Controller
 
   public function exportStockBalance(Request $request)
   {
-    $branch_id = explode(",",$request->branch_id[0]);
-
     if(!Storage::exists('public/report'))
     {
       Storage::makeDirectory('public/report', 0775, true); //creates directory
@@ -1396,106 +1394,12 @@ class SalesController extends Controller
     Storage::delete($files);
 
     $date = date('d-M-Y h:i:s A', strtotime(now()));
-    $branch = Branch::whereIn('id',$branch_id)->get();
-    $count = count($branch);
+    $branch = Branch::whereIn('id',$request->branch_id)->get();
 
-    $branch_list = "";
-    foreach($branch as $key => $result){
-      if($key+1 == $count){
-        $branch_list .= $result->branch_name;
-      }else{
-        $branch_list .= $result->branch_name.',';
-      }
-    }
+    $branch_list = implode(",",$branch->pluck('branch_name')->toArray());
 
-    if(end($branch_id) == 'hq' && $count == 0){
-      $branch_list .= 'HQ Warehouse';
-    }else if(end($branch_id) == 'hq' && $count != 0){
-      $branch_list .= ',HQ Warehouse';
-    }
-
-    if(count($branch_id) == 1 && $branch_id[0] == 'hq'){
-      $stock = Warehouse_stock::join('department','department.id','=','warehouse_stock.department_id')
-                              ->join('category','category.id','=','warehouse_stock.category_id')
-                              ->select('department.department_name','category.category_name','warehouse_stock.*',DB::raw('SUM(quantity) as total_quantity'))
-                              ->groupBy('warehouse_stock.barcode')
-                              ->orderBy('barcode','asc')
-                              ->get();
-
-      $stock_array = array();
-      foreach($stock as $key => $result){
-        array_push($stock_array,[$key+1,$result->department_name,$result->category_name,$result->barcode,$result->product_name,$result->cost,$result->total_quantity,$result->price,$result->cost * $result->total_quantity]);
-      }
-    }else{
-      $stock = Branch_product::join('department','department.id','=','branch_product.department_id')
-                      ->join('category','category.id','=','branch_product.category_id')
-                      ->whereIn('branch_product.branch_id',$branch_id)
-                      ->select('department.department_name','category.category_name','branch_product.*',DB::raw('SUM(quantity) as total_quantity'))
-                      ->groupBy('branch_product.barcode')
-                      ->orderBy('barcode','asc')
-                      ->get();
-
-      if(end($branch_id) == 'hq'){
-        $stock2 = Warehouse_stock::join('department','department.id','=','warehouse_stock.department_id')
-                                  ->join('category','category.id','=','warehouse_stock.category_id')
-                                  ->select('department.department_name','category.category_name','warehouse_stock.*',DB::raw('SUM(quantity) as total_quantity'))
-                                  ->groupBy('warehouse_stock.barcode')
-                                  ->orderBy('barcode','asc')
-                                  ->get();
-        $stock_array = array();
-        foreach($stock as $key => $result){
-          array_push($stock_array,[
-            $key+1,
-            $result->department_name,
-            $result->category_name,
-            $result->barcode,
-            $result->product_name,
-            $result->cost,
-            $result->total_quantity + $stock2[$key]->total_quantity,
-            $result->price,
-            $result->cost * ($result->total_quantity + $stock2[$key]->total_quantity)
-          ]);
-        }
-      }else{
-        $stock_array = array();
-        foreach($stock as $key => $result){
-          array_push($stock_array,[$key+1,$result->department_name,$result->category_name,$result->barcode,$result->product_name,$result->cost,$result->total_quantity,$result->price,$result->cost * $result->total_quantity]);
-        }        
-      }
-
-    }
-
-    $balance_stock = Branch_product::whereIn('branch_id',$branch_id)
-                                    ->selectRaw('SUM(cost * quantity) as total')
-                                    ->orderBy('barcode','asc')
-                                    ->first();
-
-    if(end($branch_id) == 'hq'){
-      $warehouse_balance = Warehouse_stock::selectRaw('SUM(cost * quantity) as total')
-                                            ->orderBy('barcode','asc')
-                                            ->first();
-
-      $total_balance_stock = $balance_stock->total + $warehouse_balance->total;
-    }else{
-      $total_balance_stock = $balance_stock->total;
-    }
-
-    $branch_stock_quantity = array();
-    foreach($branch as $result){
-      $a[] = Branch_product::where('branch_id',$result->id)
-                            ->select('quantity')
-                            ->orderBy('barcode','asc')
-                            ->get()
-                            ->toArray();
-    }
-
-    if(end($branch_id) == 'hq'){
-      $a[] = Warehouse_stock::select('quantity')
-                              ->orderBy('barcode','asc')
-                              ->get()
-                              ->toArray();
-    }
-
+    
+    // Exporting Part ////////////////////////////////////////
     $row = 5;
     $col = 11;
 
@@ -1504,7 +1408,6 @@ class SalesController extends Controller
     $spreadsheet->getActiveSheet()->mergeCells('A1:I1');
     $spreadsheet->getActiveSheet()->mergeCells('A2:I2');
     $spreadsheet->getActiveSheet()->mergeCells('G4:H4');
-    $spreadsheet->getActiveSheet()->fromArray($stock_array,null,'A6');  
     $sheet = $spreadsheet->getActiveSheet();
     $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal('center');
 
@@ -1515,15 +1418,10 @@ class SalesController extends Controller
     $sheet->setCellValue('B3', $date);
     $sheet->setCellValue('A4', 'Branch');
     $sheet->setCellValue('B4', $branch_list);
-    $sheet->setCellValue('G4', 'Balance Stock');
+    $sheet->setCellValue('G4', 'Stock Balance Value');
     $sheet->setCellValue('I4', number_format($total_balance_stock,2));
     foreach($branch as $result){
       $sheet->getCellByColumnAndRow($set_col, $row)->setValue($result->branch_name);
-      $set_col++;
-    }
-
-    if(end($branch_id)=='hq'){
-      $sheet->getCellByColumnAndRow($set_col, $row)->setValue('HQ Warehouse');
       $set_col++;
     }
 
@@ -1534,15 +1432,10 @@ class SalesController extends Controller
     $sheet->setCellValue('D5', 'Barcode');
     $sheet->setCellValue('E5', 'Product Name');
     $sheet->setCellValue('F5', 'Cost');
+    $sheet->setCellValue('H5', 'Price');
+    $sheet->setCellValue('H5', 'Total Cost');
     $sheet->setCellValue('G5', 'Total Quantity');
-    $sheet->setCellValue('H5', 'Selling Price');
-    $sheet->setCellValue('I5', 'Total Cost');
-
-    foreach($a as $key1 => $result){
-      foreach($result as $key2 => $final){
-        $sheet->getCellByColumnAndRow($col+$key1, $row+$key2+1)->setValue($final['quantity']); 
-      }
-    }
+  
     $sheet->getStyle('D')->getAlignment()->setHorizontal('left');
     $sheet->getStyle('A5:A25000')->getAlignment()->setHorizontal('left');
     $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
@@ -2682,6 +2575,7 @@ class SalesController extends Controller
     $branches = Branch::whereIn('id',$request->branch_id)->orderBy('id','ASC')->get();
     $stocks = Branch_product::whereIn('branch_id',$request->branch_id)
                             ->where('department_id',21)
+                            ->where('deleted_at',NULL)
                             ->orderBy('branch_id','ASC')
                             ->orderBy('barcode','ASC')
                             ->get();
@@ -2690,12 +2584,14 @@ class SalesController extends Controller
 
     if($warehouse != null){
       $warehouse = Warehouse_stock::where('department_id',21)
+                                  ->where('deleted_at',NULL)
                                   ->orderBy('barcode','ASC')
                                   ->get();
     }
 
     $items = Product_list::join('category as c','c.id','=','product_list.category_id')
                           ->where('product_list.department_id',21)
+                          ->where('deleted_at',NULL)
                           ->orderBy('barcode','ASC')
                           ->get();
 
@@ -2704,28 +2600,28 @@ class SalesController extends Controller
       foreach($branches as $index => $branch){
         switch($branch->id){
           case 1:
-            $tmp['wb1'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',1)->first()->quantity ?? 0);
+            $tmp['wb1'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 1;})->first()->quantity ?? 0);
             break;
           case 3:
-            $tmp['wb2'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',3)->first()->quantity ?? 0);
+            $tmp['wb2'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 3;})->first()->quantity ?? 0);
             break;
           case 4:
-            $tmp['bac'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',4)->first()->quantity ?? 0);
+            $tmp['bac'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 4;})->first()->quantity ?? 0);
             break;
           case 5:
-            $tmp['pc'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',5)->first()->quantity ?? 0);
+            $tmp['pc'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 5;})->first()->quantity ?? 0);
             break;
           case 6:
-            $tmp['pm1'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',6)->first()->quantity ?? 0);
+            $tmp['pm1'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 6;})->first()->quantity ?? 0);
             break;
           case 7:
-            $tmp['pm2'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',7)->first()->quantity ?? 0);
+            $tmp['pm2'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 7;})->first()->quantity ?? 0);
             break;
         }
       }
 
       if($warehouse != null){
-        $tmp['hq'] = floatval($warehouse->where('barcode',$item->barcode)->first()->quantity ?? 0);
+        $tmp['hq'] = floatval($warehouse->filter(function($data) use ($item){return $data->barcode === $item->barcode;})->first()->quantity ?? 0);
       }
 
       $data->push([
@@ -2745,6 +2641,7 @@ class SalesController extends Controller
     $branches = Branch::whereIn('id',$request->branch_id)->orderBy('id','ASC')->get();
     $stocks = Branch_product::whereIn('branch_id',$request->branch_id)
                             ->where('department_id',21)
+                            ->where('deleted_at',NULL)
                             ->orderBy('branch_id','ASC')
                             ->orderBy('barcode','ASC')
                             ->get();
@@ -2753,12 +2650,14 @@ class SalesController extends Controller
 
     if($warehouse != null){
       $warehouse = Warehouse_stock::where('department_id',21)
+                                  ->where('deleted_at',NULL)
                                   ->orderBy('barcode','ASC')
                                   ->get();
     }
 
     $items = Product_list::join('category as c','c.id','=','product_list.category_id')
                           ->where('product_list.department_id',21)
+                          ->where('deleted_at',NULL)
                           ->orderBy('barcode','ASC')
                           ->get();
 
@@ -2767,28 +2666,28 @@ class SalesController extends Controller
       foreach($branches as $index => $branch){
         switch($branch->id){
           case 1:
-            $tmp['wb1'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',1)->first()->quantity ?? 0);
+            $tmp['wb1'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 1;})->first()->quantity ?? 0);
             break;
           case 3:
-            $tmp['wb2'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',3)->first()->quantity ?? 0);
+            $tmp['wb2'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 3;})->first()->quantity ?? 0);
             break;
           case 4:
-            $tmp['bac'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',4)->first()->quantity ?? 0);
+            $tmp['bac'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 4;})->first()->quantity ?? 0);
             break;
           case 5:
-            $tmp['pc'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',5)->first()->quantity ?? 0);
+            $tmp['pc'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 5;})->first()->quantity ?? 0);
             break;
           case 6:
-            $tmp['pm1'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',6)->first()->quantity ?? 0);
+            $tmp['pm1'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 6;})->first()->quantity ?? 0);
             break;
           case 7:
-            $tmp['pm2'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',7)->first()->quantity ?? 0);
+            $tmp['pm2'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 7;})->first()->quantity ?? 0);
             break;
         }
       }
 
       if($warehouse != null){
-        $tmp['hq'] = floatval($warehouse->where('barcode',$item->barcode)->first()->quantity ?? 0);
+        $tmp['hq'] = floatval($warehouse->filter(function($data) use ($item){return $data->barcode === $item->barcode;})->first()->quantity ?? 0);
       }
 
       $data->push([
