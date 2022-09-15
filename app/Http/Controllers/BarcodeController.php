@@ -89,7 +89,7 @@ class BarcodeController extends Controller
         return response()->json($response);
       }
 
-      if(!$request->stock_count)
+      if($request->stock_count < 0)
       {
         $response = new \stdClass();
         $response->error = 1;
