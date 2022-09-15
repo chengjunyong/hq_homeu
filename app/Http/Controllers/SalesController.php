@@ -2,30 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Branch;
-use App\Transaction;
-use App\Transaction_detail;
-use App\Product_list;
-use App\Branch_stock_history;
-use App\Branch_product;
-use App\Do_list;
-use App\Do_detail;
-use App\Branch_shift;
-use App\Cash_float;
 use App\Refund;
-use App\Refund_detail;
-use App\Department;
+use App\Do_list;
 use App\Category;
+use App\Do_detail;
+use Carbon\Carbon;
+use App\Cash_float;
+use App\Department;
+use App\Transaction;
+use App\Branch_shift;
+use App\Product_list;
+use App\Refund_detail;
+use App\Branch_product;
 use App\Warehouse_stock;
+use App\Transaction_detail;
+use Illuminate\Support\Str;
 
+use Illuminate\Http\Request;
+use App\Branch_stock_history;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\CelL\DataType;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class SalesController extends Controller
 {
@@ -2670,16 +2671,28 @@ class SalesController extends Controller
 
   public function getStockBalanceBranchReport()
   {
-    $data = collect();
     $branches = Branch::orderBy('id','ASC')->get();
-    $stocks = Branch_product::where('department_id',21)
+
+    return view('report.stock_balance_branch_index',compact('branches'));
+  }
+
+  public function postStockBalanceBranchReport(Request $request)
+  {
+    $data = collect();
+    $branches = Branch::whereIn('id',$request->branch_id)->orderBy('id','ASC')->get();
+    $stocks = Branch_product::whereIn('branch_id',$request->branch_id)
+                            ->where('department_id',21)
                             ->orderBy('branch_id','ASC')
                             ->orderBy('barcode','ASC')
                             ->get();
+    
+    $warehouse = array_filter($request->branch_id,function($a){return $a == 99;});
 
-    $warehouse = Warehouse_stock::where('department_id',21)
-                                ->orderBy('barcode','ASC')
-                                ->get();
+    if($warehouse != null){
+      $warehouse = Warehouse_stock::where('department_id',21)
+                                  ->orderBy('barcode','ASC')
+                                  ->get();
+    }
 
     $items = Product_list::join('category as c','c.id','=','product_list.category_id')
                           ->where('product_list.department_id',21)
@@ -2687,29 +2700,160 @@ class SalesController extends Controller
                           ->get();
 
     foreach($items as $index => $item){
+      $tmp = array();
+      foreach($branches as $index => $branch){
+        switch($branch->id){
+          case 1:
+            $tmp['wb1'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',1)->first()->quantity ?? 0);
+            break;
+          case 3:
+            $tmp['wb2'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',3)->first()->quantity ?? 0);
+            break;
+          case 4:
+            $tmp['bac'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',4)->first()->quantity ?? 0);
+            break;
+          case 5:
+            $tmp['pc'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',5)->first()->quantity ?? 0);
+            break;
+          case 6:
+            $tmp['pm1'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',6)->first()->quantity ?? 0);
+            break;
+          case 7:
+            $tmp['pm2'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',7)->first()->quantity ?? 0);
+            break;
+        }
+      }
+
+      if($warehouse != null){
+        $tmp['hq'] = floatval($warehouse->where('barcode',$item->barcode)->first()->quantity ?? 0);
+      }
+
       $data->push([
         'barcode' => $item->barcode,
         'product_name' => $item->product_name,
         'category' => $item->category_name,
-        'branch_qty' => [
-          'wb1' => floatval($stocks->where('barcode',$item->barcode)->where('branch_id',1)->first()->quantity ?? 0),
-          'wb2' => floatval($stocks->where('barcode',$item->barcode)->where('branch_id',3)->first()->quantity ?? 0),
-          'bac' => floatval($stocks->where('barcode',$item->barcode)->where('branch_id',4)->first()->quantity ?? 0),
-          'pc' => floatval($stocks->where('barcode',$item->barcode)->where('branch_id',5)->first()->quantity ?? 0),
-          'pm1' => floatval($stocks->where('barcode',$item->barcode)->where('branch_id',6)->first()->quantity ?? 0),
-          'pm2' => floatval($stocks->where('barcode',$item->barcode)->where('branch_id',7)->first()->quantity ?? 0),
-          'hq' => floatval($warehouse->where('barcode',$item->barcode)->first()->quantity ?? 0),
-        ]
+        'branch_qty' => $tmp,
       ]);
     }
 
-    return view('report.stock_balance_branch_report',compact('data','branches'));
+    return view('report.stock_balance_branch_report',compact('data','branches','warehouse'));
   }
 
-  public function postStockBalanceBranchReport()
+  public function ajaxStockBalanceBranchReport(Request $request)
   {
+    $data = collect();
+    $branches = Branch::whereIn('id',$request->branch_id)->orderBy('id','ASC')->get();
+    $stocks = Branch_product::whereIn('branch_id',$request->branch_id)
+                            ->where('department_id',21)
+                            ->orderBy('branch_id','ASC')
+                            ->orderBy('barcode','ASC')
+                            ->get();
+    
+    $warehouse = array_filter($request->branch_id,function($a){return $a == 99;});
+
+    if($warehouse != null){
+      $warehouse = Warehouse_stock::where('department_id',21)
+                                  ->orderBy('barcode','ASC')
+                                  ->get();
+    }
+
+    $items = Product_list::join('category as c','c.id','=','product_list.category_id')
+                          ->where('product_list.department_id',21)
+                          ->orderBy('barcode','ASC')
+                          ->get();
+
+    foreach($items as $index => $item){
+      $tmp = array();
+      foreach($branches as $index => $branch){
+        switch($branch->id){
+          case 1:
+            $tmp['wb1'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',1)->first()->quantity ?? 0);
+            break;
+          case 3:
+            $tmp['wb2'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',3)->first()->quantity ?? 0);
+            break;
+          case 4:
+            $tmp['bac'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',4)->first()->quantity ?? 0);
+            break;
+          case 5:
+            $tmp['pc'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',5)->first()->quantity ?? 0);
+            break;
+          case 6:
+            $tmp['pm1'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',6)->first()->quantity ?? 0);
+            break;
+          case 7:
+            $tmp['pm2'] = floatval($stocks->where('barcode',$item->barcode)->where('branch_id',7)->first()->quantity ?? 0);
+            break;
+        }
+      }
+
+      if($warehouse != null){
+        $tmp['hq'] = floatval($warehouse->where('barcode',$item->barcode)->first()->quantity ?? 0);
+      }
+
+      $data->push([
+        'barcode' => $item->barcode,
+        'product_name' => $item->product_name,
+        'category' => $item->category_name,
+        'branch_qty' => $tmp,
+      ]);
+    }
+
+    $files = Storage::allFiles('public/report');
+    Storage::delete($files);                  
+    if(!Storage::exists('public/report'))
+    {
+      Storage::makeDirectory('public/report', 0775, true); //creates directory
+    }
+
+    $col = ['E','F','G','H','I','J','K','L'];
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->mergeCells('A1:A2');
+    $sheet->mergeCells('B1:B2');
+    $sheet->mergeCells('C1:C2');
+    $sheet->mergeCells('D1:D2');
+    $sheet->setCellValue('A1', 'Bil');
+    $sheet->setCellValue('B1', 'Category');
+    $sheet->setCellValue('C1', 'Barcode');
+    $sheet->setCellValue('D1', 'Product Name');
+    $sheet->setCellValue('E1', 'Stock Balance');
+
+    $k = 0;
+    foreach($branches as $index => $branch){
+      $k++;
+      $sheet->setCellValue($col[$index].'2', $branch->branch_name);
+    }
 
 
+    $k = $k - 1;
+
+    $sheet->mergeCells('E1:'.$col[$k].'1');
+    $sheet->getStyle('E1')->getAlignment()->setHorizontal('center');
+
+
+    //start content
+    $start = 3;
+    foreach($data as $index => $result){
+      $sheet->setCellValue('A'.$start, $index+1);
+      $sheet->setCellValue('B'.$start, $result['category']);
+      $sheet->setCellValue('C'.$start, $result['barcode']);
+      $sheet->setCellValue('D'.$start, $result['product_name']);
+      $a=0;
+      foreach($result['branch_qty'] as $branch_qty){
+        $sheet->setCellValue($col[$a].$start, $branch_qty);
+        $a++;
+      }
+
+      $start++;
+    }
+    //end content
+
+
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/report/Stock Kawalan Report -'.Str::random(8).'.xlsx';
+    $writer->save($path);
+
+    return response()->json($path);
   }
-
 }
