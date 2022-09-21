@@ -214,6 +214,27 @@
     <div class="col-md-6">
       <div class="card">
         <div class="card-body">
+          <h4 class="card-title">Audit Report</h4>
+          <div class="col-md-5 audit-color">
+            <i class="fa fa-user-secret first"></i>
+          </div>
+          <div class="col-md-7" style="float:right">
+            <ul>
+              <li>Item Audit</li>
+              <li>Report</li>
+              <li>Stock Movement</li>
+              <li>Item Based</li>
+            </ul>
+            <div class="center">
+              <button class="btn btn-primary btn-other" id="audit_btn">Access</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
           <h4 class="card-title">Other</h4>
           <div class="col-md-5 other-color">
             <i class="fa fa-wrench first"></i>
@@ -495,7 +516,7 @@
 <div class="container" id="sales_menu" style="display: none">
   <div class="row">
 
-<!--     <div class="col-md-4">
+  <!--     <div class="col-md-4">
       <div class="card icon">
         <div class="card-body">
           <div class="row">
@@ -964,11 +985,31 @@
   </div>
 </div>
 
+<div class="container" id="audit_menu" style="display: none">
+  <div class="row">
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Supplier</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('stockMovementMenu')}}"><i class="fa fa-th first audit-color" ></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 $(document).ready(function(){
   $(".float2").click(function(){
     $(this).fadeOut("fast");
-    $("#product_menu,#branch_menu,#stock_menu,#sales_menu,#other_menu").fadeOut("fast",function(){
+    $("#product_menu,#branch_menu,#stock_menu,#sales_menu,#other_menu,#audit_menu").fadeOut("fast",function(){
       $("#main_menu").fadeIn("fast");
     });
   });
@@ -978,6 +1019,7 @@ $(document).ready(function(){
   showMenu("sales_btn","sales_menu");
   showMenu("other_btn","other_menu");
   showMenu("stock_btn","stock_menu");
+  showMenu("audit_btn","audit_menu");
 
   let a = "{{$target}}";
   if(a != "na"){

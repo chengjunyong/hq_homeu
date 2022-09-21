@@ -215,3 +215,8 @@ Route::get('/AddGrItem','WarehouseController@ajaxAddGrItem')->name('ajaxAddGrIte
 //Transaction Number Correction Function
 Route::get('/TransactionCorrection/{target_date}/{branch_code}/{token}','SalesController@transactionCorrection');
 Route::get('/TransactionCorrection2/{from_date}/{to_date}/{branch_code}/{token}','SalesController@transactionCorrection2');
+
+//Audit
+Route::get('/stock-movement-menu','AuditController@stockMovementMenu')->name('stockMovementMenu');
+Route::get('/get-stock-movement-menu','AuditController@getStockMovementMenu')->name('getStockMovementMenu');
+Route::get('/ajax-get-stock-movement-menu','AuditController@ajaxStockMovementMenu')->name('ajaxStockMovementMenu');

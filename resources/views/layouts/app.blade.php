@@ -26,6 +26,7 @@
   <link rel="stylesheet" href="{{ asset('select2/css/select2.min.css') }}">
   <!-- Select2 -->
   <script src="{{ asset('select2/js/select2.full.min.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

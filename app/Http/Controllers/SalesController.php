@@ -2837,9 +2837,10 @@ class SalesController extends Controller
 
   public function getStockBalanceBranchReport()
   {
+    $url = route('home')."?p=sales_menu";
     $branches = Branch::orderBy('id','ASC')->get();
 
-    return view('report.stock_balance_branch_index',compact('branches'));
+    return view('report.stock_balance_branch_index',compact('branches','url'));
   }
 
   public function postStockBalanceBranchReport(Request $request)
