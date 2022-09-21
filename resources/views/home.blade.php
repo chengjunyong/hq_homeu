@@ -993,7 +993,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Supplier</h4>
+              <h4 class="card-title">Item Movement Report</h4>
             </div>
             <div class="col">
               <a href="{{route('stockMovementMenu')}}"><i class="fa fa-th first audit-color" ></i></a>
