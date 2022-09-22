@@ -220,3 +220,6 @@ Route::get('/TransactionCorrection2/{from_date}/{to_date}/{branch_code}/{token}'
 Route::get('/stock-movement-menu','AuditController@stockMovementMenu')->name('stockMovementMenu');
 Route::get('/get-stock-movement-menu','AuditController@getStockMovementMenu')->name('getStockMovementMenu');
 Route::get('/ajax-get-stock-movement-menu','AuditController@ajaxStockMovementMenu')->name('ajaxStockMovementMenu');
+
+//StockLog  
+Route::get('/stocklog/index','StockLogController@index')->name('stock-log-index');
