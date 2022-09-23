@@ -11,8 +11,10 @@ use App\transaction;
 use App\Product_list;
 use App\Branch_product;
 use App\Warehouse_stock;
+use App\transaction_detail;
 use Illuminate\Http\Request;
 use App\Branch_stock_history;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -51,17 +53,19 @@ class AuditController extends Controller
                                     ->where('do_list.to_branch_id',$branch->id)
                                     ->where('dd.barcode',$product->barcode)
                                     ->groupBy('dd.do_number')
-                                    ->select('do_list.do_number AS transaction_no','dd.quantity','dd.price','do_list.completed_time AS transaction_date');
+                                    ->select('do_list.do_number AS transaction_no','dd.quantity','dd.price','do_list.completed_time AS transaction_date');                          
 
-        $transaction_data = transaction::join('transaction_detail as td','td.branch_transaction_id','=','transaction.branch_transaction_id')
-                                        ->where('transaction.branch_id',$branch->token)
-                                        ->where('td.barcode',$product->barcode)
+        $transaction_data = transaction::join('transaction_detail as td',function($q) use ($branch,$request){
+                                            $q->on('transaction.branch_transaction_id','=','td.branch_transaction_id');
+                                            $q->on('td.transaction_date','>',DB::raw("'".$request->report_date_from."'"));
+                                            $q->on('td.transaction_date','<=',DB::raw("'".$request->report_date_to." 23:59:59'"));
+                                        })
                                         ->where('transaction.transaction_date','>',$request->report_date_from)
-                                        ->where('transaction.transaction_date','<=',$request->report_date_to." 23:59:59")
-                                        ->groupBy('td.branch_transaction_id')
+                                        ->where('transaction.transaction_date','<=',$request->report_date_to." 23:59:59'")
+                                        ->where('td.barcode',$product->barcode)
+                                        ->where('transaction.branch_id',$branch->token)
                                         ->select('transaction.transaction_no','td.quantity','td.price','transaction.transaction_date')
                                         ->union($stock_transfer)
-                                        ->orderBy('transaction_date','ASC')
                                         ->get();
 
         return view('audit.stock-movement-report',compact('transaction_data','product','date_target'));
@@ -84,16 +88,18 @@ class AuditController extends Controller
                                     ->groupBy('dd.do_number')
                                     ->select('do_list.do_number AS transaction_no','dd.quantity','dd.price','do_list.completed_time AS transaction_date');
 
-        $transaction_data = transaction::join('transaction_detail as td','td.branch_transaction_id','=','transaction.branch_transaction_id')
-                                        ->where('transaction.branch_id',$branch->token)
-                                        ->where('td.barcode',$product->barcode)
-                                        ->where('transaction.transaction_date','>',$request->report_date_from)
-                                        ->where('transaction.transaction_date','<=',$request->report_date_to." 23:59:59")
-                                        ->groupBy('td.branch_transaction_id')
-                                        ->select('transaction.transaction_no','td.quantity','td.price','transaction.transaction_date')
-                                        ->union($stock_transfer)
-                                        ->orderBy('transaction_date','ASC')
-                                        ->get();
+        $transaction_data = transaction::join('transaction_detail as td',function($q) use ($branch,$request){
+                                        $q->on('transaction.branch_transaction_id','=','td.branch_transaction_id');
+                                        $q->on('td.transaction_date','>',DB::raw("'".$request->report_date_from."'"));
+                                        $q->on('td.transaction_date','<=',DB::raw("'".$request->report_date_to." 23:59:59'"));
+                                    })
+                                    ->where('transaction.transaction_date','>',$request->report_date_from)
+                                    ->where('transaction.transaction_date','<=',$request->report_date_to." 23:59:59'")
+                                    ->where('td.barcode',$product->barcode)
+                                    ->where('transaction.branch_id',$branch->token)
+                                    ->select('transaction.transaction_no','td.quantity','td.price','transaction.transaction_date')
+                                    ->union($stock_transfer)
+                                    ->get();
 
         //Start exporting
         $files = Storage::allFiles('public/report');
