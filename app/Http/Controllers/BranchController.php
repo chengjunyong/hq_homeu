@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class BranchController extends Controller
 {
@@ -1058,7 +1059,7 @@ class BranchController extends Controller
 
     $start = 2;
     foreach($branch_restock as $index => $result){
-      $sheet->setCellValue('A'.$start, $result->barcode);
+      $sheet->setCellValue('A'.$start, "'".$result->barcode."'");
       $sheet->setCellValue('B'.$start, $result->product_name);
       $sheet->setCellValue('C'.$start, $result->quantity);
       $sheet->setCellValue('D'.$start, $result->reorder_level);
@@ -1066,7 +1067,7 @@ class BranchController extends Controller
       $sheet->setCellValue('F'.$start, 0);
       $start++;
     }
-    $spreadsheet->getActiveSheet()->getStyle('A')->getNumberFormat()->setFormatCode('################################');
+    // $spreadsheet->getActiveSheet()->getStyle('A')->getNumberFormat()->setFormatCode('################################');
 
     $date = strtotime("now");
     $writer = new Xlsx($spreadsheet);
@@ -1074,6 +1075,50 @@ class BranchController extends Controller
     $writer->save($path);
 
     return response()->json($path);
+  }
+
+  public function importRestockList(Request $request)
+  {
+    $path = Storage::disk('public')->put('/import-file/tmp', $request->file('restock_list'));
+    $url = ".".Storage::url($path);
+    
+    $spreadsheet = IOFactory::load($url);
+    $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+    Storage::delete($path);
+
+    if($request->from_branch_id == 0){
+      $branch_product = Warehouse_stock::get();
+    }else{
+      $branch_product = Branch_product::where('branch_id',$request->from_branch_id)->get();
+    }
+    
+    array_shift($sheetData);
+    foreach($sheetData as $data){
+      $barcode = str_replace("'","",$data['A']);
+      $target = $branch_product->filter(function($value,$key) use ($barcode){return $value->barcode == $barcode;})->first();
+
+      if($target != null){
+        Tmp_order_list::updateOrCreate(
+          [
+            'from_branch' => $request->from_branch_id,
+            'to_branch' => $request->to_branch_id,
+            'branch_product_id' => $target->id,
+            'user_id' => Auth::user()->id
+          ],
+          [
+            'department_id' => $target->department_id,
+            'category_id' => $target->category_id,
+            'barcode' => $target->barcode,
+            'product_name' => $target->product_name,
+            'measurement' => $target->measurement,
+            'cost' => $target->cost,
+            'price' => $target->price,
+            'order_quantity' => $data['F'],
+          ]);
+      }
+    }
+
+    return back()->with('success','Import Successful');
   }
 
 }

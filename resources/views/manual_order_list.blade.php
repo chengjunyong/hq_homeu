@@ -12,11 +12,27 @@
 </style>
 <div class="container" style="padding-bottom: 5vh;">
   <div class="card" style="margin-top: 10px">
-    <div class="card-title">
-      <h4>Manual Order List Detail</h4>
+
+    <div class="row">
+      <div class="col-md-3">
+        <div class="card-title">
+          <h4>Manual Order List Detail</h4>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <form action="{{route('importRestockList')}}" method="post" enctype="multipart/form-data">
+          @csrf
+          <div class="col-md-12" style="margin-top:10px;text-align:right">
+            <input hidden class="form-control" type="text" name="to_branch_id" value="{{$tmp[0]->to_branch}}">
+            <input hidden class="form-control" type="text" name="from_branch_id" value="{{$tmp[0]->from_branch}}">
+            <input type="file" name="restock_list" class="form-control" style="width:30%;float:right;margin-left:5px;" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required/>
+            <input type="submit" class="btn btn-success" value="Import Restock Item" style="margin-top: 3px;">
+          </div>
+        </form>
+      </div>
     </div>
 
-    <form>
+    <form id="form2">
       @csrf
       <div class="card-body">
         <div class="row">
@@ -115,7 +131,7 @@ $(document).ready(function(){
     })
   });
 
-  $("form").submit(function(e){
+  $("#form2").submit(function(e){
     e.preventDefault();
     Swal.fire({
       title: 'Generate DO',
@@ -142,5 +158,9 @@ $(document).ready(function(){
 
 });
 </script>
+
+@if(session()->has('success'))
+  <script>swal.fire('Success','Import Successful','success');</script>
+@endif
 
 @endsection
