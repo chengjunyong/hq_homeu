@@ -23,8 +23,8 @@
         <form action="{{route('importRestockList')}}" method="post" enctype="multipart/form-data">
           @csrf
           <div class="col-md-12" style="margin-top:10px;text-align:right">
-            <input hidden class="form-control" type="text" name="to_branch_id" value="{{$tmp[0]->to_branch}}">
-            <input hidden class="form-control" type="text" name="from_branch_id" value="{{$tmp[0]->from_branch}}">
+            <input hidden class="form-control" type="text" name="to_branch_id" value="{{$to->id}}">
+            <input hidden class="form-control" type="text" name="from_branch_id" value="{{$from->id}}">
             <input type="file" name="restock_list" class="form-control" style="width:30%;float:right;margin-left:5px;" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required/>
             <input type="submit" class="btn btn-success" value="Import Restock Item" style="margin-top: 3px;">
           </div>
@@ -39,12 +39,12 @@
           <div class="col-md-6">
             <label>From:</label>
             <input readonly class="form-control" type="text" name="from" value="{{$from->branch_name}}">
-            <input hidden class="form-control" type="text" name="from_branch_id" value="{{$tmp[0]->from_branch}}">
+            <input hidden class="form-control" type="text" name="from_branch_id" value="{{$from->id}}">
           </div>
           <div class="col-md-6">
             <label>To:</label>
             <input readonly class="form-control" type="text" name="to" value="{{$to->branch_name}}">
-            <input hidden class="form-control" type="text" name="to_branch_id" value="{{$tmp[0]->to_branch}}">
+            <input hidden class="form-control" type="text" name="to_branch_id" value="{{$to->id}}">
           </div>
           <div class="col-md-6">
             <label>Total Items:</label>
@@ -52,7 +52,7 @@
           </div>
           <div class="col-md-6">
             <label>Date Issue:</label>
-            <input readonly class="form-control" type="text" name="created_at" value="{{$tmp[0]->created_at}}">
+            <input readonly class="form-control" type="text" name="created_at" value="{{$tmp[0]->created_at ?? null}}">
           </div>
 
         <div style="overflow-y: auto;height:425px;margin-top:25px;width:100%">
@@ -90,6 +90,7 @@
       <div class="row">
         <div class="col-md-12" style="text-align: center">
           <input class="btn btn-primary" type="submit" value="Generate DO"/>
+          <button type="button" id="reset" class="btn btn-danger">Reset</button>
         </div>
       </div>
 
@@ -153,7 +154,23 @@ $(document).ready(function(){
         },"json");
       }
     });
-      
+  });
+
+  $("#reset").click(function(){
+    let ans = confirm("Confirm reset the order list ?");
+
+    if(ans){
+      $.post("{{route('resetRestockList')}}",
+      {
+        '_token':"{{ csrf_token() }}",
+        'from_id':$("input[name=from_branch_id]").val(),
+        'to_id':$("input[name=to_branch_id]").val(),
+      },function(data){
+        if(data == 'success'){
+          swal.fire('Success','Reset Successful','success').then(()=>{location.reload();});
+        }
+      },'json');
+    }
   });
 
 });

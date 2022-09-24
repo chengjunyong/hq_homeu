@@ -824,27 +824,23 @@ class BranchController extends Controller
                                     ->where('to_branch',$_GET['id'])
                                     ->where('user_id',$user)
                                     ->first();
-
-    if($branch_group == null){ 
-      $branch = Branch::first();
-      return "<script>
-              alert('No order data, you will be redirect to order page shortly');
-              window.location.assign('".route('getManualStockOrder')."?branch_id=0&from=0');
-              </script>";
+                                    
+    if($_GET['from'] == 0){
+      $from->id = 0;
+      $from->branch_name = "HQ";
+    }else{
+      $from = Branch::where('id',$_GET['from'])->select('branch_name','id')->first();
     }
 
-    if($branch_group->from_branch == 0)
-      $from->branch_name = "HQ";
-    else
-      $from = Branch::where('id',$branch_group->from_branch)->select('branch_name')->first();
-
-    if($branch_group->to_branch == 0)
+    if($_GET['to'] == 0){
+      $to->id = 0;
       $to->branch_name = "HQ";
-    else  
-      $to = Branch::where('id',$branch_group->to_branch)->select('branch_name')->first();
+    }else{
+      $to = Branch::where('id',$_GET['to'])->select('branch_name','id')->first();
+    }
 
-    $tmp = Tmp_order_list::where('from_branch',$branch_group->from_branch)
-                          ->where('to_branch',$branch_group->to_branch)
+    $tmp = Tmp_order_list::where('from_branch',$_GET['from'])
+                          ->where('to_branch',$_GET['to'])
                           ->where('user_id',$user)
                           ->get();
     $total_item = 0;
@@ -1036,6 +1032,7 @@ class BranchController extends Controller
   public function ajaxRestockExcel(Request $request)
   {
     $branch_restock = Branch_product::where('branch_id',$request->branch_id)
+                                      ->where('reorder_level','>',0)
                                       ->whereRaw('reorder_level >= quantity')
                                       ->get();
     
@@ -1097,7 +1094,7 @@ class BranchController extends Controller
       $barcode = str_replace("'","",$data['A']);
       $target = $branch_product->filter(function($value,$key) use ($barcode){return $value->barcode == $barcode;})->first();
 
-      if($target != null){
+      if($target != null && floatval($data['F']) > 0){
         Tmp_order_list::updateOrCreate(
           [
             'from_branch' => $request->from_branch_id,
@@ -1121,4 +1118,13 @@ class BranchController extends Controller
     return back()->with('success','Import Successful');
   }
 
+  public function resetRestockList(Request $request)
+  {
+    Tmp_order_list::where('user_id',Auth::user()->id)
+                    ->where('from_branch',$request->from_id)
+                    ->where('to_branch',$request->to_id)
+                    ->delete();
+
+    return response()->json("success");
+  }
 }
