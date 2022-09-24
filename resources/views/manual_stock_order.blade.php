@@ -23,6 +23,7 @@
     </div>
 
     <div style="margin-left: 5px;">
+
       <div class="row">
         <div class="col-md-3">
           <select name="from" id="from" class="form-control">
@@ -44,7 +45,11 @@
               <option value="hq" {{ (isset($_GET['branch_id']) && $_GET['branch_id'] == 'hq') ? 'selected' : '' }}>HQ Warehouse</option>
           </select>
         </div>
+        <div class="col">
+          <button type="button" id="export-restock" class="btn btn-success">Export Restock List</button>
+        </div>
       </div> 
+
       <div class="row" style="margin-top: 20px;">
         <div class="col-md-12" style="margin-top: 10px;">
           <h4 align="center">Branch Stock Detail</h4>
@@ -152,6 +157,37 @@ $(document).ready(function(){
       $("#search_form").submit();
     }
   });
+
+  $("#export-restock").click(function(){
+		let branch_id = $("#to").val();
+		if(branch_id == "null"){
+			swal.fire('Error','Please select branch before export','error');
+		}else{
+			swal.fire({
+				title : 'Exporting',
+				html  : 'It will take some time to process, please wait awhile.',
+				didOpen: () => {
+						swal.showLoading()
+				},
+				backdrop : true,
+				allowOutsideClick : false,
+			});
+
+			$.get("{{route('ajaxRestockExcel')}}",
+			{
+				'branch_id':branch_id,
+			},
+			function(data){
+        console.log(data);
+				swal.close();
+				if(data == "error"){
+					swal.fire('Error','Product Not Found','error');
+				}else{
+					window.open(data);
+				}
+			},'json');
+		}
+	});
 
 });
 

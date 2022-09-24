@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 class BranchController extends Controller
 {
@@ -1029,6 +1030,50 @@ class BranchController extends Controller
     }
     
     return back()->with('result','true');
+  }
+
+  public function ajaxRestockExcel(Request $request)
+  {
+    $branch_restock = Branch_product::where('branch_id',$request->branch_id)
+                                      ->whereRaw('reorder_level >= quantity')
+                                      ->get();
+    
+    //Start exporting
+    $files = Storage::allFiles('public/report');
+    Storage::delete($files);                  
+    if(!Storage::exists('public/report'))
+    {
+    Storage::makeDirectory('public/report', 0775, true); //creates directory
+    }                                  
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setCellValue('A1','Barcode');
+    $sheet->setCellValue('B1','Product Name');
+    $sheet->setCellValue('C1','Current Quantity');
+    $sheet->setCellValue('D1','Reorder Level');
+    $sheet->setCellValue('E1','Recommended Quantity');
+    $sheet->setCellValue('F1','Restock Quantity');
+
+
+    $start = 2;
+    foreach($branch_restock as $index => $result){
+      $sheet->setCellValue('A'.$start, $result->barcode);
+      $sheet->setCellValue('B'.$start, $result->product_name);
+      $sheet->setCellValue('C'.$start, $result->quantity);
+      $sheet->setCellValue('D'.$start, $result->reorder_level);
+      $sheet->setCellValue('E'.$start, $result->recommend_quantity);
+      $sheet->setCellValue('F'.$start, 0);
+      $start++;
+    }
+    $spreadsheet->getActiveSheet()->getStyle('A')->getNumberFormat()->setFormatCode('################################');
+
+    $date = strtotime("now");
+    $writer = new Xlsx($spreadsheet);
+    $path = 'storage/report/Restock Item List - '.$date.'.xlsx';
+    $writer->save($path);
+
+    return response()->json($path);
   }
 
 }

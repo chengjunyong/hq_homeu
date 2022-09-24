@@ -37,6 +37,7 @@ Route::get('/branchrestockhistorydetail/{id}','BranchController@getRestockHistor
 Route::get('/stockadjustment','BranchController@getStockAdjustment')->name('getStockAdjustment');
 Route::post('/exportbranchstock','BranchController@postExportBranchStock')->name('postExportBranchStock');
 Route::post('/importbranchstock','BranchController@postImportBranchStock')->name('postImportBranchStock');
+Route::get('/get-restock-excel','BranchController@ajaxRestockExcel')->name('ajaxRestockExcel');
 
 
 Route::get('/damagedstock','BranchController@getDamagedStock')->name('getDamagedStock');

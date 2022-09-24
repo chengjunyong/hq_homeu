@@ -135,22 +135,22 @@ class AuditController extends Controller
 
         $start = 7;
         foreach($transaction_data as $index => $result){
-        $sheet->setCellValue('A'.$start, $index+1);
-        if(str_contains($result->transaction_no,"WTS")){
-            $sheet->setCellValue('B'.$start, 'Warehouse Transfer');
-        }else{
-            $sheet->setCellValue('B'.$start, 'Sales');
-        }
-        $sheet->setCellValue('C'.$start, $result->transaction_no);
-        $sheet->setCellValue('D'.$start, number_format($result->price,2));
-        if(str_contains($result->transaction_no,"WTS")){
-            $sheet->setCellValue('E'.$start, '+'.$result->quantity);
-        }else{
-            $sheet->setCellValue('E'.$start, '-'.$result->quantity);
-        }
-        $sheet->setCellValue('F'.$start, number_format($result->price * $result->quantity,2));
-        $sheet->setCellValue('G'.$start, date("d-M-Y H:i:s A",strtotime($result->transaction_date)));
-        $start++;
+            $sheet->setCellValue('A'.$start, $index+1);
+            if(str_contains($result->transaction_no,"WTS")){
+                $sheet->setCellValue('B'.$start, 'Warehouse Transfer');
+            }else{
+                $sheet->setCellValue('B'.$start, 'Sales');
+            }
+            $sheet->setCellValue('C'.$start, $result->transaction_no);
+            $sheet->setCellValue('D'.$start, number_format($result->price,2));
+            if(str_contains($result->transaction_no,"WTS")){
+                $sheet->setCellValue('E'.$start, '+'.$result->quantity);
+            }else{
+                $sheet->setCellValue('E'.$start, '-'.$result->quantity);
+            }
+            $sheet->setCellValue('F'.$start, number_format($result->price * $result->quantity,2));
+            $sheet->setCellValue('G'.$start, date("d-M-Y H:i:s A",strtotime($result->transaction_date)));
+            $start++;
         }
 
         $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
