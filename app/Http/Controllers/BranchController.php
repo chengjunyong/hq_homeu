@@ -402,26 +402,41 @@ class BranchController extends Controller
                               ]);
 
       //Decide to take branch product or warehouse product                        
-      if($do_list->to == "HQ"){
-        $warehouse_stock = Warehouse_stock::where('id',$request->product_id[$x])->first();
+      if($do_list->to_branch_id == 0){
+        $warehouse_stock = Warehouse_stock::where('barcode',$request->barcode[$x])->first();
         if($warehouse_stock != null){
           $total_restock_quantity = $restock_quantity + intval($warehouse_stock->quantity);
-          Warehouse_stock::where('id',$request->product_id[$x])
+          Warehouse_stock::where('barcode',$request->barcode[$x])
+                  ->update([
+                    'quantity' => $total_restock_quantity,
+                  ]);
+        }else{
+          $total_restock_quantity = $restock_quantity + intval(0);
+          Warehouse_stock::where('barcode',$request->barcode[$x])
                   ->update([
                     'quantity' => $total_restock_quantity,
                   ]);
         }
       }else{  
-        $branch_product = Branch_product::where('id',$request->product_id[$x])->first();
+        $branch_product = Branch_product::where('branch_id',$do_list->to_branch_id)
+                                          ->where('barcode',$request->barcode[$x])
+                                          ->first();
         if($branch_product != null){
           $total_restock_quantity = $restock_quantity + intval($branch_product->quantity);
-          Branch_product::where('id',$request->product_id[$x])
-                  ->update([
-                    'quantity' => $total_restock_quantity,
-                  ]);
+          Branch_product::where('branch_id',$do_list->to_branch_id)
+                          ->where('barcode',$request->barcode[$x])
+                          ->update([
+                            'quantity' => $total_restock_quantity,
+                          ]);
+        }else{
+          $total_restock_quantity = $restock_quantity + intval(0);
+          Branch_product::where('branch_id',$do_list->to_branch_id)
+                          ->where('barcode',$request->barcode[$x])
+                          ->update([
+                            'quantity' => $total_restock_quantity,
+                          ]);
         }
       }
-
     }         
     
     Do_list::where('do_number',$request->do_number)
