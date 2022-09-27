@@ -98,11 +98,11 @@ td{
 					</div>
 					<div class="col-md-6">
 						<label>Reorder Level</label>
-						<input type="number" min="0" step="1" name="reorder_level" class="form-control" required value="{{$product->reorder_level}}">
+						<input type="number" min="0" step="1" name="reorder_level" class="form-control" required value="{{$product->reorder_level}}" disabled>
 					</div>
 					<div class="col-md-6">
 						<label>Reorder Recommend Quantity</label>
-						<input type="number" min="0" step="1" name="recommend_quantity" class="form-control" required value="{{$product->recommend_quantity}}">
+						<input type="number" min="0" step="1" name="recommend_quantity" class="form-control" required value="{{$product->recommend_quantity}}" disabled>
 					</div>
           <div class="col-md-6">
             <label>Schedule Date</label>

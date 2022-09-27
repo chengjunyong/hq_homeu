@@ -142,7 +142,6 @@ class ProductController extends Controller
   public function postAddProduct(Request $request)
   {
     $branch = Branch::select('id')->get();
-
     foreach($branch as $result){
       Branch_product::updateOrCreate(
         [
@@ -158,8 +157,8 @@ class ProductController extends Controller
         'cost'=>$request->cost,
         'price'=>$request->price,
         'quantity'=>0,
-        'reorder_level'=>$request->reorder_level,
-        'recommend_quantity'=>$request->recommend_quantity,
+        'reorder_level'=>$request->reorder_level ?? 0,
+        'recommend_quantity'=>$request->recommend_quantity ?? 0,
         'unit_type'=>null,
         'product_sync'=>0,
       ]);
@@ -176,8 +175,8 @@ class ProductController extends Controller
       'cost'=>$request->cost,
       'price'=>$request->price,
       'quantity'=>0,
-      'reorder_level'=>$request->reorder_level,
-      'recommend_quantity'=>$request->recommend_quantity,
+      'reorder_level'=>$request->reorder_level ?? 0,
+      'recommend_quantity'=>$request->recommend_quantity ?? 0,
       'unit_type'=>null,
     ]);
 
@@ -192,8 +191,8 @@ class ProductController extends Controller
       'cost'=>$request->cost,
       'price'=>$request->price,
       'quantity'=>0,
-      'reorder_level'=>$request->reorder_level,
-      'reorder_quantity'=>$request->recommend_quantity,
+      'reorder_level'=>$request->reorder_level ?? 0,
+      'reorder_quantity'=>$request->recommend_quantity ?? 0,
       'unit_type'=>null,
       'product_sync'=>null,
     ]);
@@ -315,8 +314,8 @@ class ProductController extends Controller
                       'normal_wholesale_quantity6'=>$request->normal_wholesales_quantity6 ?? null,
                       'normal_wholesale_price7'=>$request->normal_wholesales_price7 ?? null,
                       'normal_wholesale_quantity7'=>$request->normal_wholesales_quantity7 ?? null,
-                      'reorder_level'=>$request->reorder_level ?? null,
-                      'recommend_quantity'=>$request->recommend_quantity ?? null,
+                      // 'reorder_level'=>$request->reorder_level ?? null,
+                      // 'recommend_quantity'=>$request->recommend_quantity ?? null,
                       'promotion_start'=>$request->promotion_start ?? null,
                       'promotion_end'=>$request->promotion_end ?? null,
                       'promotion_price'=>$request->promotion_price ?? null,
@@ -366,8 +365,8 @@ class ProductController extends Controller
                       'normal_wholesale_quantity6'=>$request->normal_wholesales_quantity6 ?? null,
                       'normal_wholesale_price7'=>$request->normal_wholesales_price7 ?? null,
                       'normal_wholesale_quantity7'=>$request->normal_wholesales_quantity7 ?? null,
-                      'reorder_level'=>$request->reorder_level ?? null,
-                      'recommend_quantity'=>$request->recommend_quantity ?? null,
+                      // 'reorder_level'=>$request->reorder_level ?? null,
+                      // 'recommend_quantity'=>$request->recommend_quantity ?? null,
                       'schedule_date'=>$request->schedule_date,
                       'schedule_price'=>$request->schedule_price,
                       'promotion_start'=>$request->promotion_start ?? null,
@@ -406,8 +405,8 @@ class ProductController extends Controller
                       'measurement'=>$request->measurement,
                       'cost'=>$request->cost,
                       'price'=>$request->price,
-                      'reorder_level'=>0,
-                      'reorder_quantity'=>0,
+                      // 'reorder_level'=>0,
+                      // 'reorder_quantity'=>0,
                       'product_sync'=>null,
                     ]);                
 

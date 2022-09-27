@@ -34,11 +34,11 @@
           </div>
 					<div class="col-md-6">
 						<label>Cost</label>
-						<input type="number" min="0" step="0.0001" name="cost" id="cost" class="form-control" value="{{$product->cost}}">
+						<input type="number" min="0" step="0.0001" name="cost" id="cost" class="form-control" value="{{$product->cost}}" disabled>
 					</div>
 					<div class="col-md-6">
 						<label>Price</label>
-						<input type="number" min="0" step="0.0001" name="price" id="price" class="form-control" value="{{$product->price}}">
+						<input type="number" min="0" step="0.0001" name="price" id="price" class="form-control" value="{{$product->price}}" disabled>
 					</div>
 					<div class="col-md-6">
 						<label>Reorder Level</label>
