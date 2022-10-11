@@ -3007,8 +3007,9 @@ class SalesController extends Controller
 
     //start content
     $start = 3;
-    foreach($data as $index => $result){
-      $sheet->setCellValue('A'.$start, $index+1);
+    $index = 1;
+    foreach($data->sortBy('category') as $result){
+      $sheet->setCellValue('A'.$start, $index);
       $sheet->setCellValue('B'.$start, $result['category']);
       $sheet->setCellValue('C'.$start, $result['barcode']);
       $sheet->setCellValue('D'.$start, $result['product_name']);
@@ -3017,7 +3018,7 @@ class SalesController extends Controller
         $sheet->setCellValue($col[$a].$start, $branch_qty);
         $a++;
       }
-
+      $index++;
       $start++;
     }
     //end content

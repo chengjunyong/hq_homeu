@@ -1046,9 +1046,13 @@ class BranchController extends Controller
 
   public function ajaxRestockExcel(Request $request)
   {
-    $branch_restock = Branch_product::where('branch_id',$request->branch_id)
-                                      ->where('reorder_level','>',0)
-                                      ->whereRaw('reorder_level >= quantity')
+    $branch_restock = Branch_product::join('department as d','d.id','=','branch_product.department_id')
+                                      ->join('category as c','c.id','=','branch_product.category_id')
+                                      ->where('branch_product.branch_id',$request->branch_id)
+                                      ->where('branch_product.reorder_level','>',0)
+                                      ->whereRaw('branch_product.reorder_level >= quantity')
+                                      ->orderBy('d.department_name','ASC')
+                                      ->orderBy('c.category_name','ASC')
                                       ->get();
     
     //Start exporting
@@ -1063,20 +1067,24 @@ class BranchController extends Controller
     $sheet = $spreadsheet->getActiveSheet();
     $sheet->setCellValue('A1','Barcode');
     $sheet->setCellValue('B1','Product Name');
-    $sheet->setCellValue('C1','Current Quantity');
-    $sheet->setCellValue('D1','Reorder Level');
-    $sheet->setCellValue('E1','Recommended Quantity');
-    $sheet->setCellValue('F1','Restock Quantity');
+    $sheet->setCellValue('C1','Department');
+    $sheet->setCellValue('D1','Category');
+    $sheet->setCellValue('E1','Current Quantity');
+    $sheet->setCellValue('F1','Reorder Level');
+    $sheet->setCellValue('G1','Recommended Quantity');
+    $sheet->setCellValue('H1','Restock Quantity');
 
 
     $start = 2;
     foreach($branch_restock as $index => $result){
       $sheet->setCellValue('A'.$start, "'".$result->barcode."'");
       $sheet->setCellValue('B'.$start, $result->product_name);
-      $sheet->setCellValue('C'.$start, $result->quantity);
-      $sheet->setCellValue('D'.$start, $result->reorder_level);
-      $sheet->setCellValue('E'.$start, $result->recommend_quantity);
-      $sheet->setCellValue('F'.$start, 0);
+      $sheet->setCellValue('C'.$start, $result->department_name);
+      $sheet->setCellValue('D'.$start, $result->category_name);
+      $sheet->setCellValue('E'.$start, $result->quantity);
+      $sheet->setCellValue('F'.$start, $result->reorder_level);
+      $sheet->setCellValue('G'.$start, $result->recommend_quantity);
+      $sheet->setCellValue('H'.$start, 0);
       $start++;
     }
     // $spreadsheet->getActiveSheet()->getStyle('A')->getNumberFormat()->setFormatCode('################################');
