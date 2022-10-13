@@ -618,7 +618,13 @@
     }
 
     $.post("{{ route('getProductByBarcode') }}", {"_token" : "{{ csrf_token() }}", "barcode" : barcode, "stock_type" : stock_type, "branch_id" : selected_branch }, function(result){
-      cameraFeed.getElementsByTagName("video")[0].pause();
+      try {
+        cameraFeed.getElementsByTagName("video")[0].pause();
+      }
+      catch(err) {
+        console.log(err.message);
+      }
+      
       if(result.error == 0)
       {
         $("#quagga-box").hide();
