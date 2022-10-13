@@ -648,7 +648,13 @@
         $("#manual_barcode").val("");
         $("input[name='stock_count']").val("");
 
-        cameraFeed.getElementsByTagName("video")[0].load();
+        try {
+          cameraFeed.getElementsByTagName("video")[0].load();
+        }
+        catch(err) {
+          console.log(err.message);
+        }
+
         freeze = 1;
         setTimeout(function(){
           freeze = 0;
