@@ -67,14 +67,14 @@
 						<label>Price <span id="display_price" style="color:red;font-weight:bold">(1 Unit)</span></label>
 						<input type="number" min="0" step="0.01" name="price" id="price" class="form-control" required>
 					</div>
-					<div class="col-md-6">
+					{{-- <div class="col-md-6">
 						<label>Reorder Level</label>
 						<input type="number" name="reorder_level" class="form-control">
 					</div>
 					<div class="col-md-6">
 						<label>Reorder Recommend Quantity</label>
 						<input type="number" name="recommend_quantity" class="form-control">
-					</div>
+					</div> --}}
 					<div class="col-md-12" style="text-align: center;margin-top: 20px">
 						<input type="submit" class="btn btn-primary" value="Add">
 					</div>

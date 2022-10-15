@@ -157,8 +157,8 @@ class ProductController extends Controller
         'cost'=>$request->cost,
         'price'=>$request->price,
         'quantity'=>0,
-        'reorder_level'=>$request->reorder_level ?? 0,
-        'recommend_quantity'=>$request->recommend_quantity ?? 0,
+        'reorder_level'=>0,
+        'recommend_quantity'=>0,
         'unit_type'=>null,
         'product_sync'=>0,
       ]);
@@ -175,8 +175,8 @@ class ProductController extends Controller
       'cost'=>$request->cost,
       'price'=>$request->price,
       'quantity'=>0,
-      'reorder_level'=>$request->reorder_level ?? 0,
-      'recommend_quantity'=>$request->recommend_quantity ?? 0,
+      'reorder_level'=>0,
+      'recommend_quantity'=>0,
       'unit_type'=>null,
     ]);
 
@@ -191,8 +191,8 @@ class ProductController extends Controller
       'cost'=>$request->cost,
       'price'=>$request->price,
       'quantity'=>0,
-      'reorder_level'=>$request->reorder_level ?? 0,
-      'reorder_quantity'=>$request->recommend_quantity ?? 0,
+      'reorder_level'=>0,
+      'reorder_quantity'=>0,
       'unit_type'=>null,
       'product_sync'=>null,
     ]);
