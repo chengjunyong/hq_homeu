@@ -1787,7 +1787,7 @@ class SalesController extends Controller
         $tmp = Transaction_detail::selectRaw("SUM(quantity) as quantity,SUM(total) as total,created_at,branch_id")
                                     ->where('product_name','LIKE',$request->product)
                                     ->where('branch_id',$result->token)
-                                    ->whereRaw("DATE(created_at) = '$tmp_d'")
+                                    ->whereRaw("DATE(transaction_date) = '$tmp_d'")
                                     ->first();
 
         array_push($data[$index],$tmp);
