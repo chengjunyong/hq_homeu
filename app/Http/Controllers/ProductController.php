@@ -16,6 +16,7 @@ use App\Supplier;
 use App\Product_supplier;
 use App\Hamper;
 use App\Product_history;
+use App\user_access_control;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Log;
@@ -31,6 +32,9 @@ class ProductController extends Controller
   public function getProductList()
   { 
     $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    $permission = explode(",",user_access_control::where('user_id',auth()->id())->first()->access_control);
+
+    $permission = in_array(35,$permission);
 
     $url = route('home')."?p=product_menu";
 
@@ -40,12 +44,15 @@ class ProductController extends Controller
                                 ->select('product_list.*','department.department_name','category.category_name')
                                 ->paginate(14);
 
-  	return view('product_list',compact('product_list','search','url','access'));
+  	return view('product_list',compact('product_list','search','url','access','permission'));
   }
 
   public function searchProduct(Request $request)
   {
     $access = app('App\Http\Controllers\UserController')->checkAccessControl();
+    $permission = explode(",",user_access_control::where('user_id',auth()->id())->first()->access_control);
+
+    $permission = in_array(35,$permission);
 
     $url = route('home')."?p=product_menu";
 
@@ -60,7 +67,7 @@ class ProductController extends Controller
 
   	$product_list->withPath('?search='.$request->search);
 
-  	return view('product_list',compact('product_list','search','url','access'));
+  	return view('product_list',compact('product_list','search','url','access','permission'));
   }
 
   // public function ajaxAddProduct(Request $request)

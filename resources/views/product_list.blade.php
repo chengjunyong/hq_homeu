@@ -58,7 +58,7 @@
 									<td>{{$result->department_name}}</td>
 									<td>{{$result->category_name}}</td>
 									<td>
-                    @if($access)
+                    @if($access && $permission)
                       <a href="{{route('getModifyProduct',$result->id)}}">{{$result->product_name}}</a>
                     @else
                       {{$result->product_name}}
