@@ -16,7 +16,7 @@
 			<form method="post" action="{{route('postModifyWarehouseProduct')}}" id="form">
 				@csrf
 				<div class="row">
-					<div class="col-md-12">
+					<div class="col-md-6">
 						<label>Department</label>
 						<select name="department" id="department" class="form-control" readonly>
 							@foreach($department as $result)
@@ -24,7 +24,7 @@
 							@endforeach
 						</select>
 					</div>
-					<div class="col-md-12">
+					<div class="col-md-6">
 						<label>Category</label>
 						<select name="category" id="category" class="form-control" readonly>
 							@foreach($category as $result)
@@ -32,15 +32,15 @@
 							@endforeach
 						</select>
 					</div>
-					<div class="col-md-12">
+					<div class="col-md-6">
 						<label>Barcode</label>
 						<input type="text" name="barcode" class="form-control" readonly value="{{$warehouse_stock->barcode}}">
 					</div>
-					<div class="col-md-12">
+					<div class="col-md-6">
 						<label>Product Name</label>
 						<input type="text" name="product_name" class="form-control" readonly value="{{$warehouse_stock->product_name}}">
 					</div>
-          <div class="col-md-12">
+          <div class="col-md-6">
             <label>Measurement Type</label>
             <input type="text" name="measurement" class="form-control" readonly value="{{ucfirst($warehouse_stock->measurement)}}">
           </div>

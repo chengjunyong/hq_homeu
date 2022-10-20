@@ -46,7 +46,7 @@ td{
 			<form method="post" action="{{route('postModifyProduct')}}" id="form">
 				@csrf
 				<div class="row">
-					<div class="col-md-12">
+					<div class="col-md-6">
 						<label>Department</label>
 						<select name="department" id="department" class="form-control" required>
 							@foreach($department as $result)
@@ -54,7 +54,7 @@ td{
 							@endforeach
 						</select>
 					</div>
-					<div class="col-md-12">
+					<div class="col-md-6">
 						<label>Category</label>
 						<select name="category" id="category" class="form-control" required>
 							@foreach($category as $result)
@@ -62,7 +62,7 @@ td{
 							@endforeach
 						</select>
 					</div>
-					<div class="col-md-12">
+					<div class="col-md-6">
 						<label>Barcode</label>
 						<input type="text" name="barcode" class="form-control" readonly value="{{$product->barcode}}">
 					</div>
@@ -78,6 +78,7 @@ td{
               <option value="meter" {{($product->measurement == 'meter') ? 'selected' : ''}}>Meter</option>
             </select>
           </div>
+          <div class="col-md-6"></div>
 					<div class="col-md-6">
 						<label>Cost <!-- <a href="{{route('getProductConfig')}}">(Auto Increase {{$default_price->default_price_margin}}%)</a> --></label>
 						<input type="number" min="0" step="0.001" name="cost" id="cost" class="form-control" required value="{{number_format($product->cost,3)}}">

@@ -12,23 +12,23 @@
 				@csrf
 				<input type="text" value="{{$product->id}}" name="id" hidden /> 
 				<div class="row"> 
-					<div class="col-md-12">
+					<div class="col-md-6">
 						<label>Department</label>
 						<input type="text" class="form-control" value="{{$product->department_name}}" disabled />
 					</div>
-					<div class="col-md-12">
+					<div class="col-md-6">
 						<label>Category</label>
 						<input type="text" class="form-control" value="{{$product->category_name}}" disabled />
 					</div>
-					<div class="col-md-12">
+					<div class="col-md-6">
 						<label>Barcode</label>
 						<input type="text" name="barcode" class="form-control" readonly value="{{$product->barcode}}" disabled>
 					</div>
-					<div class="col-md-12">
+					<div class="col-md-6">
 						<label>Product Name</label>
 						<input type="text" name="product_name" class="form-control" value="{{$product->product_name}}" disabled>
 					</div>
-          <div class="col-md-12">
+          <div class="col-md-6">
             <label>Measurement Type</label>
             <input type="text" name="uom" class="form-control" value="{{ucfirst($product->measurement)}}" disabled>
           </div>
