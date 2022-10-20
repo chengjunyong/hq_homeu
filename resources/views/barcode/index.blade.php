@@ -215,6 +215,16 @@
           </div>
 
           <div class="col-12 form-group">
+            <label>Reorder Level </label>
+            <input type="number" class="form-control" name="reorder_level" /> 
+          </div>
+
+          <div class="col-12 form-group">
+            <label>Recommend Quantity </label>
+            <input type="number" class="form-control" name="recommend_qty" /> 
+          </div>
+
+          <div class="col-12 form-group">
             <input type="hidden" id="product_id" />
             <input type="hidden" id="stock_type" />
             <button type="button" class="btn btn-success" id="submit_stock" disabled>Submit</button>
@@ -644,6 +654,14 @@
         $("select[name='department']").val(product_detail.department_id);
         $("select[name='category']").val(product_detail.category_id);
 
+        $("input[name='reorder_level']").val(product_detail.reorder_level);
+
+        if(result.stock_type == "warehouse"){
+          $("input[name='recommend_qty']").val(product_detail.reorder_quantity);
+        }else{
+          $("input[name='recommend_qty']").val(product_detail.recommend_quantity);
+        }
+        
         $("#submit_stock").attr("disabled", false);
         $("#manual_barcode").val("");
         $("input[name='stock_count']").val("");
@@ -685,6 +703,8 @@
     var department_id = $("select[name='department']").val();
     var category_id = $("select[name='category']").val();
     var stock_type = $("#stock_type").val();
+    var reorder_level = $("input[name='reorder_level']").val();
+    var recommend_qty = $("input[name='recommend_qty']").val();
 
     if(stock_count == "")
     {
@@ -698,7 +718,7 @@
       return;
     }
 
-    $.post("{{ route('updateBranchStockByScanner') }}", {"_token" : "{{ csrf_token() }}", "product_id" : product_id, "stock_count" : stock_count, "department_id" : department_id, "category_id" : category_id, "stock_type" : stock_type }, function(result){
+    $.post("{{ route('updateBranchStockByScanner') }}", {"_token" : "{{ csrf_token() }}", "product_id" : product_id, "stock_count" : stock_count, "department_id" : department_id, "category_id" : category_id, "stock_type" : stock_type, "reorder_level" : reorder_level, "recommend_qty" : recommend_qty }, function(result){
       $("#submit_stock").attr("disabled", false);
       if(result.error == 0)
       {

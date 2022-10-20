@@ -174,6 +174,8 @@ class BarcodeController extends Controller
           'quantity' => $request->stock_count,
           'department_id' => $request->department_id,
           'category_id' => $request->category_id,
+          'reorder_level' => $request->reorder_level ?? 0,
+          'recommend_quantity' => $request->recommend_qty ?? 0,
           'last_stock_updated_at' => date('Y-m-d H:i:s')
         ]);
       }
@@ -182,7 +184,9 @@ class BarcodeController extends Controller
         Warehouse_stock::where('id', $request->product_id)->update([
           'quantity' => $request->stock_count,
           'department_id' => $request->department_id,
-          'category_id' => $request->category_id
+          'category_id' => $request->category_id,
+          'reorder_level' => $request->reorder_level ?? 0,
+          'reorder_quantity' => $request->recommend_qty ?? 0,
         ]);
       }
 
