@@ -1116,7 +1116,7 @@ class BranchController extends Controller
       $barcode = str_replace("'","",$data['A']);
       $target = $branch_product->filter(function($value,$key) use ($barcode){return $value->barcode == $barcode;})->first();
 
-      if($target != null && floatval($data['F']) > 0){
+      if($target != null && floatval($data['H']) > 0){
         Tmp_order_list::updateOrCreate(
           [
             'from_branch' => $request->from_branch_id,
@@ -1132,7 +1132,7 @@ class BranchController extends Controller
             'measurement' => $target->measurement,
             'cost' => $target->cost,
             'price' => $target->price,
-            'order_quantity' => $data['F'],
+            'order_quantity' => $data['H'],
           ]);
       }
     }
