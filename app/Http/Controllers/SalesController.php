@@ -1785,7 +1785,7 @@ class SalesController extends Controller
       for($a=0;$a<$diff_date;$a++){
         $tmp_d = date('Y-m-d',strtotime($request->report_date_from."+".$a." day"));
         $tmp = Transaction_detail::selectRaw("SUM(quantity) as quantity,SUM(total) as total,created_at,branch_id")
-                                    ->where('product_name','LIKE',$request->product)
+                                    ->where('barcode',$product_detail->barcode)
                                     ->where('branch_id',$result->token)
                                     ->whereRaw("DATE(transaction_date) = '$tmp_d'")
                                     ->first();
