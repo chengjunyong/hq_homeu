@@ -2110,12 +2110,12 @@ class SalesController extends Controller
 
   public function ajaxExportSalesTransactionReport(Request $request)
   {
-    $branch = Branch::where('id',$request->branch_id)->first();
+    $branch = Branch::whereIn('id',$request->branch_id)->get();
     $from_date = $request->start;
     $to_date = $request->end;
     $date = Carbon::parse($request->end);
 
-    $transaction = Transaction::where('branch_id',$branch->token)
+    $transaction = Transaction::whereIn('branch_id',array_column($branch->toArray(),'token'))
                                 ->whereBetween('transaction_date',[$from_date,$date->addDays(1)])
                                 ->orderBy('transaction_no','asc')
                                 ->get();
