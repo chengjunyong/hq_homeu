@@ -65,7 +65,7 @@
     $("select[name='branch_id[]']").select2();
 
     $("#export_report").click(function(){
-      let branch_id = $("select[name=branch_id]").val();
+      let branch_id = $("select[name='branch_id[]']").val();
       let start = $("input[name=report_date_from]").val();
       let end = $("input[name=report_date_to]").val();
 
