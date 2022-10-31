@@ -36,7 +36,7 @@
           </div>
           <div class="col-md-12" style="margin-bottom: 10px;">
             <label>Branch</label>
-            <select class="form-control" name="branch_id">
+            <select class="form-control" name="branch_id[]" multiple="multiple">
               @foreach($branch as $result)
                 <option value="{{$result->id}}">{{$result->branch_name}}</option>
               @endforeach
@@ -62,6 +62,8 @@
 </form>
 <script>
   $(document).ready(function(){
+    $("select[name='branch_id[]']").select2();
+
     $("#export_report").click(function(){
       let branch_id = $("select[name=branch_id]").val();
       let start = $("input[name=report_date_from]").val();

@@ -2038,19 +2038,19 @@ class SalesController extends Controller
 
   public function postDailySalesTransactionReport(Request $request)
   {
-    $branch = Branch::where('id',$request->branch_id)->first();
+    $branch = Branch::whereIn('id',$request->branch_id)->get();
+
     $from_date = $request->report_date_from;
     $to_date = $request->report_date_to;
     $date = Carbon::parse($request->report_date_to);
 
-    $transaction = Transaction::where('branch_id',$branch->token)
+    $transaction = Transaction::whereIn('branch_id',array_column($branch->toArray(),'token'))
                                 ->whereBetween('transaction_date',[$request->report_date_from,$date->addDays(1)])
                                 ->orderBy('transaction_no','asc')
                                 ->get();
-
     $user = Auth::user();                            
 
-    return view('report.daily_sales_transaction_report',compact('branch','transaction','from_date','to_date','user'));
+    return view('report.daily_sales_transaction_report',compact('transaction','from_date','to_date','user'));
   }
 
   public function transactionCorrection(Request $request)
