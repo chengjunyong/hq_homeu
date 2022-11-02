@@ -39,36 +39,50 @@ class AuditController extends Controller
     public function getStockMovementMenu(Request $request)
     {
         $product = Product_list::where('product_name',$request->product)->first();
-
+        $date_target = $request->report_date_from." Til ".$request->report_date_to;
         if($product == null){
             return back()->with('error','Product Not Found');
         }
-        $branch = Branch::find($request->branch);
 
-        $date_target = $request->report_date_from." Til ".$request->report_date_to;
+        $selected_branch = "";
 
-        $stock_transfer = Do_list::join('do_detail as dd','dd.do_number','=','do_list.do_number')
-                                    ->where('do_list.completed_time','>',$request->report_date_from)
-                                    ->where('do_list.completed_time','<=',$request->report_date_to." 23:59:59")
-                                    ->where('do_list.to_branch_id',$branch->id)
-                                    ->where('dd.barcode',$product->barcode)
-                                    ->groupBy('dd.do_number')
-                                    ->select('do_list.do_number AS transaction_no','dd.quantity','dd.price','do_list.completed_time AS transaction_date');                          
+        if($request->branch != 'warehouse'){
+            $branch = Branch::find($request->branch);
+            $selected_branch = $branch->name;
+            $stock_transfer = Do_list::join('do_detail as dd','dd.do_number','=','do_list.do_number')
+                                        ->where('do_list.completed_time','>',$request->report_date_from)
+                                        ->where('do_list.completed_time','<=',$request->report_date_to." 23:59:59")
+                                        ->where('do_list.to_branch_id',$branch->id)
+                                        ->where('dd.barcode',$product->barcode)
+                                        ->groupBy('dd.do_number')
+                                        ->select('do_list.do_number AS transaction_no','dd.quantity','dd.price','do_list.completed_time AS transaction_date');                          
 
-        $transaction_data = transaction::join('transaction_detail as td',function($q) use ($branch,$request){
-                                            $q->on('transaction.branch_transaction_id','=','td.branch_transaction_id');
-                                            $q->on('td.transaction_date','>',DB::raw("'".$request->report_date_from."'"));
-                                            $q->on('td.transaction_date','<=',DB::raw("'".$request->report_date_to." 23:59:59'"));
-                                        })
-                                        ->where('transaction.transaction_date','>',$request->report_date_from)
-                                        ->where('transaction.transaction_date','<=',$request->report_date_to." 23:59:59'")
-                                        ->where('td.barcode',$product->barcode)
-                                        ->where('transaction.branch_id',$branch->token)
-                                        ->select('transaction.transaction_no','td.quantity','td.price','transaction.transaction_date')
-                                        ->union($stock_transfer)
-                                        ->get();
+            $transaction_data = transaction::join('transaction_detail as td',function($q) use ($branch,$request){
+                                                $q->on('transaction.branch_transaction_id','=','td.branch_transaction_id');
+                                                $q->on('td.transaction_date','>',DB::raw("'".$request->report_date_from."'"));
+                                                $q->on('td.transaction_date','<=',DB::raw("'".$request->report_date_to." 23:59:59'"));
+                                            })
+                                            ->where('transaction.transaction_date','>',$request->report_date_from)
+                                            ->where('transaction.transaction_date','<=',$request->report_date_to." 23:59:59'")
+                                            ->where('td.barcode',$product->barcode)
+                                            ->where('transaction.branch_id',$branch->token)
+                                            ->select('transaction.transaction_no','td.quantity','td.price','transaction.transaction_date')
+                                            ->union($stock_transfer)
+                                            ->get();
+        }else{
+            $selected_branch = "warehouse";
 
-        return view('audit.stock-movement-report',compact('transaction_data','product','date_target'));
+            $stock_transfer = Do_list::join('do_detail as dd','dd.do_number','=','do_list.do_number')
+                                        ->where('do_list.completed_time','>',$request->report_date_from)
+                                        ->where('do_list.completed_time','<=',$request->report_date_to." 23:59:59")
+                                        ->where('do_list.to_branch_id',0)
+                                        ->where('dd.barcode',$product->barcode)
+                                        ->groupBy('dd.do_number')
+                                        ->select('do_list.do_number AS transaction_no','dd.quantity','dd.price','do_list.completed_time AS transaction_date');   
+
+        }
+
+        return view('audit.stock-movement-report',compact('transaction_data','product','date_target','selected_branch'));
     }
 
     public function ajaxStockMovementMenu(Request $request)

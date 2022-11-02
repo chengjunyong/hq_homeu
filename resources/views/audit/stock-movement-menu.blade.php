@@ -25,7 +25,7 @@
               @foreach($branches as $branch)
                 <option value="{{$branch->id}}">{{$branch->branch_name}}</option>
               @endforeach
-              <option value="warehourse">Warehouse</option>
+              {{-- <option value="warehouse">Warehouse</option> --}}
             </select>
           </div>
           <div class="col-md-6">
