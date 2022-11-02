@@ -187,6 +187,11 @@
           </div>
 
           <div class="col-12">
+            <label>Product Price :</label>
+            <label id="product_price"></label>
+          </div>
+
+          <div class="col-12">
             <label>Product measurement :</label>
             <label style="text-transform: capitalize;" id="product_measurement"></label>
           </div>
@@ -641,6 +646,7 @@
         product_detail = result.product_detail;
         $("#product_name").html(product_detail.product_name);
         $("#product_barcode").html(product_detail.barcode);
+        $("#product_price").html(product_detail.price);
         $("#product_id").val(product_detail.id);
 
         $("#product_measurement").html("");
