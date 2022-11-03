@@ -1068,10 +1068,10 @@ class BranchController extends Controller
     $sheet->setCellValue('B1','Product Name');
     $sheet->setCellValue('C1','Department');
     $sheet->setCellValue('D1','Category');
-    $sheet->setCellValue('E1','Current Quantity');
-    $sheet->setCellValue('F1','Reorder Level');
-    $sheet->setCellValue('G1','Recommended Quantity');
-    $sheet->setCellValue('H1','Restock Quantity');
+    $sheet->setCellValue('E1','Balance Qty');
+    $sheet->setCellValue('F1','Minimum Qty');
+    $sheet->setCellValue('G1','Top Up Qty');
+    $sheet->setCellValue('H1','Restock Qty');
 
 
     $start = 2;

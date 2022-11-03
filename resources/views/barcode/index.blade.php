@@ -187,13 +187,18 @@
           </div>
 
           <div class="col-12">
-            <label>Product Price :</label>
+            <label>Selling Price :</label>
             <label id="product_price"></label>
           </div>
 
           <div class="col-12">
             <label>Product measurement :</label>
             <label style="text-transform: capitalize;" id="product_measurement"></label>
+          </div>
+
+          <div class="col-12">
+            <label>Balance qty :</label>
+            <label style="text-transform: capitalize;" id="current_qty"></label>
           </div>
 
           <div class="col-12">
@@ -220,12 +225,12 @@
           </div>
 
           <div class="col-12 form-group">
-            <label>Reorder Level </label>
+            <label>Minimum Quantity </label>
             <input type="number" class="form-control" name="reorder_level" /> 
           </div>
 
           <div class="col-12 form-group">
-            <label>Recommend Quantity </label>
+            <label>Top Up Quantity </label>
             <input type="number" class="form-control" name="recommend_qty" /> 
           </div>
 
@@ -648,6 +653,7 @@
         $("#product_barcode").html(product_detail.barcode);
         $("#product_price").html(product_detail.price);
         $("#product_id").val(product_detail.id);
+        $("#current_qty").html(product_detail.quantity);
 
         $("#product_measurement").html("");
         if(product_detail.measurement)
