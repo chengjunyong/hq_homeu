@@ -660,10 +660,16 @@ class WarehouseController extends Controller
     }
     $reference_no = "P".$last_id;
 
+    if($request->branch_id == 'warehouse')
+      $branch_name = "HQ Warehouse";
+    else
+      $branch_name = Branch::find($request->branch_id)->branch_name;
+
     $invoice_purchase = Invoice_purchase::create([
                                             'reference_no'=>$reference_no,
                                             'invoice_date'=>$request->invoice_date,
                                             'invoice_no'=>$request->invoice_no,
+                                            'destination' => $branch_name,
                                             'total_item'=>$total_item,
                                             'total_cost'=>0,
                                             'total_different_item'=>count($purchase_items),
@@ -797,8 +803,6 @@ class WarehouseController extends Controller
     $url = route('getInvoicePurchaseHistory');
     $invoice = Invoice_purchase::where('id',$request->invoice_id)->first();
     $invoice_detail = Invoice_purchase_detail::where('invoice_purchase_id',$request->invoice_id)->get();
-
-    
 
     return view('warehouse.invoice_history_detail',compact('url','invoice','invoice_detail'));
   }

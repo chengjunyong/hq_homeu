@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Branch_product;
+use App\CostHistory;
 use App\Product_list;
 use App\StockLog;
 use App\Warehouse_stock;
@@ -38,4 +39,20 @@ class StockLogController extends Controller
 
         exit('Finish');
     }
+
+    public function cost()
+    {   
+        $products = Product_list::all();
+
+        foreach($products as $product){
+            CostHistory::create([
+                'product_id' => $product->id,
+                'barcode' => $product->barcode,
+                'product_name' => $product->product_name,
+                'cost' => $product->cost,
+            ]);
+        }
+        
+        exit('Finish');
+    }   
 }

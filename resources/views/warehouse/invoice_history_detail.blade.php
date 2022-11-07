@@ -30,6 +30,10 @@
           <input readonly class="form-control" type="text" value="{{$invoice->invoice_no}}">
         </div>
         <div class="col-md-6">
+          <label>To Branch:</label>
+          <input readonly class="form-control" type="text" value="{{$invoice->destination ?? ''}}">
+        </div>
+        <div class="col-md-6">
           <label>Supplier Name:</label>
           <input readonly class="form-control" type="text" value="{{$invoice->supplier_name}}">
         </div>

@@ -14,6 +14,7 @@ class Invoice_purchase extends Model
       'reference_no',
       'invoice_date',
       'invoice_no',
+      'destination',
       'total_item',
       'total_cost',
       'total_different_item',

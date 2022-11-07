@@ -226,3 +226,4 @@ Route::get('/ajax-get-stock-movement-menu','AuditController@ajaxStockMovementMen
 
 //StockLog  
 Route::get('/stocklog/index','StockLogController@index')->name('stock-log-index');
+Route::get('/stocklog/cost','StockLogController@cost')->name('cost');
