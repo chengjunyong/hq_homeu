@@ -148,11 +148,10 @@ $(document).ready(function(){
   });
 
   $("#order_list").click(function(){
-    let a = $("#branch_order_list").val();
+    let to = $("#branch_order_list").val();
     let from = "{{$_GET['from'] ?? ''}}";
-    let to = "{{$_GET['branch_id'] ?? ''}}";
 
-    window.location.assign(`{{route('getManualOrderList')}}?id=${a}&from=${from}&to=${to}`);
+    window.location.assign(`{{route('getManualOrderList')}}?from=${from}&to=${to}`);
   });
 
   $("input[name=search]").keydown(function(e){

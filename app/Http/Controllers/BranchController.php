@@ -835,7 +835,7 @@ class BranchController extends Controller
     $to = new \stdClass();
 
     $branch_group = Tmp_order_list::groupBy(['to_branch','from_branch'])
-                                    ->where('to_branch',$_GET['id'])
+                                    ->where('to_branch',$_GET['to'])
                                     ->where('user_id',$user)
                                     ->first();
                                     

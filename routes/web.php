@@ -223,6 +223,10 @@ Route::get('/TransactionCorrection2/{from_date}/{to_date}/{branch_code}/{token}'
 Route::get('/stock-movement-menu','AuditController@stockMovementMenu')->name('stockMovementMenu');
 Route::get('/get-stock-movement-menu','AuditController@getStockMovementMenu')->name('getStockMovementMenu');
 Route::get('/ajax-get-stock-movement-menu','AuditController@ajaxStockMovementMenu')->name('ajaxStockMovementMenu');
+Route::get('/stock-check-list','AuditController@stockCheckList')->name('stockCheckList');
+Route::post('/change-quantity','AuditController@changeStockCheckQuantity')->name('changeStockCheckQuantity');
+Route::post('/delete-stock-check','AuditController@deleteStockCheck')->name('deleteStockCheck');
+Route::get('/approve-stock-check','AuditController@approveStockCheck')->name('approveStockCheck');
 
 //StockLog  
 Route::get('/stocklog/index','StockLogController@index')->name('stock-log-index');

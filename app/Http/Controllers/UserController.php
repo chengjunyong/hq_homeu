@@ -416,6 +416,12 @@ class UserController extends Controller
           'value' => 35,
           'name' => 'Search Product',
           'route' => 'searchProduct'
+        ],
+        [
+          'group' => 'Product',
+          'value' => 36,
+          'name' => 'Stock Checking List (Audit)',
+          'route' => 'stockCheckList'
         ]
       ];
 

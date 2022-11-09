@@ -14,6 +14,7 @@ use App\Warehouse_stock;
 use App\transaction_detail;
 use Illuminate\Http\Request;
 use App\Branch_stock_history;
+use App\StockCheck;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -181,5 +182,63 @@ class AuditController extends Controller
         $writer->save($path);
 
         return response()->json($path);
+    }
+
+    public function stockCheckList(Request $request)
+    {
+        $branch = Branch::all();
+        if(isset($request->branch)){
+            $data = StockCheck::with('branch','product','user')->where('destination',$request->branch)->get();
+        }else{
+            $data = [];
+        }
+
+        return view('audit.stock-checklist',compact('branch','data'))->with('url',$this->url);
+    }
+
+    public function changeStockCheckQuantity(Request $request)
+    {
+        $stock = StockCheck::where('id',$request->id)->first();
+        $raw = json_decode($stock->raw);
+        $raw->quantity = $request->qty;
+    
+        $stock->update([
+            'stock_count' => $request->qty,
+            'raw' => json_encode($raw),
+        ]);
+
+        return "true";
+    }
+
+    public function deleteStockCheck(Request $request)
+    {
+        StockCheck::where('id',$request->id)->delete();
+
+        return "true";
+    }
+
+    public function approveStockCheck(Request $request)
+    {
+        $stocks = StockCheck::where('destination',$request->branch_id)->get();
+        if($request->branch_id == 'warehouse'){
+
+            foreach($stocks as $result){
+                $data = json_decode($result->raw,true);
+                Warehouse_stock::where('barcode',$result->barcode)
+                            ->update($data);
+            }
+        }else{
+
+            foreach($stocks as $result){
+                $data = json_decode($result->raw,true);
+                Branch_product::where('barcode',$result->barcode)
+                                ->where('branch_id',$request->branch_id)
+                                ->update($data);
+            }
+        }
+
+        StockCheck::where('destination',$request->branch_id)->delete();
+
+        return "true";
     }
 }
