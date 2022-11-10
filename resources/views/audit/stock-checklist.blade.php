@@ -73,7 +73,13 @@
                 @endif
               </td>
               <td>{{$result->barcode}}</td>
-              <td>{{$result->product->product_name}}</td>
+              <td>
+                @if($result->destination == 'warehouse')
+                  {{$result->warehouseProduct->product_name}}
+                @else
+                  {{$result->branchProduct->product_name}}
+                @endif
+              </td>
               <td>{{$result->stock_count}}</td>
               <td>{{$result->user->name}}</td>
               <td>{{date("d-M -Y h:i:s a",strtotime($result->updated_at))}}</td>

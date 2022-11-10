@@ -187,6 +187,7 @@ class BarcodeController extends Controller
           ],
           [
             'product_id' => $request->product_id,
+            'product_name' => $branch_product->product_name,
             'user_id' => $user->id,
             'stock_count' => $request->stock_count,
             'raw' => json_encode($products),
@@ -210,6 +211,7 @@ class BarcodeController extends Controller
           ],
           [
             'product_id' => $request->product_id,
+            'product_name' => $branch_product->product_name,
             'user_id' => $user->id,
             'stock_count' => $request->stock_count,
             'raw' => json_encode($products),

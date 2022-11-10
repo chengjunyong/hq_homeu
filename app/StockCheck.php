@@ -12,6 +12,7 @@ class StockCheck extends Model
         'destination',
         'product_id',
         'barcode',
+        'product_name',
         'user_id',
         'stock_count',
         'raw',
@@ -22,9 +23,14 @@ class StockCheck extends Model
         return $this->belongsTo(Branch::class,'destination');
     }
 
-    public function product()
+    public function branchProduct()
     {
-        return $this->belongsTo(Product_list::class,'product_id');
+        return $this->belongsTo(Branch_product::class,'product_id','id');
+    }
+
+    public function warehouseProduct()
+    {
+        return $this->belongsTo(Warehouse_stock::class,'product_id','id');
     }
 
     public function user()

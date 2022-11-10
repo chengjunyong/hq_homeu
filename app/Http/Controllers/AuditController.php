@@ -56,7 +56,8 @@ class AuditController extends Controller
                                         ->where('do_list.to_branch_id',$branch->id)
                                         ->where('dd.barcode',$product->barcode)
                                         ->groupBy('dd.do_number')
-                                        ->select('do_list.do_number AS transaction_no','dd.quantity','dd.price','do_list.completed_time AS transaction_date');                          
+                                        ->select('do_list.do_number AS transaction_no','dd.quantity','dd.price','do_list.completed_time AS transaction_date')
+                                        ->selectRaw("'warehouse_tranfer' AS type");                          
 
             $transaction_data = transaction::join('transaction_detail as td',function($q) use ($branch,$request){
                                                 $q->on('transaction.branch_transaction_id','=','td.branch_transaction_id');
@@ -68,8 +69,14 @@ class AuditController extends Controller
                                             ->where('td.barcode',$product->barcode)
                                             ->where('transaction.branch_id',$branch->token)
                                             ->select('transaction.transaction_no','td.quantity','td.price','transaction.transaction_date')
+                                            ->selectRaw("'sales' AS type")
                                             ->union($stock_transfer)
                                             ->get();
+
+            //Stock Purchase direct to branch
+
+            // Good Return
+
         }else{
             $selected_branch = "warehouse";
 
@@ -79,7 +86,15 @@ class AuditController extends Controller
                                         ->where('do_list.to_branch_id',0)
                                         ->where('dd.barcode',$product->barcode)
                                         ->groupBy('dd.do_number')
-                                        ->select('do_list.do_number AS transaction_no','dd.quantity','dd.price','do_list.completed_time AS transaction_date');   
+                                        ->select('do_list.do_number AS transaction_no','dd.quantity','dd.price','do_list.completed_time AS transaction_date')
+                                        ->selectRaw("'warehouse_tranfer' AS type")
+                                        ->get();  
+                                        
+            // Stock Purchase
+
+            // Stock Check
+
+            // Good Return
 
         }
 
@@ -188,7 +203,7 @@ class AuditController extends Controller
     {
         $branch = Branch::all();
         if(isset($request->branch)){
-            $data = StockCheck::with('branch','product','user')->where('destination',$request->branch)->get();
+            $data = StockCheck::with('branch','branchProduct','warehouseProduct','user')->where('destination',$request->branch)->get();
         }else{
             $data = [];
         }
