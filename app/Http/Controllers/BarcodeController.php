@@ -171,51 +171,71 @@ class BarcodeController extends Controller
 
       if($stock_type == "branch")
       {
-        $products = [
+
+        Branch_product::where('id', $request->product_id)->update([
           'quantity' => $request->stock_count,
           'department_id' => $request->department_id,
           'category_id' => $request->category_id,
           'reorder_level' => $request->reorder_level ?? 0,
           'recommend_quantity' => $request->recommend_qty ?? 0,
           'last_stock_updated_at' => date('Y-m-d H:i:s')
-        ];
+        ]);
 
-        StockCheck::updateOrCreate(
-          [
-            'destination' => $branch_id,
-            'barcode' => $branch_product->barcode,
-          ],
-          [
-            'product_id' => $request->product_id,
-            'product_name' => $branch_product->product_name,
-            'user_id' => $user->id,
-            'stock_count' => $request->stock_count,
-            'raw' => json_encode($products),
-          ]);
+        // $products = [
+        //   'quantity' => $request->stock_count,
+        //   'department_id' => $request->department_id,
+        //   'category_id' => $request->category_id,
+        //   'reorder_level' => $request->reorder_level ?? 0,
+        //   'recommend_quantity' => $request->recommend_qty ?? 0,
+        //   'last_stock_updated_at' => date('Y-m-d H:i:s')
+        // ];
+
+        // Send to stock check section
+        // StockCheck::updateOrCreate(
+        //   [
+        //     'destination' => $branch_id,
+        //     'barcode' => $branch_product->barcode,
+        //   ],
+        //   [
+        //     'product_id' => $request->product_id,
+        //     'product_name' => $branch_product->product_name,
+        //     'user_id' => $user->id,
+        //     'stock_count' => $request->stock_count,
+        //     'raw' => json_encode($products),
+        //   ]);
 
       }
       elseif($stock_type == "warehouse")
       {
-        $products = [
+        Warehouse_stock::where('id', $request->product_id)->update([
           'quantity' => $request->stock_count,
           'department_id' => $request->department_id,
           'category_id' => $request->category_id,
           'reorder_level' => $request->reorder_level ?? 0,
           'reorder_quantity' => $request->recommend_qty ?? 0,
-        ];
+        ]);
 
-        StockCheck::updateOrCreate(
-          [
-            'destination' => 'warehouse',
-            'barcode' => $branch_product->barcode,
-          ],
-          [
-            'product_id' => $request->product_id,
-            'product_name' => $branch_product->product_name,
-            'user_id' => $user->id,
-            'stock_count' => $request->stock_count,
-            'raw' => json_encode($products),
-          ]);
+        // $products = [
+        //   'quantity' => $request->stock_count,
+        //   'department_id' => $request->department_id,
+        //   'category_id' => $request->category_id,
+        //   'reorder_level' => $request->reorder_level ?? 0,
+        //   'reorder_quantity' => $request->recommend_qty ?? 0,
+        // ];
+
+        // Send to stock check section
+        // StockCheck::updateOrCreate(
+        //   [
+        //     'destination' => 'warehouse',
+        //     'barcode' => $branch_product->barcode,
+        //   ],
+        //   [
+        //     'product_id' => $request->product_id,
+        //     'product_name' => $branch_product->product_name,
+        //     'user_id' => $user->id,
+        //     'stock_count' => $request->stock_count,
+        //     'raw' => json_encode($products),
+        //   ]);
 
       }
 
