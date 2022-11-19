@@ -2423,9 +2423,9 @@ class SalesController extends Controller
 
       $started_row++;
     }
-
+    $str = Str::random(5);
     $writer = new Xlsx($spreadsheet);
-    $path = 'storage/report/Department and Branch Sales Report.xlsx';
+    $path = 'storage/report/Department and Branch Sales Report '.$str.'.xlsx';
     $writer->save($path);
 
     $response = new \stdClass();
