@@ -52,4 +52,14 @@ class Product_list extends Model
       'deleted_by',
       'remark',
     ];
+
+    public function department()
+    {
+      return $this->belongsTo(Department::class,'department_id');
+    }
+
+    public function category()
+    {
+      return $this->belongsTo(Category::class,'category_id');
+    }
 }

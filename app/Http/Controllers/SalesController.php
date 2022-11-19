@@ -2321,91 +2321,40 @@ class SalesController extends Controller
 
   public function exportDepartmentAndCategoryReport(Request $request)
   {
-    $department_detail = Department::where('id', $request->export_department_id)->first();
-    $category_list = Category::whereIn('id', $request->export_category_id)->get();
-    $category_id_array = $request->export_category_id;
-
+    $branch_list = Branch::whereNotIn('id',[11,12])->get();
     $date_from = $request->export_report_date_from;
     $date_to = $request->export_report_date_to;
     $report_date_from = $date_from." 00:00:00";
     $report_date_to = $date_to." 23:59:59";
 
-    $transaction_query = Transaction_detail::leftJoin('transaction', function($join)
-    {
-      $join->on('transaction.branch_transaction_id', '=', 'transaction_detail.branch_transaction_id');
-      $join->on('transaction.branch_id', '=', 'transaction_detail.branch_id');
-    })->whereBetween('transaction.transaction_date', [$report_date_from, $report_date_to]);
+    $transaction_details = Transaction_detail::where('department_id',$request->export_department_id)
+                                    ->whereIn('category_id',$request->export_category_id)
+                                    ->whereBetween('transaction_detail_date',[$report_date_from,$report_date_to])
+                                    ->groupBy('barcode')
+                                    ->get();
 
-    $barcode_array = $transaction_query->pluck('barcode')->toArray();
+    $product_list = Product_list::with('department','category')
+                                ->whereIn('barcode',$transaction_details->pluck('barcode'))
+                                ->get();
 
-    $barcode_array = array_unique($barcode_array);
+    foreach($product_list as $key => $data){
+      $total_sales = 0;
+      $total_qty = 0;
+      foreach($branch_list as $branch){
+        $qty = $transaction_details->where('branch_id',$branch->token)->where('barcode',$data->barcode)->first()->quantity ?? 0;
+        $sales = $transaction_details->where('branch_id',$branch->token)->where('barcode',$data->barcode)->first()->total ?? 0;
 
-    $product_query = Product_list::withTrashed();
+        $branch_data[$branch->id] = [
+          'qty' => $qty,
+          'sales' => $sales,
+        ];
 
-    $product_query->where(function($query) use ($barcode_array){
-      foreach (array_chunk($barcode_array, 1000) as $barcode) {
-        $query->orWhereIn('barcode', $barcode);
+        $total_sales += $sales;
+        $total_qty += $qty;
       }
-    });
-  
-    $product_list = $product_query->leftJoin('category', 'category.id', '=', 'product_list.category_id')->leftJoin('department', 'department.id', '=', 'product_list.department_id')->select('product_list.*', 'category.category_name', 'department.department_name')->orderBy('barcode')->get();
-
-    $transaction_detail = $transaction_query->select('transaction_detail.*')->orderBy('transaction_detail.barcode')->get();
-
-    $branch_list = Branch::get();
-    foreach($product_list as $product)
-    {
-      $product->total_quantity = 0;
-      $product->total_sales = 0;
-
-      $product_branch_list = array();
-      foreach($branch_list as $branch)
-      {
-        $branch_detail = new \stdClass();
-        $branch_detail->id = $branch->id;
-        $branch_detail->token = $branch->token;
-        $branch_detail->total = 0;
-        $branch_detail->quantity = 0;
-
-        array_push($product_branch_list, $branch_detail);
-      }
-        
-      $product->branch_list = $product_branch_list;
-    }
-
-    $using_barcode = null;
-
-    foreach($product_list as $product)
-    {
-      $using_barcode = $product->barcode;
-      foreach($transaction_detail as $t_key => $value)
-      {
-        if($using_barcode === $value->barcode)
-        {
-          if(!$value->measurement)
-          {
-            $value->measurement = 1;
-          }
-
-          $product->total_sales += $value->total;
-          $product->total_quantity += ($value->quantity * $value->measurement);
-          foreach($product->branch_list as $branch)
-          {
-            if($branch->token == $value->branch_id)
-            {
-              $branch->total = $branch->total + $value->total;
-              $branch->quantity = $branch->quantity + ($value->quantity * $value->measurement);
-              break;
-            }
-          }
-          
-          unset($transaction_detail[$t_key]);
-        }
-        elseif(in_array($value->barcode, $barcode_array))
-        {
-          break;
-        }
-      }
+      $data->branch = $branch_data;
+      $data->total_qty = $total_qty;
+      $data->total_sales = $total_sales;
     }
 
     $spreadsheet = new Spreadsheet();
@@ -2455,30 +2404,24 @@ class SalesController extends Controller
     $started_row = 5;
     foreach($product_list as $key => $product)
     {
-      if(in_array($product->category_id, $category_id_array))
+      $sheet->setCellValue('A'.$started_row, ($key + 1));
+      $sheet->setCellValue('B'.$started_row, $product->department->department_name);
+      $sheet->setCellValue('C'.$started_row, $product->category->category_name);
+      $sheet->setCellValue('D'.$started_row, $product->barcode);
+      $sheet->setCellValue('E'.$started_row, $product->product_name);
+      $sheet->setCellValue('F'.$started_row, $product->total_qty);
+      $sheet->setCellValue('G'.$started_row, $product->total_sales);
+
+      $started_alp = 8;
+      foreach($product->branch as $branch)
       {
-        $sheet->setCellValue('A'.$started_row, ($key + 1));
-        $sheet->setCellValue('B'.$started_row, $product->department_name);
-        $sheet->setCellValue('C'.$started_row, $product->category_name);
-        $sheet->setCellValue('D'.$started_row, $product->barcode);
-        $sheet->setCellValue('E'.$started_row, $product->product_name);
-        $sheet->setCellValue('F'.$started_row, $product->total_quantity);
-        $sheet->setCellValue('G'.$started_row, $product->total_sales);
-
-        $started_alp = 8;
-        foreach($product->branch_list as $branch)
-        {
-          $col = $alphabet[$started_alp];
-
-          if($branch->quantity > 0)
-          {
-            $sheet->setCellValue($col.$started_row, $branch->quantity);
-          }
-          $started_alp++;
-        }
-
-        $started_row++;
+        $col = $alphabet[$started_alp];
+        $sheet->setCellValue($col.$started_row, $branch['qty']);
+        
+        $started_alp++;
       }
+
+      $started_row++;
     }
 
     $writer = new Xlsx($spreadsheet);

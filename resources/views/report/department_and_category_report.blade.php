@@ -130,7 +130,7 @@
       }); 
 
       $.post("{{ route('exportDepartmentAndCategoryReport') }}", $("#exportDepartmentAndCategoryReportForm").serialize(), function(result){
-
+        console.log(result)
         if(result.error == 0)
         {
           Swal.close();
