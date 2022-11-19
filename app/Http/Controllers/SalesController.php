@@ -2336,7 +2336,6 @@ class SalesController extends Controller
     $transaction_details2 = Transaction_detail::where('department_id',$request->export_department_id)
                                     ->whereIn('category_id',$request->export_category_id)
                                     ->whereBetween('transaction_detail_date',[$report_date_from,$report_date_to])
-                                    ->groupBy('barcode')
                                     ->get();
 
     $product_list = Product_list::with('department','category')
@@ -2347,8 +2346,8 @@ class SalesController extends Controller
       $total_sales = 0;
       $total_qty = 0;
       foreach($branch_list as $branch){
-        $qty = $transaction_details2->where('branch_id',$branch->token)->where('barcode',$data->barcode)->first()->quantity ?? 0;
-        $sales = $transaction_details2->where('branch_id',$branch->token)->where('barcode',$data->barcode)->first()->total ?? 0;
+        $qty = $transaction_details2->where('branch_id',$branch->token)->where('barcode',$data->barcode)->sum('quantity') ?? 0;
+        $sales = $transaction_details2->where('branch_id',$branch->token)->where('barcode',$data->barcode)->sum('total') ?? 0;
 
         $branch_data[$branch->id] = [
           'qty' => $qty,
