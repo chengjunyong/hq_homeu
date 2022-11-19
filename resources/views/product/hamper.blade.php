@@ -50,9 +50,11 @@
           <table class="table" style="width:100%">
             <thead>
               <th>No</th>
+              <th>Branch</th>
               <th>Barcode</th>
               <th>Hamper Name</th>
               <th>Hamper Price</th>
+              <th>Quantity</th>
               <th>Creator</th>
               <th>Last Update</th>
               <th></th>
@@ -61,9 +63,11 @@
             @foreach($hamper as $index => $result)
               <tr>
                 <td>{{ $index +1 }}</td>
+                <td>Branch</td>
                 <td>{{ $result->barcode }}</td>
                 <td>{{ $result->name }}</td>
                 <td>Rm {{ number_format($result->price,2) }}</td>
+                <td>Quantity</td>
                 <td>{{ $result->creator_name }}</td>
                 <td>{{ date("d-M-Y h:i:s A",strtotime($result->updated_at)) }}</td>
                 <td><button type="button" class="btn btn-primary modify" ref-id="{{$result->id}}">Check</button></td>
@@ -90,6 +94,15 @@
       <div class="modal-body modal_edit_hamper">
         <div class="row">
           <div class="col-md-12">
+            <label>Branch</label><br/>
+            <select name="e_branch" class="form-control" disabled>
+              @foreach($branches as $branch)
+                <option value={{$branch->id}}>{{$branch->branch_name}}</option>
+              @endforeach
+            </select>
+          </div><br/>
+
+          <div class="col-md-12">
             <label>Hamper Barcode</label><br/>
             <input class="form-control" name="e_barcode" readonly type="text"/>
           </div><br/>
@@ -105,12 +118,17 @@
           </div><br/>
 
           <div class="col-md-12">
+            <label>Quantity</label><br/>
+            <input class="form-control" name="e_quantity" type="number" readonly step="1" min="0"/>
+          </div><br/>
+
+          <div class="col-md-12">
             <label>Product List</label>
-            <div style="float:right">
+            {{-- <div style="float:right">
               <input type="text" id="e_product_barcode" placeholder="Barcode" />
               <input type="number" id="e_product_quantity" placeholder="Quantity"/>
               <button class="btn btn-outline edit_product_list">Add Product</button>
-            </div>
+            </div> --}}
 
             <ul class="hamper_product_list">
               
@@ -141,6 +159,15 @@
       <div class="modal-body modal_create_hamper">
         <div class="row">
           <div class="col-md-12">
+            <label>Branch</label><br/>
+            <select name="branch" class="form-control" >
+              @foreach($branches as $branch)
+                <option value={{$branch->id}}>{{$branch->branch_name}}</option>
+              @endforeach
+            </select>
+          </div><br/>
+
+          <div class="col-md-12">
             <label>Hamper Barcode</label><br/>
             <input class="form-control" name="barcode" type="text"/>
           </div><br/>
@@ -153,6 +180,11 @@
           <div class="col-md-12">
             <label>Price</label><br/>
             <input class="form-control" name="price" type="number" step="0.01" min="0.01"/>
+          </div><br/>
+
+          <div class="col-md-12">
+            <label>Quantity</label><br/>
+            <input class="form-control" name="quantity" type="number" step="1" min="0"/>
           </div><br/>
 
           <div class="col-md-12">
@@ -194,6 +226,8 @@
       {
         'id':id,
       },function(data){
+        $("select[name=e_branch]").val(data.branch_id);
+        $("input[name=e_quantity]").val(data.quantity);
         $("input[name=e_barcode]").val(data.barcode);
         $("input[name=e_name]").val(data.name);
         $("input[name=e_price]").val(data.price);
@@ -201,7 +235,7 @@
         localStorage.setItem('product_list',data.product_list);
         let product_list = JSON.parse(data.product_list);
         product_list.forEach((result,index) => {
-          $(".hamper_product_list").append(`<li>(${result.barcode}) ${result.product_name} - qty:${result.quantity}<i class="fa fa-times removeItem" onclick="removeItem(${index})" target='${index}' style="cursor: pointer;margin-left: 5px; color:red"></i></li>`)
+          $(".hamper_product_list").append(`<li>(${result.barcode}) ${result.product_name} - qty:${result.quantity}</li>`)
         });
       },'json');
 
@@ -302,22 +336,28 @@
       let barcode = $("input[name=barcode]").val();
       let name = $("input[name=name]").val();
       let price = $("input[name=price]").val();
+      let branch = $("select[name=branch]").val();
+      let quantity = $("input[name=quantity]").val();
       let list = localStorage.getItem('product_list');
 
       if(barcode.trim() == ""){
         swal.fire("Error","Hamper Barcode Cannot Be Empty","error");
       }else if(name.trim() == ""){
         swal.fire("Error","Hamper Name Cannot Be Empty","error");
-      }else if(parseFloat(price) <= 0){
-        swal.fire("Error","Hamper Price Cannot Lower Then 0","error");
+      }else if(parseFloat(price) <= 0 || price.trim() == ''){
+        swal.fire("Error","Hamper Price Cannot Lower Then 0 Or Empty","error");
       }else if(list.trim() == ""){
         swal.fire("Error","Hamper Product List Cannot Be Empty","error");
+      }else if(parseFloat(quantity) <= 0 || quantity.trim() == ''){
+        swal.fire("Error","Quantity Cannot Lower Then 0 Or Empty","error");
       }else{
         $.get('{{route('getCreateHamper')}}',
         {
+          'branch' : branch,
           'barcode':barcode,
           'name':name,
           'price':price,
+          'quantity':quantity,
           'product_list':list,
         },function(data){
           if(data.result == false){

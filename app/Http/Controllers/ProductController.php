@@ -692,7 +692,9 @@ class ProductController extends Controller
                       ->orderBy('updated_at','desc')
                       ->paginate('15');
 
-    return view('product.hamper',compact('url','hamper'));
+    $branches = Branch::whereNotIn('id',['11','12'])->get();
+
+    return view('product.hamper',compact('url','hamper','branches'));
   }
 
   public function ajaxAddHamperProduct(Request $request)
@@ -710,6 +712,8 @@ class ProductController extends Controller
 
   public function getCreateHamper(Request $request)
   {
+    $product_list = json_decode($request->product_list);
+
     $err = new \stdClass();
     $user = Auth::user();
     $count = Hamper::where('barcode',$request->barcode)->count();
@@ -719,12 +723,70 @@ class ProductController extends Controller
       return json_encode($err);
     }else{
       Hamper::create([
+            'branch_id' => $request->branch,
             'name' => $request->name,
             'price' => $request->price,
             'barcode' => $request->barcode,
             'product_list' => $request->product_list,
+            'quantity' => $request->quantity,
             'created_by' => $user->id,
       ]);
+
+      $branches = Branch::all();
+      foreach($branches as $branch){
+        Branch_product::where('id',$branch->id)
+                      ->updateOrCreate(
+                        [
+                          'barcode' => $request->barcode,
+                        ],[
+                          'branch_id' => $branch->id,
+                          'department_id' => 1,
+                          'category_id' => 1,
+                          'product_name' => $request->name,
+                          'uom' => NULL,
+                          'measurement' => 'unit',
+                          'cost' => 0,
+                          'price' => $request->price,
+                          'quantity' => $request->branch == $branch->id ? $request->quantity : 0,
+                          'product_sync' => 1,
+                        ]);
+      }
+
+      Product_list::updateOrCreate(
+      [
+        'barcode' => $request->barcode,
+      ],[
+        'department_id' => 1,
+        'category_id' => 1,
+        'product_name' => $request->name,
+        'uom' => NULL,
+        'measurement' => 'unit',
+        'cost' => 0,
+        'price' => $request->price,
+        'quantity' => $request->quantity,
+        'product_sync' => 1,
+      ]);
+
+      Warehouse_stock::updateOrCreate(
+      [
+        'barcode' => $request->barcode,
+      ],[
+        'department_id' => 1,
+        'category_id' => 1,
+        'product_name' => $request->name,
+        'uom' => NULL,
+        'measurement' => 'unit',
+        'cost' => 0,
+        'price' => $request->price,
+        'quantity' => 0,
+      ]);
+
+      $product_list = json_decode($request->product_list);
+      foreach($product_list as $product){
+        Branch_product::where('branch_id',$request->branch)
+                        ->where('barcode',$product->barcode)
+                        ->decrement('quantity',$product->quantity * $request->quantity);
+      }
 
       $err->result = true;
       $err->msg = "Create Successful";
@@ -735,7 +797,24 @@ class ProductController extends Controller
 
   public function ajaxDeleteHamper(Request $request)
   {
-    Hamper::where('id',$request->id)->delete();
+    $hamper = Hamper::where('id',$request->id)->first();
+
+    Product_list::where('barcode',$hamper->barcode)->delete();
+    Warehouse_stock::where('barcode',$hamper->barcode)->delete();
+
+    $remain_qty = Branch_product::where('branch_id',$hamper->branch_id)
+                                  ->where('barcode',$hamper->barcode)
+                                  ->first();
+
+    $product_list = json_decode($hamper->product_list);
+    foreach($product_list as $product){
+      Branch_product::where('branch_id',$hamper->branch_id)
+                      ->where('barcode',$product->barcode)
+                      ->increment('quantity',$product->quantity * $remain_qty->quantity ?? 0);
+    }
+
+    Branch_product::where('barcode',$hamper->barcode)->delete();
+    $hamper->delete();
 
     return json_encode(true);
   }
@@ -752,15 +831,34 @@ class ProductController extends Controller
   {
     $err = new \stdClass();
     $user = Auth::user();
-    Hamper::where('id',$request->id)
-            ->update([
+
+    $hamper = Hamper::where('id',$request->id)->first();
+    $hamper->update([
                   'name' => $request->name,
                   'price' => $request->price,
-                  'product_list' => $request->product_list,
                   'created_by' => $user->id,
             ]);
-      $err->result = true;
-      $err->msg = "Update Successful";
+
+    Branch_product::where('barcode',$hamper->barcode)
+                    ->update([
+                      'product_name' => $hamper->name,
+                      'price' => $hamper->price,
+                    ]);
+
+    Product_list::where('barcode',$hamper->barcode)
+                  ->update([
+                    'product_name' => $hamper->name,
+                    'price' => $hamper->price,
+                  ]);
+
+    Warehouse_stock::where('barcode',$hamper->barcode)
+                    ->update([
+                      'product_name' => $hamper->name,
+                      'price' => $hamper->price,
+                    ]);
+
+    $err->result = true;
+    $err->msg = "Update Successful";
     
     return json_encode($err);
   }

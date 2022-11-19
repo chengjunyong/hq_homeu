@@ -11,6 +11,7 @@ class Hamper extends Model
     protected $table = 'hamper';
     protected $fillable = 
     [
+      'branch_id',
       'name',
       'price',
       'barcode',
