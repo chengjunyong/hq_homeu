@@ -71,6 +71,7 @@
                 <td>{{ $result->creator_name }}</td>
                 <td>{{ date("d-M-Y h:i:s A",strtotime($result->updated_at)) }}</td>
                 <td><button type="button" class="btn btn-primary modify" ref-id="{{$result->id}}">Check</button></td>
+                <td><a class="btn btn-secondary" href="{{route('printHamper',$result->id)}}" target="_blank">Print</button></td>
                 <td><button type="button" class="btn btn-danger delete" ref-id="{{$result->id}}">Delete</button></td>
               </tr>
             @endforeach

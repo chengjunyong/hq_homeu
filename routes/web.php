@@ -87,6 +87,7 @@ Route::get('/createHamper','ProductController@getCreateHamper')->name('getCreate
 Route::get('/deleteHamper','ProductController@ajaxDeleteHamper')->name('ajaxDeleteHamper');
 Route::get('/getHamper','ProductController@getHamper')->name('getHamper');
 Route::get('/editHamper','ProductController@getEditHamper')->name('getEditHamper');
+Route::get('/printHamper/{id}','ProductController@printHamper')->name('printHamper');
 
 //Other
 Route::get('/Supplier','OtherController@getSupplier')->name('getSupplier');

@@ -864,4 +864,14 @@ class ProductController extends Controller
     return json_encode($err);
   }
 
+  public function printHamper(Request $request)
+  {
+    $hamper = Hamper::find($request->id);
+    $list = collect(json_decode($hamper->product_list));
+
+    $products = Product_list::whereIn('barcode',$list->pluck('barcode'))->get();
+
+    return view('product.hamper_print',compact('hamper','products','list'));
+
+  }
 }
