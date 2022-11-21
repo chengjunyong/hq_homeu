@@ -63,11 +63,11 @@
             @foreach($hamper as $index => $result)
               <tr>
                 <td>{{ $index +1 }}</td>
-                <td>Branch</td>
+                <td>{{ $result->branch_name }}</td>
                 <td>{{ $result->barcode }}</td>
                 <td>{{ $result->name }}</td>
                 <td>Rm {{ number_format($result->price,2) }}</td>
-                <td>Quantity</td>
+                <td>{{ $result->quantity }}</td>
                 <td>{{ $result->creator_name }}</td>
                 <td>{{ date("d-M-Y h:i:s A",strtotime($result->updated_at)) }}</td>
                 <td><button type="button" class="btn btn-primary modify" ref-id="{{$result->id}}">Check</button></td>

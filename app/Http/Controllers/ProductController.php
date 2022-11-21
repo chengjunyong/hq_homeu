@@ -688,7 +688,8 @@ class ProductController extends Controller
     $url = route('home')."?p=product_menu";
 
     $hamper = Hamper::join('users','users.id','=','hamper.created_by')
-                      ->select('hamper.*','users.name as creator_name')
+                      ->join('branch','branch.id','=','hamper.branch_id')
+                      ->select('hamper.*','users.name as creator_name','branch.branch_name as branch_name')
                       ->orderBy('updated_at','desc')
                       ->paginate('15');
 
