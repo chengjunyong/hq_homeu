@@ -876,6 +876,8 @@ class WarehouseController extends Controller
     }
     Invoice_purchase::where('reference_no',$request->ref_no)
                       ->update([
+                        'invoice_date'=>$request->invoice_date,
+                        'invoice_no'=>$request->invoice_no,
                         'total_cost'=>$total,
                         'total_item'=>$total_quantity,
                       ]);

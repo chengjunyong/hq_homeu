@@ -15,52 +15,51 @@
     <div class="card-title">
       <h4>Invoice History Details</h4>
     </div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-md-12">
-          <label>Reference No:</label>
-          <input readonly class="form-control" type="text" value="{{$invoice->reference_no}}">
+    <form method="post" action="{{route('postInvoicePurchaseHistoryDetail')}}">
+      @csrf
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12">
+            <label>Reference No:</label>
+            <input readonly class="form-control" name="ref_no" type="text" value="{{$invoice->reference_no}}">
+          </div>
+          <div class="col-md-6">
+            <label>Invoice Date:</label>
+            <input class="form-control" type="date" name="invoice_date" value="{{$invoice->invoice_date}}">
+          </div>
+          <div class="col-md-6">
+            <label>Invoice No:</label>
+            <input class="form-control" type="text" name="invoice_no" value="{{$invoice->invoice_no}}">
+          </div>
+          <div class="col-md-6">
+            <label>To Branch:</label>
+            <input readonly class="form-control" type="text" value="{{$invoice->destination ?? ''}}">
+          </div>
+          <div class="col-md-6">
+            <label>Supplier Name:</label>
+            <input readonly class="form-control" type="text" value="{{$invoice->supplier_name}}">
+          </div>
+          <div class="col-md-6">
+            <label>Total Items:</label>
+            <input readonly class="form-control" type="text" value="{{$invoice->total_different_item}}">
+          </div>
+          <div class="col-md-6">
+            <label>Total Items Quantity:</label>
+            <input readonly class="form-control" type="text" value="{{$invoice->total_item}}">
+          </div>
+          <div class="col-md-6">
+            <label>Total Value:</label>
+            <input readonly class="form-control" type="text" value="Rm {{number_format($invoice->total_cost,3)}}">
+          </div>
+          <div class="col-md-6">
+            <label>Record Creator:</label>
+            <input readonly class="form-control" type="text" value="{{$invoice->creator_name}}">
+          </div>
+          <div class="col-md-6">
+            <label>Created At:</label>
+            <input readonly class="form-control" type="text" value="{{$invoice->created_at}}">
+          </div>
         </div>
-        <div class="col-md-6">
-          <label>Invoice Date:</label>
-          <input readonly class="form-control" type="text" value="{{$invoice->invoice_date}}">
-        </div>
-        <div class="col-md-6">
-          <label>Invoice No:</label>
-          <input readonly class="form-control" type="text" value="{{$invoice->invoice_no}}">
-        </div>
-        <div class="col-md-6">
-          <label>To Branch:</label>
-          <input readonly class="form-control" type="text" value="{{$invoice->destination ?? ''}}">
-        </div>
-        <div class="col-md-6">
-          <label>Supplier Name:</label>
-          <input readonly class="form-control" type="text" value="{{$invoice->supplier_name}}">
-        </div>
-        <div class="col-md-6">
-          <label>Total Items:</label>
-          <input readonly class="form-control" type="text" value="{{$invoice->total_different_item}}">
-        </div>
-        <div class="col-md-6">
-          <label>Total Items Quantity:</label>
-          <input readonly class="form-control" type="text" value="{{$invoice->total_item}}">
-        </div>
-        <div class="col-md-6">
-          <label>Total Value:</label>
-          <input readonly class="form-control" type="text" value="Rm {{number_format($invoice->total_cost,3)}}">
-        </div>
-        <div class="col-md-6">
-          <label>Record Creator:</label>
-          <input readonly class="form-control" type="text" value="{{$invoice->creator_name}}">
-        </div>
-        <div class="col-md-6">
-          <label>Created At:</label>
-          <input readonly class="form-control" type="text" value="{{$invoice->created_at}}">
-        </div>
-      </div>
-
-      <form method="post" action="{{route('postInvoicePurchaseHistoryDetail')}}">
-        @csrf
         <input type="text" name="ref_no" value="{{$invoice->reference_no}}" hidden/>
         <div style="overflow-y: auto;height:425px;margin-top:25px">
           <table style="width:100%;">
@@ -97,9 +96,9 @@
             <input type="submit" class="btn btn-primary" value="Modify"/>
           </div>
         </div>
-      </form>
+      </div>
+    </form>
 
-    </div>
   </div>
 </div>
 <script>
