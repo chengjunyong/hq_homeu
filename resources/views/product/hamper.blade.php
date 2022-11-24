@@ -63,12 +63,12 @@
             @foreach($hamper as $index => $result)
               <tr>
                 <td>{{ $index +1 }}</td>
-                <td>{{ $result->branch_name }}</td>
+                <td>{{ $result->branch->branch_name ?? 'Warehouse' }}</td>
                 <td>{{ $result->barcode }}</td>
                 <td>{{ $result->name }}</td>
                 <td>Rm {{ number_format($result->price,2) }}</td>
                 <td>{{ $result->quantity }}</td>
-                <td>{{ $result->creator_name }}</td>
+                <td>{{ $result->user->name ?? 'Unknown' }}</td>
                 <td>{{ date("d-M-Y h:i:s A",strtotime($result->updated_at)) }}</td>
                 <td><button type="button" class="btn btn-primary modify" ref-id="{{$result->id}}">Check</button></td>
                 <td><a class="btn btn-secondary" href="{{route('printHamper',$result->id)}}" target="_blank">Print</button></td>
@@ -100,6 +100,7 @@
               @foreach($branches as $branch)
                 <option value={{$branch->id}}>{{$branch->branch_name}}</option>
               @endforeach
+              <option value="0">Warehouse</option>
             </select>
           </div><br/>
 
@@ -165,6 +166,7 @@
               @foreach($branches as $branch)
                 <option value={{$branch->id}}>{{$branch->branch_name}}</option>
               @endforeach
+              <option value="0">Warehouse</option>
             </select>
           </div><br/>
 
@@ -206,7 +208,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="create">Created</button>
+        <button type="button" class="btn btn-primary" id="create">Create</button>
       </div>
     </div>
   </div>

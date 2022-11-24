@@ -687,9 +687,7 @@ class ProductController extends Controller
   {
     $url = route('home')."?p=product_menu";
 
-    $hamper = Hamper::join('users','users.id','=','hamper.created_by')
-                      ->join('branch','branch.id','=','hamper.branch_id')
-                      ->select('hamper.*','users.name as creator_name','branch.branch_name as branch_name')
+    $hamper = Hamper::with('user','branch')
                       ->orderBy('updated_at','desc')
                       ->paginate('15');
 
@@ -779,14 +777,21 @@ class ProductController extends Controller
         'measurement' => 'unit',
         'cost' => 0,
         'price' => $request->price,
-        'quantity' => 0,
+        'quantity' => $request->branch == '0' ? $request->quantity : 0,
       ]);
 
       $product_list = json_decode($request->product_list);
-      foreach($product_list as $product){
-        Branch_product::where('branch_id',$request->branch)
-                        ->where('barcode',$product->barcode)
-                        ->decrement('quantity',$product->quantity * $request->quantity);
+      if($request->branch == '0'){
+        foreach($product_list as $product){
+          Warehouse_stock::where('barcode',$product->barcode)
+                          ->decrement('quantity',$product->quantity * $request->quantity);
+        }
+      }else{
+        foreach($product_list as $product){
+          Branch_product::where('branch_id',$request->branch)
+                          ->where('barcode',$product->barcode)
+                          ->decrement('quantity',$product->quantity * $request->quantity);
+        }
       }
 
       $err->result = true;
@@ -801,20 +806,34 @@ class ProductController extends Controller
     $hamper = Hamper::where('id',$request->id)->first();
 
     Product_list::where('barcode',$hamper->barcode)->delete();
-    Warehouse_stock::where('barcode',$hamper->barcode)->delete();
-
-    $remain_qty = Branch_product::where('branch_id',$hamper->branch_id)
-                                  ->where('barcode',$hamper->barcode)
-                                  ->first();
-
-    $product_list = json_decode($hamper->product_list);
-    foreach($product_list as $product){
-      Branch_product::where('branch_id',$hamper->branch_id)
-                      ->where('barcode',$product->barcode)
-                      ->increment('quantity',$product->quantity * $remain_qty->quantity ?? 0);
+    
+    if($hamper->branch_id == '0'){
+      $remain_qty = Warehouse_stock::where('barcode',$hamper->barcode)
+                                    ->first();
+    }else{
+      $remain_qty = Branch_product::where('branch_id',$hamper->branch_id)
+                                    ->where('barcode',$hamper->barcode)
+                                    ->first();
     }
 
-    Branch_product::where('barcode',$hamper->barcode)->delete();
+    $product_list = json_decode($hamper->product_list);
+    if($hamper->branch_id == '0'){
+      foreach($product_list as $product){
+        Warehouse_stock::where('barcode',$product->barcode)
+                        ->increment('quantity',$product->quantity * $remain_qty->quantity ?? 0);
+      }
+
+      Warehouse_stock::where('barcode',$hamper->barcode)->delete();
+    }else{
+      foreach($product_list as $product){
+        Branch_product::where('branch_id',$hamper->branch_id)
+                        ->where('barcode',$product->barcode)
+                        ->increment('quantity',$product->quantity * $remain_qty->quantity ?? 0);
+      }
+
+      Branch_product::where('barcode',$hamper->barcode)->delete();
+    }
+
     $hamper->delete();
 
     return json_encode(true);
