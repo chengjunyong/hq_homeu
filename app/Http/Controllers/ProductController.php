@@ -816,11 +816,12 @@ class ProductController extends Controller
                                     ->first();
     }
 
+    $remain_qty = $remain_qty->quantity ?? 0;
     $product_list = json_decode($hamper->product_list);
     if($hamper->branch_id == '0'){
       foreach($product_list as $product){
         Warehouse_stock::where('barcode',$product->barcode)
-                        ->increment('quantity',$product->quantity * $remain_qty->quantity ?? 0);
+                        ->increment('quantity',$product->quantity * $remain_qty);
       }
 
       Warehouse_stock::where('barcode',$hamper->barcode)->delete();
@@ -828,7 +829,7 @@ class ProductController extends Controller
       foreach($product_list as $product){
         Branch_product::where('branch_id',$hamper->branch_id)
                         ->where('barcode',$product->barcode)
-                        ->increment('quantity',$product->quantity * $remain_qty->quantity ?? 0);
+                        ->increment('quantity',$product->quantity * $remain_qty);
       }
 
       Branch_product::where('barcode',$hamper->barcode)->delete();
