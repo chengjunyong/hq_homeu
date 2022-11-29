@@ -747,7 +747,7 @@ class ProductController extends Controller
                           'cost' => 0,
                           'price' => $request->price,
                           'quantity' => $request->branch == $branch->id ? $request->quantity : 0,
-                          'product_sync' => 1,
+                          'product_sync' => 0,
                         ]);
       }
 
@@ -763,7 +763,7 @@ class ProductController extends Controller
         'cost' => 0,
         'price' => $request->price,
         'quantity' => $request->quantity,
-        'product_sync' => 1,
+        'product_sync' => 0,
       ]);
 
       Warehouse_stock::updateOrCreate(
@@ -865,6 +865,7 @@ class ProductController extends Controller
                     ->update([
                       'product_name' => $hamper->name,
                       'price' => $hamper->price,
+                      'product_sync' => 0,
                     ]);
 
     Product_list::where('barcode',$hamper->barcode)
