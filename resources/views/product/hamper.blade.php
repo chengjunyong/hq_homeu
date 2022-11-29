@@ -67,7 +67,7 @@
                 <td>{{ $result->barcode }}</td>
                 <td>{{ $result->name }}</td>
                 <td>Rm {{ number_format($result->price,2) }}</td>
-                <td>{{ $result->quantity }}</td>
+                <td>{{ $result->getQuantity()->quantity ?? 0}}</td>
                 <td>{{ $result->user->name ?? 'Unknown' }}</td>
                 <td>{{ date("d-M-Y h:i:s A",strtotime($result->updated_at)) }}</td>
                 <td><button type="button" class="btn btn-primary modify" ref-id="{{$result->id}}">Check</button></td>

@@ -29,4 +29,14 @@ class Hamper extends Model
     {
       return $this->belongsTo(User::class,'created_by');
     }
+
+    public function getQuantity()
+    {
+      if($this->branch_id != 0){
+        return Branch_product::where('branch_id',$this->branch_id)->where('barcode',$this->barcode)->first();
+      }else{
+        return Warehouse_stock::where('barcode',$this->barcode)->first();
+      }
+    }
+    
 }
