@@ -832,6 +832,7 @@ class ProductController extends Controller
                         ->increment('quantity',$product->quantity * $remain_qty);
       }
 
+      Branch_product::where('barcode',$hamper->barcode)->update(['product_sync' => 0]);
       Branch_product::where('barcode',$hamper->barcode)->delete();
     }
 
