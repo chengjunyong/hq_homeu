@@ -38,7 +38,7 @@
 					</div>
 					<div class="col-md-6">
 						<label>Price</label>
-						<input type="number" min="0" step="0.0001" name="price" id="price" class="form-control" value="{{$product->price}}" disabled>
+						<input type="number" min="0" step="0.0001" name="price" id="price" class="form-control" value="{{$product->price}}">
 					</div>
 					<div class="col-md-6">
 						<label>Reorder Level</label>
