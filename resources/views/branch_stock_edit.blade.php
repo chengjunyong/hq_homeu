@@ -50,7 +50,7 @@
 					</div>
 					<div class="col-md-6">
 						<label>Stock Quantity</label>
-						<input type="number" min="0" step="1" name="stock_quantity" class="form-control" value="{{round($product->quantity,3)}}" >
+						<input type="number" min="0" step="1" name="stock_quantity" class="form-control" value="{{round($product->quantity,3)}}" readonly>
 					</div>
 					<div class="col-md-12" style="text-align: center;margin-top: 20px">
 						<input type="submit" name="submit" hidden>
