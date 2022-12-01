@@ -165,7 +165,7 @@ class BarcodeController extends Controller
         'product_name' => $branch_product->product_name,
         'old_stock_count' => $branch_product->quantity,
         'new_stock_count' => $request->stock_count,
-        'difference_count' => ($branch_product->quantity - $request->stock_count)
+        'difference_count' => ($request->stock_count - $branch_product->quantity)
       ]);
 
       if($stock_type == "branch")

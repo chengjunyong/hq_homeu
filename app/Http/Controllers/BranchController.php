@@ -165,8 +165,7 @@ class BranchController extends Controller
                       'reorder_level' => $request->reorder_level,
                       'recommend_quantity' => $request->recommend_quantity,
                       'quantity' => round($request->stock_quantity,3),
-                      'price' => $request->price,
-                      'cost' => $request->cost,
+                      'price'=> $request->price,
                       'product_sync' => 0,
                     ]);
 
