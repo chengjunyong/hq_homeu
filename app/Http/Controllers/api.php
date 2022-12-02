@@ -43,6 +43,8 @@ class api extends Controller
       $branch_id = $request->branch_id;
       $session_list = $request->session_list;
 
+      $actual_branch = Branch::where('token',$branch_id)->first();
+
       $previous_transaction_detail = transaction_detail::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->groupBy('product_id')->get();
 
       transaction::where('branch_id', $branch_id)->whereIn('session_id', $session_list)->delete();
@@ -354,6 +356,7 @@ class api extends Controller
       // refund detail
       $branch_refund_detail_query = [];
       $branch_refund_detail_id_array = [];
+
       foreach($refund_detail as $refund_detail_info)
       {
         $query = [
@@ -412,6 +415,11 @@ class api extends Controller
 
         array_push($branch_refund_detail_id_array, $refund_detail_info['id']);
         array_push($branch_refund_detail_query, $query);
+
+        Branch_product::withTrashed()
+                        ->where('branch_id',$actual_branch->id)
+                        ->where('barcode',$refund_detail_info['barcode'])
+                        ->increment('quantity',$refund_detail_info['quantity']);
       }
 
       $prev_refund_detail = Refund_detail::where('branch_id', $branch_id)->whereIn('branch_refund_detail_id', $branch_refund_detail_id_array)->get();
