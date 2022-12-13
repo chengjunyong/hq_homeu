@@ -71,7 +71,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <tr>
           <th style="width:5%;">No</th>
           <th style="width:17%;">Type</th>
-          <th style="width:17%;">Transaction No</th>
+          {{-- <th style="width:17%;">Transaction No</th> --}}
           <th style="width:13%;">Price</th>
           <th style="width:13%;">Qty</th>
           <th style="width:15%;">Total</th>
@@ -79,29 +79,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </tr>
       </thead>
       <tbody class="border">
-        @foreach($transaction_data as $key => $result)
+        @php
+          $a=1;
+        @endphp
+        @foreach($transaction_detail as $result)
           <tr>
-            <td>{{$key+1}}</td>
-            <td>
-              @if(str_contains($result->transaction_no,"WTS"))
-                Warehouse Transfer
-              @else
-                Sales
-              @endif
-            </td>
-            <td>{{$result->transaction_no}}</td>
+            <td>{{$a++}}</td>
+            <td>Sales</td>
+            {{-- <td>{{$result->transaction->transaction_no}}</td> --}}
             <td>Rm {{number_format($result->price,2)}}</td>
-            <td>
-              @if(str_contains($result->transaction_no,"WTS"))
-                +{{$result->quantity}}
-              @else
-                -{{$result->quantity}}
-              @endif
-            </td>
+            <td>-{{$result->quantity}}</td>
             <td>Rm {{ number_format($result->price * $result->quantity,2) }}</td>
             <td>{{ date("d-M-Y H:i:s A",strtotime($result->transaction_date))}}</td>
           </tr>
         @endforeach
+        @foreach($stock_transfer as $result)
+        <tr>
+          <td>{{$a++}}</td>
+          <td>Warehouse Transfer</td>
+          {{-- <td>{{$result->transaction_no}}</td> --}}
+          <td>Rm {{number_format($result->price,2)}}</td>
+          <td>-{{$result->quantity}}</td>
+          <td>Rm {{ number_format($result->price * $result->quantity,2) }}</td>
+          <td>{{ date("d-M-Y H:i:s A",strtotime($result->transaction_date))}}</td>
+        </tr>
+      @endforeach
       </tbody>
     </table>
   </div>

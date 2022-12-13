@@ -33,4 +33,14 @@ class transaction_detail extends Model
       'created_at', 
       'updated_at'
     ];
+
+    public function transaction()
+    {
+      return $this->belongsTo(transaction::class,'branch_transaction_id','branch_transaction_id')->orderBy('transaction_date');
+    }
+
+    public function scopeListing($query,$branch_id,$start=null,$end=null)
+    {
+      return $query->where('branch_id',$branch_id);
+    }
 }
