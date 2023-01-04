@@ -107,7 +107,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 				<th>PRICE</th>
 			</thead>
 			<tbody class="border">
+				@php
+					$grant_total = 0;
+				@endphp
 				@foreach($do_detail as $index => $result)
+					@php
+						$grant_total += $result->quantity * $result->price;
+					@endphp
 					<tr>
             <td>{{$index+1}}</td>
 						<td>{{ $result->barcode }}</td>
@@ -126,6 +132,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 					</tr>
 				@endforeach
 			</tbody>
+			<tfoot>
+				<tr style="border: 1px solid black;">
+					<td colspan="4" style="text-align: center;font-weight:bold;border: 1px solid black;padding: 5px;">Total</td>
+					<td style="text-align: center;font-weight:bold;border: 1px solid black;padding: 5px;">
+						{{ number_format($do_detail->sum('quantity'),2) }}
+					</td>
+					<td style="text-align: center;font-weight:bold;border: 1px solid black;padding: 5px;">
+						{{ number_format($grant_total,2) }}
+					</td>
+				</tr>
+			</tfoot>
 		</table>
 	</div>
 
