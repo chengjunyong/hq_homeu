@@ -104,7 +104,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 				<th>ITEMS</th>
         <th>UNIT<br/>PRICE</th>
 				<th>QTY</th>
-				<th>PRICE</th>
+				<th>COST</th>
 			</thead>
 			<tbody class="border">
 				@php
@@ -112,7 +112,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 				@endphp
 				@foreach($do_detail as $index => $result)
 					@php
-						$grant_total += $result->quantity * $result->price;
+						$grant_total += $result->quantity * $result->cost;
 					@endphp
 					<tr>
             <td>{{$index+1}}</td>
@@ -128,7 +128,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 {{number_format($result->quantity,0)}}
               @endif
             </td>
-						<td align="right">{{ number_format($result->quantity * $result->price,2) }}</td>
+						<td align="right">{{ number_format($result->quantity * $result->cost,2) }}</td>
 					</tr>
 				@endforeach
 			</tbody>
@@ -138,7 +138,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 					<td style="text-align: center;font-weight:bold;border: 1px solid black;padding: 5px;">
 						{{ number_format($do_detail->sum('quantity'),2) }}
 					</td>
-					<td style="text-align: center;font-weight:bold;border: 1px solid black;padding: 5px;">
+					<td style="text-align: right;font-weight:bold;border: 1px solid black;padding: 5px;">
 						{{ number_format($grant_total,2) }}
 					</td>
 				</tr>
