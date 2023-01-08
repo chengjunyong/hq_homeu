@@ -1414,87 +1414,38 @@ class SalesController extends Controller
       $branch_list .= ',HQ Warehouse';
     }
 
-    if(count($branch_id) == 1 && $branch_id[0] == 'hq'){
-      $stock = Warehouse_stock::join('department','department.id','=','warehouse_stock.department_id')
-                              ->join('category','category.id','=','warehouse_stock.category_id')
-                              ->select('department.department_name','category.category_name','warehouse_stock.*',DB::raw('SUM(quantity) as total_quantity'))
-                              ->groupBy('warehouse_stock.barcode')
-                              ->orderBy('barcode','asc')
-                              ->get();
+    $product_lists = Product_list::query();
+    $product_lists =  $product_lists->with('category','department');
 
-      $stock_array = array();
-      foreach($stock as $key => $result){
-        array_push($stock_array,[$key+1,$result->department_name,$result->category_name,$result->barcode,$result->product_name,$result->cost,$result->total_quantity,$result->price,$result->cost * $result->total_quantity]);
-      }
-    }else{
-      $stock = Branch_product::join('department','department.id','=','branch_product.department_id')
-                      ->join('category','category.id','=','branch_product.category_id')
-                      ->whereIn('branch_product.branch_id',$branch_id)
-                      ->select('department.department_name','category.category_name','branch_product.*',DB::raw('SUM(quantity) as total_quantity'))
-                      ->groupBy('branch_product.barcode')
-                      ->orderBy('barcode','asc')
-                      ->get();
-
-      if(end($branch_id) == 'hq'){
-        $stock2 = Warehouse_stock::join('department','department.id','=','warehouse_stock.department_id')
-                                  ->join('category','category.id','=','warehouse_stock.category_id')
-                                  ->select('department.department_name','category.category_name','warehouse_stock.*',DB::raw('SUM(quantity) as total_quantity'))
-                                  ->groupBy('warehouse_stock.barcode')
-                                  ->orderBy('barcode','asc')
-                                  ->get();
-        $stock_array = array();
-        foreach($stock as $key => $result){
-          array_push($stock_array,[
-            $key+1,
-            $result->department_name,
-            $result->category_name,
-            $result->barcode,
-            $result->product_name,
-            $result->cost,
-            $result->total_quantity + $stock2[$key]->total_quantity,
-            $result->price,
-            $result->cost * ($result->total_quantity + $stock2[$key]->total_quantity)
-          ]);
-        }
-      }else{
-        $stock_array = array();
-        foreach($stock as $key => $result){
-          array_push($stock_array,[$key+1,$result->department_name,$result->category_name,$result->barcode,$result->product_name,$result->cost,$result->total_quantity,$result->price,$result->cost * $result->total_quantity]);
-        }        
-      }
-
+    if(in_array(1,$branch_id)){
+      $product_lists = $product_lists->with('wb1');
     }
 
-    $balance_stock = Branch_product::whereIn('branch_id',$branch_id)
-                                    ->selectRaw('SUM(cost * quantity) as total')
-                                    ->orderBy('barcode','asc')
-                                    ->first();
-
-    if(end($branch_id) == 'hq'){
-      $warehouse_balance = Warehouse_stock::selectRaw('SUM(cost * quantity) as total')
-                                            ->orderBy('barcode','asc')
-                                            ->first();
-
-      $total_balance_stock = $balance_stock->total + $warehouse_balance->total;
-    }else{
-      $total_balance_stock = $balance_stock->total;
+    if(in_array(3,$branch_id)){
+      $product_lists = $product_lists->with('wb2');
     }
 
-    $branch_stock_quantity = array();
-    foreach($branch as $result){
-      $a[] = Branch_product::where('branch_id',$result->id)
-                            ->select('quantity')
-                            ->orderBy('barcode','asc')
-                            ->get()
-                            ->toArray();
+    if(in_array(4,$branch_id)){
+      $product_lists = $product_lists->with('bak');
     }
 
-    if(end($branch_id) == 'hq'){
-      $a[] = Warehouse_stock::select('quantity')
-                              ->orderBy('barcode','asc')
-                              ->get()
-                              ->toArray();
+    if(in_array(5,$branch_id)){
+      $product_lists = $product_lists->with('pc');
     }
+
+    if(in_array(6,$branch_id)){
+      $product_lists = $product_lists->with('pm1');
+    }
+
+    if(in_array(7,$branch_id)){
+      $product_lists = $product_lists->with('pm2');
+    }
+
+    if(in_array('hq',$branch_id)){
+      $product_lists = $product_lists->with('hq');
+    }
+
+    $product_lists = $product_lists->get();
 
     $row = 5;
     $col = 11;
@@ -1504,7 +1455,6 @@ class SalesController extends Controller
     $spreadsheet->getActiveSheet()->mergeCells('A1:I1');
     $spreadsheet->getActiveSheet()->mergeCells('A2:I2');
     $spreadsheet->getActiveSheet()->mergeCells('G4:H4');
-    $spreadsheet->getActiveSheet()->fromArray($stock_array,null,'A6');  
     $sheet = $spreadsheet->getActiveSheet();
     $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal('center');
 
@@ -1516,7 +1466,6 @@ class SalesController extends Controller
     $sheet->setCellValue('A4', 'Branch');
     $sheet->setCellValue('B4', $branch_list);
     $sheet->setCellValue('G4', 'Balance Stock');
-    $sheet->setCellValue('I4', number_format($total_balance_stock,2));
     foreach($branch as $result){
       $sheet->getCellByColumnAndRow($set_col, $row)->setValue($result->branch_name);
       $set_col++;
@@ -1538,11 +1487,50 @@ class SalesController extends Controller
     $sheet->setCellValue('H5', 'Selling Price');
     $sheet->setCellValue('I5', 'Total Cost');
 
-    foreach($a as $key1 => $result){
-      foreach($result as $key2 => $final){
-        $sheet->getCellByColumnAndRow($col+$key1, $row+$key2+1)->setValue($final['quantity']); 
+    $count=6;
+    $total_balance_stock = 0;
+    foreach($product_lists as $key => $product){
+      $sheet->setCellValue('A'.$count, $key+1);
+      $sheet->setCellValue('B'.$count, $product->department->department_name);
+      $sheet->setCellValue('C'.$count, $product->category->category_name);
+      $sheet->setCellValue('D'.$count, $product->barcode);
+      $sheet->setCellValue('E'.$count, $product->product_name);
+      $sheet->setCellValue('F'.$count, $product->cost);
+      $sheet->setCellValue('G'.$count, "=SUM(K".$count.":Q".$count.")");
+      $sheet->setCellValue('H'.$count, $product->price);
+      $sheet->setCellValue('I'.$count, "=SUM(F".$count."*G".$count.")");
+      $set_col = 11;
+      foreach($branch_id as $branch){
+        switch($branch){
+          case 1:
+            $sheet->getCellByColumnAndRow($set_col, $count)->setValue($product->wb1->quantity ?? 0);
+            break;
+          case 3:
+            $sheet->getCellByColumnAndRow($set_col, $count)->setValue($product->wb2->quantity ?? 0);
+            break;
+          case 4:
+            $sheet->getCellByColumnAndRow($set_col, $count)->setValue($product->bak->quantity ?? 0);
+            break;
+          case 5:
+            $sheet->getCellByColumnAndRow($set_col, $count)->setValue($product->pc->quantity ?? 0);
+            break;
+          case 6:
+            $sheet->getCellByColumnAndRow($set_col, $count)->setValue($product->pm1->quantity ?? 0);
+            break;
+          case 7:
+            $sheet->getCellByColumnAndRow($set_col, $count)->setValue($product->pm2->quantity ?? 0);
+            break;
+          case 'hq':
+            $sheet->getCellByColumnAndRow($set_col, $count)->setValue($product->hq->quantity ?? 0);
+            break;
+        }
+        $set_col++;
       }
+      $count++;
     }
+    $key += 7;
+    $sheet->setCellValue('I4', "=SUM(I6:I".$key.")");
+
     $sheet->getStyle('D')->getAlignment()->setHorizontal('left');
     $sheet->getStyle('A5:A25000')->getAlignment()->setHorizontal('left');
     $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
@@ -1570,172 +1558,6 @@ class SalesController extends Controller
 
     return response()->json($path);
   }
-
-
-  // Backup Method (Stock Balance Report)
-    // public function exportStockBalance(Request $request)
-    // {
-    //   if(!Storage::exists('public/report'))
-    //   {
-    //     Storage::makeDirectory('public/report', 0775, true); //creates directory
-    //   }
-
-    //   $files = Storage::allFiles('public/report');
-
-    //   Storage::delete($files);
-
-    //   $date = date('d-M-Y h:i:s A', strtotime(now()));
-    //   $branches = Branch::whereIn('id',$request->branch_id)->get();
-    //   $branch_list = implode(",",$branches->pluck('branch_name')->toArray());
-
-    //   $product_list = Product_list::join('department','department.id','=','product_list.department_id')
-    //                               ->join('category','category.id','=','product_list.category_id')
-    //                               ->where('deleted_at',NULL)
-    //                               ->limit(1000)
-    //                               ->get();
-
-    //   // $branch_product = Branch_product::whereIn('branch_id',$branches->pluck('id')->toArray())->where('deleted_at',NULL)->get();
-
-    //   $branch_product1 = Branch_product::where('branch_id',1)->where('deleted_at',NULL)->get();
-    //   $branch_product2 = Branch_product::where('branch_id',3)->where('deleted_at',NULL)->get();
-    //   $branch_product3 = Branch_product::where('branch_id',4)->where('deleted_at',NULL)->get();
-    //   $branch_product4 = Branch_product::where('branch_id',5)->where('deleted_at',NULL)->get();
-    //   $branch_product5 = Branch_product::where('branch_id',6)->where('deleted_at',NULL)->get();
-    //   $branch_product6 = Branch_product::where('branch_id',7)->where('deleted_at',NULL)->get();
-
-    //   $warehouse_product = Warehouse_stock::where('deleted_at',NULL)->get();
-
-    //   $data = collect();
-    //   // continue next round
-      
-    //   foreach($product_list as $product){
-
-    //     $tmp = array();
-    //     // foreach($branches as $branch){
-    //     //   switch($branch->id){
-    //     //     case 1:
-    //     //       $tmp['wb1'] = floatval($branch_product->filter(function($data) use ($product){return $data->barcode === $product->barcode && $data->branch_id == 1;})->first()->quantity ?? 0);
-    //     //       break;
-    //     //     case 3:
-    //     //       $tmp['wb2'] = floatval($branch_product->filter(function($data) use ($product){return $data->barcode === $product->barcode && $data->branch_id == 3;})->first()->quantity ?? 0);
-    //     //       break;
-    //     //     case 4:
-    //     //       $tmp['bac'] = floatval($branch_product->filter(function($data) use ($product){return $data->barcode === $product->barcode && $data->branch_id == 4;})->first()->quantity ?? 0);
-    //     //       break;
-    //     //     case 5:
-    //     //       $tmp['pc'] = floatval($branch_product->filter(function($data) use ($product){return $data->barcode === $product->barcode && $data->branch_id == 5;})->first()->quantity ?? 0);
-    //     //       break;
-    //     //     case 6:
-    //     //       $tmp['pm1'] = floatval($branch_product->filter(function($data) use ($product){return $data->barcode === $product->barcode && $data->branch_id == 6;})->first()->quantity ?? 0);
-    //     //       break;
-    //     //     case 7:
-    //     //       $tmp['pm2'] = floatval($branch_product->filter(function($data) use ($product){return $data->barcode === $product->barcode && $data->branch_id == 7;})->first()->quantity ?? 0);
-    //     //       break;
-    //     //   }
-    //     // }
-
-    //     foreach($branches as $branch){
-    //       switch($branch->id){
-    //         case 1:
-    //           $tmp['wb1'] = floatval($branch_product1->where('barcode',$product->bacode)->first()->quantity ?? 0);
-    //           break;
-    //         case 3:
-    //           $tmp['wb2'] = floatval($branch_product2->where('barcode',$product->bacode)->first()->quantity ?? 0);
-    //           break;
-    //         case 4:
-    //           $tmp['bac'] = floatval($branch_product3->where('barcode',$product->bacode)->first()->quantity ?? 0);
-    //           break;
-    //         case 5:
-    //           $tmp['pc'] = floatval($branch_product4->where('barcode',$product->bacode)->first()->quantity ?? 0);
-    //           break;
-    //         case 6:
-    //           $tmp['pm1'] = floatval($branch_product5->where('barcode',$product->bacode)->first()->quantity ?? 0);
-    //           break;
-    //         case 7:
-    //           $tmp['pm2'] = floatval($branch_product6->where('barcode',$product->bacode)->first()->quantity ?? 0);
-    //           break;
-    //       }
-    //     }
-
-    //     $data->push([
-    //       'department' => $product->department_name,
-    //       'category' => $product->category_name,
-    //       'barcode' => $product->barcode,
-    //       'product_name' => $product->product_name,
-    //       'cost' => $product->cost,
-    //       'price' => $product->price,
-    //       'branch_qty' => $tmp,
-    //     ]);
-    //   }
-    
-    //   dd($data);
-
-    //   // Exporting Part ////////////////////////////////////////
-    //   $row = 5;
-    //   $col = 11;
-
-    //   $set_col = $col; 
-    //   $spreadsheet = new Spreadsheet();
-    //   $spreadsheet->getActiveSheet()->mergeCells('A1:I1');
-    //   $spreadsheet->getActiveSheet()->mergeCells('A2:I2');
-    //   $spreadsheet->getActiveSheet()->mergeCells('G4:H4');
-    //   $sheet = $spreadsheet->getActiveSheet();
-    //   $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal('center');
-
-    //   //Header
-    //   $sheet->setCellValue('A1', 'HomeU (M) Sdh Bhd');
-    //   $sheet->setCellValue('A2', 'Stock Balance Stock');
-    //   $sheet->setCellValue('A3', 'Date');
-    //   $sheet->setCellValue('B3', $date);
-    //   $sheet->setCellValue('A4', 'Branch');
-    //   $sheet->setCellValue('B4', $branch_list);
-    //   $sheet->setCellValue('G4', 'Stock Balance Value');
-    //   $sheet->setCellValue('I4', number_format($total_balance_stock,2));
-    //   foreach($branches as $result){
-    //     $sheet->getCellByColumnAndRow($set_col, $row)->setValue($result->branch_name);
-    //     $set_col++;
-    //   }
-
-    //   //Data
-    //   $sheet->setCellValue('A5', 'Bil');
-    //   $sheet->setCellValue('B5', 'Department');
-    //   $sheet->setCellValue('C5', 'Category');
-    //   $sheet->setCellValue('D5', 'Barcode');
-    //   $sheet->setCellValue('E5', 'Product Name');
-    //   $sheet->setCellValue('F5', 'Cost');
-    //   $sheet->setCellValue('H5', 'Price');
-    //   $sheet->setCellValue('H5', 'Total Cost');
-    //   $sheet->setCellValue('G5', 'Total Quantity');
-    
-    //   $sheet->getStyle('D')->getAlignment()->setHorizontal('left');
-    //   $sheet->getStyle('A5:A25000')->getAlignment()->setHorizontal('left');
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(17);
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(17);
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(20);
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(47);
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(10);
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(10);
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(10);
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('N')->setAutoSize(true);
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
-    //   $spreadsheet->getActiveSheet()->getColumnDimension('P')->setAutoSize(true);
-    //   $spreadsheet->getActiveSheet()->getStyle('D')->getNumberFormat()->setFormatCode('################################');
-
-    //   $time = date('d-M-Y h i s A');
-    //   $time = (string)$time;
-    //   $writer = new Xlsx($spreadsheet);
-    //   $path = 'storage/report/Stock Balance Report ('.$time.').xlsx';
-    //   $writer->save($path);
-
-    //   return response()->json($path);
-    // }
-  //End Backup Method (Stock Balance Report)
-
 
   public function getStockOrder()
   {

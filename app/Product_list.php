@@ -62,4 +62,39 @@ class Product_list extends Model
     {
       return $this->belongsTo(Category::class,'category_id');
     }
+
+    public function wb1()
+    {
+      return $this->belongsTo(Branch_product::class,'barcode','barcode')->where('branch_product.branch_id',1);
+    }
+
+    public function wb2()
+    {
+      return $this->belongsTo(Branch_product::class,'barcode','barcode')->where('branch_product.branch_id',3);
+    }
+
+    public function bak()
+    {
+      return $this->belongsTo(Branch_product::class,'barcode','barcode')->where('branch_product.branch_id',4);
+    }
+
+    public function pc()
+    {
+      return $this->belongsTo(Branch_product::class,'barcode','barcode')->where('branch_product.branch_id',5);
+    }
+
+    public function pm1()
+    {
+      return $this->belongsTo(Branch_product::class,'barcode','barcode')->where('branch_product.branch_id',6);
+    }
+
+    public function pm2()
+    {
+      return $this->belongsTo(Branch_product::class,'barcode','barcode')->where('branch_product.branch_id',7);
+    }
+
+    public function hq()
+    {
+      return $this->belongsTo(Warehouse_stock::class,'barcode','barcode');
+    }
 }
