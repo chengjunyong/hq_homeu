@@ -18,6 +18,7 @@ use App\Refund_detail;
 use App\Delivery;
 use App\Delivery_detail;
 use App\Hamper;
+use App\SchedulerJob;
 use App\StockBalanceLog;
 
 class api extends Controller
@@ -622,6 +623,44 @@ class api extends Controller
 
         return response()->json($response);
       });
+
+    }
+
+    public function newBranchSync(Request $request)
+    {
+      $branch = Branch::where('token',$request->branch_id)->first();
+      $existing = SchedulerJob::where('branch_id',$branch->id)->get();
+
+      DB::transaction(function() use ($request,$branch,$existing){
+        foreach($request->transaction as $result){
+
+          $validate = $existing->where('session_id',$result['session_id'])->where('transaction_id',$result['id']);
+          // return response()->json($validate->count());
+
+          if($validate->count() == 0){
+            SchedulerJob::create([
+              'branch_id' => $branch->id,
+              'session_id' => $result['session_id'],
+              'transaction_id' => $result['id'],
+              'transaction' => json_encode($result),
+              'transaction_detail' => json_encode($result['transaction_details']),
+              'sync' => 0,
+            ]);
+          }
+
+        }
+      });
+
+      $product_list = Branch_product::withTrashed()->where('branch_id', $branch->id)->where('product_sync', 0)->get();
+      $hamper_list = Hamper::get();
+
+      $response = new \stdClass();
+      $response->error = 0;
+      $response->message = "Transaction sync completed";
+      $response->product_list = $product_list;
+      $response->hamper_list = $hamper_list;
+
+      return response()->json($response);
     }
 
     public function branchSyncCompleted(Request $request)
@@ -736,5 +775,12 @@ class api extends Controller
       }
 
       return "Done";
+    }
+
+    public function recalculateBranchStock()
+    {
+
+      dd('here');
+
     }
 }

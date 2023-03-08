@@ -23,7 +23,15 @@ Route::post('/branchSyncCompleted', 'api@branchSyncCompleted')->name('branchSync
 Route::post('/branchSyncProductList', 'api@syncBranchProductList')->name('syncBranchProductList');
 Route::post('/branchSyncProductListCompleted', 'api@branchSyncProductListCompleted')->name('branchSyncProductListCompleted');
 
+// New function
+Route::post('/newBranchSync', 'api@newBranchSync')->name('newBranchSync');
+
+
 //CronJob
 Route::get('/PriceSync','api@CronPriceSync')->name('CronPriceSync');
 Route::get('/StockLog','api@dailyRecordStockBalance')->name('dailyRecordStockBalance');
+
+// Calculate every time
+Route::get('/recalculate-branch-stock','api@recalculateBranchStock')->name('recalculateBranchStock');
+
 
