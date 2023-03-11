@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Warehouse_stock;
 use App\Voucher;
 use App\Branch_shift;
+use App\branch_stock_history;
 use App\Cash_float;
 use App\Refund;
 use App\Refund_detail;
@@ -433,13 +434,21 @@ class api extends Controller
               'transaction_date' => $data['transaction_date'],
               'transaction_detail_date' => $details['updated_at'],
             ]);
-                                          
-            $branchItem->decrement('quantity',$details['quantity']);
-          }
 
+            $stockCheckHistory = branch_stock_history::where('branch_id',$transaction->branch->id)
+                                                      ->where('barcode',$branchItem->barcode)
+                                                      ->orderBy('created_at','DESC')
+                                                      ->first();
+                                          
+            if($stockCheckHistory == null || $stockCheckHistory->created_at < $data['transaction_date']){
+              $branchItem->decrement('quantity',$details['quantity']);
+            }
+          }
           $transaction->update(['sync' => 1]);
         }
       });
+
+      exit('Done');
     }
 
 }
