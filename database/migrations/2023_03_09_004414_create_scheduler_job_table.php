@@ -17,9 +17,11 @@ class CreateSchedulerJobTable extends Migration
             $table->bigIncrements('id');
             $table->string('branch_id')->nullable();
             $table->string('session_id');
-            $table->string('transaction_id');
-            $table->longText('transaction');
-            $table->longText('transaction_detail');
+            $table->string('entity_type');
+            $table->string('entity_id');
+            $table->longText('transaction')->nullable();
+            $table->longText('transaction_detail')->nullable();
+            $table->longText('records')->nullable();
             $table->boolean('sync')->nullable();
             $table->softDeletes();
             $table->timestamps();

@@ -10,9 +10,17 @@ class SchedulerJob extends Model
     protected $fillable = [
         'branch_id',
         'session_id',
+        'entity_type',
+        'entity_id',
         'transaction_id',
         'transaction',
         'transaction_detail',
+        'records',
         'sync',
     ];
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
 }
