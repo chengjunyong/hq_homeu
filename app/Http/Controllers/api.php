@@ -375,6 +375,7 @@ class api extends Controller
       $transactions = SchedulerJob::with('branch')
                                     ->where('entity_type','sales')
                                     ->where('sync',0)
+                                    ->limit(1000)
                                     ->get();
 
       foreach($transactions as $transaction){
@@ -414,8 +415,8 @@ class api extends Controller
             'session_id' => $data['session_id'],
             'branch_transaction_detail_id' => $details['id'],
             'branch_transaction_id' => $details['transaction_id'],
-            'department_id' => $details['department_id'],
-            'category_id' => $details['category_id'],
+            'department_id' => $details['department_id'] ?? 1,
+            'category_id' => $details['category_id'] ?? 1,
             'product_id' => $branchItem->id,
             'barcode' => $branchItem->barcode,
             'product_name' => $branchItem->product_name,
