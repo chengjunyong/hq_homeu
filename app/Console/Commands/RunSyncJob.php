@@ -54,28 +54,29 @@ class RunSyncJob extends Command
         foreach($transactions as $transaction){
 
             $data = json_decode($transaction->transaction,true);
+            $transactionDate = $data['transaction_date'];
             Transaction::create([
-            'branch_transaction_id' => $data['id'],
-            'branch_id' => $transaction->branch->token,
-            'session_id' => $data['session_id'],
-            'ip' => $data['ip'],
-            'cashier_name' => $data['cashier_name'],
-            'transaction_no' => $data['transaction_no'],
-            'reference_no' => $data['reference_no'],
-            'user_id' => $data['user_id'],
-            'user_name' => $data['user_name'],
-            'subtotal' => $data['subtotal'],
-            'total_discount' => $data['total_discount'],
-            'voucher_code' => $data['voucher_code'],
-            'payment' => $data['payment'],
-            'payment_type' => $data['payment_type'],
-            'payment_type_text' => $data['payment_type_text'],
-            'balance' => $data['balance'],
-            'total' => $data['total'],
-            'round_off' => $data['round_off'],
-            'void' => $data['void'],
-            'completed' => $data['completed'],
-            'transaction_date' => $data['transaction_date'],
+                'branch_transaction_id' => $data['id'],
+                'branch_id' => $transaction->branch->token,
+                'session_id' => $data['session_id'],
+                'ip' => $data['ip'],
+                'cashier_name' => $data['cashier_name'],
+                'transaction_no' => $data['transaction_no'],
+                'reference_no' => $data['reference_no'],
+                'user_id' => $data['user_id'],
+                'user_name' => $data['user_name'],
+                'subtotal' => $data['subtotal'],
+                'total_discount' => $data['total_discount'],
+                'voucher_code' => $data['voucher_code'],
+                'payment' => $data['payment'],
+                'payment_type' => $data['payment_type'],
+                'payment_type_text' => $data['payment_type_text'],
+                'balance' => $data['balance'],
+                'total' => $data['total'],
+                'round_off' => $data['round_off'],
+                'void' => $data['void'],
+                'completed' => $data['completed'],
+                'transaction_date' => $transactionDate,
             ]);
 
             foreach($data['transaction_details'] as $details){
@@ -104,8 +105,8 @@ class RunSyncJob extends Command
                     'discount' => $details['discount'],
                     'subtotal' => $details['subtotal'],
                     'total' => $details['total'],
-                    'transaction_date' => $data['transaction_date'],
-                    'transaction_detail_date' => $details['updated_at'],
+                    'transaction_date' => $transactionDate,
+                    'transaction_detail_date' => $transactionDate,
                 ]);
 
                 $stockCheckHistory = branch_stock_history::where('branch_id',$transaction->branch->id)
@@ -113,7 +114,7 @@ class RunSyncJob extends Command
                                                             ->orderBy('created_at','DESC')
                                                             ->first();
                                                 
-                if($stockCheckHistory == null || $stockCheckHistory->created_at < $data['transaction_date']){
+                if($stockCheckHistory == null || $stockCheckHistory->created_at < $transactionDate){
                     $branchItem->decrement('quantity',$details['quantity']);
                 }
             }
