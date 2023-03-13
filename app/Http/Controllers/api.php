@@ -372,81 +372,79 @@ class api extends Controller
 
     public function recalculateBranchStock()
     {
-      DB::transaction(function(){
-        $transactions = SchedulerJob::with('branch')
-                                      ->where('entity_type','sales')
-                                      ->where('sync',0)
-                                      ->get();
+      $transactions = SchedulerJob::with('branch')
+                                    ->where('entity_type','sales')
+                                    ->where('sync',0)
+                                    ->get();
 
-        foreach($transactions as $transaction){
+      foreach($transactions as $transaction){
 
-          $data = json_decode($transaction->transaction,true);
-          Transaction::create([
-            'branch_transaction_id' => $data['id'],
+        $data = json_decode($transaction->transaction,true);
+        Transaction::create([
+          'branch_transaction_id' => $data['id'],
+          'branch_id' => $transaction->branch->token,
+          'session_id' => $data['session_id'],
+          'ip' => $data['ip'],
+          'cashier_name' => $data['cashier_name'],
+          'transaction_no' => $data['transaction_no'],
+          'reference_no' => $data['reference_no'],
+          'user_id' => $data['user_id'],
+          'user_name' => $data['user_name'],
+          'subtotal' => $data['subtotal'],
+          'total_discount' => $data['total_discount'],
+          'voucher_code' => $data['voucher_code'],
+          'payment' => $data['payment'],
+          'payment_type' => $data['payment_type'],
+          'payment_type_text' => $data['payment_type_text'],
+          'balance' => $data['balance'],
+          'total' => $data['total'],
+          'round_off' => $data['round_off'],
+          'void' => $data['void'],
+          'completed' => $data['completed'],
+          'transaction_date' => $data['transaction_date'],
+        ]);
+
+        foreach($data['transaction_details'] as $details){
+          $branchItem = Branch_product::where('branch_id',$transaction->branch->id)
+                                        ->where('barcode',$details['barcode'])
+                                        ->first();
+
+          Transaction_detail::create([
             'branch_id' => $transaction->branch->token,
             'session_id' => $data['session_id'],
-            'ip' => $data['ip'],
-            'cashier_name' => $data['cashier_name'],
-            'transaction_no' => $data['transaction_no'],
-            'reference_no' => $data['reference_no'],
-            'user_id' => $data['user_id'],
-            'user_name' => $data['user_name'],
-            'subtotal' => $data['subtotal'],
-            'total_discount' => $data['total_discount'],
-            'voucher_code' => $data['voucher_code'],
-            'payment' => $data['payment'],
-            'payment_type' => $data['payment_type'],
-            'payment_type_text' => $data['payment_type_text'],
-            'balance' => $data['balance'],
-            'total' => $data['total'],
-            'round_off' => $data['round_off'],
-            'void' => $data['void'],
-            'completed' => $data['completed'],
+            'branch_transaction_detail_id' => $details['id'],
+            'branch_transaction_id' => $details['transaction_id'],
+            'department_id' => $details['department_id'],
+            'category_id' => $details['category_id'],
+            'product_id' => $branchItem->id,
+            'barcode' => $branchItem->barcode,
+            'product_name' => $branchItem->product_name,
+            'quantity' => $details['quantity'],
+            'measurement_type' => $details['measurement_type'],
+            'measurement' => $details['measurement'],
+            'product_info' => $details['product_info'],
+            'product_type' => $details['product_type'],
+            'price' => $details['price'],
+            'wholesale_price' => $details['wholesale_price'],
+            'wholesale_quantity' => $details['wholesale_quantity'],
+            'discount' => $details['discount'],
+            'subtotal' => $details['subtotal'],
+            'total' => $details['total'],
             'transaction_date' => $data['transaction_date'],
+            'transaction_detail_date' => $details['updated_at'],
           ]);
 
-          foreach($data['transaction_details'] as $details){
-            $branchItem = Branch_product::where('branch_id',$transaction->branch->id)
-                                          ->where('barcode',$details['barcode'])
-                                          ->first();
-
-            Transaction_detail::create([
-              'branch_id' => $transaction->branch->token,
-              'session_id' => $data['session_id'],
-              'branch_transaction_detail_id' => $details['id'],
-              'branch_transaction_id' => $details['transaction_id'],
-              'department_id' => $details['department_id'],
-              'category_id' => $details['category_id'],
-              'product_id' => $branchItem->id,
-              'barcode' => $branchItem->barcode,
-              'product_name' => $branchItem->product_name,
-              'quantity' => $details['quantity'],
-              'measurement_type' => $details['measurement_type'],
-              'measurement' => $details['measurement'],
-              'product_info' => $details['product_info'],
-              'product_type' => $details['product_type'],
-              'price' => $details['price'],
-              'wholesale_price' => $details['wholesale_price'],
-              'wholesale_quantity' => $details['wholesale_quantity'],
-              'discount' => $details['discount'],
-              'subtotal' => $details['subtotal'],
-              'total' => $details['total'],
-              'transaction_date' => $data['transaction_date'],
-              'transaction_detail_date' => $details['updated_at'],
-            ]);
-
-            $stockCheckHistory = branch_stock_history::where('branch_id',$transaction->branch->id)
-                                                      ->where('barcode',$branchItem->barcode)
-                                                      ->orderBy('created_at','DESC')
-                                                      ->first();
-                                          
-            if($stockCheckHistory == null || $stockCheckHistory->created_at < $data['transaction_date']){
-              $branchItem->decrement('quantity',$details['quantity']);
-            }
+          $stockCheckHistory = branch_stock_history::where('branch_id',$transaction->branch->id)
+                                                    ->where('barcode',$branchItem->barcode)
+                                                    ->orderBy('created_at','DESC')
+                                                    ->first();
+                                        
+          if($stockCheckHistory == null || $stockCheckHistory->created_at < $data['transaction_date']){
+            $branchItem->decrement('quantity',$details['quantity']);
           }
-          $transaction->update(['sync' => 1]);
         }
-      });
+        $transaction->update(['sync' => 1]);
+      }
 
       exit('Done');
     }
