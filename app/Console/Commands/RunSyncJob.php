@@ -82,6 +82,8 @@ class RunSyncJob extends Command
             foreach($data['transaction_details'] as $details){
                 $branchItem = Branch_product::where('branch_id',$transaction->branch->id)
                                                 ->where('barcode',$details['barcode'])
+                                                ->withTrashed()
+                                                ->orderBy('created_at','DESC')
                                                 ->first();
 
                 Transaction_detail::create([

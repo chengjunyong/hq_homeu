@@ -407,9 +407,11 @@ class api extends Controller
             ]);
 
             foreach($data['transaction_details'] as $details){
-                $branchItem = Branch_product::where('branch_id',$transaction->branch->id)
-                                                ->where('barcode',$details['barcode'])
-                                                ->first();
+              $branchItem = Branch_product::where('branch_id',$transaction->branch->id)
+                                          ->where('barcode',$details['barcode'])
+                                          ->withTrashed()
+                                          ->orderBy('created_at','DESC')
+                                          ->first();
 
                 Transaction_detail::create([
                     'branch_id' => $transaction->branch->token,
