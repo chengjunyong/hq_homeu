@@ -86,39 +86,40 @@ class RunSyncJob extends Command
                                                 ->withTrashed()
                                                 ->orderBy('created_at','DESC')
                                                 ->first();
+                if($branchItem != null){
+                    Transaction_detail::create([
+                        'branch_id' => $transaction->branch->token,
+                        'session_id' => $data['session_id'],
+                        'branch_transaction_detail_id' => $details['id'],
+                        'branch_transaction_id' => $details['transaction_id'],
+                        'department_id' => $details['department_id'] ?? 1,
+                        'category_id' => $details['category_id'] ?? 1,
+                        'product_id' => $branchItem->id,
+                        'barcode' => $branchItem->barcode,
+                        'product_name' => $branchItem->product_name,
+                        'quantity' => $details['quantity'],
+                        'measurement_type' => $details['measurement_type'],
+                        'measurement' => $details['measurement'],
+                        'product_info' => $details['product_info'],
+                        'product_type' => $details['product_type'],
+                        'price' => $details['price'],
+                        'wholesale_price' => $details['wholesale_price'],
+                        'wholesale_quantity' => $details['wholesale_quantity'],
+                        'discount' => $details['discount'],
+                        'subtotal' => $details['subtotal'],
+                        'total' => $details['total'],
+                        'transaction_date' => $transactionDate,
+                        'transaction_detail_date' => $transactionDate,
+                    ]);
 
-                Transaction_detail::create([
-                    'branch_id' => $transaction->branch->token,
-                    'session_id' => $data['session_id'],
-                    'branch_transaction_detail_id' => $details['id'],
-                    'branch_transaction_id' => $details['transaction_id'],
-                    'department_id' => $details['department_id'] ?? 1,
-                    'category_id' => $details['category_id'] ?? 1,
-                    'product_id' => $branchItem->id,
-                    'barcode' => $branchItem->barcode,
-                    'product_name' => $branchItem->product_name,
-                    'quantity' => $details['quantity'],
-                    'measurement_type' => $details['measurement_type'],
-                    'measurement' => $details['measurement'],
-                    'product_info' => $details['product_info'],
-                    'product_type' => $details['product_type'],
-                    'price' => $details['price'],
-                    'wholesale_price' => $details['wholesale_price'],
-                    'wholesale_quantity' => $details['wholesale_quantity'],
-                    'discount' => $details['discount'],
-                    'subtotal' => $details['subtotal'],
-                    'total' => $details['total'],
-                    'transaction_date' => $transactionDate,
-                    'transaction_detail_date' => $transactionDate,
-                ]);
-
-                $stockCheckHistory = branch_stock_history::where('branch_id',$transaction->branch->id)
-                                                            ->where('barcode',$branchItem->barcode)
-                                                            ->orderBy('created_at','DESC')
-                                                            ->first();
-                                                
-                if($stockCheckHistory == null || $stockCheckHistory->created_at < $transactionDate){
-                    $branchItem->decrement('quantity',$details['quantity']);
+                    $stockCheckHistory = branch_stock_history::where('branch_id',$transaction->branch->id)
+                                                                ->where('barcode',$branchItem->barcode)
+                                                                ->orderBy('created_at','DESC')
+                                                                ->first();
+                                                    
+                    if($stockCheckHistory == null || $stockCheckHistory->created_at < $transactionDate){
+                        $branchItem->decrement('quantity',$details['quantity']);
+                    }
                 }
             }
             $transaction->update(['sync' => 1]);
