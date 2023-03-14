@@ -2,13 +2,14 @@
 
 namespace App\Console\Commands;
 
-use App\SchedulerJob;
 use App\transaction;
+use App\SchedulerJob;
 use App\Branch_product;
 use App\transaction_detail;
-use App\Branch_stock_history;
 
+use App\Branch_stock_history;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class RunSyncJob extends Command
 {
@@ -126,5 +127,7 @@ class RunSyncJob extends Command
 
         $bar->finish();
         $this->output->success('Done');
+
+        Log::info("Stock sync is working fine!");
     }
 }
