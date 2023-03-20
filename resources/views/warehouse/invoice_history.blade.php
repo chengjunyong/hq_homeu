@@ -15,7 +15,6 @@
     </div>
     <div class="card-body">
       <div style="float:right">
-<!--         <input type="text" id="search" placeholder="" class="form-control" style="margin-bottom: 15px"/> -->
       </div>
       <div class="table table-responsive">
         <div class="filter">
@@ -62,6 +61,9 @@
               <div class="col-md-12" style='text-align: center;'>
                 <input type="submit" class='btn btn-primary' value="Filter" style="font-size: 18px;padding: 8px 5vw"/>
                 <button type="button" class="btn btn-success" onclick="window.location.href='{{route('getInvoicePurchaseHistory')}}'" style="font-size: 18px;padding: 8px 5vw">Reset</button>
+              </div>
+              <div class="col-md-12 mt-1" style='text-align: center;'>
+                <button id="export" type="button" class="btn btn-secondary" style="width: 25.7vw;">Export Excel</button>
               </div>
             </form>
           </div>
@@ -133,6 +135,14 @@ $(document).ready(function(){
         
       }
     });
+  });
+
+  $("#export").click(function(){
+
+    let start = $("input[name=date_start]").val();
+    let end = $("input[name=date_end]").val();
+
+    window.open(`{{route('exportExcelInvoice')}}?start=${start}&end=${end}`);
   });
 
 });

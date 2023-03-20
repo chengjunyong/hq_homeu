@@ -2,32 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use App\Branch;
-use App\Warehouse_stock;
-use App\Department;
 use App\Category;
 use App\Supplier;
+use App\Write_off;
+use App\Department;
+use App\Good_return;
 use App\Product_list;
 use App\Branch_product;
 use App\Purchase_order;
-use App\Purchase_order_detail;
-use App\Warehouse_restock_history;
-use App\Warehouse_restock_history_detail;
-use App\Branch_stock_history;
-use App\Tmp_purchase_list;
-use App\Tmp_invoice_purchase;
-use App\Invoice_purchase;
-use App\Invoice_purchase_detail;
-use App\Good_return;
-use App\Good_return_detail;
 use App\Tmp_good_return;
-use App\Write_off;
+use App\Warehouse_stock;
+use App\Invoice_purchase;
 use App\Write_off_detail;
+use App\Tmp_purchase_list;
+use App\Good_return_detail;
 use Barryvdh\DomPDF\Facade;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Branch_stock_history;
+use App\Tmp_invoice_purchase;
+use App\Purchase_order_detail;
+use App\Invoice_purchase_detail;
+use App\Warehouse_restock_history;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use App\Warehouse_restock_history_detail;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class WarehouseController extends Controller
 {
@@ -1384,6 +1387,53 @@ class WarehouseController extends Controller
     $wf_list = Write_off_detail::where('write_off_id',$request->id)->get();
 
     return view('print.print_write_off',compact('wf','wf_list'));
+  }
+
+  public function exportExcelInvoice(Request $request)
+  {
+    $start = $request->start ?? date("Y-m-d");;
+    $end = $request->end ?? date("Y-m-d",strtotime("+1 day"));
+
+    if(!Storage::exists('public/export'))
+    {
+      Storage::makeDirectory('public/export', 0775, true); //creates directory
+    }
+    $files = Storage::allFiles('public/export');
+    Storage::delete($files);
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    $invoices = Invoice_purchase::with('supplier')
+                                  ->whereBetween('created_at',[$start,$end])
+                                  ->get();
+    //Header
+    $sheet->setCellValue('A1', 'No');
+    $sheet->setCellValue('B1', 'Reference No');
+    $sheet->setCellValue('C1', 'Invoice Date');
+    $sheet->setCellValue('D1', 'Invoice No');
+    $sheet->setCellValue('E1', 'Supplier Code');
+    $sheet->setCellValue('F1', 'Supplier Name');
+    $sheet->setCellValue('G1', 'Total Value');
+   
+    $count=2;
+    foreach($invoices as $key => $invoice){
+      $sheet->setCellValue('A'.$count, $key+1);
+      $sheet->setCellValue('B'.$count, $invoice->reference_no);
+      $sheet->setCellValue('C'.$count, $invoice->invoice_date);
+      $sheet->setCellValue('D'.$count, $invoice->invoice_no);
+      $sheet->setCellValue('E'.$count, $invoice->supplier->supplier_code);
+      $sheet->setCellValue('F'.$count, $invoice->supplier->supplier_name);
+      $sheet->setCellValue('G'.$count, $invoice->total_cost);
+      $count++;
+    }
+    
+    $time = date('d-M-Y h i s A');
+    $time = (string)$time;
+    $writer = new Xlsx($spreadsheet);
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment; filename="'.'Stock Purchase-'.strtotime('now').'.xlsx'.'"');
+    $writer->save('php://output');
   }
 
 }

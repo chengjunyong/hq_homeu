@@ -216,6 +216,8 @@ Route::get('/PrintWriteOffRecord/{id}','WarehouseController@getWriteOffPrint')->
 Route::get('/DeleteWriteOffRecord','WarehouseController@ajaxDeleteWriteOffRecord')->name('ajaxDeleteWriteOffRecord');
 Route::get('/AddGrItem','WarehouseController@ajaxAddGrItem')->name('ajaxAddGrItem');
 
+Route::get('/export-excel-invoice','WarehouseController@exportExcelInvoice')->name('exportExcelInvoice');
+
 //Transaction Number Correction Function
 Route::get('/TransactionCorrection/{target_date}/{branch_code}/{token}','SalesController@transactionCorrection');
 Route::get('/TransactionCorrection2/{from_date}/{to_date}/{branch_code}/{token}','SalesController@transactionCorrection2');
