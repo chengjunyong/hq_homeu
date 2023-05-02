@@ -1441,6 +1441,10 @@ class SalesController extends Controller
       $product_lists = $product_lists->with('pm2');
     }
 
+    if(in_array(13,$branch_id)){
+      $product_lists = $product_lists->with('g01');
+    }
+
     if(in_array('hq',$branch_id)){
       $product_lists = $product_lists->with('hq');
     }
@@ -1519,6 +1523,9 @@ class SalesController extends Controller
             break;
           case 7:
             $sheet->getCellByColumnAndRow($set_col, $count)->setValue($product->pm2->quantity ?? 0);
+            break;
+          case 13:
+            $sheet->getCellByColumnAndRow($set_col, $count)->setValue($product->g01->quantity ?? 0);
             break;
           case 'hq':
             $sheet->getCellByColumnAndRow($set_col, $count)->setValue($product->hq->quantity ?? 0);

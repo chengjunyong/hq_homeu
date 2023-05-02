@@ -97,4 +97,9 @@ class Product_list extends Model
     {
       return $this->belongsTo(Warehouse_stock::class,'barcode','barcode');
     }
+
+    public function g01()
+    {
+      return $this->belongsTo(Branch_product::class,'barcode','barcode')->where('branch_product.branch_id',13);
+    }
 }
