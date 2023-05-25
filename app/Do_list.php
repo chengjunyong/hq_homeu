@@ -24,4 +24,9 @@ class Do_list extends Model
       'user_id',
       'deleted_by',
     ];
+
+    public function details()
+    {
+      return $this->hasMany(Do_detail::class,'do_number','do_number');
+    }
 }

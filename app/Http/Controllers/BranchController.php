@@ -473,6 +473,13 @@ class BranchController extends Controller
     return view('restock_history',compact('do_list','url'));
   }
 
+  public function printRestockHistory($id)
+  {
+    $do = Do_list::with('details')->where('id',$id)->first();
+
+    return view('print.print_branch_restock',compact('do'));
+  }
+
   public function getRestockHistoryDetail(Request $request)
   {
     $url = route('home')."?p=branch_menu";

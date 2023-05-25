@@ -43,7 +43,10 @@
                 <td>Rm {{ number_format($result->total_value,2) }}</td>
 								<td>{{$result->created_at}}</td>
 								<td>{{($result->stock_lost == 0) ? 'No' : 'Yes'}}</td>
-								<td><buttton class="btn btn-primary" onclick="window.location.assign('{{route('getRestockHistoryDetail',$result->id)}}')">Details</buttton></td>
+								<td>
+									<buttton class="btn btn-primary" onclick="window.location.assign('{{route('getRestockHistoryDetail',$result->id)}}')">Details</buttton>
+									<buttton class="btn btn-secondary" onclick="window.open('{{route('printRestockHistory',$result->id)}}')">Print</buttton>
+								</td>
 							</tr>
 						@endforeach
 					</tbody>
