@@ -77,27 +77,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="row">
       <div class="col-md-6">
         <label>From:</label>
-        <input readonly="" class="form-control" type="text" name="from" value="HQ">
+        <input readonly="" class="form-control" type="text" name="from" value="{{ $do->from }}">
       </div>
       <div class="col-md-6">
         <label>To:</label>
-        <input readonly="" class="form-control" type="text" name="to" value="Pengkalan Chepa">
+        <input readonly="" class="form-control" type="text" name="to" value="{{ $do->to }}">
       </div>
       <div class="col-md-6">
         <label>DO Number:</label>
-        <input readonly="" class="form-control" type="text" name="do_number" value="WTS008662">
+        <input readonly="" class="form-control" type="text" name="do_number" value="{{ $do->do_number }}">
       </div>
       <div class="col-md-6">
         <label>Total Items:</label>
-        <input readonly="" class="form-control" type="text" name="total_item" value="24.000">
+        <input readonly="" class="form-control" type="text" name="total_item" value="{{ $do->details->count() }}">
       </div>
       <div class="col-md-6">
         <label>Date Issue:</label>
-        <input readonly="" class="form-control" type="text" name="created_at" value="2023-05-22 19:22:04">
+        <input readonly="" class="form-control" type="text" name="created_at" value="{{ date("Y-m-d h:i:s A",strtotime($do->created_at))}}">
       </div>
       <div class="col-md-6">
         <label>Description:</label>
-        <input readonly="" class="form-control" type="text" name="description" value="">
+        <input readonly="" class="form-control" type="text" name="description" value="{{ $do->description }}">
       </div>
     </div>
     <div style="margin-top:25px">
