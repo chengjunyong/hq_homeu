@@ -48,6 +48,7 @@ class syncProductDetail extends Command
             foreach($products as $product){
                 Branch_product::where('barcode',$product->barcode)
                                 ->update([
+                                    'measurement' => $product->measurement,
                                     'normal_wholesale_price' => $product->normal_wholesale_price,
                                     'normal_wholesale_price2' => $product->normal_wholesale_price2,
                                     'normal_wholesale_quantity' => $product->normal_wholesale_quantity,
