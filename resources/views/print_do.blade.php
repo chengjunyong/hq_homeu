@@ -140,6 +140,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 					<td style="text-align: center;font-weight:bold;border: 1px solid black;padding: 5px;">
 						{{ number_format($do_detail->sum('quantity'),2) }}
 					</td>
+					<td></td>
 					<td style="text-align: right;font-weight:bold;border: 1px solid black;padding: 5px;">
 						{{ number_format($grant_total,2) }}
 					</td>
