@@ -104,6 +104,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 				<th>ITEMS</th>
         <th>UNIT<br/>PRICE</th>
 				<th>QTY</th>
+				<th>UNIT<br/>COST</th>
 				<th>COST</th>
 			</thead>
 			<tbody class="border">
@@ -128,6 +129,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 {{number_format($result->quantity,0)}}
               @endif
             </td>
+						<td align="right">{{ number_format($result->cost,4) }}</td>
 						<td align="right">{{ number_format($result->quantity * $result->cost,2) }}</td>
 					</tr>
 				@endforeach
