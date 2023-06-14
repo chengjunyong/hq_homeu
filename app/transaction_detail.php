@@ -34,6 +34,11 @@ class transaction_detail extends Model
       'updated_at'
     ];
 
+    public function product()
+    {
+      return $this->belongsTo(Product_list::class,'barcode','barcode');
+    }
+
     public function transaction()
     {
       return $this->belongsTo(transaction::class,'branch_transaction_id','branch_transaction_id')->orderBy('transaction_date');

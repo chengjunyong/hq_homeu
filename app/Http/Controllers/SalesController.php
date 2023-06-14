@@ -2156,41 +2156,14 @@ class SalesController extends Controller
     $report_date_from = $date_from." 00:00:00";
     $report_date_to = $date_to." 23:59:59";
 
-    $transaction_details = Transaction_detail::where('department_id',$request->export_department_id)
-                                    ->whereIn('category_id',$request->export_category_id)
-                                    ->whereBetween('transaction_detail_date',[$report_date_from,$report_date_to])
-                                    ->groupBy('barcode')
-                                    ->get();
-
-    $transaction_details2 = Transaction_detail::where('department_id',$request->export_department_id)
+    $transaction_details = Transaction_detail::with(['product' => function($q){
+                                      $q->with('department','category');
+                                    }])
+                                    ->where('department_id',$request->export_department_id)
                                     ->whereIn('category_id',$request->export_category_id)
                                     ->whereBetween('transaction_detail_date',[$report_date_from,$report_date_to])
                                     ->get();
-
-    $product_list = Product_list::with('department','category')
-                                ->whereIn('barcode',$transaction_details->pluck('barcode'))
-                                ->get();
-
-    foreach($product_list as $key => $data){
-      $total_sales = 0;
-      $total_qty = 0;
-      foreach($branch_list as $branch){
-        $qty = $transaction_details2->where('branch_id',$branch->token)->where('barcode',$data->barcode)->sum('quantity') ?? 0;
-        $sales = $transaction_details2->where('branch_id',$branch->token)->where('barcode',$data->barcode)->sum('total') ?? 0;
-
-        $branch_data[$branch->id] = [
-          'qty' => $qty,
-          'sales' => $sales,
-        ];
-
-        $total_sales += $sales;
-        $total_qty += $qty;
-      }
-      $data->branch = $branch_data;
-      $data->total_qty = $total_qty;
-      $data->total_sales = $total_sales;
-    }
-
+    
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
 
@@ -2201,7 +2174,7 @@ class SalesController extends Controller
     $sheet->mergeCells('A2:G2');
 
     $sheet->setCellValue('A3', 'Date:');
-    $sheet->setCellValue('B3', "Date from : ".date('d-m-Y', strtotime($date_from))."\nDate to : ".date('d-m-Y', strtotime($date_to)));
+    $sheet->setCellValue('B3', "Date: ".date('d-m-Y', strtotime($date_from))." until Date: ".date('d-m-Y', strtotime($date_to)));
 
     $sheet->mergeCells('B3:C3');
     $sheet->setCellValue('I3', 'Branch Sales Quantity');
@@ -2236,26 +2209,28 @@ class SalesController extends Controller
     }
 
     $started_row = 5;
-    foreach($product_list as $key => $product)
+    $index = 0;
+    foreach($transaction_details->groupBy('barcode') as $key => $result)
     {
-      $sheet->setCellValue('A'.$started_row, ($key + 1));
-      $sheet->setCellValue('B'.$started_row, $product->department->department_name);
-      $sheet->setCellValue('C'.$started_row, $product->category->category_name);
-      $sheet->setCellValue('D'.$started_row, $product->barcode);
-      $sheet->setCellValue('E'.$started_row, $product->product_name);
-      $sheet->setCellValue('F'.$started_row, $product->total_qty);
-      $sheet->setCellValue('G'.$started_row, $product->total_sales);
+      $sheet->setCellValue('A'.$started_row, ($index + 1));
+      $sheet->setCellValue('B'.$started_row, $result->first()->product->department->department_name);
+      $sheet->setCellValue('C'.$started_row, $result->first()->product->category->category_name);
+      $sheet->setCellValue('D'.$started_row, $result->first()->barcode);
+      $sheet->setCellValue('E'.$started_row, $result->first()->product_name);
+      $sheet->setCellValue('F'.$started_row, $transaction_details->where('barcode',$result->first()->barcode)->sum('quantity'));
+      $sheet->setCellValue('G'.$started_row, $transaction_details->where('barcode',$result->first()->barcode)->sum('total'));
 
       $started_alp = 8;
-      foreach($product->branch as $branch)
+      foreach($branch_list as $branch)
       {
         $col = $alphabet[$started_alp];
-        $sheet->setCellValue($col.$started_row, $branch['qty']);
+        $sheet->setCellValue($col.$started_row, $transaction_details->where('branch_id',$branch->token)->where('barcode',$result->first()->barcode)->sum('quantity'));
         
         $started_alp++;
       }
 
       $started_row++;
+      $index++;
     }
     $str = Str::random(5);
     $writer = new Xlsx($spreadsheet);

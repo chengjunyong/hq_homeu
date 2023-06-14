@@ -156,19 +156,19 @@
 
     });
 
-    $("input[name=report_date_from]").change(function(){
-      let date = moment($(this).val());
-      date.add(13,'days');
-      $("input[name=report_date_to]").attr('max',date.format("YYYY-MM-DD"));
-      $("input[name=report_date_to]").attr('min',$(this).val());
-    });
+    // $("input[name=report_date_from]").change(function(){
+    //   let date = moment($(this).val());
+    //   date.add(13,'days');
+    //   $("input[name=report_date_to]").attr('max',date.format("YYYY-MM-DD"));
+    //   $("input[name=report_date_to]").attr('min',$(this).val());
+    // });
 
-    $("input[name=report_date_to]").change(function(){
-      let date = moment($(this).val());
-      date.subtract(13,'days');
-      $("input[name=report_date_to]").attr('max',$(this).val());
-      $("input[name=report_date_from]").attr('min',date.format("YYYY-MM-DD"));
-    });
+    // $("input[name=report_date_to]").change(function(){
+    //   let date = moment($(this).val());
+    //   date.subtract(13,'days');
+    //   $("input[name=report_date_to]").attr('max',$(this).val());
+    //   $("input[name=report_date_from]").attr('min',date.format("YYYY-MM-DD"));
+    // });
 
   });
 
