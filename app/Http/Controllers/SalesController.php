@@ -1500,7 +1500,7 @@ class SalesController extends Controller
       $sheet->setCellValue('D'.$count, $product->barcode);
       $sheet->setCellValue('E'.$count, $product->product_name);
       $sheet->setCellValue('F'.$count, $product->cost);
-      $sheet->setCellValue('G'.$count, "=SUM(K".$count.":Q".$count.")");
+      $sheet->setCellValue('G'.$count, "=SUM(K".$count.":R".$count.")");
       $sheet->setCellValue('H'.$count, $product->price);
       $sheet->setCellValue('I'.$count, "=SUM(F".$count."*G".$count.")");
       $set_col = 11;
