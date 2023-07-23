@@ -59,7 +59,7 @@ class AuditController extends Controller
                                         ->select('do_list.do_number AS transaction_no','dd.quantity','dd.price','do_list.completed_time AS transaction_date')
                                         ->get();                          
 
-            $transaction_detail = transaction_detail::with('transaction')
+            $transaction_detail = Transaction_detail::with('transaction')
                                     ->where('branch_id','LIKE',$branch->token)
                                     ->where('barcode',$product->barcode)
                                     ->where('transaction_date','>=',$request->report_date_from)

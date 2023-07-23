@@ -28,6 +28,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('cron:syncStock')->hourly();
         $schedule->command('test:job')->everyMinute();
+        $schedule->command('generate:stockBalanceReport')->dailyAt('4:00');
     }
 
     /**

@@ -2782,4 +2782,25 @@ class SalesController extends Controller
 
     return response()->json($path);
   }
+
+  public function getStockBalanceHistory()
+  {
+    $url = route('home')."?p=sales_menu";
+
+    $files = collect();
+
+    foreach(Storage::allFiles('public/monthly-report') as $file){
+      $publicUrl = Storage::url($file);
+      $createdDate = Storage::lastModified($file);
+
+      $files[] = [
+        'name' => pathinfo($file, PATHINFO_FILENAME),
+        'path' => $publicUrl,
+        'created_at' => $createdDate,
+      ];
+    }
+
+    return view('report.stock_balance_history',compact('url','files'));
+
+  }
 }

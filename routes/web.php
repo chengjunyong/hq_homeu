@@ -101,6 +101,7 @@ Route::post('/postcreateSupplier','OtherController@postCreateSupplier')->name('p
 Route::get('/deleteSupplier','OtherController@deleteSupplier')->name('deleteSupplier');
 
 // Report
+Route::get('/stock-balance-history','SalesController@getStockBalanceHistory')->name('getStockBalanceHistory');
 Route::get('/sales_report', 'SalesController@getSalesReport')->name('getSalesReport');
 Route::get('/sales_report/{branch_id}/{id}', 'SalesController@getSalesReportDetail')->name('getSalesReportDetail');
 Route::get('/sales_report_transaction', 'SalesController@getSalesTransactionReport')->name('getSalesTransactionReport');
