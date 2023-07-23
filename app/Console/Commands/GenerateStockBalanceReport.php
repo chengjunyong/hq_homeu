@@ -42,7 +42,7 @@ class GenerateStockBalanceReport extends Command
      */
     public function handle()
     {
-        $data = "1";
+        $data = "1,3,4,5,6,7,13,hq";
         $branch_id = explode(",",$data);
 
         $date = date('d-M-Y h:i:s A', strtotime(now()));
