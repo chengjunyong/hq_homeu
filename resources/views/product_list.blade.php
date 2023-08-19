@@ -47,7 +47,8 @@
                 <td align="center">Measurement</td>
 								<td>Cost</td>
 								<td>Price</td>
-								<td>Last Updated</td>
+								<td align="center">Created Date</td>
+								<td align="center">Last Updated</td>
 							</tr>
 						</thead>
 						<tbody>
@@ -67,6 +68,7 @@
                   <td align="center">{{ucfirst($result->measurement)}}</td>
 									<td style="width:5%">{{number_format($result->cost,2)}}</td>
 									<td style="width:5%">{{number_format($result->price,2)}}</td>
+									<td align="center" style="width:9%">{{ date('d-M-Y', strtotime($result->created_at))}} <br/> {{ date('h:i A', strtotime($result->created_at))}}</td>
 									<td align="center" style="width:9%">{{ date('d-M-Y', strtotime($result->updated_at))}} <br/> {{ date('h:i A', strtotime($result->updated_at))}}</td>
 								</tr>
 							@endforeach
