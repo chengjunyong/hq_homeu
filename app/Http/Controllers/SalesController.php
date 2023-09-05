@@ -2643,6 +2643,9 @@ class SalesController extends Controller
           case 7:
             $tmp['pm2'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 7;})->first()->quantity ?? 0);
             break;
+          case 13:
+            $tmp['gerong'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 13;})->first()->quantity ?? 0);
+            break;
         }
       }
 
@@ -2708,6 +2711,9 @@ class SalesController extends Controller
             break;
           case 7:
             $tmp['pm2'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 7;})->first()->quantity ?? 0);
+            break;
+          case 13:
+            $tmp['gerong'] = floatval($stocks->filter(function($data) use ($item){return $data->barcode === $item->barcode && $data->branch_id == 13;})->first()->quantity ?? 0);
             break;
         }
       }
