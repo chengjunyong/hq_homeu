@@ -102,4 +102,9 @@ class Product_list extends Model
     {
       return $this->belongsTo(Branch_product::class,'barcode','barcode')->where('branch_product.branch_id',13);
     }
+
+    public function do_details()
+    {
+      return $this->hasMany(Do_detail::class,'barcode','barcode');
+    }
 }

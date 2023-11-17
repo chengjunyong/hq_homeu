@@ -2809,4 +2809,120 @@ class SalesController extends Controller
     return view('report.stock_balance_history',compact('url','files'));
 
   }
+
+  public function getStockInReport()
+  {
+    $url = route('home')."?p=sales_menu";
+    $departments = Department::with('categories')->get();
+    $branches = Branch::listing();
+
+    return view('report.stock_in_report',compact('url','departments','branches'));
+  }
+
+  public function postStockInReport(Request $request)
+  {
+    $data = Do_detail::with('do_list','product')
+                      ->whereHas('do_list', function($q) use ($request){
+                        if($request->from_branch != 'all'){
+                          $q->where('from_branch_id',$request->from_branch);
+                        }
+                        $q->where('to_branch_id',$request->to_branch);
+                        $q->whereBetween('completed_time',[$request->report_date_from.' 00:00:00',$request->report_date_to.' 23:59:59']);
+                      })
+                      ->when($request->product_name != null, function($q) use ($request){
+                        $q->where('product_name','LIKE','%'.$request->product_name.'%');
+                      })
+                      ->when($request->barcode != null, function($q) use ($request){
+                        $q->where('barcode','LIKE','%'.$request->barcode.'%');
+                      })
+                      ->when($request->department != 1, function($q) use ($request){
+                        $q->whereHas('product',function($x) use ($request){
+                          $x->where('department_id',$request->department_id);
+                          $x->whereIn('category_id',$request->category_id);
+                        });
+                      })
+                      ->when($request->product_name != null, function($q) use ($request){
+                        $q->where('product_name','LIKE','%'.$request->product_name.'%');
+                      })
+                      ->groupBy('barcode')
+                      ->select('*',DB::raw('SUM(quantity) as total_quantity'))
+                      ->get();
+
+    $toBranch = $request->to_branch != 0 ? Branch::find($request->to_branch)->branch_name : 'HQ';
+    if($request->from_branch == 'all'){
+      $fromBranch = 'All Branches';
+    }else if($request->from_branch == '0'){
+      $fromBranch = 'HQ';
+    }else{
+      $fromBranch = Branch::find($request->from_branch)->branch_name;
+    }
+
+    $response = [
+      'from_date' => $request->report_date_from,
+      'to_date' => $request->report_date_to,
+      'user' => Auth::user(),
+      'from_branch' => $fromBranch,
+      'to_branch' => $toBranch,
+    ];
+
+    return view('report.stock_in_view',compact('data','response'));
+  }
+
+  public function getStockOutReport()
+  {
+    $url = route('home')."?p=sales_menu";
+    $departments = Department::with('categories')->get();
+    $branches = Branch::listing();
+
+    return view('report.stock_out_report',compact('url','departments','branches'));
+  }
+
+  public function postStockOutReport(Request $request)
+  {
+    $data = Do_detail::with('do_list','product')
+                      ->whereHas('do_list', function($q) use ($request){
+                        if($request->to_branch != 'all'){
+                          $q->where('to_branch_id',$request->to_branch);
+                        }
+                        $q->where('from_branch_id',$request->from_branch);
+                        $q->whereBetween('completed_time',[$request->report_date_from.' 00:00:00',$request->report_date_to.' 23:59:59']);
+                      })
+                      ->when($request->product_name != null, function($q) use ($request){
+                        $q->where('product_name','LIKE','%'.$request->product_name.'%');
+                      })
+                      ->when($request->barcode != null, function($q) use ($request){
+                        $q->where('barcode','LIKE','%'.$request->barcode.'%');
+                      })
+                      ->when($request->department != 1, function($q) use ($request){
+                        $q->whereHas('product',function($x) use ($request){
+                          $x->where('department_id',$request->department_id);
+                          $x->whereIn('category_id',$request->category_id);
+                        });
+                      })
+                      ->when($request->product_name != null, function($q) use ($request){
+                        $q->where('product_name','LIKE','%'.$request->product_name.'%');
+                      })
+                      ->groupBy('barcode')
+                      ->select('*',DB::raw('SUM(quantity) as total_quantity'))
+                      ->get();
+
+    $fromBranch = $request->to_branch != 0 ? Branch::find($request->to_branch)->branch_name : 'HQ';
+    if($request->to_branch == 'all'){
+      $toBranch = 'All Branches';
+    }else if($request->to_branch == '0'){
+      $toBranch = 'HQ';
+    }else{
+      $toBranch = Branch::find($request->to_branch)->branch_name;
+    }
+
+    $response = [
+      'from_date' => $request->report_date_from,
+      'to_date' => $request->report_date_to,
+      'user' => Auth::user(),
+      'from_branch' => $fromBranch,
+      'to_branch' => $toBranch,
+    ];
+
+    return view('report.stock_out_view',compact('data','response'));
+  }
 }

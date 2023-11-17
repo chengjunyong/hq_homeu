@@ -70,7 +70,7 @@
   <button class="float" onclick="window.location.assign('{{ (isset($url)) ? $url : "" }}')" style="border:none">
     <i class="fa fa-arrow-left" style="font-size: 40px;"></i>
   </button>
-  <div id="app">
+  <div id="app" style="padding:15px;">
 
    @yield('content')
    

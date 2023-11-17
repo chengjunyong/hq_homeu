@@ -14,4 +14,9 @@ class Branch extends Model
       'contact',
       'token',
     ];
+
+    public function scopeListing()
+    {
+      return $this->whereNotIn('id',[11,12])->get();
+    }
 }

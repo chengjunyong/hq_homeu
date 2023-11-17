@@ -11,4 +11,9 @@ class Department extends Model
     [
       'department_name',
     ];
+
+    public function categories()
+    {
+      return $this->hasMany(Category::class, 'department_id');
+    }
 }

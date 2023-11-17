@@ -11,6 +11,8 @@
 |
 */
 
+use App\Http\Controllers\ProductController;
+
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
@@ -92,6 +94,7 @@ Route::get('/getHamper','ProductController@getHamper')->name('getHamper');
 Route::get('/editHamper','ProductController@getEditHamper')->name('getEditHamper');
 Route::get('/printHamper/{id}','ProductController@printHamper')->name('printHamper');
 
+
 //Other
 Route::get('/Supplier','OtherController@getSupplier')->name('getSupplier');
 Route::get('/EditSupplier/{id}','OtherController@getEditSupplier')->name('getEditSupplier');
@@ -146,6 +149,11 @@ Route::get('/ExportDeliveryReport','SalesController@ajaxDeliveryReport')->name('
 Route::get('/StockBalanceBranchReport','SalesController@getStockBalanceBranchReport')->name('getStockBalanceBranchReport');
 Route::post('/StockBalanceBranchReport','SalesController@postStockBalanceBranchReport')->name('postStockBalanceBranchReport');
 Route::post('/ajaxStockBalanceBranchReport','SalesController@ajaxStockBalanceBranchReport')->name('ajaxStockBalanceBranchReport');
+Route::get('/stock-in-report','SalesController@getStockInReport')->name('stock-in-report');
+Route::post('/stock-in-report-view','SalesController@postStockInReport')->name('postStockInReport');
+
+Route::get('/stock-out-report','SalesController@getStockOutReport')->name('stock-out-report');
+Route::post('/stock-out-report-view','SalesController@postStockOutReport')->name('postStockOutReport');
 
 // User access control
 Route::get('/user_access_control', 'UserController@getUserAccessControl')->name('getUserAccessControl'); 

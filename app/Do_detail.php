@@ -22,4 +22,14 @@ class Do_detail extends Model
       'remark',
       'stock_lost_review',
     ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product_list::class,'barcode','barcode');
+    }
+
+    public function do_list()
+    {
+        return $this->belongsTo(Do_list::class,'do_number','do_number');
+    }
 }

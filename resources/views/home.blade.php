@@ -509,7 +509,6 @@
         </div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -720,6 +719,37 @@
             </div>
             <div class="col">
               <a href="{{route('getStockBalanceBranchReport')}}"><i class="fas fa-layer-group first sales-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Stock In Report</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('stock-in-report')}}"><i class="fas fa-reply first sales-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Stock Out Report</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('stock-out-report')}}"><i class="fas fa-share first sales-color"></i></a>
             </div>
           </div>
         </div>
