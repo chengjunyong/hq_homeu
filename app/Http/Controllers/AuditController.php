@@ -120,7 +120,7 @@ class AuditController extends Controller
                                     ->where('transaction.transaction_date','<=',$request->report_date_to." 23:59:59'")
                                     ->where('td.barcode',$product->barcode)
                                     ->where('transaction.branch_id',$branch->token)
-                                    ->select('transaction.transaction_no','td.quantity','td.price','transaction.transaction_date')
+                                    ->selectRaw('transaction.transaction_no, sum(td.quantity) as quantity, td.price, transaction.transaction_date')
                                     ->union($stock_transfer)
                                     ->get();
 
