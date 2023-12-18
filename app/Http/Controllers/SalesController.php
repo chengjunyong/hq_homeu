@@ -2836,7 +2836,7 @@ class SalesController extends Controller
                       ->when($request->barcode != null, function($q) use ($request){
                         $q->where('barcode','LIKE','%'.$request->barcode.'%');
                       })
-                      ->when($request->department != '', function($q) use ($request){
+                      ->when($request->department_id != '', function($q) use ($request){
                         $q->whereHas('product',function($x) use ($request){
                           $x->where('department_id',$request->department_id);
                           if(isset($request->category_id)){
@@ -2893,7 +2893,7 @@ class SalesController extends Controller
                       ->when($request->barcode != null, function($q) use ($request){
                         $q->where('barcode','LIKE','%'.$request->barcode.'%');
                       })
-                      ->when($request->department != '', function($q) use ($request){
+                      ->when($request->department_id != '', function($q) use ($request){
                         $q->whereHas('product',function($x) use ($request){
                           $x->where('department_id',$request->department_id);
                           if(isset($request->category_id)){
