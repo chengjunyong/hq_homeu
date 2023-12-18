@@ -92,6 +92,7 @@
           <div class="col-md-6">
             <label>Department</label>
             <select class='form-control' name="department_id" id="department_id">
+              <option value="">Select Department</option>
               @foreach($departments as $department)
                 <option value="{{ $department->id }}">{{ $department->department_name }}</option>
               @endforeach
@@ -101,9 +102,7 @@
           <div class="col-md-6">
             <label>Category</label>
             <select class='form-control' name="category_id[]" multiple>
-              @foreach($departments->first()->categories as $category)
-                <option value="{{ $category->id }}" selected>{{ $category->category_name }}</option>
-              @endforeach
+
             </select>
           </div>
         </div>

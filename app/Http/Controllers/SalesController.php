@@ -135,6 +135,7 @@ class SalesController extends Controller
       $branch_other_total = 0;
       $branch_total = 0;
 
+      // Need optimize
       $transaction = Transaction::whereBetween('transaction_date', [$selected_date_start, $selected_date_end])->where('branch_id', $branch->token)->selectRaw('*, sum(total) as payment_type_total')->groupBy('payment_type')->get();
 
       foreach($transaction as $value)
@@ -2835,14 +2836,13 @@ class SalesController extends Controller
                       ->when($request->barcode != null, function($q) use ($request){
                         $q->where('barcode','LIKE','%'.$request->barcode.'%');
                       })
-                      ->when($request->department != 1, function($q) use ($request){
+                      ->when($request->department != '', function($q) use ($request){
                         $q->whereHas('product',function($x) use ($request){
                           $x->where('department_id',$request->department_id);
-                          $x->whereIn('category_id',$request->category_id);
+                          if(isset($request->category_id)){
+                            $x->whereIn('category_id',$request->category_id);
+                          }
                         });
-                      })
-                      ->when($request->product_name != null, function($q) use ($request){
-                        $q->where('product_name','LIKE','%'.$request->product_name.'%');
                       })
                       ->groupBy('barcode')
                       ->select('*',DB::raw('SUM(quantity) as total_quantity'))
@@ -2887,20 +2887,19 @@ class SalesController extends Controller
                         $q->where('from_branch_id',$request->from_branch);
                         $q->whereBetween('completed_time',[$request->report_date_from.' 00:00:00',$request->report_date_to.' 23:59:59']);
                       })
-                      ->when($request->product_name != null, function($q) use ($request){
+                      ->when($request->product_name != 'null', function($q) use ($request){
                         $q->where('product_name','LIKE','%'.$request->product_name.'%');
                       })
                       ->when($request->barcode != null, function($q) use ($request){
                         $q->where('barcode','LIKE','%'.$request->barcode.'%');
                       })
-                      ->when($request->department != 1, function($q) use ($request){
+                      ->when($request->department != '', function($q) use ($request){
                         $q->whereHas('product',function($x) use ($request){
                           $x->where('department_id',$request->department_id);
-                          $x->whereIn('category_id',$request->category_id);
+                          if(isset($request->category_id)){
+                            $x->whereIn('category_id',$request->category_id);
+                          }
                         });
-                      })
-                      ->when($request->product_name != null, function($q) use ($request){
-                        $q->where('product_name','LIKE','%'.$request->product_name.'%');
                       })
                       ->groupBy('barcode')
                       ->select('*',DB::raw('SUM(quantity) as total_quantity'))
