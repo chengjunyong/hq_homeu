@@ -264,6 +264,36 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
+              <h4 class="card-title">Product Category</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('category.index')}}"><i class="fa fa-list first product-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Product Brand</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('brand.index')}}"><i class="fa fa-copyright first product-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
               <h4 class="card-title">Product Check List</h4>
             </div>
             <div class="col">

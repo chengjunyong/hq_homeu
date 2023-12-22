@@ -33,6 +33,14 @@
 						</select>
 					</div>
 					<div class="col-md-12">
+						<label>Brand</label>
+						<select name="brand" id="brand" class="form-control" required>
+							@foreach($brands as $result)
+								<option value="{{$result->id}}">{{$result->name}}</option>
+							@endforeach
+						</select>
+					</div>
+					<div class="col-md-12">
 						<label>Barcode</label>
 						<input type="text" name="barcode" class="form-control" required>
 					</div>

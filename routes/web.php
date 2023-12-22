@@ -162,6 +162,7 @@ Route::post('/editUser', 'UserController@editUser')->name('editUser');
 Route::get('/no_access', 'UserController@getNoAccess')->name('no_access');
 Route::get('/profile', 'UserController@getUserProfile')->name('getUserProfile');
 Route::post('/update_profile', 'UserController@updateUserProfile')->name('updateUserProfile');
+Route::delete('/deleteUser/{user}','UserController@removeUser')->name('removeUser');
 
 // barcode check stock
 Route::get('/check_stock', 'BarcodeController@getCheckStockPage')->name('getCheckStockPage');
@@ -246,3 +247,8 @@ Route::get('/approve-stock-check','AuditController@approveStockCheck')->name('ap
 //StockLog  
 Route::get('/stocklog/index','StockLogController@index')->name('stock-log-index');
 Route::get('/stocklog/cost','StockLogController@cost')->name('cost');
+
+// Brand
+Route::resource('brand','BrandController');
+
+Route::resource('category','CategoryController');

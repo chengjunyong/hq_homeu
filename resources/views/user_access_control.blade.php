@@ -45,6 +45,7 @@
                   <td>{{ $user_detail->username }}</td>
                   <td>
                     <button type="button" class="btn btn-primary edit_user" user_id="{{ $user_detail->id }}" user_type="{{ $user_detail->user_type }}" name="{{ $user_detail->name }}" username="{{ $user_detail->username }}" access_control="{{ $user_detail->access_control }}">Edit</button>
+                    <button type="button" class="btn btn-danger" onclick="removeUser('{{route('removeUser',$user_detail->id)}}')" >Delete</button>
                   </td>
                 </tr>
               @endforeach
@@ -306,6 +307,25 @@
     });
 
   });
+
+  function removeUser($url){
+			Swal.fire({
+				title: 'Do you want to delete the user ?',
+				icon: 'warning',
+				showDenyButton: true,
+				confirmButtonText: 'Yes',
+			}).then((result) => {
+				if (result.isConfirmed) {
+					$.post($url,
+					{
+						'_method': 'DELETE',
+						'_token': '{{ csrf_token() }}',
+					},function(data){
+						swal.fire('Success','User delete successful','success').then(()=>{window.location.reload()});
+					},'json');
+				}
+			})
+		}
 
   function submitAddUser()
   {

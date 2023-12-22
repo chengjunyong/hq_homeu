@@ -62,6 +62,14 @@ td{
 							@endforeach
 						</select>
 					</div>
+          <div class="col-md-6">
+						<label>Brand</label>
+						<select name="brand" id="brand" class="form-control" required>
+							@foreach($brands as $result)
+								<option value="{{$result->id}}" {{($product->brand_id == $result->id) ? 'selected' : ''}}>{{$result->name}}</option>
+							@endforeach
+						</select>
+					</div>
 					<div class="col-md-6">
 						<label>Barcode</label>
 						<input type="text" name="barcode" class="form-control" readonly value="{{$product->barcode}}">

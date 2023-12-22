@@ -90,6 +90,16 @@
           </div>
 
           <div class="col-md-6">
+            <label>Brand</label>
+            <select class='form-control' name="brand_id" id="brand_id">
+              <option value="">Select Brand</option>
+              @foreach($brands as $brand)
+                <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+              @endforeach
+            </select>
+          </div>
+
+          <div class="col-md-6">
             <label>Department</label>
             <select class='form-control' name="department_id" id="department_id">
               <option value="">Select Department</option>

@@ -2,25 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Branch_product;
-use App\Department;
-use App\Category;
-use App\Product_list;
-use App\Product_configure;
+use App\Brand;
 use App\Branch;
-use App\Warehouse_stock;
-use App\Voucher;
-use App\Supplier;
-use App\Product_supplier;
 use App\Hamper;
+use App\Voucher;
+use App\Category;
+use App\Supplier;
+use App\Department;
+use App\Product_list;
+use App\Branch_product;
 use App\Product_history;
+use App\Warehouse_stock;
+use App\Product_supplier;
+use App\Product_configure;
 use App\user_access_control;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -42,7 +43,8 @@ class ProductController extends Controller
   	$product_list = Product_list::join('department','department.id','=','product_list.department_id')
                                 ->join('category','category.id','=','product_list.category_id')
                                 ->select('product_list.*','department.department_name','category.category_name')
-                                ->paginate(14);
+                                ->orderBy('created_at','DESC')
+                                ->paginate(15);
 
   	return view('product_list',compact('product_list','search','url','access','permission'));
   }
@@ -63,7 +65,8 @@ class ProductController extends Controller
                             ->select('product_list.*','department.department_name','category.category_name')
                             ->where('product_list.barcode','LIKE','%'.$request->search.'%')
   													->orWhere('product_list.product_name','LIKE','%'.$request->search.'%')
-  													->paginate(14);
+                            ->orderBy('created_at','DESC')
+  													->paginate(15);
 
   	$product_list->withPath('?search='.$request->search);
 
@@ -131,8 +134,10 @@ class ProductController extends Controller
     $category = Category::where('department_id',$department->first()->id)->get();
 
     $default_price = Product_configure::first();
+    
+    $brands = Brand::all();
 
-    return view('addproduct',compact('department','category','default_price','url'));
+    return view('addproduct',compact('department','category','default_price','url','brands'));
   }
 
   public function ajaxGetCategory(Request $request)
@@ -176,6 +181,7 @@ class ProductController extends Controller
       [
       'department_id'=>$request->department,
       'category_id'=>$request->category,
+      'brand_id'=>$request->brand,
       'product_name'=>$request->product_name,
       'uom'=>$request->uom,
       'measurement'=>$request->measurement,
@@ -248,7 +254,9 @@ class ProductController extends Controller
 
     $history = Product_history::where('product_id',$product->id)->orderBy('created_at','DESC')->limit(100)->get();
 
-    return view('modifyproduct',compact('product','department','category','default_price','url','supplier','supplier_list','history'));
+    $brands = Brand::all();
+
+    return view('modifyproduct',compact('product','department','category','default_price','url','supplier','supplier_list','history','brands'));
   }
 
   public function ajaxAddSupplier(Request $request)
@@ -353,6 +361,7 @@ class ProductController extends Controller
                     ->update([
                       'department_id'=>$request->department,
                       'category_id'=>$request->category,
+                      'brand_id'=>$request->brand,
                       'product_name'=>$request->product_name,
                       'uom'=>$request->uom,
                       'measurement'=>$request->measurement,

@@ -22,7 +22,10 @@ class UserController extends Controller
     {
       $url = route('home')."?p=other_menu";
       
-      $user_list = User::leftJoin('user_access_control', 'user_access_control.user_id', '=', 'users.id')->select('users.*', 'user_access_control.access_control')->get();
+      $user_list = User::leftJoin('user_access_control', 'user_access_control.user_id', '=', 'users.id')
+                        ->whereNull('users.removed_at')
+                        ->select('users.*', 'user_access_control.access_control')
+                        ->get();
 
       foreach($user_list as $user_detail)
       {
@@ -589,4 +592,13 @@ class UserController extends Controller
       return view('testing');
     }
 
+    public function removeUser(User $user)
+    {
+      $user->update([
+        'removed_by' => auth()->user()->id,
+        'removed_at' => date("Y-m-d H:i:s"),
+      ]);
+
+      return json_encode(true);
+    }
 }

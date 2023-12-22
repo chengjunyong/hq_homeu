@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Brand;
 use App\Branch;
 use App\Refund;
 use App\Do_list;
@@ -17,8 +18,8 @@ use App\Refund_detail;
 use App\Branch_product;
 use App\Warehouse_stock;
 use App\Transaction_detail;
-use Illuminate\Support\Str;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Branch_stock_history;
 use Illuminate\Support\Facades\DB;
@@ -2824,8 +2825,9 @@ class SalesController extends Controller
     $url = route('home')."?p=sales_menu";
     $departments = Department::with('categories')->get();
     $branches = Branch::listing();
+    $brands = Brand::all();
 
-    return view('report.stock_in_report',compact('url','departments','branches'));
+    return view('report.stock_in_report',compact('url','departments','branches','brands'));
   }
 
   public function postStockInReport(Request $request)
@@ -2847,8 +2849,11 @@ class SalesController extends Controller
                       ->when($request->department_id != '', function($q) use ($request){
                         $q->whereHas('product',function($x) use ($request){
                           $x->where('department_id',$request->department_id);
-                          if(isset($request->category_id)){
+                          if(isset($request->category_id) && $request->category_id != null){
                             $x->whereIn('category_id',$request->category_id);
+                          }
+                          if(isset($request->brand_id) && $request->brand_id != null){
+                            $x->where('brand_id','=',$request->brand_id);
                           }
                         });
                       })
@@ -2881,8 +2886,9 @@ class SalesController extends Controller
     $url = route('home')."?p=sales_menu";
     $departments = Department::with('categories')->get();
     $branches = Branch::listing();
+    $brands = Brand::all();
 
-    return view('report.stock_out_report',compact('url','departments','branches'));
+    return view('report.stock_out_report',compact('url','departments','branches','brands'));
   }
 
   public function postStockOutReport(Request $request)
@@ -2904,9 +2910,12 @@ class SalesController extends Controller
                       ->when($request->department_id != '', function($q) use ($request){
                         $q->whereHas('product',function($x) use ($request){
                           $x->where('department_id',$request->department_id);
-                          if(isset($request->category_id)){
+                          if(isset($request->category_id) && $request->category_id != null){
                             $x->whereIn('category_id',$request->category_id);
                           }
+                          if(isset($request->brand_id) && $request->brand_id != null){
+                            $x->where('brand_id','=',$request->brand_id);
+                          }    
                         });
                       })
                       ->groupBy('barcode')

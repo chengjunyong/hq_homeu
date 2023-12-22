@@ -13,6 +13,7 @@ class Product_list extends Model
     [
       'department_id',
       'category_id',
+      'brand_id',
       'barcode',
       'product_name',
       'uom',
@@ -106,5 +107,10 @@ class Product_list extends Model
     public function do_details()
     {
       return $this->hasMany(Do_detail::class,'barcode','barcode');
+    }
+
+    public function brand()
+    {
+      return $this->belongsTo(Brand::class);
     }
 }
