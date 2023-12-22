@@ -104,6 +104,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <td>{{ date("d-M-Y H:i:s A",strtotime($result->transaction_date))}}</td>
         </tr>
       @endforeach
+      @foreach($refund_detail as $result)
+        <tr>
+          <td>{{$a++}}</td>
+          <td>Refund</td>
+          <td>{{$result->refund->transaction_no}}</td>
+          <td>Rm {{number_format($result->price,2)}}</td>
+          <td>+{{$result->quantity}}</td>
+          <td>Rm {{ number_format($result->price * $result->quantity,2) }}</td>
+          <td>{{ date("d-M-Y H:i:s A",strtotime($result->refund->refund_created_at))}}</td>
+        </tr>
+      @endforeach
       </tbody>
     </table>
   </div>

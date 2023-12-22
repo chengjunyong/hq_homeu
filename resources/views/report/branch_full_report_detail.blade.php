@@ -60,7 +60,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <h4>(125272-P)</h4>
     <h4 style="margin:20px 30%;border:1px solid black;margin-top: 10px">Branch Report</h4>
     <h5 style="margin: 0 !important;">Report Date</h5>
-    <h5>({{ date("d-M-Y", strtotime($selected_date)) }} )</h5>
+    <h5>
+      @if($report_type == "period")
+        ({{ date("d-M-Y", strtotime($selected_date)) }} until {{ date("d-M-Y", strtotime($selected_date2))}})
+      @else
+        ({{ date("d-M-Y", strtotime($selected_date)) }})
+      @endif
+    </h5>
   </div>
 
   <div class="second">
@@ -94,6 +100,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <!-- <th style="text-align: right">OTHER</th> -->
         <th style="text-align: right">PANDAMART</th>
         <th style="text-align: right">GRABMART</th>
+        @if($report_type == 'period')
+          <th style="text-align: right">Refund</th>
+        @endif
         <th style="text-align: right">TOTAL</th>
       </thead>
       <tbody class="border" style="border-bottom-color:black !important">
@@ -103,7 +112,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             @foreach($payment_type as $type)
               <td style="text-align: right;">{{ number_format($branch->$type, 2) }}</td>
             @endforeach
-            <td style="text-align: right;">{{ number_format($branch->total, 2) }}</td>
+            @if($report_type == 'period')
+              <td style="text-align: right;">{{ number_format($branch->refund, 2) }}</td>
+            @endif
+            <td style="text-align: right;">{{ number_format($branch->total - $branch->refund, 2) }}</td>
           </tr>
         @endforeach
       </tbody>
@@ -113,48 +125,53 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           @foreach($total_payment_type as $total_payment)
             <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total_payment->total, 2) }}</td>
           @endforeach
-          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total, 2) }}</td>
+          @if($report_type == 'period')
+            <td style="text-align: right;">{{ number_format($branch_total->refund, 2) }}</td>
+          @endif
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total - $branch_total->refund, 2) }}</td>
         </tr>
       </tfoot>
     </table>
 
-    <br><br>
-    <h5 style="margin: 0 !important; text-align: center;">Lapuran Tunai Harian</h5>
-    <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
-      <thead style="background: #adade0;">
-        <th style="text-align: right">BRANCH NAME</th>
-        <th style="text-align: right">Modal Pagi</th>
-        <th style="text-align: right">Tambah<br>Modal</th>
-        <th style="text-align: right">Kutipan<br>Tunai</th>
-        <th style="text-align: right">Modal utk<br>esok</th>
-        <th style="text-align: right">Expenses /<br>Purchases</th>
-        <th style="text-align: right">Refund</th>
-        <th style="text-align: right">Baki Tunai Syarikat</th>
-      </thead>
-      <tbody class="border" style="border-bottom-color:black !important">
-        @foreach($branch_list as $branch)
-          <tr>
-            <td style="text-align: right;">{{ $branch->branch_name }}</td>
-            <td style="text-align: right;">{{ number_format($branch->opening, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($branch->float_in, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($branch->cash, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($branch->opening, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($branch->float_out, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($branch->refund, 2) }}</td>
-            <td style="text-align: right;">{{ number_format($branch->remain, 2) }}</td>
-          </tr>
-        @endforeach
-      </tbody>
-      <tfoot>
-        <tr>
-          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">Jumlah :</td>
-          @foreach($branch_total as $branch_total_detail)
-            <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($branch_total_detail, 2) }}</td>
+    @if($report_type != "period")
+      <br><br>
+      <h5 style="margin: 0 !important; text-align: center;">Lapuran Tunai Harian</h5>
+      <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
+        <thead style="background: #adade0;">
+          <th style="text-align: right">BRANCH NAME</th>
+          <th style="text-align: right">Modal Pagi</th>
+          <th style="text-align: right">Tambah<br>Modal</th>
+          <th style="text-align: right">Kutipan<br>Tunai</th>
+          <th style="text-align: right">Modal utk<br>esok</th>
+          <th style="text-align: right">Expenses /<br>Purchases</th>
+          <th style="text-align: right">Refund</th>
+          <th style="text-align: right">Baki Tunai Syarikat</th>
+        </thead>
+        <tbody class="border" style="border-bottom-color:black !important">
+          @foreach($branch_list as $branch)
+            <tr>
+              <td style="text-align: right;">{{ $branch->branch_name }}</td>
+              <td style="text-align: right;">{{ number_format($branch->opening, 2) }}</td>
+              <td style="text-align: right;">{{ number_format($branch->float_in, 2) }}</td>
+              <td style="text-align: right;">{{ number_format($branch->cash, 2) }}</td>
+              <td style="text-align: right;">{{ number_format($branch->opening, 2) }}</td>
+              <td style="text-align: right;">{{ number_format($branch->float_out, 2) }}</td>
+              <td style="text-align: right;">{{ number_format($branch->refund, 2) }}</td>
+              <td style="text-align: right;">{{ number_format($branch->remain, 2) }}</td>
+            </tr>
           @endforeach
-        </tr>
-      </tfoot>
-    </table>
-  </div>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td style="text-align: right;border:1px solid black; padding: 5px 5px;">Jumlah :</td>
+            @foreach($branch_total as $branch_total_detail)
+              <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($branch_total_detail, 2) }}</td>
+            @endforeach
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  @endif
 
 </div>
 

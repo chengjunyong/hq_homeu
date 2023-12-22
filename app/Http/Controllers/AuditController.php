@@ -14,6 +14,7 @@ use App\Warehouse_stock;
 use App\transaction_detail;
 use Illuminate\Http\Request;
 use App\Branch_stock_history;
+use App\Refund_detail;
 use App\StockCheck;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -65,10 +66,15 @@ class AuditController extends Controller
                                     ->where('transaction_date','>=',$request->report_date_from)
                                     ->where('transaction_date','<=',$request->report_date_to." 23:59:59")
                                     ->orderby('transaction_date','DESC')
-                                    ->get();                                
-            //Stock Purchase direct to branch
-
-            // Good Return
+                                    ->get();        
+                                    
+            $refund_detail = Refund_detail::with('refund')
+                                    ->where('branch_id','LIKE',$branch->token)
+                                    ->where('barcode',$product->barcode)
+                                    ->where('refund_detail_created_at','>=',$request->report_date_from)
+                                    ->where('refund_detail_created_at','<=',$request->report_date_to." 23:59:59")
+                                    ->orderby('refund_detail_created_at','DESC')
+                                    ->get();  
 
         }else{
             $selected_branch = "warehouse";
@@ -83,15 +89,9 @@ class AuditController extends Controller
                                         ->selectRaw("'warehouse_tranfer' AS type")
                                         ->get();  
                                         
-            // Stock Purchase
-
-            // Stock Check
-
-            // Good Return
-
         }
 
-        return view('audit.stock-movement-report',compact('stock_transfer','transaction_detail','product','date_target','selected_branch'));
+        return view('audit.stock-movement-report',compact('stock_transfer','transaction_detail','product','date_target','selected_branch','refund_detail'));
     }
 
     public function ajaxStockMovementMenu(Request $request)
@@ -102,6 +102,18 @@ class AuditController extends Controller
             return response()->json("error");
         }
         $branch = Branch::find($request->branch);
+
+        $refund_detail = Refund_detail::join('refund as r',function($q) use ($branch,$request){
+                                        $q->on('refund_detail.branch_refund_id','=','r.branch_refund_id');
+                                        $q->on('r.refund_created_at','>',DB::raw("'".$request->report_date_from."'"));
+                                        $q->on('r.refund_created_at','<=',DB::raw("'".$request->report_date_to." 23:59:59'"));
+                                    })
+                                    ->where('r.branch_id','LIKE',$branch->token)
+                                    ->where('refund_detail.barcode',$product->barcode)
+                                    ->where('refund_detail.refund_detail_created_at','>=',$request->report_date_from)
+                                    ->where('refund_detail.refund_detail_created_at','<=',$request->report_date_to." 23:59:59")
+                                    ->orderby('r.refund_created_at','DESC')
+                                    ->select('r.transaction_no AS transaction_no','refund_detail.quantity','refund_detail.price','r.refund_created_at AS transaction_date');
 
         $stock_transfer = Do_list::join('do_detail as dd','dd.do_number','=','do_list.do_number')
                                     ->where('do_list.completed_time','>',$request->report_date_from)
@@ -123,6 +135,7 @@ class AuditController extends Controller
                                     ->groupBy('transaction.branch_transaction_id')
                                     ->selectRaw('transaction.transaction_no, sum(td.quantity) as quantity, td.price,transaction.transaction_date')
                                     ->union($stock_transfer)
+                                    ->union($refund_detail)
                                     ->get();
 
         //Start exporting
@@ -158,16 +171,19 @@ class AuditController extends Controller
         $sheet->setCellValue('G6','Transaction Date');
 
         $start = 7;
+
         foreach($transaction_data as $index => $result){
             $sheet->setCellValue('A'.$start, $index+1);
             if(str_contains($result->transaction_no,"WTS")){
                 $sheet->setCellValue('B'.$start, 'Warehouse Transfer');
+            }else if(str_contains($result->transaction_no,"RN")){
+                $sheet->setCellValue('B'.$start, 'Refund');
             }else{
                 $sheet->setCellValue('B'.$start, 'Sales');
             }
             $sheet->setCellValue('C'.$start, $result->transaction_no);
             $sheet->setCellValue('D'.$start, number_format($result->price,2));
-            if(str_contains($result->transaction_no,"WTS")){
+            if(str_contains($result->transaction_no,"WTS") || str_contains($result->transaction_no,"RN")){
                 $sheet->setCellValue('E'.$start, '+'.$result->quantity);
             }else{
                 $sheet->setCellValue('E'.$start, '-'.$result->quantity);

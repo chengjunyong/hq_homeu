@@ -691,16 +691,23 @@ class SalesController extends Controller
       }
 
       return view('report.branch_cashier_report_detail',compact('cashier_list', 'payment_type', 'total_payment_type', 'total', 'cashier_total', 'branch', 'selected_date','selected_date2', 'url', 'date', 'user'));
-    }
-    elseif($request->report_type == "all")
-    {
+    
+    }elseif($request->report_type == "all" || $request->report_type == "period"){
+
+      $report_type = $request->report_type;
+
       if($request->report_date){
         $selected_date = $request->report_date;
-        $selected_date2 = null;
+        $selected_date2 = $request->report_date2 ?? null;
       }
 
-      $selected_date_from = $selected_date." 00:00:00";
-      $selected_date_to = $selected_date." 23:59:59";
+      if($report_type == "all"){
+        $selected_date_from = $selected_date." 00:00:00";
+        $selected_date_to = $selected_date." 23:59:59";
+      }else{
+        $selected_date_from = $selected_date." 00:00:00";
+        $selected_date_to = $selected_date2." 23:59:59";
+      }
 
       $branch_list = Branch::get();
 
@@ -818,7 +825,8 @@ class SalesController extends Controller
         $branch_total->remain += $branch->remain;
       }
 
-      return view('report.branch_full_report_detail',compact('branch_list', 'payment_type', 'total', 'total_payment_type', 'branch_total', 'selected_date','selected_date2', 'url', 'date', 'user'));
+      return view('report.branch_full_report_detail',compact('branch_list', 'payment_type', 'total', 'total_payment_type', 'branch_total', 'selected_date','selected_date2', 'url', 'date', 'user','report_type'));
+    
     }
     
   }

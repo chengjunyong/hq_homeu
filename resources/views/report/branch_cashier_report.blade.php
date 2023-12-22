@@ -42,6 +42,12 @@
                 <input class="form-check-input" type="radio" name="report_type" value="all" /> All branch
               </label>
             </div>
+
+            <div class="checkbox icheck" style="display: inline-block; margin-right: 10px;">
+              <label style="cursor: pointer;">
+                <input class="form-check-input" type="radio" name="report_type" value="period" /> Period
+              </label>
+            </div>
           </div>
 
           <div class="col-md-12 form-group" id="branch_list">
@@ -94,15 +100,18 @@
     });
 
     $("input[name='report_type']").on("ifChecked", function(){
-      if($(this).val() == "all")
-      {
+      if($(this).val() == "all"){
         $("#branch_list").hide();
         $("#date2").hide()
         $("input[name=report_date2]").prop('disabled',true);
-      }
-      else
-      {
+
+      }else if($(this).val() == "single"){
         $("#branch_list").show();
+        $("#date2").show();
+        $("input[name=report_date2]").prop('disabled',false);
+
+      }else{
+        $("#branch_list").hide();
         $("#date2").show();
         $("input[name=report_date2]").prop('disabled',false);
       }

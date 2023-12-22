@@ -23,4 +23,9 @@ class Refund_detail extends Model
       'total',
       'refund_detail_created_at',
     ];
+
+    public function refund()
+    {
+      return $this->belongsTo(Refund::class,'branch_refund_id','branch_refund_id')->where('branch_id','LIKE',$this->branch_id);
+    }
 }
