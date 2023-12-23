@@ -620,6 +620,7 @@ class SalesController extends Controller
         {
           if($total_payment->type == $value->payment_type)
           {
+
             $total_payment->total += $value->total;
             break;
           }
@@ -691,7 +692,7 @@ class SalesController extends Controller
         $cashier_total->remain += $cashier->remain;
       }
 
-      return view('report.branch_cashier_report_detail',compact('cashier_list', 'payment_type', 'total_payment_type', 'total', 'cashier_total', 'branch', 'selected_date','selected_date2', 'url', 'date', 'user'));
+      return view('report.branch_cashier_report_detail',compact('cashier_list', 'payment_type', 'total_payment_type', 'total', 'cashier_total', 'branch', 'selected_date','selected_date2', 'url', 'date', 'user','transaction'));
     
     }elseif($request->report_type == "all" || $request->report_type == "period"){
 
@@ -1594,7 +1595,9 @@ class SalesController extends Controller
 
   public function ajaxGetProduct(Request $request)
   {
-    $product = Product_list::where('product_name','LIKE','%'.$request->target.'%')->get();
+    $product = Product_list::where('product_name','LIKE','%'.$request->target.'%')
+                            ->orWhere('barcode','LIKE','%'.$request->target.'%')
+                            ->get();
 
     return $product;
   }
@@ -2941,4 +2944,40 @@ class SalesController extends Controller
 
     return view('report.stock_out_view',compact('data','response'));
   }
+
+  public function getItemBasedSalesReport(Request $request)
+  {
+    $url = route('home')."?p=sales_menu";
+    $branches = Branch::listing();
+
+    return view('report.item_based_report',compact('branches','url'));
+  }
+
+  public function printItemBasedSalesReport(Request $request)
+  {
+    $from = $request->start;
+    $to = $request->end;
+    $branches = Branch::whereIn('id',$request->branches)->get();
+
+    $details = Transaction_detail::with('product')
+                                  ->whereBetween('transaction_date',[$request->start,$request->end." 23:59:59"])
+                                  ->whereIn('branch_id',$branches->pluck('token')->toArray())
+                                  ->select('*',DB::raw('SUM(quantity) as total_quantity'))
+                                  ->orderBy('total_quantity','DESC')
+                                  ->groupBy('barcode')
+                                  ->paginate(1000);
+
+    return view('report.print_item_based_report',compact('details','branches','from','to'));
+  }
+
+  public function getBranchRestockReport()
+  {
+
+  }
+
+  public function printBranchRestockReport(Request $request)
+  {
+
+  }
+
 }

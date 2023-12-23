@@ -15,6 +15,7 @@ use App\Product_history;
 use App\Warehouse_stock;
 use App\Product_supplier;
 use App\Product_configure;
+use App\SubCategory;
 use App\user_access_control;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -30,7 +31,7 @@ class ProductController extends Controller
      // dd($this->middleware(['auth', 'user_access']));
   }
     
-  public function getProductList()
+  public function getProductList(Request $request)
   { 
     $access = app('App\Http\Controllers\UserController')->checkAccessControl();
     $permission = explode(",",user_access_control::where('user_id',auth()->id())->first()->access_control);
@@ -40,13 +41,32 @@ class ProductController extends Controller
     $url = route('home')."?p=product_menu";
 
     $search = null;
-  	$product_list = Product_list::join('department','department.id','=','product_list.department_id')
-                                ->join('category','category.id','=','product_list.category_id')
-                                ->select('product_list.*','department.department_name','category.category_name')
+  	$product_list = Product_list::with('department','category','subCategory','brand')
+                                ->when(isset($request->search) && $request->search != '', function ($q) use ($request){
+                                  $q->where('barcode','LIKE','%'.$request->search.'%')
+                                    ->orWhere('product_name','LIKE','%'.$request->search.'%');
+                                })  
+                                ->when(isset($request->department_id) && $request->department_id != null, function ($q) use ($request){
+                                  $q->where('department_id',$request->department_id);
+                                }) 
+                                ->when(isset($request->category_id) && $request->category_id != null, function ($q) use ($request){
+                                  $q->where('category_id',$request->category_id);
+                                }) 
+                                ->when(isset($request->sub_category_id) && $request->sub_category_id != null, function ($q) use ($request){
+                                  $q->where('sub_category_id',$request->sub_category_id);
+                                }) 
+                                ->when(isset($request->brand_id) && $request->brand_id != null, function ($q) use ($request){
+                                  $q->where('brand_id',$request->brand_id);
+                                }) 
                                 ->orderBy('created_at','DESC')
                                 ->paginate(15);
 
-  	return view('product_list',compact('product_list','search','url','access','permission'));
+    $departments = Department::all();
+    $categories = Category::all();
+    $subCategories = SubCategory::all();
+    $brands = Brand::all();
+
+  	return view('product_list',compact('product_list','search','url','access','permission','departments','categories','subCategories','brands'));
   }
 
   public function searchProduct(Request $request)
@@ -72,21 +92,6 @@ class ProductController extends Controller
 
   	return view('product_list',compact('product_list','search','url','access','permission'));
   }
-
-  // public function ajaxAddProduct(Request $request)
-  // {
-  //   Product::updateOrCreate(
-  //     [
-		// 	'branch_id'=>'1',
-		// 	'barcode'=>$request->barcode,
-		// 	'product_name'=>$request->product_name,
-		// 	'price'=>$request->price,
-		// 	'quantity'=>$request->quantity,
-  //   ]);
-
-  //   return 'true';
-  // }
-
   public function getProductConfig()
   {
     $access = app('App\Http\Controllers\UserController')->checkAccessControl();
@@ -136,8 +141,9 @@ class ProductController extends Controller
     $default_price = Product_configure::first();
     
     $brands = Brand::all();
+    $subCategories = SubCategory::all();
 
-    return view('addproduct',compact('department','category','default_price','url','brands'));
+    return view('addproduct',compact('department','category','default_price','url','brands','subCategories'));
   }
 
   public function ajaxGetCategory(Request $request)
@@ -181,6 +187,7 @@ class ProductController extends Controller
       [
       'department_id'=>$request->department,
       'category_id'=>$request->category,
+      'sub_category_id'=>$request->sub_category,
       'brand_id'=>$request->brand,
       'product_name'=>$request->product_name,
       'uom'=>$request->uom,
@@ -255,8 +262,9 @@ class ProductController extends Controller
     $history = Product_history::where('product_id',$product->id)->orderBy('created_at','DESC')->limit(100)->get();
 
     $brands = Brand::all();
+    $subCategories = SubCategory::all();
 
-    return view('modifyproduct',compact('product','department','category','default_price','url','supplier','supplier_list','history','brands'));
+    return view('modifyproduct',compact('product','department','category','default_price','url','supplier','supplier_list','history','brands','subCategories'));
   }
 
   public function ajaxAddSupplier(Request $request)
@@ -361,6 +369,7 @@ class ProductController extends Controller
                     ->update([
                       'department_id'=>$request->department,
                       'category_id'=>$request->category,
+                      'sub_category_id'=>$request->sub_category,
                       'brand_id'=>$request->brand,
                       'product_name'=>$request->product_name,
                       'uom'=>$request->uom,

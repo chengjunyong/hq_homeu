@@ -155,6 +155,12 @@ Route::post('/stock-in-report-view','SalesController@postStockInReport')->name('
 Route::get('/stock-out-report','SalesController@getStockOutReport')->name('stock-out-report');
 Route::post('/stock-out-report-view','SalesController@postStockOutReport')->name('postStockOutReport');
 
+Route::get('/getItemBasedSalesReport','SalesController@getItemBasedSalesReport')->name('getItemBasedSalesReport');
+Route::get('/printItemBasedSalesReport','SalesController@printItemBasedSalesReport')->name('printItemBasedSalesReport');
+
+Route::get('/getBranchRestockReport','SalesController@getBranchRestockReport')->name('getBranchRestockReport');
+Route::get('/printBranchRestockReport','SalesController@printBranchRestockReport')->name('printBranchRestockReport');
+
 // User access control
 Route::get('/user_access_control', 'UserController@getUserAccessControl')->name('getUserAccessControl'); 
 Route::post('/createNewUser', 'UserController@createNewUser')->name('createNewUser');
@@ -252,3 +258,5 @@ Route::get('/stocklog/cost','StockLogController@cost')->name('cost');
 Route::resource('brand','BrandController');
 
 Route::resource('category','CategoryController');
+
+Route::resource('sub_category','SubCategoryController');

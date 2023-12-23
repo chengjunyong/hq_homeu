@@ -294,6 +294,21 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
+              <h4 class="card-title">Product Sub Category</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('sub_category.index')}}"><i class="fa fa-layer-group first product-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
               <h4 class="card-title">Product Check List</h4>
             </div>
             <div class="col">
@@ -770,7 +785,6 @@
       </div>
     </div>
 
-    
     <div class="col-md-4">
       <div class="card icon">
         <div class="card-body">
@@ -785,6 +799,36 @@
         </div>
       </div>
     </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Item Based Sales Report </h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getItemBasedSalesReport')}}"><i class="fas fa-sort-amount-up-alt first sales-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{{-- 
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Branch Restock Report </h4>
+            </div>
+            <div class="col">
+              <a href="{{route('getItemBasedSalesReport')}}"><i class="fas fa-sort-amount-up-alt first sales-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> --}}
 
   </div>
 </div>

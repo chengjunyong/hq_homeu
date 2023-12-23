@@ -33,6 +33,14 @@
 						</select>
 					</div>
 					<div class="col-md-12">
+						<label>Sub Category</label>
+						<select name="sub_category" id="sub_category" class="form-control" required>
+							@foreach($subCategories as $result)
+								<option value="{{$result->id}}">{{$result->name}}</option>
+							@endforeach
+						</select>
+					</div>
+					<div class="col-md-12">
 						<label>Brand</label>
 						<select name="brand" id="brand" class="form-control" required>
 							@foreach($brands as $result)

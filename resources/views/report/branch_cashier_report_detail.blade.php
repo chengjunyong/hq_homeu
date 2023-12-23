@@ -106,9 +106,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <tr>
             <td style="text-align: right;">{{ $cashier->cashier_name }}</td>
             @foreach($cashier->payment_type as $type)
-              <td style="text-align: right;">{{ number_format($type->total, 2) }}</td>
+              <td style="text-align: right;">{{ number_format($type->total, 2) }} <br/> <b>Transaction Qty: {{ $transaction->where('cashier_name',$cashier->cashier_name)->where('payment_type',$type->type)->count() }}</b></td>
             @endforeach
-            <td style="text-align: right;">{{ number_format($cashier->total, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($cashier->total, 2) }} <br/> <b>Transaction Qty: {{ $transaction->where('cashier_name',$cashier->cashier_name)->count() }}</b></td>
           </tr>
         @endforeach
       </tbody>

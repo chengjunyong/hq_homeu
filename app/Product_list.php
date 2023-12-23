@@ -14,6 +14,7 @@ class Product_list extends Model
       'department_id',
       'category_id',
       'brand_id',
+      'sub_category_id',
       'barcode',
       'product_name',
       'uom',
@@ -112,5 +113,10 @@ class Product_list extends Model
     public function brand()
     {
       return $this->belongsTo(Brand::class);
+    }
+
+    public function subCategory()
+    {
+      return $this->belongsTo(SubCategory::class);
     }
 }

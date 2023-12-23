@@ -14,7 +14,7 @@
         <div class="row">
           <div class="col-md-12" style="margin-bottom:10px;">
             <button type="button" class="btn btn-primary" id="export_report" style="float: right; margin-bottom: 10px;">Export Report</button>
-            <label>Product</label>
+            <label>Exact Product Name</label>
             <input list="product_list" id="product" name="product" class="form-control">
             <datalist id="product_list">
             </datalist>
@@ -60,7 +60,7 @@
         },function(data){
           $("#product_list").html("");
           data.forEach(function(result,index){
-            $("#product_list").append(`<option value='${result.product_name}'>`);
+            $("#product_list").append(`<option value='${result.product_name}'>Barcode: ${result.barcode}</option>`);
           });
         },'json');
       }
