@@ -57,7 +57,7 @@
 
   .first{
     float:left;
-    font-size: 120px;
+    font-size: 110px;
   }
 
   .icon{
@@ -264,7 +264,22 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Product Category</h4>
+              <h4 class="card-title">Department</h4>
+            </div>
+            <div class="col">
+              <a href="{{route('department.index')}}"><i class="fa fa-sitemap first product-color"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card icon">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h4 class="card-title">Category</h4>
             </div>
             <div class="col">
               <a href="{{route('category.index')}}"><i class="fa fa-list first product-color"></i></a>
@@ -279,7 +294,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Product Brand</h4>
+              <h4 class="card-title">Brand</h4>
             </div>
             <div class="col">
               <a href="{{route('brand.index')}}"><i class="fa fa-copyright first product-color"></i></a>
@@ -294,7 +309,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Product Sub Category</h4>
+              <h4 class="card-title">Sub Category</h4>
             </div>
             <div class="col">
               <a href="{{route('sub_category.index')}}"><i class="fa fa-layer-group first product-color"></i></a>
@@ -775,7 +790,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h4 class="card-title">Stock In Report</h4>
+              <h4 class="card-title">Stock Transfer Report</h4>
             </div>
             <div class="col">
               <a href="{{route('stock-in-report')}}"><i class="fas fa-reply first sales-color"></i></a>
@@ -785,7 +800,7 @@
       </div>
     </div>
 
-    <div class="col-md-4">
+    {{-- <div class="col-md-4">
       <div class="card icon">
         <div class="card-body">
           <div class="row">
@@ -798,7 +813,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> --}}
 
     <div class="col-md-4">
       <div class="card icon">

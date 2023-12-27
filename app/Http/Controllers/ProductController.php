@@ -59,7 +59,7 @@ class ProductController extends Controller
                                   $q->where('brand_id',$request->brand_id);
                                 }) 
                                 ->orderBy('created_at','DESC')
-                                ->paginate(15);
+                                ->paginate(30);
 
     $departments = Department::all();
     $categories = Category::all();

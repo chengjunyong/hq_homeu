@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Stock In Report</title>
+<title>Stock Transfer Report</title>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -72,7 +72,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <h4>HOME U(M) SDN BHD</h2>
     <h5>(125272-P)</h4>
     <h5>Tel: 09-7744243 &nbsp Email: assist@homeu.com.my</h4>
-    <h4 style="margin:20px 30%;border:1px solid black">Stock In Report</h3>
+    <h4 style="margin:20px 30%;border:1px solid black">Stock Transfer Report</h3>
   </div>
 
   <div class="second">

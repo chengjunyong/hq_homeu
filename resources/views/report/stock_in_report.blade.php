@@ -1,5 +1,5 @@
 @extends('layouts.app')
-<title>Stock In Report</title>
+<title>Stock Transfer Report</title>
 @section('content')
 <script src="{{ asset('datatable/datatables.min.js') }}"></script>
 <link rel="stylesheet" href="{{ asset('datatable/datatables.min.css')}}"/>
@@ -43,7 +43,7 @@
 
 <form method="post" action="{{route('postStockInReport')}}" target="_blank">
   @csrf
-  <h2 align="center">Stock In Report</h2>
+  <h2 align="center">Stock Transfer Report</h2>
   <div class="container">
     <div class="card">
       <div class="card-body">

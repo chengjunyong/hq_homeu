@@ -260,3 +260,5 @@ Route::resource('brand','BrandController');
 Route::resource('category','CategoryController');
 
 Route::resource('sub_category','SubCategoryController');
+
+Route::resource('department','DepartmentController');
