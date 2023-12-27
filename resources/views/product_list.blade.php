@@ -75,6 +75,7 @@
 					<table id="product_list" class="table">
 						<thead style="background:#a1e619">
 							<tr>
+								<td align="center">Bulk</td>
 								<td>No</td>
 								<td>Bar Code</td>
 								<td>Department</td>
@@ -92,6 +93,9 @@
 						<tbody>
 							@foreach($product_list as $key => $result)
 								<tr style="{{($key % 2 == 0) ? 'background:#ccc5c585' : ''}};">
+									<td align="center">
+										<input type="checkbox" style="height:25px;width:25px" name="product_ids[]" value="{{$result->id}}" />
+									</td>
 									<td>{{$key+1}}</td>
 									<td>{{$result->barcode}}</td>
 									<td>{{$result->department->department_name ?? 'N/A'}}</td>
@@ -114,6 +118,9 @@
 							@endforeach
 						</tbody>
 					</table>
+					<div style="float:left;margin-top: 5px">
+						<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#bulk-edit">Bulk Change</button>
+					</div>
 					<div style="float:right;margin-top: 5px">
 						{{$product_list->appends(request()->query())->links()}}
 					</div>	
@@ -123,4 +130,118 @@
 	</div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="bulk-edit" tabindex="-1"	>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Bulk Edit</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+
+					<div class="col-md-12">
+						<div class="form-group">
+							<label>Department</label>
+							<select name="department_id" class="form-control" id="department">
+								@foreach($departments as $department)
+									<option value="{{$department->id}}">{{$department->department_name}}</option>
+								@endforeach
+							</select>
+						</div>
+					</div>
+
+					<div class="col-md-12">
+						<div class="form-group">
+							<label>Category</label>
+							<select name="category_id" class="form-control" id="category">
+								<option value="1">Not Available</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="col-md-12">
+						<div class="form-group">
+							<label>Sub Category</label>
+							<select name="subcategory_id" class="form-control" id="subcategory">
+								<option value="">N/A</option>
+								@foreach($subCategories as $subCategory)
+									<option value="{{$subCategory->id}}">{{$subCategory->name}}</option>
+								@endforeach
+							</select>
+						</div>
+					</div>
+
+					<div class="col-md-12">
+						<div class="form-group">
+							<label>Brand</label>
+							<select name="brand_id" class="form-control" id="brand">
+								<option value="">N/A</option>
+								@foreach($brands as $brand)
+									<option value="{{$brand->id}}">{{$brand->name}}</option>
+								@endforeach
+							</select>
+						</div>
+					</div>
+
+				</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="bulk-update">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+	$(document).ready(function(){
+
+		$("#department").change(function(){
+			$.get('{{route('ajaxGetCategory')}}',{'department_id' : $("#department").val()},
+				function(data){
+					$("#category").html("");
+					Object.entries(data).forEach(([key, result]) => {
+						$("#category").append(`<option value='${result['id']}'>${result['category_name']}</option>`)
+					});
+				},"json");
+		});
+
+		$("#bulk-update").click(function(){
+			let el = $("input[name='product_ids[]']:checked");
+			let ids = [];
+			let departmentId = $("#department").val();
+			let categoryId = $("#category").val();
+			let subCategoryId = $("#subcategory").val();
+			let brandId = $("#brand").val();
+
+			el.each(function(index,target){
+				ids[index] = target.value;
+			});
+
+			$.get("{{route('bulkChanges')}}",
+			{
+				'ids' : ids,
+				'department_id' : departmentId,
+				'category_id' : categoryId,
+				'subCategory_id' : subCategoryId,
+				'brand_id' : brandId,
+
+			},function(data){
+				if(data){
+					$("#bulk-edit").modal('hide');
+					swal.fire('Bulk Edit','Update successful','success').then(()=>{
+						window.location.reload();
+					});
+				}else{
+					swal.fire('Bulk Edit','Update failed, please try again later','error');
+				}
+			},'json');
+		});
+
+	});
+</script>
 @endsection

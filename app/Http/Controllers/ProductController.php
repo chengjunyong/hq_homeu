@@ -914,4 +914,18 @@ class ProductController extends Controller
     return view('product.hamper_print',compact('hamper','products','list'));
 
   }
+
+  public function bulkChanges(Request $request)
+  {
+    Product_list::whereIn('id',$request->ids)
+                  ->update([
+                    'department_id' => $request->department_id,
+                    'category_id' => $request->category_id,
+                    'sub_category_id' => $request->subCategory_id,
+                    'brand_id' => $request->brand_id,
+                  ]);
+
+    return json_encode(true);
+  }
+
 }

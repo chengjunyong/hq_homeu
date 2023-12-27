@@ -93,7 +93,7 @@ Route::get('/deleteHamper','ProductController@ajaxDeleteHamper')->name('ajaxDele
 Route::get('/getHamper','ProductController@getHamper')->name('getHamper');
 Route::get('/editHamper','ProductController@getEditHamper')->name('getEditHamper');
 Route::get('/printHamper/{id}','ProductController@printHamper')->name('printHamper');
-
+Route::get('/bulk-changes','ProductController@bulkChanges')->name('bulkChanges');
 
 //Other
 Route::get('/Supplier','OtherController@getSupplier')->name('getSupplier');

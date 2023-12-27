@@ -22,6 +22,7 @@ use App\Transaction_detail;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Branch_stock_history;
+use App\SubCategory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -2949,8 +2950,12 @@ class SalesController extends Controller
   {
     $url = route('home')."?p=sales_menu";
     $branches = Branch::listing();
+    $departments = Department::all();
+    $brands = Brand::all();
+    $subCategories = SubCategory::all();
+    $categories = Category::all();
 
-    return view('report.item_based_report',compact('branches','url'));
+    return view('report.item_based_report',compact('branches','url','departments','brands','subCategories','categories'));
   }
 
   public function printItemBasedSalesReport(Request $request)
@@ -2960,12 +2965,29 @@ class SalesController extends Controller
     $branches = Branch::whereIn('id',$request->branches)->get();
 
     $details = Transaction_detail::with('product')
+                                  ->whereHas('product',function($q) use ($request){
+                                    if(isset($request->department) && $request->department != null){
+                                      $q->where('department_id',$request->department);
+                                    }
+
+                                    if(isset($request->sub_category_ids) && $request->sub_category_ids != null){
+                                      $q->whereIn('sub_category_id',$request->sub_category_ids);
+                                    }
+
+                                    if(isset($request->brand_ids) && $request->brand_ids != null){
+                                      $q->whereIn('brand_id',$request->brand_ids);
+                                    }
+
+                                    if(isset($request->category_ids) && $request->category_ids != null){
+                                      $q->whereIn('category_id',$request->category_ids);
+                                    }
+                                  })
                                   ->whereBetween('transaction_date',[$request->start,$request->end." 23:59:59"])
                                   ->whereIn('branch_id',$branches->pluck('token')->toArray())
                                   ->select('*',DB::raw('SUM(quantity) as total_quantity'))
                                   ->orderBy('total_quantity','DESC')
                                   ->groupBy('barcode')
-                                  ->paginate(1000);
+                                  ->paginate(100);
 
     return view('report.print_item_based_report',compact('details','branches','from','to'));
   }
