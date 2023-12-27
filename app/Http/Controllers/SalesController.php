@@ -2987,7 +2987,7 @@ class SalesController extends Controller
                                   ->select('*',DB::raw('SUM(quantity) as total_quantity'))
                                   ->orderBy('total_quantity','DESC')
                                   ->groupBy('barcode')
-                                  ->paginate(100);
+                                  ->paginate(1000);
 
     return view('report.print_item_based_report',compact('details','branches','from','to'));
   }
