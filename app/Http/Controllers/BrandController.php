@@ -20,7 +20,7 @@ class BrandController extends Controller
      */
     public function index()
     {
-        $brands = Brand::orderBy('id','DESC')->paginate(15);
+        $brands = Brand::orderBy('name','ASC')->paginate(15);
 
         return view('brand.index',compact('brands'))->with(['url' => $this->url]);
     }

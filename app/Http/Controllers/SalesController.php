@@ -2156,8 +2156,8 @@ class SalesController extends Controller
     $selected_date_from = date('Y-m-d', strtotime(now()));
     $selected_date_to = date('Y-m-d', strtotime(now()));
 
-    $department_list = Department::get();
-    $category_list = Category::get();
+    $department_list = Department::orderBy('department_name','ASC')->get();
+    $category_list = Category::orderBy('category_name','ASC')->get();
 
     return view('report.department_and_category_report',compact('selected_date_from', 'selected_date_to', 'url', 'department_list', 'category_list'));
   }
@@ -2829,7 +2829,7 @@ class SalesController extends Controller
     $url = route('home')."?p=sales_menu";
     $departments = Department::with('categories')->get();
     $branches = Branch::listing();
-    $brands = Brand::all();
+    $brands = Brand::orderBy('name','ASC')->all();
 
     return view('report.stock_in_report',compact('url','departments','branches','brands'));
   }
@@ -2890,7 +2890,7 @@ class SalesController extends Controller
     $url = route('home')."?p=sales_menu";
     $departments = Department::with('categories')->get();
     $branches = Branch::listing();
-    $brands = Brand::all();
+    $brands = Brand::orderBy('name','ASC')->all();
 
     return view('report.stock_out_report',compact('url','departments','branches','brands'));
   }
@@ -2950,10 +2950,10 @@ class SalesController extends Controller
   {
     $url = route('home')."?p=sales_menu";
     $branches = Branch::listing();
-    $departments = Department::all();
-    $brands = Brand::all();
-    $subCategories = SubCategory::all();
-    $categories = Category::all();
+    $departments = Department::orderBy('department_name','ASC')->all();
+    $brands = Brand::orderBy('name','ASC')->all();
+    $subCategories = SubCategory::orderBy('name','ASC')->all();
+    $categories = Category::orderBy('category_name','ASC')->all();
 
     return view('report.item_based_report',compact('branches','url','departments','brands','subCategories','categories'));
   }

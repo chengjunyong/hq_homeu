@@ -22,7 +22,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::orderBy('id','DESC')->paginate(15);
+        $categories = Category::orderBy('category_name','ASC')->paginate(15);
 
         return view('category.index',compact('categories'))->with(['url' => $this->url]);
     }
@@ -34,7 +34,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $departments = Department::all();
+        $departments = Department::orderBy('department_name','ASC')->all();
 
         return view('category.create',compact('departments'))->with(['url' => $this->url]);
     }
@@ -80,7 +80,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        $departments = Department::all();
+        $departments = Department::orderBy('department_name','ASC')->all();
 
         return view('category.create',compact('departments','category'))->with(['url' => $this->url]);
     }

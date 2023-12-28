@@ -65,7 +65,7 @@ class WarehouseController extends Controller
   public function getAddWarehouseProduct()
   {
   	$url = route('getWarehouseStockList');
-  	$department = Department::get();
+  	$department = Department::orderBy('department_name','ASC')->get();
   	$category = Category::where('department_id',$department->first()->id)->get();
 
   	return view('addwarehouseproduct',compact('url','department','category'));
@@ -93,8 +93,8 @@ class WarehouseController extends Controller
   	$url = route('getWarehouseStockList');
 
   	$warehouse_stock = Warehouse_stock::where('id',$request->id)->first();
-  	$department = Department::get();
-  	$category = Category::get();
+  	$department = Department::orderBy('department_name','ASC')->get();
+  	$category = Category::orderBy('category_name','ASC')->get();
 
   	return view('edit_warehouse_stock',compact('url','warehouse_stock','department','category'));
   }

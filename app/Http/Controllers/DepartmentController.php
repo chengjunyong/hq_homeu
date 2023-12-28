@@ -21,7 +21,7 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = Department::orderBy('id','DESC')->paginate(15);
+        $departments = Department::orderBy('department_name','ASC')->paginate(15);
 
         return view('department.index',compact('departments'))->with(['url' => $this->url]);
     }

@@ -20,7 +20,7 @@ class SubCategoryController extends Controller
      */
     public function index()
     {
-        $subCategories = SubCategory::orderBy('id','DESC')->paginate(15);
+        $subCategories = SubCategory::orderBy('name','ASC')->paginate(15);
 
         return view('sub_category.index',compact('subCategories'))->with(['url' => $this->url]);
     }

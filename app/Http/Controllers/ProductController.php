@@ -61,10 +61,10 @@ class ProductController extends Controller
                                 ->orderBy('created_at','DESC')
                                 ->paginate(30);
 
-    $departments = Department::all();
-    $categories = Category::all();
-    $subCategories = SubCategory::all();
-    $brands = Brand::all();
+    $departments = Department::orderBy('department_name','ASC')->all();
+    $categories = Category::orderBy('category_name','ASC')->all();
+    $subCategories = SubCategory::orderBy('name','ASC')->all();
+    $brands = Brand::orderBy('name','ASC')->all();
 
   	return view('product_list',compact('product_list','search','url','access','permission','departments','categories','subCategories','brands'));
   }
@@ -140,8 +140,8 @@ class ProductController extends Controller
 
     $default_price = Product_configure::first();
     
-    $brands = Brand::all();
-    $subCategories = SubCategory::all();
+    $brands = Brand::orderBy('name','ASC')->all();
+    $subCategories = SubCategory::orderBy('name','ASC')->all();
 
     return view('addproduct',compact('department','category','default_price','url','brands','subCategories'));
   }
@@ -261,8 +261,8 @@ class ProductController extends Controller
 
     $history = Product_history::where('product_id',$product->id)->orderBy('created_at','DESC')->limit(100)->get();
 
-    $brands = Brand::all();
-    $subCategories = SubCategory::all();
+    $brands = Brand::orderBy('name','ASC')->all();
+    $subCategories = SubCategory::orderBy('name','ASC')->all();
 
     return view('modifyproduct',compact('product','department','category','default_price','url','supplier','supplier_list','history','brands','subCategories'));
   }

@@ -23,8 +23,8 @@ class BarcodeController extends Controller
     public function getCheckStockPage()
     {
       $branch_list = Branch::get();
-      $department_list = Department::get();
-      $category_list = Category::get();
+      $department_list = Department::orderBy('department_name','ASC')->get();
+      $category_list = Category::orderBy('category_name','ASC')->get();
 
       $barcode_type = [
         'ean_reader',
