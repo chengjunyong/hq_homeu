@@ -34,7 +34,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $departments = Department::orderBy('department_name','ASC')->all();
+        $departments = Department::orderBy('department_name','ASC')->get();
 
         return view('category.create',compact('departments'))->with(['url' => $this->url]);
     }
@@ -80,7 +80,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        $departments = Department::orderBy('department_name','ASC')->all();
+        $departments = Department::orderBy('department_name','ASC')->get();
 
         return view('category.create',compact('departments','category'))->with(['url' => $this->url]);
     }

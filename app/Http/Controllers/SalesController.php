@@ -2829,7 +2829,7 @@ class SalesController extends Controller
     $url = route('home')."?p=sales_menu";
     $departments = Department::with('categories')->get();
     $branches = Branch::listing();
-    $brands = Brand::orderBy('name','ASC')->all();
+    $brands = Brand::orderBy('name','ASC')->get();
 
     return view('report.stock_in_report',compact('url','departments','branches','brands'));
   }
@@ -2890,7 +2890,7 @@ class SalesController extends Controller
     $url = route('home')."?p=sales_menu";
     $departments = Department::with('categories')->get();
     $branches = Branch::listing();
-    $brands = Brand::orderBy('name','ASC')->all();
+    $brands = Brand::orderBy('name','ASC')->get();
 
     return view('report.stock_out_report',compact('url','departments','branches','brands'));
   }
@@ -2950,10 +2950,10 @@ class SalesController extends Controller
   {
     $url = route('home')."?p=sales_menu";
     $branches = Branch::listing();
-    $departments = Department::orderBy('department_name','ASC')->all();
-    $brands = Brand::orderBy('name','ASC')->all();
-    $subCategories = SubCategory::orderBy('name','ASC')->all();
-    $categories = Category::orderBy('category_name','ASC')->all();
+    $departments = Department::orderBy('department_name','ASC')->get();
+    $brands = Brand::orderBy('name','ASC')->get();
+    $subCategories = SubCategory::orderBy('name','ASC')->get();
+    $categories = Category::orderBy('category_name','ASC')->get();
 
     return view('report.item_based_report',compact('branches','url','departments','brands','subCategories','categories'));
   }
