@@ -2888,7 +2888,7 @@ class SalesController extends Controller
   public function getStockOutReport()
   {
     $url = route('home')."?p=sales_menu";
-    $departments = Department::with('categories')->get();
+    $departments = Department::with('categories')->orderBy('department_name','ASC')->get();
     $branches = Branch::listing();
     $brands = Brand::orderBy('name','ASC')->get();
 

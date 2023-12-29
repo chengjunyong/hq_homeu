@@ -134,9 +134,9 @@ class ProductController extends Controller
 
     $url = route('home')."?p=product_menu";
 
-    $department = Department::orderBy('id','asc')->get();
+    $department = Department::orderBy('department_name','ASC')->get();
 
-    $category = Category::where('department_id',$department->first()->id)->get();
+    $category = Category::where('department_id',$department->first()->id)->orderBy('category_name','ASC')->get();
 
     $default_price = Product_configure::first();
     
@@ -244,9 +244,9 @@ class ProductController extends Controller
 
     $product = Product_list::where('id',$request->id)->first();
 
-    $department = Department::orderBy('id','asc')->get();
+    $department = Department::orderBy('department_name','ASC')->get();
 
-    $category = Category::where('department_id',$product->department_id)->get();
+    $category = Category::where('department_id',$product->department_id)->orderBy('category_name','ASC')->get();
 
     $default_price = Product_configure::first();
 
