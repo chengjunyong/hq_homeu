@@ -65,6 +65,7 @@ td{
           <div class="col-md-6">
 						<label>Sub Category</label>
 						<select name="sub_category" id="sub_category" class="form-control" required>
+              <option value=null {{ $product->sub_category_id == null ? "selected" : ''}}>N/A</option>
 							@foreach($subCategories as $result)
 								<option value="{{$result->id}}" {{($product->sub_category_id == $result->id) ? 'selected' : ''}}>{{$result->name}}</option>
 							@endforeach
@@ -73,6 +74,7 @@ td{
           <div class="col-md-6">
 						<label>Brand</label>
 						<select name="brand" id="brand" class="form-control" required>
+              <option value=null {{ $product->brand_id == null ? "selected" : ''}}>N/A</option>
 							@foreach($brands as $result)
 								<option value="{{$result->id}}" {{($product->brand_id == $result->id) ? 'selected' : ''}}>{{$result->name}}</option>
 							@endforeach

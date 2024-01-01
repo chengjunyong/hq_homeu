@@ -100,9 +100,9 @@ class CategoryController extends Controller
         ]);
 
         $category->update([
-            'code' => $request->code,
-            'name' => $request->name,
-            'department' => $request->department,
+            'category_code' => $request->code,
+            'category_name' => $request->name,
+            'department_id' => $request->department,
         ]);
 
         return redirect()->route('category.index')->with(['success' => 'Update Successful']);

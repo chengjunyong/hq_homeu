@@ -93,7 +93,7 @@ class DepartmentController extends Controller
         ]);
 
         $department->update([
-            'name' => $request->name,
+            'department_name' => $request->name,
             'updated_by' => auth()->user()->id,
         ]);
 
