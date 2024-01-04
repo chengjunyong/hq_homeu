@@ -75,7 +75,10 @@
 					<table id="product_list" class="table">
 						<thead style="background:#a1e619">
 							<tr>
-								<td align="center">Bulk</td>
+								<td align="center">
+									All<br/>
+									<input type="checkbox" id="all" style="height:25px;width:25px" />
+								</td>
 								<td>No</td>
 								<td>Bar Code</td>
 								<td>Department</td>
@@ -199,6 +202,14 @@
 
 <script>
 	$(document).ready(function(){
+
+		$("#all").change(function(){
+			if($(this).prop('checked')){
+				$("input[name='product_ids[]']").prop('checked',true);
+			}else{
+				$("input[name='product_ids[]']").prop('checked',false);
+			}
+		});
 
 		$("#department").change(function(){
 			$.get('{{route('ajaxGetCategory')}}',{'department_id' : $("#department").val()},

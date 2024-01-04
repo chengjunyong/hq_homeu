@@ -66,17 +66,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <tr>
         <td><b>Date From</b></td>
         <td>:</td>
-        <td align="right">{{ $from_date }}</td>
+        <td align="right">{{ $data['from'] }}</td>
       </tr>
       <tr>
         <td><b>Date To</b></td>
         <td>:</td>
-        <td align="right">{{ $to_date }}</td>
+        <td align="right">{{ $data['to'] }}</td>
       </tr>
       <tr>
         <td><b>Barcode</b></td>
         <td>:</td>
-        <td align="right">{{ $product_detail->barcode }}</td>
+        <td align="right">{{ $data['product']->barcode }}</td>
       </tr>
     </table>
   </div>
@@ -86,55 +86,66 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <tr>
         <td><b>Date From</b></td>
         <td>:</td>
-        <td align="right">{{ date('d-M-Y',strtotime($from_date)) }}</td>
+        <td align="right">{{ date('d-M-Y',strtotime($data['from'])) }}</td>
       </tr>
       <tr>
         <td><b>Date To</b></td>
         <td>:</td>
-        <td align="right">{{ date('d-M-Y',strtotime($to_date."-1 day")) }}</td>
+        <td align="right">{{ date('d-M-Y',strtotime($data['to'])) }}</td>
       </tr>
       <tr>
         <td><b>Generate by</b></td>
         <td>:</td>
-        <td align="right">{{ $user->name }}</td>
+        <td align="right">{{ $data['user'] }}</td>
       </tr>
     </table>
   </div>
 
   <center>
-    <label><strong>Product Name</strong><br/>{{$product_detail->product_name}}</label>
+    <label><strong>Product Name</strong><br/>{{$data['product']->product_name}}</label>
   </center>
 
-  <div class="main" style="">
+  <div class="main" style="margin-bottom:30px">
     <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
       <thead style="background: #adade0;">
         <th style="width:5%;text-align: center">Date</th>
-        @foreach($branch as $result)
-          <th style="width:5%;text-align: center">{{$result->branch_name}}</th>
+        @foreach($data['branches'] as $branch)
+          <th style="width:5%;text-align: center">{{$branch->branch_name}}</th>
         @endforeach
         <th style="width:7%;text-align: center">Total Quantity</th>
         <th style="width:7%;text-align: center">Total Sales</th>
       </thead>
       <tbody class="border">
-        @for($a=0;$a<$diff_date;$a++)
+        @for($a=0;$a<$daysDifference;$a++)
           <tr>
-            <td align="center">{{ date('d-M-Y',strtotime($from_date."+".$a." day")) }}</td>
-            @for($b=0;$b<count($data);$b++)
-              <td align="center">{{ ($data[$b][$a]->quantity) ? $data[$b][$a]->quantity : "0"}}</td>
-            @endfor
-            <td align="center">{{$total_quantity_day[$a]}}</td>
-            <td align="right">Rm {{number_format($total_sales_day[$a],2) }}</td>
+            <td align="center">{{ date('d-M-Y',strtotime($data['from']."+".$a." day")) }}</td>
+            @foreach($data['branches'] as $branch)
+              <td align="center">
+                @php
+                  $result = $details->where('branch_id',$branch->token)->where('tDate',date('Y-m-d',strtotime($data['from']."+".$a." day")));
+                  if($result->count() > 0){
+                    echo $result->sum('quantity');
+                  }else{
+                    echo 0;
+                  }
+                @endphp 
+              </td>
+            @endforeach
+            <td align="center">{{ number_format($details->where('tDate',date('Y-m-d',strtotime($data['from']."+".$a." day")))->sum('quantity'),2) }}</td>
+            <td align="right">Rm {{ number_format($details->where('tDate',date('Y-m-d',strtotime($data['from']."+".$a." day")))->sum('total'),2) }}</td>
           </tr>
         @endfor
-          <tr>
-            <td align="center"><strong>Total</strong></td>
-            @for($b=0;$b<count($data);$b++)
-              <td align="center"><strong>{{ ($branch_total_quantity[$b]) ? $branch_total_quantity[$b] : "0"}}</strong></td>
-            @endfor
-            <td align="center"><strong>{{$total_quantity}}</strong></td>
-            <td align="right"><strong>Rm {{number_format($total_sales,2)}}</strong></td>
-          </tr>
       </tbody>
+      <tfoot class="border" style="font-weight: bold">
+        <tr>
+          <td>Total</td>
+          @foreach($data['branches'] as $branch)
+            <td align="center">{{ $details->where('branch_id',$branch->token)->sum('quantity') }}</td>
+          @endforeach
+          <td align="center">{{ number_format($details->sum('quantity'),2) }}</td>
+          <td align="right">Rm {{ number_format($details->sum('total'),2) }}</td>
+        </tr>
+      </tfoot>
     </table>
   </div>
 

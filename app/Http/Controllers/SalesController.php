@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
 use App\Brand;
 use App\Branch;
 use App\Refund;
@@ -11,18 +12,18 @@ use App\Do_detail;
 use Carbon\Carbon;
 use App\Cash_float;
 use App\Department;
+use App\SubCategory;
 use App\Transaction;
 use App\Branch_shift;
 use App\Product_list;
 use App\Refund_detail;
 use App\Branch_product;
+
 use App\Warehouse_stock;
 use App\Transaction_detail;
-
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Branch_stock_history;
-use App\SubCategory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -1605,65 +1606,38 @@ class SalesController extends Controller
 
   public function postProductSalesReport(Request $request)
   {
-    $user = Auth::user();
-    $data[] = array();
-    $total_quantity = 0;
-    $total_sales = 0;
-    $total_quantity_day = array();
-    $total_sales_day = array();
-    $branch_total_quantity = array();
-    $branch_total_sales = array(); 
+    $from = $request->report_date_from;
+    $to = $request->report_date_to;
 
-    $from_date = $request->report_date_from;
-    $to_date = date('Y-m-d',strtotime($request->report_date_to."+1 day"));
+    $date1 = new DateTime($from);
+    $date2 = new DateTime($to);
+    $interval = $date1->diff($date2);
+    $daysDifference = $interval->days + 1;
 
-    $diff=strtotime($to_date)-strtotime($from_date);
-    $diff_date = $diff / 60 / 60 / 24;
+    $branch = Branch::listing();
+    $tokens = $branch->pluck('token')->toArray();
+    $product = Product_list::where('product_name',$request->product)->first();
 
-    $branch = Branch::orderBy('token')->get();
-    $product_detail = Product_list::where('product_name','LIKE',$request->product)->first();
+    $details = Transaction_detail::whereBetween('transaction_date',[$from,$to." 23:59:59"])
+                                  ->where('barcode',$product->barcode)
+                                  ->whereIn('branch_id',$tokens)
+                                  ->selectRaw('branch_id, quantity, total, DATE(transaction_date) as tDate')
+                                  ->get();
+                                  
+    $data = [
+      'user' => Auth::user()->name,
+      'product' => $product,
+      'branches' => $branch,
+      'from' => $from,
+      'to' => $to,
+    ];
 
-    foreach($branch as $index => $result){
-      $data[$index] = array();
-      for($a=0;$a<$diff_date;$a++){
-        $tmp_d = date('Y-m-d',strtotime($request->report_date_from."+".$a." day"));
-        $tmp = Transaction_detail::selectRaw("SUM(quantity) as quantity,SUM(total) as total,created_at,branch_id")
-                                    ->where('barcode',$product_detail->barcode)
-                                    ->where('branch_id',$result->token)
-                                    ->whereRaw("DATE(transaction_date) = '$tmp_d'")
-                                    ->first();
-
-        array_push($data[$index],$tmp);
-      }
-
-      $branch_total_sales[$index] = 0;
-      $branch_total_quantity[$index] = 0;
-
-      foreach($data[$index] as $result){
-        $total_quantity += intval($result->quantity);
-        $total_sales += $result->total;
-
-        $branch_total_sales[$index] += $result->total;
-        $branch_total_quantity[$index] += intval($result->quantity);
-      }
-    }
-
-    //Row Sum
-    for($a=0;$a<$diff_date;$a++){
-      $total_quantity_day[$a] = 0;
-      $total_sales_day[$a] = 0;
-      for($b=0;$b<count($data);$b++){
-        $total_sales_day[$a] += $data[$b][$a]->total;
-        $total_quantity_day[$a] += intval($data[$b][$a]->quantity);
-      }
-    }
-
-    return view('report.print_product_sales_report',compact('total_quantity','total_sales','branch_total_quantity','branch_total_sales','user','data','from_date','to_date','product_detail','branch','diff_date','total_quantity_day','total_sales_day'));
+    return view('report.print_product_sales_report',compact('data','details','daysDifference'));
   }
 
   public function exportProductSalesReport(Request $request)
   {
-    $user = Auth::user();
+    
     //Clear the report folder
     if(!Storage::exists('public/report'))
     {
@@ -1673,57 +1647,24 @@ class SalesController extends Controller
     Storage::delete($files);
 
     //Data Processing
-    $data[] = array();
-    $total_quantity = 0;
-    $total_sales = 0;
-    $total_quantity_day = array();
-    $total_sales_day = array();
-    $branch_total_quantity = array();
-    $branch_total_sales = array(); 
+    $user = Auth::user();
+    $from = $request->report_date_from;
+    $to = $request->report_date_to;
 
-    $from_date = $request->report_date_from;
-    $to_date = date('Y-m-d',strtotime($request->report_date_to."+1 day"));
+    $date1 = new DateTime($from);
+    $date2 = new DateTime($to);
+    $interval = $date1->diff($date2);
+    $daysDifference = $interval->days + 1;
 
-    $diff=strtotime($to_date)-strtotime($from_date);
-    $diff_date = $diff / 60 / 60 / 24;
+    $branch = Branch::listing();
+    $tokens = $branch->pluck('token')->toArray();
+    $product = Product_list::where('product_name',$request->product_export)->first();
 
-    $branch = Branch::orderBy('token')->get();
-    $product_detail = Product_list::where('product_name','LIKE',$request->product_export)->first();
-
-    foreach($branch as $index => $result){
-      $data[$index] = array();
-      for($a=0;$a<$diff_date;$a++){
-        $tmp_d = date('Y-m-d',strtotime($request->report_date_from."+".$a." day"));
-        $tmp = Transaction_detail::selectRaw("SUM(quantity) as quantity,SUM(total) as total,created_at,branch_id")
-                                    ->where('product_name','LIKE',$request->product_export)
-                                    ->where('branch_id',$result->token)
-                                    ->whereRaw("DATE(created_at) = '$tmp_d'")
-                                    ->first();
-
-        array_push($data[$index],$tmp);
-      }
-
-      $branch_total_sales[$index] = 0;
-      $branch_total_quantity[$index] = 0;
-
-      foreach($data[$index] as $result){
-        $total_quantity += intval($result->quantity);
-        $total_sales += $result->total;
-
-        $branch_total_sales[$index] += $result->total;
-        $branch_total_quantity[$index] += intval($result->quantity);
-      }
-    }
-
-    //Row Sum
-    for($a=0;$a<$diff_date;$a++){
-      $total_quantity_day[$a] = 0;
-      $total_sales_day[$a] = 0;
-      for($b=0;$b<count($data);$b++){
-        $total_sales_day[$a] += $data[$b][$a]->total;
-        $total_quantity_day[$a] += intval($data[$b][$a]->quantity);
-      }
-    }
+    $details = Transaction_detail::whereBetween('transaction_date',[$from,$to." 23:59:59"])
+                                  ->where('barcode',$product->barcode)
+                                  ->whereIn('branch_id',$tokens)
+                                  ->selectRaw('branch_id, quantity, total, DATE(transaction_date) as tDate')
+                                  ->get();
 
     //Start Build Excel File
     $spreadsheet = new Spreadsheet();
@@ -1738,11 +1679,11 @@ class SalesController extends Controller
     $sheet->setCellValue('A2', 'Product Sales Report');
     $sheet->setCellValue('A4', 'Generate By : '.$user->name);
     $sheet->setCellValue('B4', 'Time : '.now());
-    $sheet->setCellValue('A5', 'Product Name : '.$product_detail->product_name);
+    $sheet->setCellValue('A5', 'Product Name : '.$product->product_name);
 
     $row = 8;
-    for($a=0;$a<$diff_date;$a++){
-      $sheet->getCellByColumnAndRow(1,$row+$a)->setValue(date('d-M-Y',strtotime($from_date."+".$a." day")));
+    for($a=0;$a<$daysDifference;$a++){
+      $sheet->getCellByColumnAndRow(1,$row+$a)->setValue(date('d-M-Y',strtotime($from."+".$a." day")));
       $c_row = $row+$a;
     }
     $sheet->getCellByColumnAndRow(1,$c_row+1)->setValue("Total");
@@ -1760,29 +1701,30 @@ class SalesController extends Controller
     $sheet->getCellByColumnAndRow($c_col+2,7)->setValue("Total Sales");
     $sheet->getStyle('A'.($c_row+1).':Z'.($c_row+1))->getFont()->setBold(true);
 
-    $row = 8; $col = 2;
-    foreach($data as $c){
-      foreach($c as $index => $d){
-        $sheet->getCellByColumnAndRow($col,$row+$index)->setValue(($d->quantity)?$d->quantity:0);
+    $row = 8;
+    for($a=0;$a<$daysDifference;$a++){
+      $col = 2;
+      foreach($branch as $index => $target){
+        $result = $details->where('branch_id',$target->token)->where('tDate',date('Y-m-d',strtotime($from."+".$a." day")));
+        if($result->count() > 0){
+          $sheet->getCellByColumnAndRow($col,$row)->setValue($result->sum('quantity'));
+        }else{
+          $sheet->getCellByColumnAndRow($col,$row)->setValue(0);
+        }
+        $col++;
       }
-      $col++;
+      $sheet->getCellByColumnAndRow($col,$row)->setValue($details->where('tDate',date('Y-m-d',strtotime($from."+".$a." day")))->sum('quantity'));
+      $sheet->getCellByColumnAndRow($col+1,$row)->setValue($details->where('tDate',date('Y-m-d',strtotime($from."+".$a." day")))->sum('total'));
+      $row++;
     }
-
-    $col = 7;
-    foreach($total_quantity_day as $index => $result){
-      $sheet->getCellByColumnAndRow($c_col+1,8+$index)->setValue($result);
-      $sheet->getCellByColumnAndRow($c_col+2,8+$index)->setValue($total_sales_day[$index]);
-      $bottom = 8+$index;
-    }
-
-    $sheet->getCellByColumnAndRow($c_col+1,$bottom+1)->setValue($total_quantity);
-    $sheet->getCellByColumnAndRow($c_col+2,$bottom+1)->setValue($total_sales);
 
     $col = 2;
-    foreach($branch as $index => $result){
-      $sheet->getCellByColumnAndRow($col+$index,$bottom+1)->setValue($branch_total_quantity[$index]);
-
+    foreach($branch as $index => $target){
+      $sheet->getCellByColumnAndRow($col,$row)->setValue($details->where('branch_id',$target->token)->sum('quantity'));
+      $col++;
     }
+    $sheet->getCellByColumnAndRow($col,$row)->setValue($details->sum('quantity'));
+    $sheet->getCellByColumnAndRow($col+1,$row)->setValue($details->sum('total'));
 
     $time = date('d-M-Y h i s A');
     $time = (string)$time;
