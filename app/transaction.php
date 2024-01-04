@@ -16,6 +16,7 @@ class transaction extends Model
       'cashier_name',
       'transaction_no',
       'invoice_no',
+      'reference_no',
       'user_id',
       'user_name',
       'subtotal',
