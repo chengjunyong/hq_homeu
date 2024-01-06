@@ -60,7 +60,7 @@
         },function(data){
           $("#product_list").html("");
           data.forEach(function(result,index){
-            $("#product_list").append(`<option value='${result.product_name}'>Barcode: ${result.barcode}</option>`);
+            $("#product_list").append(`<option value="${result.product_name}">Barcode: ${result.barcode}</option>`);
           });
         },'json');
       }
