@@ -2784,7 +2784,7 @@ class SalesController extends Controller
                           $q->where('from_branch_id',$request->from_branch);
                         }
                         $q->where('to_branch_id',$request->to_branch);
-                        $q->whereBetween('completed_time',[$request->report_date_from.' 00:00:00',$request->report_date_to.' 23:59:59']);
+                        $q->whereBetween('created_at',[$request->report_date_from.' 00:00:00',$request->report_date_to.' 23:59:59']);
                       })
                       ->when($request->product_name != null, function($q) use ($request){
                         $q->where('product_name','LIKE','%'.$request->product_name.'%');
