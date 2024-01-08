@@ -46,9 +46,9 @@ class RunSyncJob extends Command
     {
         $transactions = SchedulerJob::with('branch')
                                     ->where('entity_type','sales')
-                                    // ->where('sync',0)
-                                    ->where('branch_id',5)
-                                    ->where('session_id',905)
+                                    ->where('sync',0)
+                                    // ->where('branch_id',5)
+                                    // ->where('session_id',905)
                                     ->get();
 
         $bar = $this->output->createProgressBar(count($transactions));
