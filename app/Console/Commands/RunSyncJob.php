@@ -46,7 +46,9 @@ class RunSyncJob extends Command
     {
         $transactions = SchedulerJob::with('branch')
                                     ->where('entity_type','sales')
-                                    ->where('sync',0)
+                                    // ->where('sync',0)
+                                    ->where('branch_id',5)
+                                    ->where('session_id',905)
                                     ->get();
 
         $bar = $this->output->createProgressBar(count($transactions));
@@ -56,8 +58,10 @@ class RunSyncJob extends Command
 
             $data = json_decode($transaction->transaction,true);
             $transactionDate = $data['transaction_date'];
-            $validate = Transaction::where('transaction_no',$data['transaction_no'])->first();
-            if($validate == null){
+            // $validate = Transaction::where('branch_id',$transaction->branch->token)
+            //                         ->where('transaction_no',$data['transaction_no'])
+            //                         ->first();
+            // if($validate == null){
                 Transaction::create([
                     'branch_transaction_id' => $data['id'],
                     'branch_id' => $transaction->branch->token,
@@ -124,7 +128,7 @@ class RunSyncJob extends Command
                         }
                     }
                 }
-            }
+            // }
             $transaction->update(['sync' => 1]);
             $bar->advance();
         }
