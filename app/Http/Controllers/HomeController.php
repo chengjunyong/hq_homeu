@@ -74,7 +74,7 @@ class HomeController extends Controller
           "image/hq_icon.png",
         ],
         "to" => "Ethan",
-        "from" => "Home(U) Sdh Bhd",
+        "from" => "Home(U) Sdn Bhd",
       ];
 
       $this->sendEmail($email, $info);

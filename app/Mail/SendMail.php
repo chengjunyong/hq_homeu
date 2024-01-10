@@ -39,7 +39,7 @@ class SendMail extends Mailable
         $files = $this->data['files'];
       }
 
-      $email = $this->from('support@homeumsd.com', 'Homeu(U) Sdh Bhd')->subject($subject)->view($template)->with('data', $data);
+      $email = $this->from('support@homeumsd.com', 'Homeu(U) Sdn Bhd')->subject($subject)->view($template)->with('data', $data);
       
       if(count($files) > 0)
       {

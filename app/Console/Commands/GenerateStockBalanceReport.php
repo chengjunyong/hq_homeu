@@ -113,7 +113,7 @@ class GenerateStockBalanceReport extends Command
         $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal('center');
 
         //Header
-        $sheet->setCellValue('A1', 'HomeU (M) Sdh Bhd');
+        $sheet->setCellValue('A1', 'HomeU (M) Sdn Bhd');
         $sheet->setCellValue('A2', 'Stock Balance Stock');
         $sheet->setCellValue('A3', 'Date');
         $sheet->setCellValue('B3', $date);
