@@ -46,7 +46,7 @@
 							@foreach($categories as $category)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td>{{ $category->department->department_name }}</td>
+                  <td>{{ $category->department_name }}</td>
                   <td>{{ $category->category_code }}</td>
                   <td>{{ $category->category_name }}</td>
                   <td>{{ date("d-M-Y h:i:s a",strtotime($category->updated_at)) }}</td>

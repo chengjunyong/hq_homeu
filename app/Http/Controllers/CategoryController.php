@@ -22,7 +22,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::orderBy('category_name','ASC')->paginate(15);
+        $categories = Category::join('department','department.id','=','category.department_id')
+                                ->orderBy('department.department_name','ASC')
+                                ->orderBy('category.category_name','ASC')
+                                ->paginate(15);
 
         return view('category.index',compact('categories'))->with(['url' => $this->url]);
     }
