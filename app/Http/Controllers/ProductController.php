@@ -150,6 +150,7 @@ class ProductController extends Controller
   {
 
     $category = Category::where('department_id',$request->department_id)
+                          ->orderBy('category_name','ASC')
                           ->get()
                           ->toArray();
 
