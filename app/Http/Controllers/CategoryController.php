@@ -23,6 +23,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::join('department','department.id','=','category.department_id')
+                                ->select('category.*','department.department_name')
                                 ->orderBy('department.department_name','ASC')
                                 ->orderBy('category.category_name','ASC')
                                 ->paginate(15);
