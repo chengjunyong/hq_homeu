@@ -41,27 +41,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     border:1px solid black;
   }
 
-  table {
-    page-break-inside: auto;
-  }
-  tr {
-    page-break-inside: avoid;
-    page-break-after: auto;
-  }
-  thead {
-    display: table-header-group;
-  }
-  tfoot {
-    display: table-footer-group;
-  }
-
-  .footer{
-    position: fixed;
+  /* .footer{
     left: 0;
     bottom: 0;
     width: 100%;
     text-align: center;
-  }
+  } */
 
 </style>
 <body>
@@ -143,7 +128,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </tr>
         @endforeach
         <tr>
-          <td rowspan="5" colspan="4" style="vertical-align: top"><strong>Comment: </strong></td>
+          <td colspan="4"><strong>Comment: </strong></td>
           <td align="center"><strong>Total</strong></td>
           <td style="text-align: right"><strong>{{$gr->total_cost}}</strong></td>
         </tr>
