@@ -44,7 +44,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
-  
+
 <div class="container">
 
   <div class="header">
@@ -60,10 +60,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <table style="width:100%;font-size:19px;margin-bottom: 20px;font-size:16px;">
       <tr>
         <td>
-          <strong>{{ucwords($supplier->supplier_name)}}</strong>
-          {{ ($supplier->address1 != "null") ? ucwords($supplier->address1)."<br/>" : ''}}
-          {{ ($supplier->address1 != "null") ? ucwords($supplier->address2)."<br/>" : ''}}
-          {{ ($supplier->address1 != "null") ? ucwords($supplier->address3)."<br/>" : ''}}
+          <strong>{{ucwords($supplier->supplier_name)}}</strong><br/>
+          {!! ($supplier->address1 != "null") ? ucwords($supplier->address1)."<br/>" : '' !!}
+          {!! ($supplier->address2 != "null") ? ucwords($supplier->address2)."<br/>" : '' !!}
+          {!! ($supplier->address3 != "null") ? ucwords($supplier->address3)."<br/>" : '' !!}
         </td>
         <td align="right">
           GR NO: {{$gr->gr_no}}<br/>
