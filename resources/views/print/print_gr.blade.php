@@ -99,7 +99,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </table>
     </div>
 
-    <table class="detail" style="width:100%;margin-top:30px;border-collapse: collapse;">
+    <table class="detail" style="width:100%;border-collapse: collapse;">
       <thead style="background: #adade0;">
         <th style="width:5%" align="left">Bil</th>
         <th style="width:15%" align="left">BARCODE</th>
