@@ -37,13 +37,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     border:1px solid black;
   }
 
-  /* .footer{
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-  } */
-
 </style>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -123,6 +116,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <td style="text-align: right">{{ number_format($result->total_cost,2) }}</td>
           </tr>
         @endforeach
+
+        {{-- @for($a=0;$a<13;$a++)
+          <tr>
+            <td>1</td>
+            <td>1</td>
+            <td>asdas das das das dsa dasdasdas das dasdasd as dsa dasd asd asdasdsa dsa asd as das das asd</td>
+            <td style="text-align: center">
+              1
+            </td>
+            <td style="text-align: right">1</td>
+            <td style="text-align: right">1</td>
+          </tr>
+        @endfor --}}
         <tr>
           <td colspan="4"><strong>Comment: </strong></td>
           <td align="center"><strong>Total</strong></td>
@@ -132,23 +138,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </table>
   </div>
 
-  <div class="footer">
-    <table style="text-align: center;width:100%;font-weight: bold;">
-      <tr>
-        <td>
-          <label>Issuer Signature</label><br/><br/><br/>
-          <label>_____________________</label><br/>
-          <label>(&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;)</label>
+  <table class="footer" style="text-align: center;width:100%;font-weight: bold;">
+    <tr>
+      <td>
+        <label>Issuer Signature</label><br/><br/><br/>
+        <label>_____________________</label><br/>
+        <label>(&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;)</label>
 
-        </td>
-        <td>
-          <label>Authorizer Signature</label><br/><br/><br/>
-          <label>______________________</label><br/>
-          <label>(&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;)</label>
-        </td>
-      </tr>
-    </table>
-  </div>
+      </td>
+      <td>
+        <label>Authorizer Signature</label><br/><br/><br/>
+        <label>______________________</label><br/>
+        <label>(&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;)</label>
+      </td>
+    </tr>
+  </table>
+  
 
 </div>  
 <script>
