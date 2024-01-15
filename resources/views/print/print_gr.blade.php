@@ -33,10 +33,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     print-color-adjust: exact;
   }
 
-  body{
-    min-height: 98vh;
-  }
-
   .border {
     border:1px solid black;
   }
