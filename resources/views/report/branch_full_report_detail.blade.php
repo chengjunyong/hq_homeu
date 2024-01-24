@@ -115,7 +115,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             @if($report_type == 'period')
               <td style="text-align: right;">{{ number_format($branch->refund, 2) }}</td>
             @endif
-            <td style="text-align: right;">{{ number_format($branch->total - $branch->refund, 2) }}</td>
+            <td style="text-align: right;">{{ number_format($branch->total, 2) }}</td>
           </tr>
         @endforeach
       </tbody>
@@ -128,7 +128,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           @if($report_type == 'period')
             <td style="text-align: right;">{{ number_format($branch_total->refund, 2) }}</td>
           @endif
-          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total - $branch_total->refund, 2) }}</td>
+          <td style="text-align: right;border:1px solid black; padding: 5px 5px;">{{ number_format($total, 2) }}</td>
         </tr>
       </tfoot>
     </table>
