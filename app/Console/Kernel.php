@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\RunSyncJob::class,
         Commands\TestJob::class,
+        Commands\PrefillPromotionPrice::class,
     ];
 
     /**
@@ -28,7 +29,8 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('cron:syncStock')->hourly();
         // $schedule->command('test:job')->everyMinute();
-        $schedule->command('generate:stockBalanceReport')->dailyAt('4:00');
+        $schedule->command('prefill:promotion_price')->dailyAt('4:00');
+        $schedule->command('generate:stockBalanceReport')->dailyAt('3:00');
     }
 
     /**

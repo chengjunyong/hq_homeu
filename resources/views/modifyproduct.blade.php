@@ -149,6 +149,21 @@ td{
             <input type="number" min="0" step="0.01" id="promo_price" name="promotion_price" class="form-control" value="{{$product->promotion_price}}">
           </div>
 
+          {{-- Preset Promotion Date --}}
+          <div class="col-md-12" style="text-align: center; margin: 5% 0px 0px 0px;"><label style='font-weight: bold;;font-size: 24px;'>Prefill Next Promotion Data</label></div>
+          <div class="col-md-4">
+            <label>Next Promotion Start Date</label>
+            <input type="datetime-local" id="next_promo_start" name="next_promotion_start" class="form-control" value="{{ str_replace(" ","T",$product->next_promotion_start)}}">
+          </div>
+          <div class="col-md-4">
+            <label>Next Promotion End Date</label>
+            <input type="datetime-local" id="next_promo_end" name="next_promotion_end" class="form-control" value="{{ str_replace(" ","T",$product->next_promotion_end)}}">
+          </div>
+          <div class="col-md-4">
+            <label>Next Promotion Price</label>
+            <input type="number" min="0" step="0.01" id="next_promo_price" name="next_promotion_price" class="form-control" value="{{$product->next_promotion_price}}">
+          </div>
+
           <!-- Normal Wholesales Option -->
           <div class="col-md-12" style="text-align: center; margin: 5% 0px 0px 0px;">
             <a href="#w1" data-toggle="collapse">

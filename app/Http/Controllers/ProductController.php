@@ -398,6 +398,9 @@ class ProductController extends Controller
                       'promotion_start'=>$request->promotion_start ?? null,
                       'promotion_end'=>$request->promotion_end ?? null,
                       'promotion_price'=>$request->promotion_price ?? null,
+                      'next_promotion_start'=>$request->next_promotion_start ?? null,
+                      'next_promotion_end'=>$request->next_promotion_end ?? null,
+                      'next_promotion_price'=>$request->next_promotion_price ?? null,
                       'wholesale_price'=>$request->wholesales_price ?? null,
                       'wholesale_quantity'=>$request->wholesales_quantity ?? null,
                       'wholesale_price2'=>$request->wholesales_price2 ?? null,
@@ -928,5 +931,4 @@ class ProductController extends Controller
 
     return json_encode(true);
   }
-
 }
