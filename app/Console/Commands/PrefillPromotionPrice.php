@@ -49,12 +49,14 @@ class PrefillPromotionPrice extends Command
                                 'promotion_start' => $product->next_promotion_start,
                                 'promotion_end' => $product->next_promotion_end,
                                 'promotion_price' => $product->next_promotion_price,
+                                'product_sync' => 0,
                             ]);
 
             $product->update([
                 'promotion_start' => $product->next_promotion_start,
                 'promotion_end' => $product->next_promotion_end,
                 'promotion_price' => $product->next_promotion_price,
+                'product_sync'=>0,
             ]);
         }
 
