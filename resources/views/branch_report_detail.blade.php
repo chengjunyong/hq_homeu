@@ -94,7 +94,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <th style="text-align: right">Maybank QRPay</th>
         <th style="text-align: right">Grab Pay</th>
         <th style="text-align: right">Cheque</th>
-        <th style="text-align: right">Boost</th>
+        <th style="text-align: right;width:10%">Boost & Shopee & Other</th>
         <th style="text-align: right">E-banking</th>
         <th style="text-align: right">OTHER</th>
         <th style="text-align: right">TOTAL</th>

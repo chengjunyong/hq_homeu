@@ -74,6 +74,7 @@
               <td>No</td>
               <td>Reference No</td>
               <td>Invoice Number</td>
+              <td>Branch</td>
               <td>Supplier Name</td>
               <td>Total Item</td>
               <td>Total Value</td>
@@ -87,6 +88,7 @@
                 <td>{{$key + 1}}</td>
                 <td>{{$result->reference_no}}</td>
                 <td>{{$result->invoice_no}}</td>
+                <td>{{$result->destination}}</td>
                 <td>{{$result->supplier_name}}</td>
                 <td>{{$result->total_item}}</td>
                 <td>Rm {{number_format($result->total_cost,2)}}</td>
