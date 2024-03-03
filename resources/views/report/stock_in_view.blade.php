@@ -118,14 +118,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <tbody>
           @php $lumpsum = 0; @endphp
           @foreach($data as $record)
-            @php $lumpsum += $record->product->cost * $record->total_quantity; @endphp
+            @php $lumpsum += ($record->product->cost ?? 0) * ($record->total_quantity ?? 0); @endphp
             <tr>
               <td>{{ $loop->iteration }}</td>
               <td>{{ $record->barcode }}</td>
               <td>{{ $record->product_name }}</td>
-              <td align="right">{{ number_format($record->product->cost,2) }}</td>
-              <td align="right">{{ number_format($record->total_quantity,2) }}</td>
-              <td align="right">Rm {{ number_format($record->product->cost * $record->total_quantity,2) }}</td>
+              <td align="right">{{ number_format($record->product->cost ?? 0,2) }}</td>
+              <td align="right">{{ number_format($record->total_quantity ?? 0,2) }}</td>
+              <td align="right">Rm {{ number_format(($record->product->cost ?? 0) * ($record->total_quantity ?? 0),2) }}</td>
             </tr>
           @endforeach
         </tbody>

@@ -2804,7 +2804,7 @@ class SalesController extends Controller
                         });
                       })
                       ->groupBy('barcode')
-                      ->select('*',DB::raw('SUM(quantity) as total_quantity'))
+                      ->select('do_detail.*',DB::raw('SUM(quantity) as total_quantity'))
                       ->get();
 
     $toBranch = $request->to_branch != 0 ? Branch::find($request->to_branch)->branch_name : 'HQ';
