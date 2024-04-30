@@ -1929,6 +1929,7 @@ class SalesController extends Controller
     $sheet->setCellValue('D4','Payment Type');
     $sheet->setCellValue('E4','Total');
     $sheet->setCellValue('F4','Reference No');
+    $sheet->setCellValue('G4','Transaction Date');
 
     $start = 5;
     foreach($transaction as $index => $result){
@@ -1938,6 +1939,7 @@ class SalesController extends Controller
       $sheet->setCellValue('D'.$start, $result->payment_type_text);
       $sheet->setCellValue('E'.$start, $result->total);
       $sheet->setCellValueExplicit('F'.$start, $result->reference_no,DataType::TYPE_STRING2);
+      $sheet->setCellValueExplicit('G'.$start, date("Y-m-d h:i:s a",strtotime($result->transaction_date)),DataType::TYPE_STRING2);
       $start++;
     }
 
@@ -1947,6 +1949,7 @@ class SalesController extends Controller
     $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
     $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
     $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+    $spreadsheet->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
 
     $date = strtotime("now");
     $writer = new Xlsx($spreadsheet);
