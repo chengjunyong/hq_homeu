@@ -9,7 +9,7 @@
   <script src="{{ asset('bootstrap-4.0.0/js/bootstrap.min.js') }}"></script>
   <script src="{{ asset('fontawesome/js/all.min.js') }}"></script>
   <script src="{{ asset('datatable/datatables.min.js') }}"></script>
-  <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script src="//fastly.jsdelivr.net/npm/sweetalert2@10"></script>
   <link rel="stylesheet" href="{{ asset('bootstrap-4.0.0/css/bootstrap.min.css')}}"/>
   <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css')}}"/>
   <link rel="stylesheet" href="{{ asset('datatable/datatables.min.css')}}"/>
@@ -26,7 +26,7 @@
   <link rel="stylesheet" href="{{ asset('select2/css/select2.min.css') }}">
   <!-- Select2 -->
   <script src="{{ asset('select2/js/select2.full.min.js') }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+  <script src="https://fastly.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

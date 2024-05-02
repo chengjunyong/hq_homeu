@@ -35,7 +35,7 @@
   <script src="{{ asset('select2/js/select2.full.min.js') }}"></script>
 
   <script src="{{ asset('quagga/quagga.js') }}"></script>
-  <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script src="//fastly.jsdelivr.net/npm/sweetalert2@10"></script>
 
   <style>
     
