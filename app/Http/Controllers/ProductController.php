@@ -58,7 +58,7 @@ class ProductController extends Controller
                                 ->when(isset($request->brand_id) && $request->brand_id != null, function ($q) use ($request){
                                   $q->where('brand_id',$request->brand_id);
                                 }) 
-                                ->orderBy('product_name','ASC')
+                                ->orderBy('created_At','DESC')
                                 ->paginate(30);
 
     $departments = Department::orderBy('department_name','ASC')->get();
