@@ -146,7 +146,7 @@ class GenerateStockBalanceReport extends Command
         foreach($product_lists as $key => $product){
         $sheet->setCellValue('A'.$count, $key+1);
         $sheet->setCellValue('B'.$count, $product->department->department_name);
-        $sheet->setCellValue('C'.$count, $product?->category?->category_name);
+        $sheet->setCellValue('C'.$count, $product->category->category_name);
         $sheet->setCellValue('D'.$count, $product->barcode);
         $sheet->setCellValue('E'.$count, $product->product_name);
         $sheet->setCellValue('F'.$count, $product->cost);
