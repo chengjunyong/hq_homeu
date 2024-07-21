@@ -302,18 +302,51 @@ class ProductController extends Controller
   public function postModifyProduct(Request $request)
   {
     $previous = Product_list::where('barcode',$request->barcode)->first();
-    if($request->cost != $previous->cost || $request->price != $previous->price){
-      $cvalue = "Cost : ".number_format($request->cost,2)."<br/>Price : ".number_format($request->price,2);
-      $pvalue = "Cost : ".number_format($previous->cost,2)."<br/>Price : ".number_format($previous->price,2);
+    $plog = "";
+    $clog = "";
+    if($request->cost != $previous->cost){
+      $clog .= "Cost : ".number_format($request->cost,2)."<br/>";
+      $plog .= "Cost : ".number_format($previous->cost,2)."<br/>";
+    }
+
+    if($request->price != $previous->price){
+      $clog .= "Price : ".number_format($request->price,2)."<br/>";
+      $plog .= "Price : ".number_format($previous->price,2)."<br/>";
+    }
+
+    if($request->normal_wholesales_price != $previous->normal_wholesale_price){
+      $clog .= "W/sales Price : ".number_format($request->normal_wholesales_price ?? 0,2)."<br/>";
+      $plog .= "W/sales Price : ".number_format($previous->normal_wholesale_price ?? 0,2)."<br/>";
+    }
+
+    if($request->normal_wholesales_quantity != $previous->normal_wholesale_quantity){
+      $clog .= "W/sales Quantity : ".number_format($request->normal_wholesales_quantity ?? 0,2)."<br/>";
+      $plog .= "W/sales Quantity : ".number_format($previous->normal_wholesale_quantity ?? 0,2)."<br/>";
+    }
+
+    $pstart = $request->promotion_start == "";
+    if(date("Y-m-d H:i:s",strtotime($request->promotion_start)) != date("Y-m-d H:i:s",strtotime($previous->promotion_start)) || 
+        date("Y-m-d H:i:s",strtotime($request->promotion_end)) != date("Y-m-d H:i:s",strtotime($previous->promotion_end)) || 
+        $request->promotion_price != $previous->promotion_price
+    ){
+      $tmp1 = $request->promotion_start != null && $previous->promotion_start != null ? date("d M Y",strtotime($previous->promotion_start)) : '';
+      $tmp2 = $request->promotion_end != null && $previous->promotion_end != null ? date("d M Y",strtotime($previous->promotion_end)) : '';
+
+      $clog .= "Promo period : ".date("d M y",strtotime($request->promotion_start))." - ".date("d M y",strtotime($request->promotion_end))."<br/>Promo price : ".number_format($request->promotion_price,2)."<br/>";
+      $plog .= "Promo period : ".$tmp1." - ".$tmp2."<br/>Promo price : ".number_format($previous->promotion_price,2)."<br/>";
+    }
+
+    if($clog != ""){
       Product_history::create([
                         'product_id' => $previous->id,
                         'barcode' => $previous->barcode,
-                        'previous_value' => $pvalue,
-                        'current_value' => $cvalue,
+                        'previous_value' => $plog,
+                        'current_value' => $clog,
                         'created_by' => Auth::user()->id,
                         'creator_name' => Auth::user()->name,
                       ]); 
     }
+    
 
     Branch_product::where('barcode',$request->barcode)
                     ->update([
