@@ -199,6 +199,7 @@ class ProductController extends Controller
       'reorder_level'=>0,
       'recommend_quantity'=>0,
       'unit_type'=>null,
+      'created_by' => auth()->user()->id,
     ]);
 
     Warehouse_stock::updateOrCreate(
@@ -332,8 +333,8 @@ class ProductController extends Controller
       $tmp1 = $request->promotion_start != null && $previous->promotion_start != null ? date("d M Y",strtotime($previous->promotion_start)) : '';
       $tmp2 = $request->promotion_end != null && $previous->promotion_end != null ? date("d M Y",strtotime($previous->promotion_end)) : '';
 
-      $clog .= "Promo period : ".date("d M y",strtotime($request->promotion_start))." - ".date("d M y",strtotime($request->promotion_end))."<br/>Promo price : ".number_format($request->promotion_price,2)."<br/>";
-      $plog .= "Promo period : ".$tmp1." - ".$tmp2."<br/>Promo price : ".number_format($previous->promotion_price,2)."<br/>";
+      $clog .= "Promo Period : ".date("d M y",strtotime($request->promotion_start))." - ".date("d M y",strtotime($request->promotion_end))."<br/>Promo price : ".number_format($request->promotion_price,2)."<br/>";
+      $plog .= "Promo Period : ".$tmp1." - ".$tmp2."<br/>Promo price : ".number_format($previous->promotion_price,2)."<br/>";
     }
 
     if($clog != ""){

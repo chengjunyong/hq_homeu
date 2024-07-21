@@ -56,6 +56,7 @@ class Product_list extends Model
       'wholesale_quantity2',
       'deleted_by',
       'remark',
+      'created_by',
     ];
 
     public function department()
