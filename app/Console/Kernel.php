@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('cron:syncStock')->hourly();
+        // $schedule->command('cron:syncStock')->hourly();
         // $schedule->command('test:job')->everyMinute();
         $schedule->command('prefill:promotion_price')->dailyAt('4:00');
         $schedule->command('generate:stockBalanceReport')->dailyAt('3:00');
